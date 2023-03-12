@@ -345,7 +345,7 @@ function createBeastMaster(int unitId) returns HeroDefinition
 function createWolfForm(int unitId) returns HeroDefinition
     return createSubTroll(unitId)
         ..setNameEnhance("Wolf Form")
-        ..setAttackDamage(10)
+        ..setAttackDamage(12)
         ..setAttackSpeed(1.40)
         ..setModelFile(Units.direWolf1)
         ..setIcons(Icons.bTNDireWolf)
@@ -369,8 +369,8 @@ function createWolfForm(int unitId) returns HeroDefinition
 function createBearForm(int unitId) returns HeroDefinition
     return createSubTroll(unitId)
         ..setNameEnhance("Bear Form")
-        ..setAttackDamage(17)
-        ..setAttackSpeed(2.50)
+        ..setAttackDamage(19)
+        ..setAttackSpeed(2.2)
         ..setModelFile(Units.grizzlyBear)
         ..setIcons(Icons.bTNGrizzlyBear)
         ..setUnitSoundSet(Soundsets.shaman)

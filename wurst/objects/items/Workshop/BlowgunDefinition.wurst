@@ -20,6 +20,8 @@ let GROUND_MODEL_PATH = LocalItems.blowGun
 
 public let ABILITY_ID = compiletime(ABIL_ID_GEN.next())
 public let THISTLE_HERO_ABILITY_ID = compiletime(ABIL_ID_GEN.next())
+public let POISON_THISTLE_ABILITY = compiletime(ABIL_ID_GEN.next())
+public let POISON_THISTLE_HERO_ABILITY_ID = compiletime(ABIL_ID_GEN.next())
 
 let BONE_THISTLE_DMG = 30.0
 let BONE_THISTLE_STUN_HERO = 0.75
@@ -37,14 +39,27 @@ let THISTLE_HERO_MS_FACTOR     = 0.3
 let THISTLE_HERO_DECAYING_DMG  = 1.
 let THISTLE_HERO_DECAY_POWER   = 0.5
 
+let POISON_THISTLE_DMG         = 15.
+let POISON_THISTLE_AS_FACTOR   = 0.3
+let POISON_THISTLE_MS_FACTOR   = 0.4
+let POISON_THISTLE_DECAYING_DMG = 10.
+let POISON_THISTLE_DECAY_POWER = 0.5
+
+let POISON_THISTLE_HERO_DMG         = 15.
+let POISON_THISTLE_HERO_AS_FACTOR   = 0.15
+let POISON_THISTLE_HERO_MS_FACTOR   = 0.2
+let POISON_THISTLE_DECAYING_HERO_DMG = 10.
+let POISON_THISTLE_DECAY_HERO_POWER = 0.5
+
 let DARK_THISTLE_DMG           = 20.
 let DARK_THISTLE_AS_FACTOR     = 0.2
 let DARK_THISTLE_MS_FACTOR     = 0.2
 let DARK_THISTLE_DECAYING_DMG  = 1.
 let DARK_THISTLE_DECAY_POWER   = 0.5
 
+let POISON_THISTLE_DURATION_HERO   = 7.
 let THISTLE_DURATION_NORMAL = 16.
-let THISTLE_DURATION_HERO   = 5.
+let THISTLE_DURATION_HERO   = 6.
 let DARK_THISTLE_DURATION_HERO = 12.
 
 let CAST_RANGE = 450.
@@ -70,7 +85,7 @@ let BONE_TOOLTIP    = "" +
     +makeToolTipCooldown(COOLDOWN)
 
 let THISTLE_TOOLTIP = "" +
-    "Thistle : ".color(GREEN_COLOR) +
+    "Thistle : ".color(GOLD_COLOR) +
     "Deals {0} initial damage and {1} damage every {2} seconds. "
     .format(
         THISTLE_DMG.toToolTipRed(),
@@ -83,6 +98,21 @@ let THISTLE_TOOLTIP = "" +
         THISTLE_HERO_MS_FACTOR.toToolTipOrange() + "/" + THISTLE_MS_FACTOR.toToolTipOrange()
     )
     +makeToolTipDuration(THISTLE_DURATION_HERO, COOLDOWN)
+
+ let POISON_THISTLE_TOOLTIP = "" +
+    "Poison Thistle : ".color(GREEN_COLOR) +
+    "Deals {0} initial damage and {1} damage every {2} seconds. "
+    .format(
+        POISON_THISTLE_DMG.toToolTipRed(),
+        POISON_THISTLE_DECAYING_DMG.toToolTipRed(),
+        3..toToolTipLightBlue()
+    ) +
+    "Also decrease attack speed by {0} and movement speed by {1}."
+    .format(
+        POISON_THISTLE_HERO_AS_FACTOR.toToolTipOrange() + "/" + POISON_THISTLE_AS_FACTOR.toToolTipOrange(),
+        POISON_THISTLE_HERO_MS_FACTOR.toToolTipOrange() + "/" + POISON_THISTLE_MS_FACTOR.toToolTipOrange()
+    )
+    +makeToolTipDuration(POISON_THISTLE_DURATION_HERO, COOLDOWN)   
 
 
 let DARK_THISTLE_TOOLTIP = "" +
@@ -109,8 +139,8 @@ public let ITEM_TOOLTIP_EXT = "" +
     "\n\nAmmo Effect :".color(GOLD_COLOR) +
     "\n" + BONE_TOOLTIP +
     "\n" + THISTLE_TOOLTIP +
-    "\n" + DARK_THISTLE_TOOLTIP
-
+    "\n" + DARK_THISTLE_TOOLTIP +
+    "\n" + POISON_THISTLE_TOOLTIP
 
 let ITEM_DESCRIPTION = "" +
     "A hollowed out piece of wood. If blown through, could be used to fire "+
@@ -174,6 +204,28 @@ function createThistleAbility(int newId) returns AbilityDefinitionWardenShadowSt
         ..presetDurationHero(lvl -> THISTLE_DURATION_HERO)
         ..presetDecayPower(lvl -> THISTLE_DECAY_POWER)
         ..setName("Loaded Normal Thistles")
+
+@compiletime function createPoisonThistleHeroAbility()
+    createThistleAbility(POISON_THISTLE_HERO_ABILITY_ID)
+        ..presetInitialDamage(lvl -> POISON_THISTLE_HERO_DMG)
+        ..presetDecayingDamage(lvl -> POISON_THISTLE_DECAYING_HERO_DMG)
+        ..presetAttackSpeedFactor(lvl -> POISON_THISTLE_HERO_AS_FACTOR)
+        ..presetMovementSpeedFactor(lvl -> POISON_THISTLE_HERO_MS_FACTOR)
+        ..presetDurationNormal(lvl -> THISTLE_DURATION_NORMAL)
+        ..presetDurationHero(lvl -> POISON_THISTLE_DURATION_HERO)
+        ..presetDecayPower(lvl -> POISON_THISTLE_DECAY_POWER)
+        ..setName("Loaded Hero Thistles")   
+
+@compiletime function createPoisonThistleNormalAbility()
+    createThistleAbility(POISON_THISTLE_ABILITY)
+        ..presetInitialDamage(lvl -> POISON_THISTLE_DMG)
+        ..presetDecayingDamage(lvl -> POISON_THISTLE_DECAYING_DMG)
+        ..presetAttackSpeedFactor(lvl -> POISON_THISTLE_AS_FACTOR)
+        ..presetMovementSpeedFactor(lvl -> POISON_THISTLE_MS_FACTOR)
+        ..presetDurationNormal(lvl -> THISTLE_DURATION_NORMAL)
+        ..presetDurationHero(lvl -> POISON_THISTLE_DURATION_HERO)
+        ..presetDecayPower(lvl -> POISON_THISTLE_DECAY_POWER)
+        ..setName("Loaded Normal Thistles") 
 
 @compiletime function createDarkThistleAbility()
     createThistleAbility(ABILITY_DARK_THISTLE)

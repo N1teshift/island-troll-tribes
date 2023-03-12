@@ -54,7 +54,7 @@ init
     ..add(ITEM_MANA_CRYSTAL)
 
     new QuickMake(ABILITY_QM_SCROLL_HASTE)
-    ..add(ITEM_ANABOLIC_POTION)
+    ..add(ITEM_ELK_SKIN_BOOTS)
     ..add(ITEM_MANA_CRYSTAL)
 
     new QuickMake(ABILITY_QM_ULTRA_POISON)

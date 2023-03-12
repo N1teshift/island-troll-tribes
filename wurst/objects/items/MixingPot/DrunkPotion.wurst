@@ -16,9 +16,9 @@ import ToolTipsUtils
 constant AS_FACTOR = 0.10
 constant MS_FACTOR = 0.25
 constant MISS_CHANCE = 0.50
-constant DURATION_HERO = 7.
+constant DURATION_HERO = 8.
 constant DURATION_NORMAL = 13.
-constant COOLDOWN = 25.
+constant COOLDOWN = 20.
 
 public constant TT_DRUNK_POTION = "" +
     "Throw this at an enemy to get them drunk, target is silenced, "+

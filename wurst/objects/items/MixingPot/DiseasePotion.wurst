@@ -21,7 +21,7 @@ let ABIL = compiletime(ABIL_ID_GEN.next())
 public let DISEASE_HEALING_REDUCTION_FACTOR = 0.3
 let DURATION = 25.
 let DAMAGE_TICK_INTERVAL = 0.5
-let DAMAGE_PER_SECOND = 3
+let DAMAGE_PER_SECOND = 4
 let AOE = 200.
 HashMap<unit, DiseaseInstance> diseaseInstances = new HashMap<unit,DiseaseInstance>()
 
@@ -58,7 +58,7 @@ public constant TT_DISEASE_POTION = "" +
         ..setNameEnhance("Disease Potion")
         ..setTooltipExtended(TT_DISEASE_POTION)
         ..setDescription(TT_DISEASE_POTION)
-        ..setLumberCost(40)
+        ..setLumberCost(34)
         ..setAbilities(commaList(ABIL))
         ..setScalingValue(0.70)
         ..setCooldownGroup(commaList(ABIL))

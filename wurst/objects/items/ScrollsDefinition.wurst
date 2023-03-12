@@ -19,10 +19,12 @@ import LocalObjectIDs
 import ColorUtils
 import UnitExtensions
 
+let ABIL_ABILITY_SPEED_BONUS_60 = compiletime(ABIL_ID_GEN.next())
+let ABILITY_HASTE = commaList(ABILITY_HASTE_AOE, ABILITY_SPEED_BONUS_60)
 
 let ROOT_DMG            = 5.
-let FIRE_DMG            = 40.
-let STONE_ARMOR         = 9.
+let FIRE_DMG            = 60.
+let STONE_ARMOR         = 5.
 let TSUNAMI_DMG         = 25.
 // The TOTAL damage a crushing wave can do
 let TSUNAMI_MAX_DMG     = 200.
@@ -30,33 +32,33 @@ let TSUNAMI_STRUCT_DMG  = 30.
 let SKELETAL_MINION_DMG = 7
 let HASTE_SPEED_BONUS   = 5.
 
-let ROOT_DURATION_HERO        = 4.
+let ROOT_DURATION_HERO        = 2.
 let ROOT_DURATION_NORMAL      = 8.
-let FIRE_DURATION_HERO        = 0.5
-let FIRE_DURATION_NORMAL      = 2.5
-let SKELETAL_DURATION         = 30.
-let STONE_ARMOR_DURATION      = 20.
+let FIRE_DURATION_HERO        = 0.1
+let FIRE_DURATION_NORMAL      = 1.
+let SKELETAL_DURATION         = 15.
+let STONE_ARMOR_DURATION      = 15.
 let HASTE_DURATION            = 7.
 let CYCLONE_DURATION_HERO     = 5.
 let CYCLONE_DURATION_NORMAL   = 10.
 let STONE_ARMOR_SLOW_DURATION = 2.
 
-let ROOT_COOLDOWN        = 45.
-let FIRE_COOLDOWN        = 32.
-let SKELETAL_COOLDOWN    = 60.
-let STONE_ARMOR_COOLDOWN = 80.
+let ROOT_COOLDOWN        = 20.
+let FIRE_COOLDOWN        = 22.
+let SKELETAL_COOLDOWN    = 35.
+let STONE_ARMOR_COOLDOWN = 40.
 let TSUNAMI_COOLDOWN     = 15.
 let HASTE_COOLDOWN       = 35.
 let CYCLONE_COOLDOWN     = 35.
 
 let ROOT_CAST_RANGE    = 450.
-let FIRE_CAST_RANGE    = 800.
+let FIRE_CAST_RANGE    = 450.
 let STONE_CAST_RANGE   = 400.
 let TSUNAMI_CAST_RANGE = 600.
 let CYCLONE_CAST_RANGE = 500.
 
 let TSUNAMI_DISTANCE = 600.
-let SKELETAL_AOE = 200.
+let SKELETAL_AOE = 500.
 let HASTE_AOE = 600.
 
 public let FIREBALL_TT = "Grants the unit the ability to cast Fire Ball dealing {0} damage and stunning the target for {1}/{2} seconds."
@@ -157,7 +159,7 @@ public let CYCLONE_TT = "Grants the unit the ability to cast Cyclone which tosse
         ..setDamageReturnFactor(1, 0)
         ..setNumberofSwarmUnits(1, 2)
         ..setDamageReturnThreshold(1, 600)
-        ..setMaxSwarmUnitsPerTarget(1, 1)
+        ..setMaxSwarmUnitsPerTarget(1, 4)
         ..setSwarmUnitType(1, UNIT_LOCUST_SKELETON.toRawCode())
         ..setIconNormal(Icons.bTNSkeletonWarrior)
         ..setEffectSoundLooping("")
@@ -279,7 +281,7 @@ public let CYCLONE_TT = "Grants the unit the ability to cast Cyclone which tosse
 @compiletime function createEntanglingRootsScroll() returns ItemDefinition
     return createUsableItem(ITEM_SCROLL_ENTANGLING_ROOTS)
         ..setCooldownGroup(ABILITY_ROOT_CAST.toRawCode())
-        ..setLumberCost(6)
+        ..setLumberCost(15)
         ..setAbilities(ABILITY_ROOT_CAST.toRawCode())
         ..setStockReplenishInterval(120)
         ..setModelUsed(LocalItems.scrollRegen)
@@ -326,8 +328,8 @@ public let CYCLONE_TT = "Grants the unit the ability to cast Cyclone which tosse
 @compiletime function createHasteScroll() returns ItemDefinition
     return createUsableItem(ITEM_SCROLL_HASTE)
         ..setCooldownGroup(ABILITY_HASTE_AOE.toRawCode())
-        ..setLumberCost(10)
-        ..setAbilities(ABILITY_HASTE_AOE.toRawCode())
+        ..setLumberCost(25)
+        ..setAbilities(ABILITY_HASTE)
         ..setStockReplenishInterval(120)
         ..setModelUsed(LocalItems.scrollHaste)
         ..setInterfaceIcon(Icons.bTNScrollOfHaste)

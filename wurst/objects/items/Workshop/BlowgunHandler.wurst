@@ -82,6 +82,15 @@ class Blowpipe
                         ..owner(caster.getOwner())
                         ..origin(caster.getPos())
                         ..castTarget(thistleAbility, 1, Orders.shadowstrike, this.target)
+                case ITEM_POISON_THISTLES
+                    let thistleAbility = this.target.isType(UNIT_TYPE_HERO)
+                        ? POISON_THISTLE_HERO_ABILITY_ID
+                        : POISON_THISTLE_ABILITY
+                    new DummyCaster()
+                        ..delay(2)
+                        ..owner(caster.getOwner())
+                        ..origin(caster.getPos())
+                        ..castTarget(thistleAbility, 1, Orders.shadowstrike, this.target)
                 case ITEM_BONE
                     new DummyCaster()
                         ..delay(2)
@@ -266,4 +275,6 @@ init
     slotsPerItem = new HashMap<int, int>()
     slotsPerItem.put(ITEM_BONE, 15)
     slotsPerItem.put(ITEM_THISTLES, 1)
-    slotsPerItem.put(ITEM_DARK_THISTLES, 2)
+    slotsPerItem.put(ITEM_POISON_THISTLES, 1)
+    slotsPerItem.put(ITEM_DARK_THISTLES, 1)
+    
