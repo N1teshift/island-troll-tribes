@@ -11,7 +11,7 @@ import LocalItemObjEditing
 import LocalObjectIDs
 import ToolTipsUtils
 
-public constant POT_HEAL = 65.
+public constant POT_HEAL = 80.
 
 public constant TT_HEALING_POTION = "" +
     "A dilute potion made from Athelas Seed. "+
@@ -25,7 +25,7 @@ public constant TT_HEALING_POTION = "" +
     ..setManaCost(1, 0)
     ..setCooldown(1, 0)
     ..setArtTarget(Abilities.healingSalveTarget)
-    ..setCastRange(1, 500.)
+    ..setCastRange(1, 400.)
     ..setTargetsAllowed(1, commaList(
         TargetsAllowed.friend,
         TargetsAllowed.ground,
@@ -49,3 +49,4 @@ public constant TT_HEALING_POTION = "" +
         ..setScalingValue(0.7)
         ..setCooldownGroup(commaList(ABILITY_HEALING_POTION))
         ..setStockReplenishInterval(120)
+        ..setNumberofCharges(2)

@@ -6,11 +6,13 @@ import LinkedList
 
 init
     new QuickMake(ABILITY_QM_HEALING_POTION)
-    ..add(ITEM_RIVER_ROOT)
+    ..add(ITEM_SPIRIT_WATER)
+    ..add(ITEM_ATHELAS_SEED)
     ..add(ITEM_ATHELAS_SEED)
 
     new QuickMake(ABILITY_QM_MANA_POTION)
-    ..add(ITEM_RIVER_STEM)
+    ..add(ITEM_SPIRIT_WIND)
+    ..add(ITEM_ATHELAS_SEED)
     ..add(ITEM_ATHELAS_SEED)
 
     new QuickMake(ABILITY_QM_CURE_ALL)

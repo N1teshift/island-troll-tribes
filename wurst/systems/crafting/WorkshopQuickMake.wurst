@@ -66,6 +66,10 @@ init
     ..add(ITEM_NETS)
     ..add(ITEM_STONE)
 
+    new QuickMake(ABILITY_QM_POISON_THISTLES)
+    ..add(ITEM_THISTLES)
+    ..add(ITEM_POISON)
+
     new QuickMake(ABILITY_QM_LIVING_CLAY)
     ..add(ITEM_CLAY_BALL)
     ..add(ITEM_MANA_CRYSTAL)

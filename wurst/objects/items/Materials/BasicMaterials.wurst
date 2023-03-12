@@ -59,6 +59,9 @@ constant TT_MC        = "A glowing crystal of mana. Used to craft magic gear."+H
 constant TT_THISTLES  = "" +
     "Some slightly poisonous thistles from a thistle bush. Use with the blowgun!"+HATCHERY_TRANSMUTABLE
 
+constant TT_PTHISTLES = "" +
+    "Inflicts mushroom poison on the enemy unit dealing damage and slowing."
+
 constant TT_DTHISTLES = "" +
     "Inflicts depressing on the enemy unit zapping some energy and slowing. "+
     "When combined with any other form of depression (spell or aura), the effects are increased."
@@ -294,6 +297,22 @@ constant TT_SCALE     = "A rare scale."
         ..setNameEnhance("Dark Thistles")
         ..setTooltipExtended(TT_DTHISTLES)
         ..setDescription(TT_DTHISTLES)
+        ..setLumberCost(3)
+        ..setTintingColor1Red(0)
+        ..setTintingColor2Green(0)
+        ..setTintingColor3Blue(0)
+        ..setCooldownGroup("")
+        ..setScalingValue( 0.75)
+        ..setCooldownGroup("Asp6")
+        ..setNumberofCharges(3)
+
+@compiletime function createPoisonThistles() returns ItemDefinition
+    return createPerishableItem(ITEM_POISON_THISTLES)
+        ..setInterfaceIcon(Icons.bTNPoisonQuill)
+        ..setModelUsed(Doodads.felwood_Thorns5)
+        ..setNameEnhance("Poison Thistles")
+        ..setTooltipExtended(TT_PTHISTLES)
+        ..setDescription(TT_PTHISTLES)
         ..setLumberCost(3)
         ..setTintingColor1Red(0)
         ..setTintingColor2Green(0)

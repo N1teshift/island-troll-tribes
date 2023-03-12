@@ -21,6 +21,7 @@ import LocalItemObjEditing
 import LocalObjectIDs
 import ToolTipsUtils
 
+let ABIL_ABILITY_ATTACK_SPEED_20 = compiletime(ABIL_ID_GEN.next())
 let ABIL_DMG_STONE  = compiletime(ABIL_ID_GEN.next())
 let ABIL_DMG_IRON   = compiletime(ABIL_ID_GEN.next())
 let ABIL_DMG_STEEL  = compiletime(ABIL_ID_GEN.next())
@@ -34,7 +35,7 @@ let ABIL_STONE  = commaList(ABIL_DMG_STONE, ABILITY_ATTACK_TREE)
 let ABIL_IRON   = commaList(ABIL_DMG_IRON, ABILITY_ATTACK_TREE)
 let ABIL_STEEL  = commaList(ABIL_DMG_STEEL, ABILITY_ATTACK_TREE)
 let ABIL_MASHER = commaList(ABIL_SILENCE, ABIL_DMG_MASHER, ABILITY_ATTACK_TREE)
-let ABIL_BATTLE = commaList(ABIL_PURGE, ABIL_DMG_BATTLE, ABILITY_ATTACK_TREE)
+let ABIL_BATTLE = commaList(ABIL_PURGE, ABIL_DMG_BATTLE, ABILITY_ATTACK_TREE, ABILITY_ATTACK_SPEED_20)
 
 let DMG_STONE  = 6
 let DMG_IRON   = 8

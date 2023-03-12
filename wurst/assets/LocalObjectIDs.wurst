@@ -817,3 +817,8 @@ public let UPGD_RENDO_WOLF_BITE                        = compiletime(UPGD_ID_GEN
 public let UPGD_RENDO_SNAKE_TOXIN                      = compiletime(UPGD_ID_GEN.next())..registerObjectID("UPGD_RENDO_SNAKE_TOXIN")
 public let UPGD_RENDO_HAWK_EYE                         = compiletime(UPGD_ID_GEN.next())..registerObjectID("UPGD_RENDO_HAWK_EYE")
 public let UPGD_RENDO_PANTHER_INSTINCT                 = compiletime(UPGD_ID_GEN.next())..registerObjectID("UPGD_RENDO_PANTHER_INSTINCT")
+public let ABILITY_POISON_THISTLE                      = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_POISON_THISTLE")
+public let ABILITY_POISON_THISTLE_HERO_ID              = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_POISON_THISTLE_HERO_ID")
+public let ITEM_POISON_THISTLES                        = compiletime(ITEM_ID_GEN.next())..registerObjectID("ITEM_POISON_THISTLES")
+public let ABILITY_QM_POISON_THISTLES                  = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_QM_POISON_THISTLES")
+

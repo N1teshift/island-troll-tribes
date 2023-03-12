@@ -64,7 +64,7 @@ function createMerchantShip(int newId) returns UnitDefinition
             commaList(
                 ITEM_CLAY_BALL,
                 ITEM_MAGIC,
-                ITEM_SPEAR,
+                ITEM_SCROLL_ENTANGLING_ROOTS,
                 ITEM_TINDER,
                 ITEM_ENSNARE_TRAP_KIT,
                 ITEM_STONE,
@@ -112,8 +112,9 @@ function createMerchantShip(int newId) returns UnitDefinition
                 ITEM_MUD_HUT_KIT,
                 ITEM_STEEL_INGOT,
                 ITEM_SPIRIT_WATER,
-                ITEM_ANTI_MAGIC_POTION,
-                ITEM_CURE_ALL
+                ITEM_SPIRIT_WATER,
+                ITEM_ANTI_MAGIC_POTION
+                
             )
         )
 

@@ -95,8 +95,8 @@ public let BUILDING_CRAFT_TOOLTIP         = "Look here to construct buildings, t
 
 // Mixing Pot
 
-public let HEALING_POTION_RECIPE          = "a " + "Healing Potion.".color(COLOR_GREEN) + TT_HEALING_POTION + "\n\n1x " +ATHELAS_SEED+ " + 1x " +RIVER_ROOT
-public let MANA_POTION_RECIPE             = "a Mana Potion, restore 65 mana to the consumer :\n\n1x " +ATHELAS_SEED+ " + 1x " +RIVER_STEM
+public let HEALING_POTION_RECIPE          = "a " + "Healing Potion.".color(COLOR_GREEN) + TT_HEALING_POTION + "\n\n1x " +WATER+ " + 2x " +ATHELAS_SEED
+public let MANA_POTION_RECIPE             = "a Mana Potion, restore 80 mana to the consumer :\n\n1x " +WIND+ " + 2x " +ATHELAS_SEED
 public let CURE_ALL_RECIPE                = "a Cure All, remove positive/negative buff & effect on the target ally :\n\n3x "+ATHELAS_SEED
 public let ESSENCE_BEES_RECIPE            = "an " + "Essence of Bees. ".color(COLOR_ORANGE) + TT_ESSENCE_BEES + "\n\n"+
                                             "2x "+SPECIAL_HERB+" 1 + 1x "+SPECIAL_HERB+ " 2 + 1x "+SPECIAL_HERB+" 3\nOr\n1x "+SPECIAL_HERB+" 1/2/3/4"+SPECIAL_MIX_WARNING
@@ -107,7 +107,7 @@ public let TWIN_ISLANDS_POTION_RECIPE     = "a " + "Twin Islands Potion. ".color
 
 public let NETHER_POTION_RECIPE           = "a " + "Nether Potion. ".color(COLOR_VIOLET) + TT_NETHER_POTION + "\n\n1x "+SPECIAL_HERB+" + 2x "+RIVER_STEM+" + 2x "+ATHELAS_SEED
 
-public let DRUNKS_POTION_RECIPE           = "a " + "Drunk Potion. ".color(COLOR_ORANGE) + TT_DRUNK_POTION + "\n\n1x "+SPECIAL_HERB+" 1 + 2x "+ATHELAS_SEED+" + 2x "+RIVER_ROOT+SPECIAL_MIX_WARNING
+public let DRUNKS_POTION_RECIPE           = "a " + "Drunk Potion. ".color(COLOR_ORANGE) + TT_DRUNK_POTION + "\n\n1x "+SPECIAL_HERB+" 1 + 2x "+ATHELAS_SEED+" + 1x "+RIVER_ROOT+SPECIAL_MIX_WARNING
 
 public let FERVER_POTION_RECIPE           = "Increase the consumer attack speed by {0}, damage by {1} and armor by {2}. This potion put alot of stress on the consumer body, who takes {3} damage per seconds."
                                             .format(0.20.toToolTipOrange(), 8..toToolTipRed(), 6..toToolTipGreen(), 9..toToolTipRed()) + makeToolTipDuration(20, 5)+
@@ -170,8 +170,8 @@ public let STEEL_BOOTS_RECIPE = "a pair of " + "Steel Boots. " .color(COLOR_TURQ
 // Armory
 public let BATTLE_GLOVES_RECIPE         = "a pair of " + "Battle Gloves. ".color(COLOR_VIOLET) + TT_BATTLE_GLOVES
                                           +"\n\n1x " + "Bone Gloves".color(COLOR_ORANGE) + " + 2x "+STEEL+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
-public let BATTLE_AXE_RECIPE            = "a Battle Axe. A two handed axe, increase damage by 14, can cast purge, removing all buffs from a target unit and slowing it."+makeToolTipDuration(5, 15, 60)+
-                                          "\n\n1x "+STICK+" + 2x "+STEEL+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
+public let BATTLE_AXE_RECIPE            = "a Battle Axe. A two handed axe, increase damage by 14, attack speed by 20%, can cast purge, removing all buffs from a target unit and slowing it."+makeToolTipDuration(5, 15, 60)+
+                                          "\n\n1x "+"Fervor potion ".color(COLOR_MAROON)+" + 2x "+STEEL+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
 public let BATTLE_ARMOR_RECIPE          = TT_BATTLE_ARMOR+"\n\n"+"1x " + "Bone Coat".color(COLOR_ORANGE) + " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
 public let BATTLE_SHIELD_RECIPE         = BATTLE_SHIELD_TOOLTIP+
                                            "\n\n"+"1x " + "Bone Shield".color(COLOR_ORANGE) + " + 1x " +ELK_HIDE+" + 1x "+STEEL+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
@@ -196,7 +196,7 @@ public let SCROLL_FIREBALL_RECIPE    = "a " +"Scroll of Fire Ball"      .color(C
 public let SCROLL_ROOT_RECIPE        = "a " +"Scroll of Entangling Root".color(COLOR_GREEN)     + ". " + ENTANGLING_ROOT_TT + " :\n\n1x "+ TINDER   + " + 1x "+ MC
 public let SCROLL_ARMOR_RECIPE       = "a " +"Scroll of Stone Armor"    .color(COLOR_ORANGE)    + ". " + STONE_ARMOR_TT     + " :\n\n1x "+ STONE    + " + 1x "+ MC
 public let SCROLL_LIVING_DEAD_RECIPE = "a " +"Scroll of Living Dead"    .color(COLOR_YELLOW)    + ". " + LIVING_DEAD_TT     + " :\n\n1x "+ BONE     + " + 1x "+ MC
-public let SCROLL_HASTE_RECIPE       = "a " +"Scroll of Haste"          .color(COLOR_ORANGE)    + ". " + HASTE_TT           + " :\n\n1x "+ ANABOLIC + " + 1x "+ MC
+public let SCROLL_HASTE_RECIPE       = "a " +"Scroll of Haste"          .color(COLOR_ORANGE)    + ". " + HASTE_TT           + " :\n\n1x "+ BASICBOOTS + " + 1x "+ MC
 public let SCROLL_TSUNAMI_RECIPE     = "a " +"Scroll of Tsunami"        .color(COLOR_VIOLET)    + ". " + TSUNAMI_TT         + " :\n\n1x "+ WATER    + " + 1x "+ MC
 public let SCROLL_CYCLONE_RECIPE     = "a " +"Scroll of Cyclone"        .color(COLOR_TURQUOISE) + ". " + CYCLONE_TT         + " :\n\n1x "+ WIND     + " + 1x "+ MC
 
@@ -239,6 +239,9 @@ public let BLOW_GUN_RECIPE               = "a BlowGun. Used for shooting small t
 
 public let DARK_THISTLES_RECIPE         = "a Dark thistles. Creates a special type of blowgun ammo. Instead of poisoning, dark thistles depress enemies and zap mana from them over time :"+
                                           "\n\n1x "+"Thistles".color(COLOR_GREEN) + " 1x "+DARKNESS
+                                          
+public let POISON_THISTLES_RECIPE       ="a Poison thistles. Creates a special type of blowgun ammo. Makes thistles poison even more potent :"+
+                                          "\n\n1x "+"Thistles".color(COLOR_GREEN) + " 1x "+POISON                                          
 
 public let SMOKE_BOMB_RECIPE            = "a Smoke Bomb. The skin of a banana containing the spirit of wind. When activated, the banana releases the wind and creates a smokescreen. Has 3 charges :"+
                                           "\n\n1x "+"Banana".color(GOLD_COLOR) + " 1x "+WIND
