@@ -170,8 +170,8 @@ public let STEEL_BOOTS_RECIPE = "a pair of " + "Steel Boots. " .color(COLOR_TURQ
 // Armory
 public let BATTLE_GLOVES_RECIPE         = "a pair of " + "Battle Gloves. ".color(COLOR_VIOLET) + TT_BATTLE_GLOVES
                                           +"\n\n1x " + "Bone Gloves".color(COLOR_ORANGE) + " + 2x "+STEEL+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
-public let BATTLE_AXE_RECIPE            = "a Battle Axe. A two handed axe, increase damage by 14, can cast purge, removing all buffs from a target unit and slowing it."+makeToolTipDuration(5, 15, 60)+
-                                          "\n\n1x "+STICK+" + 2x "+STEEL+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
+public let BATTLE_AXE_RECIPE            = "a Battle Axe. A two handed axe, increase damage by 14, attack speed by 20%, can cast purge, removing all buffs from a target unit and slowing it."+makeToolTipDuration(5, 15, 60)+
+                                          "\n\n1x "+"Fervor potion ".color(COLOR_MAROON)+" + 2x "+STEEL+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
 public let BATTLE_ARMOR_RECIPE          = TT_BATTLE_ARMOR+"\n\n"+"1x " + "Bone Coat".color(COLOR_ORANGE) + " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
 public let BATTLE_SHIELD_RECIPE         = BATTLE_SHIELD_TOOLTIP+
                                            "\n\n"+"1x " + "Bone Shield".color(COLOR_ORANGE) + " + 1x " +ELK_HIDE+" + 1x "+STEEL+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
