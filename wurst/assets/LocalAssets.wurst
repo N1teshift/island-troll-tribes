@@ -4,6 +4,20 @@ package LocalAssets
 import ObjectIdGenerator
 
 public class LocalIcons
+	static constant dISBTNWeaknessAura ="ReplaceableTextures\\CommandButtons\\DISBTNWeaknessAura.blp"
+	static constant bTNWeaknessAura ="ReplaceableTextures\\CommandButtons\\BTNWeaknessAura.blp"
+	static constant dISBTNBootsOfBearTenacity ="ReplaceableTextures\\CommandButtons\\DISBTNBootsOfBearTenacity.blp"
+	static constant bTNBootsOfBearTenacity ="ReplaceableTextures\\CommandButtons\\BTNBootsOfBearTenacity.blp"
+	static constant dISBTNBootsOfWolfStamina ="ReplaceableTextures\\CommandButtons\\DISBTNBootsOfWolfStamina.blp"
+	static constant bTNBootsOfWolfStamina ="ReplaceableTextures\\CommandButtons\\BTNBootsOfWolfStamina.blp"
+	static constant dISBTNWolfClaws ="ReplaceableTextures\\CommandButtons\\DISBTNWolfClaws.blp"
+	static constant bTNWolfClaws ="ReplaceableTextures\\CommandButtons\\BTNWolfClaws.blp"
+	static constant dISBTNBearGlovesOfGreed ="ReplaceableTextures\\CommandButtons\\DISBTNBearGlovesOfGreed.blp"
+	static constant bTNBearGlovesOfGreed ="ReplaceableTextures\\CommandButtons\\BTNBearGlovesOfGreed.blp"
+	static constant dISBTNChestOfWolfVoracity ="ReplaceableTextures\\CommandButtons\\DISBTNChestOfWolfVoracity.blp"
+	static constant bTNChestOfWolfVoracity ="ReplaceableTextures\\CommandButtons\\BTNChestOfWolfVoracity.blp"
+	static constant bTNCoatOfBearPresence1 ="ReplaceableTextures\\CommandButtons\\BTNCoatOfBearPresence1.blp"
+	static constant dISBTNCoatOfBearPresence2 ="ReplaceableTextures\\CommandButtons\\DISBTNCoatOfBearPresence2.blp"	
     static constant aTCCannibalize           = "ReplaceableTextures\\CommandButtons\\ATCCannibalize.blp"
     static constant aTCEnsnare               = "ReplaceableTextures\\CommandButtons\\ATCEnsnare.blp"
     static constant aTCTrack                 = "ReplaceableTextures\\CommandButtons\\ATCTrack.blp"

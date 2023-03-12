@@ -4,15 +4,20 @@ package Track
 import Assets
 import BuffObjEditing
 import ChannelAbilityPreset
+import ClosureEvents
+import ClosureTimers
+import Unit
 
 // Third-party imports:
 import Lodash
 
 // Local imports:
+import SpellBookInitializer
 import ColorUtils
 import LocalObjectIDs
 import ToolTipsUtils
 import LocalAssets
+
 
 
 let BUFF_ID = compiletime(BUFF_ID_GEN.next())
@@ -93,9 +98,27 @@ public class GreaterTrack extends Track
         this.setHeroAbility(false)
         this.setLevels(1)
         this.presetDefenseReduction(lvl -> GREATER_TRACK_ARMOR_REDUCED)
+        
 
 
 @compiletime function createTrack()
     new Track(ABILITY_TRACK, "E", new Pair(1, 1))
     new GreaterTrack(ABILITY_TRACKER_TRACK, "E", new Pair(2, 0))
-    createBuff()
+
+    createBuff()   
+
+init
+    EventListener.onTargetCast(ABILITY_TRACKER_TRACK) (unit caster, unit target) ->         
+        doPeriodicallyTimed(ANIMATION_PERIOD, GREATER_TRACK_DURATION) (CallbackCounted cb) ->                
+            if not target.isAlive()
+                caster.endAbilityCooldown(ABILITY_TRACKER_TRACK)
+                destroy cb
+
+                
+                
+                    
+
+
+         
+            
+        

@@ -1,0 +1,153 @@
+package BearsTenacityBoots
+
+// Standard library imports:
+import AbilityObjEditing
+import DamageEvent
+import HashMap
+import ClosureEvents
+import ClosureTimers
+import ObjectIdGenerator
+import ObjectIds
+
+
+// Local imports:
+import AbilityObjectCreationUtils
+import LocalObjectIDs
+import Panic
+import StringBuilder
+import ToolTipsUtils
+import UnitExtensions
+import InstantDummyCaster
+import Orders
+import BuffIds
+import BuffObjEditing
+import Sounds
+
+constant ABILITY_WOLFS_STAMINA_BOOTS_PANIC = compiletime(ABIL_ID_GEN.next())
+//constant SPELLBOOK_ABILITY_ID = compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_WOLFS_STAMINA_BOOTS_PANIC)))
+
+let TT = new StringBuilder()
+    ..add(
+        "Causes your troll to go into a panic, making him move {0} faster, " +
+        "but take {2} extra damage.|n"
+    )
+    ..add(makeToolTipDuration(DURATION, COOLDOWN))
+    ..add(
+        "Tip: Use this as often as possible to maximize efficiency.",
+        colorA(255, 255, 201, 255)
+    )
+
+    .build()
+    .format(
+        MS_FACTOR.toToolTipOrange(),
+        AS_FACTOR.toToolTipOrange(),
+        DAMAGE_FACTOR.toToolTipRed()
+    )
+
+function createBearsTenacitBuff()
+    new BuffDefinition(BUFF_BEARS_TENACITY, BuffIds.slow)
+
+        ..setName("Bear's Tenacity")
+        //..setTooltipNormal(1, makeToolTipNorm("N", "Bloodlust"))
+        //..setTooltipNormalExtended(1, TT)
+        ..setEffectSound("")
+        ..setArtTarget("")
+        ..setTargetAttachmentPoint0(1, "")
+        ..setTargetAttachmentPoint1(1, "")
+
+
+
+@compiletime function createBearsTenacity() returns AbilityDefinitionSlowCreep
+    return new AbilityDefinitionSlowCreep(ABILITY_BEARS_TENACITY)
+        ..setButtonPositionNormalX(2)
+        ..setLevels(5)
+        ..presetCooldown(lvl->0)                
+        ..presetManaCost(lvl->0)
+        ..setArtEffect("")
+        ..setArtTarget("")
+        ..presetBuffs(lvl -> BUFF_BEARS_TENACITY.toRawCode())
+        ..presetCastRange(lvl->99999)
+        ..presetCastingTime(lvl->0)           
+        ..presetMovementSpeedFactor(lvl->0.4+0.2*lvl)
+        ..presetTargetsAllowed(lvl->commaList(TargetsAllowed.ground,
+                                              TargetsAllowed.friend,
+                                              TargetsAllowed.hero,
+                                              TargetsAllowed.playerunits))
+        ..presetDurationHero(lvl->1)
+        ..setHotkeyNormal("N")
+        ..setName("Bears Tenacity")
+        ..setTooltipNormal(1, makeToolTipNorm("N", "Bears Tenacity"))
+        ..setTooltipNormalExtended(1, TT)
+
+class BearsTenacityBootsInstance
+    private unit wearer
+    private real baseClock
+    private CallbackPeriodic cb
+    private OnUnitCast hunterWeb
+    private OnUnitCast ensnare
+    private OnUnitCast trapNet   
+    construct(unit wearer)
+        this.wearer = wearer
+        this.baseClock = 0
+
+        this.hunterWeb = EventListener.onTargetCast(ABILITY_HUNTER_WEB) (unit caster, unit target) ->
+            if (target == wearer)
+                onEnsnare(wearer)
+        this.ensnare = EventListener.onTargetCast(ABILITY_ENSNARE) (unit caster, unit target) ->
+            if (target == wearer)
+                onEnsnare(wearer)
+        this.trapNet = EventListener.onTargetCast(ABILITY_ENSNARE_TRAP) (unit caster, unit target) ->
+            if (target == wearer)
+                onEnsnare(wearer)
+
+ 
+                    
+            
+            
+        //doPeriodicallsy(ANIMATION_PERIOD) (cb) ->
+           // if wearer.hasAbility(ABILITY_HUNTER_WEB)
+             //   wearer.removeAbility(ABILITY_HUNTER_WEB)
+                //InstantDummyCaster.immediateOrderById(order)          
+
+            
+            
+    
+    ondestroy
+        destroy hunterWeb
+        destroy trapNet
+        destroy ensnare
+
+IterableMap<unit, BearsTenacityBootsInstance> instances = new IterableMap<unit, BearsTenacityBootsInstance>()
+
+function onEnsnare(unit wearer)
+    doPeriodicallyTimed(ANIMATION_PERIOD, 3) (CallbackCounted cb) ->
+        if (wearer.hasAbility(BuffIds.ensnareGround)) or (wearer.hasAbility(BuffIds.entanglingRoots)) or (wearer.hasAbility(BuffIds.ensnareGeneral))
+            PlaySound(Sounds.druidOfTheClawWarcry1)
+            wearer.removeAbility(BuffIds.ensnareGround)
+            wearer.removeAbility(BuffIds.entanglingRoots)
+            wearer.removeAbility(BuffIds.ensnareGeneral)
+            InstantDummyCaster.castTarget(wearer.getOwner(), ABILITY_BEARS_TENACITY, 5, OrderIds.slow, wearer)
+            doPeriodicallyCounted(0.5, 4) (CallbackCounted cb) -> 
+                InstantDummyCaster.castTarget(wearer.getOwner(), ABILITY_BEARS_TENACITY, cb.getCount(), OrderIds.slow, wearer)
+            destroy cb        
+    
+
+function onPickupBoots(unit u)
+    if u.isTroll()
+        if not instances.has(u)
+            instances.put(u, new BearsTenacityBootsInstance(u))
+
+
+function onDropBoots(unit u)
+    if instances.has(u)
+        destroy instances.getAndRemove(u)
+
+init
+    EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->
+        if GetManipulatedItem().getTypeId() == ITEM_BEARS_TENACITY_BOOTS
+            onPickupBoots(GetManipulatingUnit())
+
+
+    EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
+        if GetManipulatedItem().getTypeId() == ITEM_BEARS_TENACITY_BOOTS
+            onDropBoots(GetManipulatingUnit())

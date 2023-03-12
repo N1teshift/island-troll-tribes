@@ -12,6 +12,7 @@ import LocalAssets
 import ToolTipsUtils
 import LocalObjectIDs
 import LocalItemObjEditing
+import RegisterEvents
 
 let EVASION_CHANCE = 0.10
 
@@ -22,6 +23,8 @@ let TT_UNFORMAT_SKIN_BOOT = TT_COMMON + " and provides warmth."
 let TT_UNFORMAT_ARMOR_BOOT = TT_COMMON + ", armor by {2} and provides warmth."
 let TT_UNFORMAT_ANA_BOOT_STRING = "Increases wearer's movement speed by {0}, armor by {1} and all stats by {2}. Also gives {3} chance to dodge an attack."
 let TT_UNFORMAT_HYDRA_FINS_STRING = "Increases wearer's movement speed by {0}, armor by {1} armor and all stats by {2}. Also gives spell shield with {3} second cooldown."
+let TT_WOLFS_STAMINA_BOOTS_ABILITY = "|nRemoves mana cost and attack speed bonus from panic."
+let TT_BEARS_TENACITY_BOOTS_ABILITY = "\nGrants wearer tenacity of a bear, no snare will be able to stop you. \nWhenever you are ensnared you gain "+ "2.5".color(COLOR_YELLOW)+"s decaying movement speed debuff instead of being immobilized"
 
 // We can retrieve the ability data field, returning an Int in those case
 // DataA1 being the bonus movement speed for bonus move speed ability
@@ -37,11 +40,24 @@ public let TT_WOLF_SKIN_BOOTS = TT_UNFORMAT_ARMOR_BOOT.format(
     getAbilityDataField(ABILITY_ARMOR_BONUS_2,   "DataA1").color(COLOR_GREEN)
 ) + TT_TRANSMUTE_SUFFIX
 
+public let TT_WOLFS_STAMINA_BOOTS = TT_UNFORMAT_ARMOR_BOOT.format(
+    getAbilityDataField(ABILITY_SPEED_BONUS_60,  "DataA1").color(COLOR_ORANGE),
+    getAbilityDataField(ABILITY_INT_BONUS_6,     "DataB1").color(COLOR_TURQUOISE),
+    getAbilityDataField(ABILITY_ARMOR_BONUS_3,   "DataA1").color(COLOR_GREEN)
+) + TT_WOLFS_STAMINA_BOOTS_ABILITY
+
 public let TT_BEAR_SKIN_BOOTS = TT_UNFORMAT_ARMOR_BOOT.format(
     getAbilityDataField(ABILITY_SPEED_BONUS_60,  "DataA1").color(COLOR_ORANGE),
     getAbilityDataField(ABILITY_INT_BONUS_5,     "DataB1").color(COLOR_TURQUOISE),
     getAbilityDataField(ABILITY_ARMOR_BONUS_3,   "DataA1").color(COLOR_GREEN)
 ) + TT_TRANSMUTE_SUFFIX
+
+public let TT_BEARS_TENACITY_BOOTS = TT_UNFORMAT_ARMOR_BOOT.format(
+    getAbilityDataField(ABILITY_SPEED_BONUS_60,  "DataA1").color(COLOR_ORANGE),
+    getAbilityDataField(ABILITY_STR_BONUS_6,     "DataC1").color(COLOR_TURQUOISE),
+    getAbilityDataField(ABILITY_ARMOR_BONUS_5,   "DataA1").color(COLOR_GREEN)
+) + TT_BEARS_TENACITY_BOOTS_ABILITY
+
 
 public let TT_BONE_BOOTS = TT_UNFORMAT_ARMOR_BOOT.format(
     getAbilityDataField(ABILITY_SPEED_BONUS_70,  "DataA1").color(COLOR_ORANGE),
@@ -156,6 +172,27 @@ public let TT_HYDRA_FINS = TT_UNFORMAT_HYDRA_FINS_STRING.format(
         ..setTooltipExtended(TT_WOLF_SKIN_BOOTS)
         ..setCooldownGroup(toRawCode(ABILITY_SPEED_BONUS_60))
 
+@compiletime function createWolfsStaminaBoots() returns ItemDefinition
+    return createBasicItem(ITEM_WOLFS_STAMINA_BOOTS)
+        ..setAbilities(commaList(
+            ABILITY_SPEED_BONUS_60,
+            ABILITY_INT_BONUS_6,
+            ABILITY_ARMOR_BONUS_3
+            )
+        )
+        ..setInterfaceIcon(LocalIcons.bTNBootsOfWolfStamina)
+        ..setDescription("Increases wearer's movement speed, armor and intelligence, |n Gives wearer wolf's stamina")
+        ..setTintingColor1Red(128)
+        ..setTintingColor2Green(128)
+        ..setTintingColor3Blue(128)
+        ..setModelUsed(LocalItems.wolfHideBoots)
+        ..setHotkey("")
+        ..setLumberCost(33)
+        ..setNameEnhance("Boots of Wolfs Stamina")
+        ..setTooltipExtended(TT_WOLFS_STAMINA_BOOTS)
+        ..setCooldownGroup(toRawCode(ABILITY_SPEED_BONUS_60))
+
+
 @compiletime function createBearSkinBoots() returns ItemDefinition
     return createBasicItem(ITEM_BEAR_SKIN_BOOTS)
         ..setAbilities(commaList(
@@ -174,6 +211,27 @@ public let TT_HYDRA_FINS = TT_UNFORMAT_HYDRA_FINS_STRING.format(
         ..setLumberCost(47)
         ..setNameEnhance("Bear Skin Boots")
         ..setTooltipExtended(TT_BEAR_SKIN_BOOTS)
+        ..setCooldownGroup(toRawCode(ABILITY_SPEED_BONUS_60))
+
+
+@compiletime function createBearsTenacityBoots() returns ItemDefinition
+    return createBasicItem(ITEM_BEARS_TENACITY_BOOTS)
+        ..setAbilities(commaList(
+            ABILITY_SPEED_BONUS_60,
+            ABILITY_STR_BONUS_6,
+            ABILITY_ARMOR_BONUS_5
+            )
+        )
+        ..setInterfaceIcon(LocalIcons.bTNBootsOfBearTenacity)
+        ..setDescription("Grants wearer tenacity of a bear")
+        ..setTintingColor1Red(255)
+        ..setTintingColor2Green(128)
+        ..setTintingColor3Blue(128)
+        ..setModelUsed(LocalItems.wolfHideBoots)
+        ..setHotkey("")
+        ..setLumberCost(76)
+        ..setNameEnhance("Boots of Bear's Tenacity")
+        ..setTooltipExtended(TT_BEARS_TENACITY_BOOTS)
         ..setCooldownGroup(toRawCode(ABILITY_SPEED_BONUS_60))
 
 @compiletime function createBoneBoots() returns ItemDefinition
@@ -274,3 +332,4 @@ public let TT_HYDRA_FINS = TT_UNFORMAT_HYDRA_FINS_STRING.format(
         ..setNameEnhance("Hydra Fins")
         ..setTooltipExtended(ARTIFACT_PREFIX + TT_HYDRA_FINS)
         ..setCooldownGroup(toRawCode(ABILITY_SPEED_BONUS_60))
+

@@ -12,12 +12,12 @@ import DamageListeners
 import LocalObjectIDs
 import ToolTipsUtils
 
-let MS_FACTOR = 0.3
-let AS_FACTOR = 0.2
-let DAMAGE_FACTOR = 0.1
-let DURATION = 15.
-let COOLDOWN = 15.
-let TT = new StringBuilder()
+public let MS_FACTOR = 0.3
+public let AS_FACTOR = 0.2
+public let DAMAGE_FACTOR = 0.1
+public let DURATION = 15.
+public let COOLDOWN = 15.
+public let TT = new StringBuilder()
     ..add(
         "Causes your troll to go into a panic, making him move {0} faster " +
         "and attack {1} faster, but take {2} extra damage.|n"
@@ -50,6 +50,9 @@ let TT = new StringBuilder()
         ..setName("Panic")
         ..setTooltipNormal(1, makeToolTipNorm("N", "Panic"))
         ..setTooltipNormalExtended(1, TT)
+
+
+
 
 function onDamage()
     // Filter for units under the effects of Panic.

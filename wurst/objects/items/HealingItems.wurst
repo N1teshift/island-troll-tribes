@@ -16,9 +16,9 @@ import LocalAssets
 import ToolTipsUtils
 import HealingPotion
 
-constant ABIL_MEAT   = compiletime(ABIL_ID_GEN.next())
-constant ABIL_BANANA = compiletime(ABIL_ID_GEN.next())
-constant ABIL_HONEY  = compiletime(ABIL_ID_GEN.next())
+public constant ABIL_MEAT   = compiletime(ABIL_ID_GEN.next())
+public constant ABIL_BANANA = compiletime(ABIL_ID_GEN.next())
+public constant ABIL_HONEY  = compiletime(ABIL_ID_GEN.next())
 
 constant MEAT_ICON   = Icons.bTNMonsterLure
 constant BANANA_ICON = LocalIcons.bTNBanana
@@ -110,6 +110,7 @@ function initHealItemTable()
 function initHealAbilityTable()
     itemTargetedHealAmount = new HashMap<int,real>()
     itemTargetedHealAmount.put(ABILITY_HEALING_POTION, POT_HEAL)
+    itemTargetedHealAmount.put(ABIL_MEAT, MEAT_HEAL)
 
 
 function onSelfHealItem()
@@ -126,6 +127,10 @@ function onSpellEffect()
 
     if itemTargetedHealAmount.has(spellId)
         new HealingInstance(target, caster, itemTargetedHealAmount.get(spellId), HealingType.ITEM)
+        print(target.getName())
+        print(caster.getName())
+        print(itemTargetedHealAmount.get(spellId))
+
 
 init
     initHealItemTable()

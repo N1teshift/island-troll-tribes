@@ -62,11 +62,25 @@ import LocalObjectIDs
         ..setName("Strenght + 2")
         ..setEditorSuffix("(Wurst)")
 
+    new AbilityDefinitionAllPlus1(ABILITY_STR_BONUS_4)
+        ..setIntelligenceBonus(1, 0)
+        ..setStrengthBonus(1, 4)
+        ..setAgilityBonus(1, 0)
+        ..setName("Strenght + 4")
+        ..setEditorSuffix("(Wurst)")
+
     new AbilityDefinitionAllPlus1(ABILITY_STR_BONUS_8)
         ..setIntelligenceBonus(1, 0)
         ..setStrengthBonus(1, 8)
         ..setAgilityBonus(1, 0)
         ..setName("Strength + 8")
+        ..setEditorSuffix("(Wurst)")
+
+    new AbilityDefinitionAllPlus1(ABILITY_STR_BONUS_10)
+        ..setIntelligenceBonus(1, 0)
+        ..setStrengthBonus(1, 10)
+        ..setAgilityBonus(1, 0)
+        ..setName("Strength + 10")
         ..setEditorSuffix("(Wurst)")
 
     new AbilityDefinitionAllPlus1(ABILITY_INT_BONUS_2)
@@ -96,3 +110,11 @@ import LocalObjectIDs
         ..setAgilityBonus(1, 0)
         ..setName("Intelligence + 10")
         ..setEditorSuffix("(Wurst)")
+
+    new AbilityDefinitionAllPlus1(ABILITY_AGI_BONUS_4)
+        ..setIntelligenceBonus(1, 0)
+        ..setStrengthBonus(1, 0)
+        ..setAgilityBonus(1, 4)
+        ..setName("Agility + 4")
+        ..setEditorSuffix("(Wurst)")
+

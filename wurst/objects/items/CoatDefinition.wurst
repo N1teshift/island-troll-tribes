@@ -25,6 +25,9 @@ constant ABIL_SPELL_RESISTANCE_BATTLE = compiletime(ABIL_ID_GEN.next())
 constant ABIL_CAST_BATTLE             = compiletime(ABIL_ID_GEN.next())
 constant ABIL_CAST_STEEL              = compiletime(ABIL_ID_GEN.next())
 constant ABIL_HARDENED_SCALE          = compiletime(ABIL_ID_GEN.next())
+constant ABILITY_WOLFS_VORACITY_COAT_ACTIVE = compiletime(ABIL_ID_GEN.next())
+constant ABILITY_BEARSKIN_COAT_HERO = compiletime(ABIL_ID_GEN.next())
+constant ABILITY_BEARSKIN_COAT_NORMAL = compiletime(ABIL_ID_GEN.next())
 
 constant BATTLE_COOLDOWN = 75.
 constant STEEL_COOLDOWN = 90.
@@ -40,7 +43,9 @@ constant TT_ARMOR  = "A coat reinforced with metals. " + TT_COMMON + " and provi
 
 constant ABIL_ELK    = commaList(ABILITY_STR_BONUS_2, ABILITY_INT_BONUS_1, ABILITY_ARMOR_BONUS_1)
 constant ABIL_WOLF   = commaList(ABILITY_STR_BONUS_3, ABILITY_INT_BONUS_2, ABILITY_ARMOR_BONUS_2)
+constant ABIL_WOLF_VORACITY   = commaList(ABILITY_WOLFS_VORACITY_COAT_ACTIVE, ABILITY_STR_BONUS_4, ABILITY_INT_BONUS_4, ABILITY_ARMOR_BONUS_4)
 constant ABIL_BEAR   = commaList(ABILITY_STR_BONUS_4, ABILITY_INT_BONUS_3, ABILITY_ARMOR_BONUS_3)
+constant ABIL_BEAR_PRESENCE   = commaList(ABILITY_STR_BONUS_10, ABILITY_ARMOR_BONUS_5, ABILITY_BEARSKIN_COAT_HERO, ABILITY_SPIRIT_BEAST)
 constant ABIL_BONE   = commaList(ABILITY_STR_BONUS_3, ABILITY_INT_BONUS_2, ABILITY_ARMOR_BONUS_2)
 constant ABIL_IRON   = commaList(ABILITY_STR_BONUS_4, ABILITY_INT_BONUS_3, ABILITY_ARMOR_BONUS_3)
 constant ABIL_STEEL  = commaList(ABIL_CAST_STEEL, ABILITY_STR_BONUS_8, ABILITY_INT_BONUS_6, ABILITY_ARMOR_BONUS_5)
@@ -59,11 +64,38 @@ public constant TT_WOLF_SKIN_COAT = TT_SKIN.format(
     getAbilityDataField(ABILITY_ARMOR_BONUS_2 , "DataA1").color(COLOR_GREEN)
 ) + TT_BASIC
 
+public constant TT_WOLF_VORACITY_COAT = "" +
+    ("A coat imbued with voracity of a Dire Wolf. "+
+    "Allows wearer to consume raw meat, and to consume corpses instantly.  " +
+    "|nCannot eat cooked meat. " +
+    "Use item to consume raw meat instantly restoring 50 health.|n" +
+    "Strength +{0}.|n" +
+    "Intelligence +{1}.|n" +
+    "Armor+{2}."
+    )
+    .format(
+    getAbilityDataField(ABILITY_STR_BONUS_4   , "DataC1").color(COLOR_GREEN),
+    getAbilityDataField(ABILITY_INT_BONUS_4   , "DataB1").color(COLOR_GREEN),
+    getAbilityDataField(ABILITY_ARMOR_BONUS_4 , "DataA1").color(COLOR_GREEN)
+) 
+
 public constant TT_BEAR_SKIN_COAT = TT_SKIN.format(
     getAbilityDataField(ABILITY_STR_BONUS_4   , "DataC1").color(COLOR_GREEN),
     getAbilityDataField(ABILITY_INT_BONUS_3   , "DataB1").color(COLOR_GREEN),
     getAbilityDataField(ABILITY_ARMOR_BONUS_3 , "DataA1").color(COLOR_GREEN)
 ) + TT_BASIC
+
+public constant TT_BEAR_PRESENCE_COAT = "" +
+    ("A coat made out of a hide of ancient bear.|n"+
+    "Animals will freeze in your terrifying presence.|n" +
+    "Enemies shaken with fear suffer 20% damage penalty.|n" +
+    "Strength +{0}.|n" +
+    "Armor +{1}."
+    )
+    .format(
+    getAbilityDataField(ABILITY_STR_BONUS_10  , "DataC1").color(COLOR_GREEN),
+    getAbilityDataField(ABILITY_ARMOR_BONUS_5 , "DataA1").color(COLOR_GREEN)
+) 
 
 public constant TT_BONE_COAT = TT_SKIN.format(
     getAbilityDataField(ABILITY_STR_BONUS_3   , "DataC1").color(COLOR_GREEN),
@@ -112,6 +144,10 @@ public constant TT_SCALE_COAT = "" +
         ..setName("Steel Coat Cast")
         ..setCooldown(1, STEEL_COOLDOWN)
 
+    createItemBerserkCast(ABILITY_WOLFS_VORACITY_COAT_ACTIVE)
+    ..setName("Consume Raw Meat")
+    ..setCooldown(1, 0)        
+
     new AbilityDefinitionCryptLordSpikedCarapace(ABIL_HARDENED_SCALE)
         ..setDefenseBonus(1, 0)
         ..setLevels(1)
@@ -128,6 +164,16 @@ public constant TT_SCALE_COAT = "" +
 
     new StatBonusAbility(ABIL_STATS_BATTLE , "Battle Armor" , 4, 4, 4)
 
+    new AbilityDefinitionItemAuraCommand(ABILITY_BEARSKIN_COAT_HERO)       
+        ..setAreaofEffect(1, 300)
+        ..setLevels(1)
+        ..setAttackDamageIncrease(1, -.2)
+        ..setTargetsAllowed(1, commaList(
+                TargetsAllowed.enemies,
+                TargetsAllowed.ground,
+                TargetsAllowed.organic,
+                TargetsAllowed.vulnerable
+            ))
 
 @compiletime function createElkSkinCoat() returns ItemDefinition
     return createBasicItem(ITEM_ELK_SKIN_COAT)
@@ -144,18 +190,33 @@ public constant TT_SCALE_COAT = "" +
         ..setAbilities(ABIL_ELK)
 
 @compiletime function createWolfSkinCoat() returns ItemDefinition
-    return createBasicItem(ITEM_WOLF_SKIN_COAT)
+    return createUsableItem(ITEM_WOLF_SKIN_COAT)
         ..setInterfaceIcon(LocalIcons.bTNWolfHideCoat)
         ..setModelUsed(LocalItems.skinCoat)
         ..setNameEnhance("Wolf Skin Coat")
-        ..setTooltipExtended(TT_WOLF_SKIN_COAT)
-        ..setDescription(TT_WOLF_SKIN_COAT)
+        ..setTooltipExtended(TT_WOLF_VORACITY_COAT)
+        ..setDescription(TT_WOLF_VORACITY_COAT)
         ..setLumberCost(49)
         ..setTintingColor1Red(255)
         ..setTintingColor2Green(255)
         ..setTintingColor3Blue(255)
         ..setScalingValue(1.5)
-        ..setAbilities(ABIL_WOLF)
+
+@compiletime function createCoatOfWolfsVoracity() returns ItemDefinition
+    return createUsableItem(ITEM_WOLF_VORACITY_COAT)
+        ..setInterfaceIcon(LocalIcons.bTNChestOfWolfVoracity)
+        ..setModelUsed(LocalItems.skinCoat)
+        ..setNameEnhance("Coat of Wolf's Voracity")
+        ..setTooltipExtended(TT_WOLF_VORACITY_COAT)
+        ..setDescription(TT_WOLF_VORACITY_COAT)
+        ..setLumberCost(60)
+        ..setTintingColor1Red(255)
+        ..setTintingColor2Green(255)
+        ..setTintingColor3Blue(255)
+        ..setScalingValue(1.5)
+        ..setAbilities(ABIL_WOLF_VORACITY)
+        ..setCooldownGroup(toRawCode(ABILITY_WOLFS_VORACITY_COAT_ACTIVE))
+
 
 @compiletime function createBearSkinCoat() returns ItemDefinition
     return createBasicItem(ITEM_BEAR_SKIN_COAT)
@@ -170,6 +231,20 @@ public constant TT_SCALE_COAT = "" +
         ..setTintingColor3Blue(19)
         ..setScalingValue(1.5)
         ..setAbilities(ABIL_BEAR)
+
+@compiletime function createCoatOfBearsTerrifyingPresence() returns ItemDefinition
+    return createBasicItem(ITEM_BEAR_PRESENCE_COAT)
+        ..setInterfaceIcon(LocalIcons.bTNCoatOfBearPresence1)
+        ..setModelUsed(LocalItems.skinCoat)
+        ..setNameEnhance("Coat of bear's terrifying presence")
+        ..setTooltipExtended(TT_BEAR_PRESENCE_COAT)
+        ..setDescription(TT_BEAR_PRESENCE_COAT)
+        ..setLumberCost(70)
+        ..setTintingColor1Red(139)
+        ..setTintingColor2Green(6)
+        ..setTintingColor3Blue(19)
+        ..setScalingValue(1.5)
+        ..setAbilities(ABIL_BEAR_PRESENCE)
 
 @compiletime function createBoneCoat() returns ItemDefinition
     return createBasicItem(ITEM_BONE_COAT)

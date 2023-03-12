@@ -21,6 +21,12 @@ public class Armory extends Building
         getUnit().addAbility(ABILITY_QM_BATTLE_GLOVES)
         getUnit().addAbility(ABILITY_QM_BATTLE_AXE)
         getUnit().addAbility(ABILITY_QM_BATTLE_SHIELD)
+        getUnit().addAbility(ABILITY_QM_WOLFS_STAMINA_BOOTS)
+        getUnit().addAbility(ABILITY_QM_WOLFS_BLOODLUST_CLAWS)
+        getUnit().addAbility(ABILITY_QM_WOLFS_VORACITY_COAT)
+        getUnit().addAbility(ABILITY_QM_BEARS_TENACITY_BOOTS)
+        getUnit().addAbility(ABILITY_QM_BEARS_GREED_PAWS)
+        getUnit().addAbility(ABILITY_QM_BEAR_PRESENCE_COAT)
 
 init
     Armory.initialize()

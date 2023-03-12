@@ -11,6 +11,7 @@ import Lodash
 // Local imports:
 import LocalObjectIDs
 import ToolTipsUtils
+import ClosureEvents
 
 public let DUMMY_TELE_GATHER_ID = compiletime(ABIL_ID_GEN.next())
 public let BUFF_TELE_TARGET = compiletime(BUFF_ID_GEN.next())
@@ -25,9 +26,9 @@ let OMNI_DURATION = DURATION + 4 * 20
 let OMNI_MANACOST = 30
 
 let TOOLTIP_NORM = "Tele-Gathering"
-let TOOLTIP_EXTENDED = "The Tele-Gatherer magically links up with the targeted campfire as its "+
-                       "outlet and starts Tele-gathering. While Tele-Gathering, items "+
-                       "picked up are warped directly to the outlet."
+let TOOLTIP_EXTENDED_1 = "The Tele-Gatherer magically links up with the targeted campfire as its "+
+                       "outlet and starts Tele-gathering. While Tele-Gathering, up to "
+let TOOLTIP_EXTENDED_2 = " items picked up are warped directly to the outlet."
 
 let TARGET_ALLOWED = commaList(TargetsAllowed.sapper, TargetsAllowed.friend) // I didn't manage to make it castable on allied fire only, so lets say you can cast it on enemy fire...
 let DUMMY_TARGET_ALLOWED = commaList(TargetsAllowed.air,TargetsAllowed.friend,TargetsAllowed.ground,TargetsAllowed.neutral,TargetsAllowed.organic)
@@ -88,7 +89,7 @@ public class TeleGatheringDefinition extends AbilityDefinitionCurse
         this.setHotkeyNormal(hotkey)
         this.setName(TOOLTIP_NORM)
         this.presetTooltipNormal(lvl -> makeToolTipNorm(hotkey, TOOLTIP_NORM))
-        this.presetTooltipNormalExtended(lvl -> TOOLTIP_EXTENDED+makeToolTipDuration(DURATION + (lvl * 20), COOLDOWN))
+        this.presetTooltipNormalExtended(lvl -> TOOLTIP_EXTENDED_1+makeToolTipItemsLimit(lvl)+TOOLTIP_EXTENDED_2+makeToolTipDuration(DURATION + (lvl * 20), COOLDOWN))
         this.setButtonPositionNormalX(buttonPos.a)
         this.setButtonPositionNormalY(buttonPos.b)
         this.setIconNormal(Icons.bTNSpellSteal)
@@ -98,6 +99,12 @@ public class TeleGatheringDefinition extends AbilityDefinitionCurse
         this.presetBuffs(lvl -> toRawCode(BUFF_TELE_TARGET))
         this.presetCastRange(lvl -> CAST_RANGE)
         this.setEditorSuffix("(Wurst)")
+
+function makeToolTipItemsLimit(int lvl) returns string
+    var ITEMLIMIT = lvl*5.+10.
+    return "{0}".format(
+    ITEMLIMIT.toToolTipLightBlue()
+    )
 
 class TeleGathering extends TeleGatheringDefinition
     construct(int newAbilityId, string hotkey, Pair<int, int> buttonPos)
@@ -110,9 +117,9 @@ class TeleGathering extends TeleGatheringDefinition
         this.presetDurationNormal(lvl -> DURATION + (lvl * 20))
         this.presetBuffs(lvl -> toRawCode(BUFF_TELE_TARGET))
         this.presetTooltipNormal(lvl -> makeToolTipNormHero(hotkey, TOOLTIP_NORM, lvl))
-        this.presetTooltipNormalExtended(lvl -> TOOLTIP_EXTENDED+makeToolTipDuration(DURATION + (lvl * 20), COOLDOWN))
+        this.presetTooltipNormalExtended(lvl -> TOOLTIP_EXTENDED_1+makeToolTipItemsLimit(lvl)+TOOLTIP_EXTENDED_2+makeToolTipDuration(DURATION + (lvl * 20), COOLDOWN))
         this.setTooltipLearn(makeToolTipLearn(TOOLTIP_NORM))
-        this.setTooltipLearnExtended(TOOLTIP_EXTENDED)
+        this.setTooltipLearnExtended(TOOLTIP_EXTENDED_1+"15/20/25"+TOOLTIP_EXTENDED_2)
         this.presetTargetsAllowed(lvl -> TARGET_ALLOWED)
         this.setEditorSuffix("(Wurst)")
 
@@ -122,7 +129,7 @@ class OmnigathererTeleGathering extends TeleGatheringDefinition
         this.presetManaCost(lvl -> OMNI_MANACOST)
         this.presetDurationHero(lvl -> OMNI_DURATION)
         this.presetDurationNormal(lvl -> OMNI_DURATION)
-        this.presetTooltipNormalExtended(lvl -> TOOLTIP_EXTENDED+makeToolTipDuration(OMNI_DURATION, COOLDOWN))
+        this.presetTooltipNormalExtended(lvl -> TOOLTIP_EXTENDED_1+makeToolTipItemsLimit(lvl)+TOOLTIP_EXTENDED_2+makeToolTipDuration(OMNI_DURATION, COOLDOWN))
         this.presetTargetsAllowed(lvl -> TARGET_ALLOWED)
         this.setEditorSuffix("(Wurst)")
 
@@ -133,3 +140,7 @@ class OmnigathererTeleGathering extends TeleGatheringDefinition
     new TeleGathering(ABILITY_TELE_RADAR_GATHER, "E", new Pair(1, 1))
     new TeleGathering(ABILITY_TELE_HERB_GATHER, "E", new Pair(1, 1))
     new OmnigathererTeleGathering(ABILITY_TELE_GATHER_OMNI, "F", new Pair(1, 1))
+
+
+
+    

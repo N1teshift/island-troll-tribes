@@ -177,7 +177,18 @@ public let BATTLE_SHIELD_RECIPE         = BATTLE_SHIELD_TOOLTIP+
                                            "\n\n"+"1x " + "Bone Shield".color(COLOR_ORANGE) + " + 1x " +ELK_HIDE+" + 1x "+STEEL+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
 public let ANABOLIC_BOOTS_RECIPE        = "a pair of " + "Anabolic Boots. ".color(COLOR_VIOLET) + TT_ANA_BOOTS + "\n\n1x " + "Bone Boots".color(COLOR_ORANGE) +
                                           " + 1x " + WIND + " + 1x " + WATER + " + 1x " + MC + " + 2x " + ANABOLIC
-
+public let WOLFS_STAMINA_BOOTS_RECIPE  = "Boots of Wolf's Stamina. \n".color(COLOR_VIOLET) +TT_WOLFS_STAMINA_BOOTS
+                                        +"\n\n1x " + "Wolf Skin Boots ".color(COLOR_ORANGE) + " + 1x "+STEEL+" + 1x "+ANABOLIC+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MAGIC                                     
+public let WOLFS_BLOODLUST_CLAWS_RECIPE   = "Claws of Wolf's Bloodlust. \n".color(COLOR_VIOLET) + TT_WOLF_BLOODLUST_CLAWS
+                                        +"\n\n1x " + "Wolf Skin Gloves ".color(COLOR_ORANGE) + " +1x "+STEEL+" + 1x "+"Fervor potion ".color(COLOR_MAROON) + " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MAGIC                                        
+public let WOLFS_VORACITY_COAT_RECIPE   = "Coat of Wolf's Voracity. \n".color(COLOR_VIOLET) + TT_WOLF_VORACITY_COAT
+                                        +"\n\n1x " + "Wolf Skin Coat ".color(COLOR_ORANGE) + " + 1x "+STEEL+" + 1x " +DARKNESS+ " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MAGIC
+public let BEARS_GREED_PAWS_RECIPE      = "Paws of Bear's Greed. \n".color(COLOR_ORANGE) + TT_BEARS_GREED_PAWS
+                                        +"\n\n1x " + "Bear Skin Gloves ".color(COLOR_ORANGE) +" + "  +STEEL+" 1x " + "Bee Hive ".color(COLOR_YELLOW)+ " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MAGIC
+public let BEAR_PRESENCE_COAT_RECIPE    = "Coat of Bear's Terrifying Presence. \n".color(COLOR_RED) + TT_BEAR_PRESENCE_COAT
+                                         +"\n\n1x " + "Bear Skin Coat ".color(COLOR_ORANGE)+" + " +STEEL+" + 1x " + DARKNESS+  " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MAGIC                                                                          
+public let ITEM_BEARS_TENACITY_BOOTS_RECIPE = "Boots of Bear's Tenacity. \n".color(COLOR_RED) + TT_BEARS_TENACITY_BOOTS
+                                        +"\n\n1x " + "Bear Skin Boots ".color(COLOR_ORANGE)+" + " +STEEL+" 1x " +"Anti-Magic Potion".color(COLOR_MAROON)+ " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MAGIC 
 
 // Witch Doctors Hut
 

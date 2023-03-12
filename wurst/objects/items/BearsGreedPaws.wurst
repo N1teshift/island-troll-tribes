@@ -1,0 +1,112 @@
+package BearsGreedPaws
+
+// Standard library imports:
+import AbilityObjEditing
+import HashMap
+import ClosureEvents
+import ObjectIdGenerator
+
+// Local imports:
+import LocalObjectIDs
+import HealingItems
+import Panic
+import StringBuilder
+import ToolTipsUtils
+import LocalAssets
+import ObjEditingUtils
+import ObjectIds
+import ChannelAbilityPreset
+import ItemIds
+import HealingSystem
+import ClosureTimers
+
+
+
+
+let TT = new StringBuilder()
+    ..add(
+        "Causes your troll to go into a panic, making him move {0} faster, " +
+        "but take {2} extra damage.|n"
+    )
+    ..add(makeToolTipDuration(DURATION, COOLDOWN))
+    ..add(
+        "Tip: Use this as often as possible to maximize efficiency.",
+        colorA(255, 255, 201, 255)
+    )
+
+    .build()
+    .format(
+        MS_FACTOR.toToolTipOrange(),
+        AS_FACTOR.toToolTipOrange(),
+        DAMAGE_FACTOR.toToolTipRed()
+    )
+
+@compiletime function BearsGreedPawsAbility()
+    new ChannelAbilityPreset(ABILITY_BEARS_GREED_PAWS_ACTIVE, 1, true)
+        ..presetCastingTime(lvl ->0.5)
+        ..presetCastRange(lvl -> 100)
+        ..presetCooldown(lvl -> 3)
+        ..presetTargetTypes(Targettype.UNIT)
+        ..presetTargetsAllowed(lvl ->commaList(
+            TargetsAllowed.neutral,
+            TargetsAllowed.ground,
+            TargetsAllowed.structure,
+            TargetsAllowed.invulnerable
+        ))  
+
+
+class BearsGreedPawsInstance
+    private unit wearer
+    private real baseClock
+    private OnUnitCast eventListener
+
+    construct(unit wearer)
+        this.wearer = wearer
+        this.baseClock = 0   
+
+        this.eventListener =EventListener.onTargetCast(ABILITY_BEARS_GREED_PAWS_ACTIVE) (unit caster, unit target) ->
+            if (target.getTypeId() == UNIT_HIDDEN_STASH)
+                onItemUse(caster, target)
+                   
+                                       
+    ondestroy
+        destroy this.eventListener
+
+IterableMap<unit, BearsGreedPawsInstance> instances = new IterableMap<unit, BearsGreedPawsInstance>()
+
+function onItemUse(unit caster, unit target)
+    let foundItem=caster.getItemById(ITEM_HONEYCOMB)
+    foundItem.setDroppable(true)
+    foundItem.setPawnable(false)
+    caster.getItemById(ITEM_BEARS_GREED_PAWS).setDroppable(false)    
+    doAfter(caster.getAbilityCooldown(ABILITY_BEARS_GREED_PAWS_ACTIVE, 1)) ->
+        caster.getItemById(ITEM_BEARS_GREED_PAWS).setDroppable(true)        
+    if (foundItem.getCharges()<1)
+        caster.addItemById(ITEM_HONEYCOMB)
+        foundItem.setPawnable(false)     
+        return
+    if (foundItem.getCharges()<8)
+        foundItem.setCharges(foundItem.getCharges()+1)
+        foundItem.setPawnable(false)
+    else
+        new HealingInstance(caster, caster, HONEY_HEAL, HealingType.ITEM)  
+
+function onPickupGloves(unit u)
+    if not instances.has(u)
+        instances.put(u, new BearsGreedPawsInstance(u))
+
+
+function onDropCoat(unit u)
+    if instances.has(u)
+        destroy instances.getAndRemove(u)
+
+init
+    EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->
+        if GetManipulatedItem().getTypeId() == ITEM_BEARS_GREED_PAWS
+            onPickupGloves(GetManipulatingUnit())
+
+    EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
+        if GetManipulatedItem().getTypeId() == ITEM_BEARS_GREED_PAWS
+            onDropCoat(GetManipulatingUnit())
+
+//@compiletime createconsume

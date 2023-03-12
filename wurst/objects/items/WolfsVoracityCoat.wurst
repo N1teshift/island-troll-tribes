@@ -1,0 +1,116 @@
+package WolfsVoracityCoat
+
+// Standard library imports:
+import AbilityObjEditing
+import HashMap
+import ClosureEvents
+import ObjectIdGenerator
+
+// Local imports:
+import LocalObjectIDs
+import HealingItems
+import Panic
+import StringBuilder
+import ToolTipsUtils
+import LocalAssets
+import HealingSystem
+import UnitExtensions
+import Sounds
+constant ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME = compiletime(ABIL_ID_GEN.next())
+
+let TT = new StringBuilder()
+    ..add(
+        "Causes your troll to go into a panic, making him move {0} faster, " +
+        "but take {2} extra damage.|n"
+    )
+    ..add(makeToolTipDuration(DURATION, COOLDOWN))
+    ..add(
+        "Tip: Use this as often as possible to maximize efficiency.",
+        colorA(255, 255, 201, 255)
+    )
+
+    .build()
+    .format(
+        MS_FACTOR.toToolTipOrange(),
+        AS_FACTOR.toToolTipOrange(),
+        DAMAGE_FACTOR.toToolTipRed()
+    )
+
+@compiletime function consumeCorpse()
+    new AbilityDefinitionCannibalize(ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME)
+        ..setName("Consume Corpse")
+        ..setCheckDependencies(false)
+        ..setButtonPositionNormalX(1)
+        ..setButtonPositionNormalY(2)
+        ..setHotkeyNormal("D")
+        ..presetHitPointsperSecond(lvl -> 0)
+        ..presetDurationHero(lvl -> 0.01)
+        ..presetDurationNormal(lvl -> 0.01)
+        ..presetTooltipNormal(lvl -> "|cffC2E8EB[|r|cffFF6347D|r|cffC2E8EB] - Eat Raw Meat|r")
+        ..presetTooltipNormalExtended(lvl -> "Consume a nearby corpse for 50 |cffd67a7ahealth|r.")
+
+
+
+class WolfCoatInstance
+    private unit wearer
+    private real baseClock
+    private EventListener eventListener
+
+    construct(unit wearer)
+        this.wearer = wearer
+        this.baseClock = 0
+        //PlaySound(Sounds.duskWolf)       
+        wearer.removeAbility(LocalAbilityIds.corpseConsume)
+        wearer.addAbility(ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME)
+        wearer.makeAbilityPermanent(ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME, true)
+        wearer.disableAbility(ABIL_MEAT, true, true) 
+        wearer.disableAbility(ABIL_HONEY, true, true)
+        wearer.disableAbility(ABIL_BANANA, true, true)                
+        //EventListener.onCast(wearer, LocalAbilityIds.corpseConsume) (unit caster) ->
+        this.eventListener = EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->
+            if (GetManipulatedItem().getTypeId() == ITEM_COOKED_MEAT) or (GetManipulatedItem().getTypeId() == ITEM_HONEYCOMB) or (GetManipulatedItem().getTypeId() == ITEM_BANANA)
+                wearer.disableAbility(ABIL_MEAT, true, true) 
+                wearer.disableAbility(ABIL_HONEY, true, true)
+                wearer.disableAbility(ABIL_BANANA, true, true)
+        
+                                 
+    ondestroy
+        destroy this.eventListener
+        wearer.removeAbility(ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME)
+        wearer.addAbility(LocalAbilityIds.corpseConsume)
+        wearer.disableAbility(ABIL_MEAT, false, true) 
+        wearer.disableAbility(ABIL_HONEY, false, true)
+        wearer.disableAbility(ABIL_BANANA, false, true)         
+       // if wearer.hasAbility(ABIL_MEAT)
+          //  wearer.removeAbility(ABIL_MEAT) 
+
+IterableMap<unit, WolfCoatInstance> instances = new IterableMap<unit, WolfCoatInstance>()
+
+function consumeCorpseHeal(unit u)
+    new HealingInstance(u, u, MEAT_HEAL, HealingType.ITEM)  
+
+function onPickupCoat(unit u)
+    if u.isTroll()
+        if not instances.has(u)
+            instances.put(u, new WolfCoatInstance(u))
+
+
+function onDropCoat(unit u)
+    if instances.has(u)
+        destroy instances.getAndRemove(u)
+
+init
+    EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->
+        if GetManipulatedItem().getTypeId() == ITEM_WOLF_VORACITY_COAT
+            onPickupCoat(GetManipulatingUnit())
+
+    
+    EventListener.add(EVENT_PLAYER_UNIT_SPELL_ENDCAST) ->
+        if (GetTriggerUnit().hasItemById(ITEM_WOLF_VORACITY_COAT)) and (GetSpellAbilityId() == ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME )
+            consumeCorpseHeal(EventData.getSpellAbilityUnit())
+
+    EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
+        if GetManipulatedItem().getTypeId() == ITEM_WOLF_VORACITY_COAT
+            onDropCoat(GetManipulatingUnit())
+
+//@compiletime createconsume

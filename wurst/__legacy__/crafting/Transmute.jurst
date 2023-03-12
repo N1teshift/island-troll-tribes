@@ -7,6 +7,7 @@ library Transmute initializer onInit requires LocalObjectIDs, UnitExtensions, It
         local boolean bol2 = false
         local item array t
         local integer array i
+        local string array n
         local integer e = 0
         local integer uid = GetUnitTypeId(GetTriggerUnit())
         local boolean bol1 = GetTriggerUnit().isTroll() or uid == UNIT_CRAFT_MASTER
@@ -16,6 +17,7 @@ library Transmute initializer onInit requires LocalObjectIDs, UnitExtensions, It
             loop
                 exitwhen e > 5
                 set t[e] = UnitItemInSlot(GetTriggerUnit(), e)
+                set n[e] = GetItemName(t[e])
                 set i[e] = GetItemTypeId(t[e])
                 set e = e +1
             endloop
@@ -473,7 +475,71 @@ library Transmute initializer onInit requires LocalObjectIDs, UnitExtensions, It
                 call RemoveItem(t[5])
                 call UnitAddItemByIdSwapped( ITEM_BATTLE_SHIELD, GetTriggerUnit() )
                 call lowerItem(1)
+            endif                
+            if i[0] == ITEM_WOLF_SKIN_BOOTS and i[1] == ITEM_STEEL_INGOT and i[2] == ITEM_ANABOLIC_POTION and i[3] == ITEM_SPIRIT_WIND and i[4] == ITEM_SPIRIT_WATER and i[5] == ITEM_MAGIC then
+                call RemoveItem(t[0])
+                call RemoveItem(t[1])
+                call RemoveItem(t[2])
+                call RemoveItem(t[3])
+                call RemoveItem(t[4])
+                call RemoveItem(t[5])
+                call UnitAddItemByIdSwapped( ITEM_WOLFS_STAMINA_BOOTS, GetTriggerUnit() )
+                call lowerItem(1)
+            endif                
+            if i[0] == ITEM_WOLF_SKIN_GLOVES and i[1] == ITEM_STEEL_INGOT and i[2] == ITEM_FERVOR_POTION and i[3] == ITEM_SPIRIT_WIND and i[4] == ITEM_SPIRIT_WATER and i[5] == ITEM_MAGIC then
+                call RemoveItem(t[0])
+                call RemoveItem(t[1])
+                call RemoveItem(t[2])
+                call RemoveItem(t[3])
+                call RemoveItem(t[4])
+                call RemoveItem(t[5])
+                call UnitAddItemByIdSwapped( ITEM_WOLFS_BLOODLUST_CLAWS, GetTriggerUnit() )
+                call lowerItem(1)
             endif
+            if i[0] == ITEM_WOLF_SKIN_COAT and i[1] == ITEM_STEEL_INGOT and i[2] == ITEM_SPIRIT_DARKNESS and i[3] == ITEM_SPIRIT_WIND and i[4] == ITEM_SPIRIT_WATER and i[5] == ITEM_MAGIC then
+                call RemoveItem(t[0])
+                call RemoveItem(t[1])
+                call RemoveItem(t[2])
+                call RemoveItem(t[3])
+                call RemoveItem(t[4])
+                call RemoveItem(t[5])
+                call UnitAddItemByIdSwapped( ITEM_WOLF_VORACITY_COAT, GetTriggerUnit() )
+                call lowerItem(1)
+            endif                             
+            if i[0] == ITEM_BEAR_SKIN_GLOVES and i[1] == ITEM_STEEL_INGOT and i[2] == ITEM_BEE_HIVE and i[3] == ITEM_SPIRIT_WIND and i[4] == ITEM_SPIRIT_WATER and i[5] == ITEM_MAGIC then
+                call RemoveItem(t[0])
+                call RemoveItem(t[1])
+                call RemoveItem(t[2])
+                call RemoveItem(t[3])
+                call RemoveItem(t[4])
+                call RemoveItem(t[5])
+                call UnitAddItemByIdSwapped( ITEM_BEARS_GREED_PAWS, GetTriggerUnit() )
+                call lowerItem(1)
+            endif                
+            if i[0] == ITEM_BEAR_SKIN_COAT and i[1] == ITEM_STEEL_INGOT and i[2] == ITEM_SPIRIT_DARKNESS and i[3] == ITEM_SPIRIT_WIND and i[4] == ITEM_SPIRIT_WATER and i[5] == ITEM_MAGIC then
+                call RemoveItem(t[0])
+                call RemoveItem(t[1])
+                call RemoveItem(t[2])
+                call RemoveItem(t[3])
+                call RemoveItem(t[4])
+                call RemoveItem(t[5])
+                call UnitAddItemByIdSwapped( ITEM_BEAR_PRESENCE_COAT, GetTriggerUnit() )
+                call lowerItem(1)                                                                  
+            endif
+            if i[0] == ITEM_BEAR_SKIN_BOOTS and i[1] == ITEM_STEEL_INGOT and i[2] == ITEM_ANTI_MAGIC_POTION and i[3] == ITEM_SPIRIT_WIND and i[4] == ITEM_SPIRIT_WATER and i[5] == ITEM_MAGIC then
+                call RemoveItem(t[0])
+                call RemoveItem(t[1])
+                if GetItemCharges(t[2]) > 1 then
+                    call SetItemCharges(t[2], GetItemCharges(t[2]) - 1 )
+                else
+                    call RemoveItem(t[2])
+                endif
+                call RemoveItem(t[3])
+                call RemoveItem(t[4])
+                call RemoveItem(t[5])
+                call UnitAddItemByIdSwapped( ITEM_BEARS_TENACITY_BOOTS, GetTriggerUnit() )
+                call lowerItem(1)                                                                  
+            endif            
         endif
     //End of Armory Item Creation
     //Begging of Witch Doctors Hut Item Creation

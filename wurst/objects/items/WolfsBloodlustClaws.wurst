@@ -1,0 +1,120 @@
+package WolfsBloodlustClaws
+
+// Standard library imports:
+import AbilityObjEditing
+import HashMap
+import ClosureEvents
+import ObjectIdGenerator
+
+// Local imports:
+import LocalObjectIDs
+import StringBuilder
+import ToolTipsUtils
+import BuffObjEditing
+import BuffIds
+import Abilities
+import OrderIds
+//import PumpUp
+import Icons
+import InstantDummyCaster
+import ClosureTimers
+import UnitExtensions
+
+constant WOLFS_BLOODLUST_CLAWS_BLOODLUST = compiletime(ABIL_ID_GEN.next())
+constant WOLFS_BLOODLUST_CLAWS_BUFF = compiletime(ABIL_ID_GEN.next())
+
+let ATTACK_SPEED_INCREASE = 0.20
+let MOVEMENT_SPEED_INCREASE = 0.10
+let TOOLTIP_EXTENDED = ("Increase a friendly unit attack speed by {0} and movement speed by {1} for {2} seconds. Has {3} seconds cooldown.")
+                        .format(ATTACK_SPEED_INCREASE.toToolTipOrange(), MOVEMENT_SPEED_INCREASE.toToolTipOrange())
+
+
+let TT = new StringBuilder()
+    ..add(
+        "Causes your troll to go into a panic, making him move {0} faster, " +
+        "but take {2} extra damage.|n"
+    )
+    ..add(makeToolTipDuration(123, 123))
+    ..add(
+        "Tip: Use this as often as possible to maximize efficiency.",
+        colorA(255, 255, 201, 255)
+    )
+
+    .build()
+    .format(
+       // MS_FACTOR.toToolTipOrange(),
+        //AS_FACTOR.toToolTipOrange(),
+       // DAMAGE_FACTOR.toToolTipRed()
+    )
+
+function createWolfSkinGlovesBloodLustBuff()
+    new BuffDefinition(WOLFS_BLOODLUST_CLAWS_BUFF, BuffIds.bloodlust)
+
+        ..setName("BloodLust")
+        //..setTooltipNormal(1, makeToolTipNorm("N", "Bloodlust"))
+        ..setTooltipNormalExtended(1, TT)
+        ..setEffectSound(1, Abilities.bloodLustTarget)
+        ..setTargetAttachmentPoint0(1, "origin")
+        ..setTargetAttachmentPoint1(1, "")
+
+class WolfSkinBloodLust extends AbilityDefinitionBloodlustCreep
+    construct(int newAbilityId, string hotkey)
+        super(newAbilityId)
+        this.setName("WOLFS_BLOODLUST_CLAWS_BLOODLUST")
+        this.setHotkeyNormal(hotkey)
+        this.setCooldown(1, 0)
+        this.setManaCost(1, 0)
+        this.setIconNormal(Icons.bTNBloodLust)
+        this.setDurationHero(1, 999)
+        this.setDurationNormal(1, 0)
+        this.setTooltipNormalExtended(1, TOOLTIP_EXTENDED)
+        this.setTooltipNormal(1, makeToolTipNorm(hotkey, "WOLFS_BLOODLUST_CLAWS_BLOODLUST"))
+        this.setAnimationNames("spell,channel")
+        this.setAttackSpeedIncrease(1, ATTACK_SPEED_INCREASE)
+        this.setMovementSpeedIncrease(1, MOVEMENT_SPEED_INCREASE)
+        this.setCastRange(1, 1000.)        
+
+class WolfGlovesInstance
+    private unit wearer
+    private real baseClock
+    construct(unit wearer)
+        this.wearer = wearer
+        this.baseClock = 0
+        doPeriodically(0.1) (CallbackPeriodic cb) ->
+            if not wearer.hasItemById(ITEM_WOLFS_BLOODLUST_CLAWS)
+                destroy cb
+            else            
+                if not wearer.hasAbility(BuffIds.bloodlust)
+                    InstantDummyCaster.castTarget(wearer.getOwner(), WOLFS_BLOODLUST_CLAWS_BLOODLUST, 1, OrderIds.bloodlust, wearer)
+
+    ondestroy
+        //destroy cb
+        wearer.removeAbility(WOLFS_BLOODLUST_CLAWS_BLOODLUST)
+        wearer.removeAbility(BuffIds.bloodlust)
+
+IterableMap<unit, WolfGlovesInstance> instances = new IterableMap<unit, WolfGlovesInstance>()
+
+function onPickupGloves(unit u)
+    if u.isTroll()
+        if not instances.has(u)
+            instances.put(u, new WolfGlovesInstance(u))
+
+function onDropGloves(unit u)
+    if instances.has(u)
+        
+       // u.removeAbility(ABILITY_WOLFSKIN_GLOVES_BLOODLUST)
+        destroy instances.getAndRemove(u)
+
+@compiletime function createWolfSkillBloodLust()
+    new WolfSkinBloodLust(WOLFS_BLOODLUST_CLAWS_BLOODLUST, "E")
+    createWolfSkinGlovesBloodLustBuff()
+
+init
+    EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->
+        if GetManipulatedItem().getTypeId() == ITEM_WOLFS_BLOODLUST_CLAWS
+            onPickupGloves(GetManipulatingUnit())
+
+
+    EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
+        if GetManipulatedItem().getTypeId() == ITEM_WOLFS_BLOODLUST_CLAWS
+            onDropGloves(GetManipulatingUnit())
