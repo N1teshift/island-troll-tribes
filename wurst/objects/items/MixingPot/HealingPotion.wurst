@@ -44,7 +44,7 @@ public constant TT_HEALING_POTION = "" +
         ..setNameEnhance("Healing Potion")
         ..setTooltipExtended(TT_HEALING_POTION)
         ..setDescription(TT_HEALING_POTION)
-        ..setLumberCost(5)
+        ..setLumberCost(14)
         ..setAbilities(commaList(ABILITY_HEALING_POTION))
         ..setScalingValue(0.7)
         ..setCooldownGroup(commaList(ABILITY_HEALING_POTION))
