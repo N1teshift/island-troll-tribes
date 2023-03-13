@@ -127,10 +127,6 @@ function onSpellEffect()
 
     if itemTargetedHealAmount.has(spellId)
         new HealingInstance(target, caster, itemTargetedHealAmount.get(spellId), HealingType.ITEM)
-        print(target.getName())
-        print(caster.getName())
-        print(itemTargetedHealAmount.get(spellId))
-
 
 init
     initHealItemTable()
