@@ -4,6 +4,7 @@ package LocalAssets
 import ObjectIdGenerator
 
 public class LocalIcons
+	static constant bTNPoisonQuill = "ReplaceableTextures\\CommandButtons\\BTNPoisonQuill.blp"
 	static constant dISBTNWeaknessAura ="ReplaceableTextures\\CommandButtons\\DISBTNWeaknessAura.blp"
 	static constant bTNWeaknessAura ="ReplaceableTextures\\CommandButtons\\BTNWeaknessAura.blp"
 	static constant dISBTNBootsOfBearTenacity ="ReplaceableTextures\\CommandButtons\\DISBTNBootsOfBearTenacity.blp"

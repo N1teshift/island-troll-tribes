@@ -308,7 +308,7 @@ constant TT_SCALE     = "A rare scale."
 
 @compiletime function createPoisonThistles() returns ItemDefinition
     return createPerishableItem(ITEM_POISON_THISTLES)
-        ..setInterfaceIcon(Icons.bTNPoisonQuill)
+        ..setInterfaceIcon("PoisonQuill")
         ..setModelUsed(Doodads.felwood_Thorns5)
         ..setNameEnhance("Poison Thistles")
         ..setTooltipExtended(TT_PTHISTLES)
