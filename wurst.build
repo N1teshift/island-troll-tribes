@@ -5,8 +5,8 @@ dependencies:
 - https://github.com/crojewsk/wurstExtLibs
 - https://github.com/theQuazz/wurst-lodash
 buildMapData:
-  name: '|cffffd700Island Troll Tribes v3.11c.appdayedition(v0.5) '
-  fileName: Island.Troll.Tribes.v3.11c.appdayedition(v0.5)
+  name: '|cffffd700Island Troll Tribes v3.11c.appdayedition(v0.51) '
+  fileName: Island.Troll.Tribes.v3.11c.appdayedition(v0.51)
   author: "Quazz, Marsunpaisti, Xan Kriegor"
   scenarioData:
     description: "Island Troll Tribes is a PvP-centric survival map in which multiple\
@@ -20,3 +20,4 @@ buildMapData:
       title: ' '
       subTitle: ' '
       text: ' '
+  

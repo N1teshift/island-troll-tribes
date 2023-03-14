@@ -111,7 +111,7 @@ function createMerchantShip(int newId) returns UnitDefinition
                 ITEM_ARMORY_KIT,
                 ITEM_MUD_HUT_KIT,
                 ITEM_STEEL_INGOT,
-                ITEM_SPIRIT_WATER,
+                ITEM_SPIRIT_WIND,
                 ITEM_SPIRIT_WATER,
                 ITEM_ANTI_MAGIC_POTION
                 
