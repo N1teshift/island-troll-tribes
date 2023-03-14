@@ -408,7 +408,11 @@ library Transmute initializer onInit requires LocalObjectIDs, UnitExtensions, It
             //     call lowerItem(3)
             // endif
             if i[0] ==  ITEM_FERVOR_POTION and i[1] == ITEM_STEEL_INGOT and i[2] == ITEM_STEEL_INGOT and i[3] == ITEM_SPIRIT_WIND and i[4] == ITEM_SPIRIT_WATER and i[5] == ITEM_MANA_CRYSTAL then
-                call RemoveItem(t[0])
+                if GetItemCharges(t[1]) > 1 then
+                    call SetItemCharges(t[1], GetItemCharges(t[1]) - 1 )
+                else
+                    call RemoveItem(t[1])
+                endif
                 call RemoveItem(t[1])
                 call RemoveItem(t[2])
                 call RemoveItem(t[3])
@@ -489,7 +493,10 @@ library Transmute initializer onInit requires LocalObjectIDs, UnitExtensions, It
             if i[0] == ITEM_WOLF_SKIN_GLOVES and i[1] == ITEM_STEEL_INGOT and i[2] == ITEM_FERVOR_POTION and i[3] == ITEM_SPIRIT_WIND and i[4] == ITEM_SPIRIT_WATER and i[5] == ITEM_MAGIC then
                 call RemoveItem(t[0])
                 call RemoveItem(t[1])
-                call RemoveItem(t[2])
+                if GetItemCharges(t[2]) > 1 then
+                    call SetItemCharges(t[2], GetItemCharges(t[2]) - 1)
+                else
+                    call RemoveItem(t[2])
                 call RemoveItem(t[3])
                 call RemoveItem(t[4])
                 call RemoveItem(t[5])

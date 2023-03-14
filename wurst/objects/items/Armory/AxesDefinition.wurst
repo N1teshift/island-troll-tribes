@@ -66,6 +66,7 @@ let DRAIN_TARGET_CLASSES = asList(
 let TT_COMMON = new StringBuilder()
     ..add("Increases the attack damage of the wielder by ")
     ..add("{0}", COLOR_RED.withAlpha(0))
+    ..add(", attack speed by "+"20%".color(COLOR_BLUE))
     ..add(" and allows them to fell trees.")
     .build()
     // This is needed to for the stack trace compiler to perform correctly.
