@@ -13,6 +13,7 @@ import HashMap
 import Mixing
 import Tanning
 import Transmute
+import SimError
 
 public class QuickMake
     // The requirements in slot order, each of which is a list of allowed type IDs.
@@ -95,9 +96,12 @@ public class QuickMake
 
                     // Discount other potential matches.
                     break
+                else
+                    for i =0 to bj_MAX_PLAYER_SLOTS-1
+                        if IsUnitSelected(caster, players[i]) and players[i].isAllyOf(caster.getOwner()) 
+                            simError(players[i], "No {0} in radius".format(GetObjectName(itemId)))
             if found == null
                 break
-
         // Restore the visibility of the items used for matches.
         for elem in items
             elem.setVisible(true)
@@ -142,3 +146,4 @@ public class QuickMake
 
     function add(LinkedList<int> itemIds)
         itemLists.add(itemIds)
+
