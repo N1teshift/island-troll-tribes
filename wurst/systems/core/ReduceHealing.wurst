@@ -51,7 +51,7 @@ let BRACKETS = asOwnedList(
     new Pair(REAL_MIN, 1.00),
     new Pair(500.,     0.80),
     new Pair(1000.,    0.60),
-    new Pair(1500.,    0.40),
+    //new Pair(1500.,    0.40),
     new Pair(REAL_MAX, 0.00)
 )
 
