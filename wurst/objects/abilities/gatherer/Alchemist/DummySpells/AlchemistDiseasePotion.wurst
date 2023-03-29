@@ -1,26 +1,15 @@
 package AlchemistDiseasePotion
 
 // Standard library imports:
-import AbilityObjEditing
-import HashMap
 import ClosureEvents
-import ObjectIdGenerator
 import ChannelAbilityPreset
-import Sounds
 import Orders
-import EventHelper
 import LinkedList
 
 // Local imports:
 import LocalObjectIDs
 import ToolTipsUtils
-import LocalAssets
-import HealingSystem
 import UnitExtensions
-import ClosureTimers
-import ItemObjEditing
-import Items
-import LocalItemObjEditing
 import Lodash
 import DiseasePotion
 import InstantDummyCaster
