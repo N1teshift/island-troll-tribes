@@ -16,15 +16,16 @@ import LocalItemObjEditing
 import LocalObjectIDs
 import ToolTipsUtils
 
-let ABIL = compiletime(ABIL_ID_GEN.next())
 
 public let DISEASE_HEALING_REDUCTION_FACTOR = 0.3
-let DURATION = 25.
+public constant DURATION = 20.
 let DAMAGE_TICK_INTERVAL = 0.5
-let DAMAGE_PER_SECOND = 4
+let DAMAGE_PER_SECOND = 5
+public constant CAST_RANGE = 600.
+public constant ICON = Icons.bTNPotionGreen
 let AOE = 200.
 HashMap<unit, DiseaseInstance> diseaseInstances = new HashMap<unit,DiseaseInstance>()
-
+public constant NAME = "Disease Potion"
 public constant TT_DISEASE_POTION = "" +
     ("Biological warfare! Throw at an enemy to give him and all units in a "+
     "small radius a disease. Dealing {0} damage per second. "+
@@ -35,12 +36,13 @@ public constant TT_DISEASE_POTION = "" +
 
 
 @compiletime function createDiseaseAbility() returns ChannelAbilityPreset
-    return createItemChannelCast(ABIL)
+    return createItemChannelCast(ABILITY_DISEASE_POTION)
         ..setCooldown(1, 0.3)
         ..setFollowThroughTime(1, 0.1)
         ..presetTargetTypes(Targettype.UNIT)
         ..setOptions(1, 29)
         ..setMissileArc(0.2)
+        ..setCastRange(1, CAST_RANGE)
         ..setMissileArt(Abilities.bottleMissile)
         ..setMissileHomingEnabled(true)
         ..setMissileSpeed(750)
@@ -59,9 +61,9 @@ public constant TT_DISEASE_POTION = "" +
         ..setTooltipExtended(TT_DISEASE_POTION)
         ..setDescription(TT_DISEASE_POTION)
         ..setLumberCost(34)
-        ..setAbilities(commaList(ABIL))
+        ..setAbilities(commaList(ABILITY_DISEASE_POTION))
         ..setScalingValue(0.70)
-        ..setCooldownGroup(commaList(ABIL))
+        ..setCooldownGroup(commaList(ABILITY_DISEASE_POTION))
         ..setStockReplenishInterval(120)
 
 public function isUnitDiseased(unit u) returns bool
@@ -71,9 +73,9 @@ function onCastDisease()
     let caster = GetSpellAbilityUnit()
     let target = GetSpellTargetUnit()
 
-    forUnitsInRange(target.getPos(), AOE) u ->
-        if isValidTarget(caster.getOwner(), u)
-            applyDisease(caster, u)
+    //forUnitsInRange(target.getPos(), AOE) u ->
+        //if isValidTarget(caster.getOwner(), u)
+    applyDisease(caster, target)
 
 function isValidTarget(player attacker, unit u) returns bool
     return u.getOwner().isEnemyOf(attacker)
@@ -120,9 +122,10 @@ class DiseaseInstance
         fx.destr()
 
 
-init
-    registerSpellEffectEvent(ABIL) ->
+init 
+    registerSpellEffectEvent(ABILITY_DISEASE_POTION) ->
         onCastDisease()
-
+    registerSpellEffectEvent(ABILITY_ALCHEMIST_DISEASE_POTION_DUMMY) ->
+        onCastDisease()
     onUnitHealed() ->
         onHealed()

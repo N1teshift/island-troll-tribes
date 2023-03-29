@@ -5,14 +5,14 @@ dependencies:
 - https://github.com/crojewsk/wurstExtLibs
 - https://github.com/theQuazz/wurst-lodash
 buildMapData:
-  name: '|cffffd700Island Troll Tribes v3.11c.appdayedition(v0.6a) '
-  fileName: Island.Troll.Tribes.v3.11c.appdayedition(v0.6a)
+  name: '|cffffd700Island Troll Tribes v3.11c.appdayedition(v0.7) '
+  fileName: Island.Troll.Tribes.v3.11c.appdayedition(v0.7)
   author: "Quazz, Marsunpaisti, Xan Kriegor"
   scenarioData:
     description: "Island Troll Tribes is a PvP-centric survival map in which multiple\
       \ tribes of trolls compete to gather resources, craft equipment, and eradicate\
       \ each other. You can set the number of player per team using ingame mode with\
-      \ the -ppt 2, 3, 4, 5 or 6 mode. Join our Discord server at https://discord.gg/Rh9JdKs\
+      \ the -ppt 2, 3, 4, 5 or 6 mode. Join our Discord server at https://discord.gg/Xb9qswfChx
       \ for mustering lobbies, reporting bugs, and making suggestions."
     suggestedPlayers: 3v3 4v4 5v5 6v6
     loadingScreen:
