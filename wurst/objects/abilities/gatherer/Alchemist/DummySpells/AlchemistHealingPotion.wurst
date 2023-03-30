@@ -57,7 +57,7 @@ function onCast()
         //let itm = caster.getItemById(ITEM_PHILOSOPHERS_STONE)
         let itm = caster.getItemById(ITEM_PHILOSOPHERS_STONE)
         if itm.getCharges() >= POTION_COST
-            new HealingInstance(caster, caster, POT_HEAL, HealingType.ITEM)  
+            new HealingInstance(target, caster, POT_HEAL, HealingType.ITEM)  
             itm.setCharges(itm.getCharges()-POTION_COST)
         else
             caster.issueImmediateOrder("stop")

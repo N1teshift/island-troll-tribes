@@ -39,7 +39,7 @@ public constant TARGETS_ALLOWED = "friend,ground,hero,invulnerable,organic,self,
         ..setModelUsed(LocalItems.potionBlueLesser)
         ..setHotkey("W")
         ..setTooltipExtended(TT_MANA_POTION)
-        ..setLumberCost(14)
+        ..setLumberCost(10)
         ..setAbilities(commaList(ABILITY_MANA_POTION))
         ..setScalingValue(0.7)
         ..setCooldownGroup(commaList(ABILITY_MANA_POTION))

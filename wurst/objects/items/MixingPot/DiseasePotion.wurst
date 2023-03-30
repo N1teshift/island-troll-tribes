@@ -27,11 +27,10 @@ let AOE = 200.
 HashMap<unit, DiseaseInstance> diseaseInstances = new HashMap<unit,DiseaseInstance>()
 public constant NAME = "Disease Potion"
 public constant TT_DISEASE_POTION = "" +
-    ("Biological warfare! Throw at an enemy to give him and all units in a "+
-    "small radius a disease. Dealing {0} damage per second. "+
-    "Reduces healing received from items and potions by {1}. Last {2} seconds.")
+    ("Biological warfare! Throw at an enemy to give him a disease."+
+    " Dealing {0} damage per second. "+
+    " Last {1} seconds.")
     .format(DAMAGE_PER_SECOND.toReal().toToolTipRed(),
-    DISEASE_HEALING_REDUCTION_FACTOR.toToolTipOrange(),
     DURATION.toToolTipLightBlue())
 
 

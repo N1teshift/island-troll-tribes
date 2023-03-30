@@ -247,6 +247,7 @@ let TT_OMNIGATHERER_INHERITED = "Contains all spells from the gatherer class."
     createHeroSpellBook(ABILITY_DRUID_SPELLBOOK, 3)
         ..setTooltipNormalExtended(1, TT_DRUID_SPELLBOOK)        
         ..presetButtonPosNormal(1, 1)
+        ..setAbilitiesPerLevel(DRUID_ABILITY_HASH)
         ..setIconNormal(Icons.bTNEntrapmentWard)
         ..setRequiredLevel(0)
         ..setLevelSkipRequirement(0)

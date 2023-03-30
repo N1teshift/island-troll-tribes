@@ -116,7 +116,7 @@ public let FERVER_POTION_RECIPE           = "Increase the consumer attack speed 
                                             "\n\n2x "+SPECIAL_HERB+" 1 + 1x "+SPECIAL_HERB+" 2 + 1x "+ATHELAS_SEED+SPECIAL_MIX_WARNING
 
 public let DISEASE_POTION_RECIPE          = "a " + "Disease Potion. " + TT_DISEASE_POTION + "\n\n"+
-                                            "2x "+SPECIAL_HERB+" 1 + 2x "+SPECIAL_HERB+" 2 + 1x "+RIVER_ROOT+"\nOr\n3 "+SPECIAL_HERB+" 1 + 1x "+SPECIAL_HERB+" 2 + 1x "+RIVER_ROOT+SPECIAL_MIX_WARNING
+                                            "1x "+POISON+" 1 + 1x "+RIVER_STEM
 
 public let ANTI_MAGIC_POTION_RECIPE       = "an " + "Anti-Magic Potion. ".color(COLOR_GREEN) + TT_ANTI_MAGIC_POTION + "\n\n1x "+SPECIAL_HERB+" + 1x "+ATHELAS_SEED
 
@@ -172,7 +172,7 @@ public let STEEL_BOOTS_RECIPE = "a pair of " + "Steel Boots. " .color(COLOR_TURQ
 // Armory
 public let BATTLE_GLOVES_RECIPE         = "a pair of " + "Battle Gloves. ".color(COLOR_VIOLET) + TT_BATTLE_GLOVES
                                           +"\n\n1x " + "Bone Gloves".color(COLOR_ORANGE) + " + 2x "+STEEL+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
-public let BATTLE_AXE_RECIPE            = "a Battle Axe. A two handed axe, increase damage by 14, attack speed by 20%, can cast purge, removing all buffs from a target unit and slowing it."+makeToolTipDuration(5, 15, 60)+
+public let BATTLE_AXE_RECIPE            = "a Battle Axe. A two handed axe, increase damage by 14, attack speed by"+" 20%".color(ENERGY_COLOR)+", can cast purge, removing all buffs from a target unit and slowing it."+makeToolTipDuration(5, 15, 60)+
                                           "\n\n1x "+"Fervor potion ".color(COLOR_MAROON)+" + 2x "+STEEL+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
 public let BATTLE_ARMOR_RECIPE          = TT_BATTLE_ARMOR+"\n\n"+"1x " + "Bone Coat".color(COLOR_ORANGE) + " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
 public let BATTLE_SHIELD_RECIPE         = BATTLE_SHIELD_TOOLTIP+
@@ -209,8 +209,8 @@ public let ULTRA_POISON_RECIPE          = "an Ultra Poison salve. Can be used to
 
 public let CLOAK_FLAMES_RECIPE  = "a " + "Cloak Of Flames. " .color(COLOR_RED      ) + CLOAK_FLAMES_TT  + "\n\n1x "+ MAGIC +" + 1x " + "Bone Coat".color(COLOR_ORANGE) + " + 1x " + FLINT
 public let CLOAK_FROST_RECIPE   = "a " + "Cloak Of Frost. "  .color(COLOR_TURQUOISE) + CLOAK_FROST_TT   + "\n\n1x "+ MAGIC +" + 1x " + "Bone Coat".color(COLOR_ORANGE) + " + 1x " + WATER
-public let CLOAK_HEALING_RECIPE = "a " + "Cloak Of Healing. ".color(COLOR_GREEN    ) + CLOAK_HEALING_TT + "\n\n1x "+ MAGIC +" + 1x " + "Bone Coat".color(COLOR_ORANGE) + " + 2x " + HEALING
-public let CLOAK_MANA_RECIPE    = "a " + "Cloak Of Mana. "   .color(COLOR_VIOLET   ) + CLOAK_MANA_TT    + "\n\n1x "+ MAGIC +" + 1x " + "Bone Coat".color(COLOR_ORANGE) + " + 2x " + MANA
+public let CLOAK_HEALING_RECIPE = "a " + "Cloak Of Healing. ".color(COLOR_GREEN    ) + CLOAK_HEALING_TT + "\n\n1x "+ MAGIC +" + 1x " + "Bone Coat".color(COLOR_ORANGE) + " + 1x " + HEALING
+public let CLOAK_MANA_RECIPE    = "a " + "Cloak Of Mana. "   .color(COLOR_VIOLET   ) + CLOAK_MANA_TT    + "\n\n1x "+ MAGIC +" + 1x " + "Bone Coat".color(COLOR_ORANGE) + " + 1x " + MANA
 // Workshop
 
 public let ENSNARE_TRAP_RECIPE = "an Ensnare Trap. Deals few ranged damage, can net trolls & animals, good for killing hawk :\n\n1x "               +TINDER     +" + 1x "+BONE +" + 1x "+STICK
