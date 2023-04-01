@@ -34,6 +34,9 @@ function createHunter(int unitId) returns HeroDefinition
     createHunter(UNIT_HUNTER_1)
         ..setModelFile(LocalUnits.axeTroll)
         ..setNameEditorSuffix("(Custom Skin 1)")
+    createHunter(UNIT_HUNTER_ELK_TROPHY_HIDE)
+        ..setModelFile(LocalUnits.ForestTrollWithElkHide)
+        ..setNameEditorSuffix("(Custom Skin 1)")        
 
 
 function createWarrior(int unitId) returns HeroDefinition
@@ -64,7 +67,7 @@ function createTracker(int unitId) returns HeroDefinition
     return createSubTroll(unitId)
         ..setNameEnhance("Tracker")
         ..setAttackDamage(14)
-        ..setAttackSpeed(1.75)
+        ..setAttackSpeed(1.65)
         ..setModelFile(Units.iceTroll1)
         ..setIcons(Icons.bTNIceTrollBeserker)
         ..setUnitSoundSet(Soundsets.forestTrollShadowPriest)

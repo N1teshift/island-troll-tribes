@@ -4,6 +4,10 @@ package LocalAssets
 import ObjectIdGenerator
 
 public class LocalIcons
+    static constant bTNWolfTrophyHide = "ReplaceableTextures\\CommandButtons\\BTNWolfTrophyHide.blp"
+    static constant bTNTrophyHideDummy = "ReplaceableTextures\\CommandButtons\\BTNTrophyHideDummy.blp"
+    static constant bTNBearTrophyHide ="ReplaceableTextures\\CommandButtons\\BTNBearTrophyHide.blp"
+    static constant bTNElkTrophyHide = "ReplaceableTextures\\CommandButtons\\BTNElkTrophyHide.blp"
     static constant bTNAlchemist   = "ReplaceableTextures\\CommandButtons\\BTNAlchemist.blp"
 	static constant bTNPoisonQuill = "ReplaceableTextures\\CommandButtons\\BTNPoisonQuill.blp"
 	static constant dISBTNWeaknessAura ="ReplaceableTextures\\CommandButtons\\DISBTNWeaknessAura.blp"
@@ -125,6 +129,7 @@ public class LocalIcons
 
 public class LocalUnits
     // A nonexistent model used to hide units.
+    static constant ForestTrollWithElkHide         = "Models\\Units\\ForestTrollWithElkHide.mdx"
     static constant TrollHexerMasked               = "Models\\Units\\TrollHexerMasked.mdx"
     static constant dummy                          = "Models\\Units\\Dummy.mdl"
     static constant axeTroll                       = "Models\\Units\\Skins\\AxeTroll.mdx"
@@ -182,6 +187,9 @@ public class LocalAbilities
     static constant test                           = "Models\\Abilities\\Test.mdx"
 
 public class LocalItems
+    static constant wolfTrophyHide                 = "Models\\Items\\WolfTrophyHide.mdx"
+    static constant bearTrophyHide                 = "Models\\Items\\BearTrophyHide.mdx"
+    static constant elkTrophyHide                  = "Models\\Items\\ElkTrophyHide.mdx"
     static constant bootsOfBearTenacity         = "Models\\Items\\BootsOfBearTenacity.mdx"
     static constant coatOfWolfVoracity           = "Models\\Items\\CoatOfWolfVoracity.mdx"
     static constant wolfsStaminaBoots           = "Models\\Items\\BootsOfWolfStamina.mdx"

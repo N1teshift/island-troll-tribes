@@ -64,7 +64,9 @@ class PhilosophersStoneInstance
     construct(unit hero)
         this.hero = hero
         this.baseClock = 0
-        this.itemHandle = hero.addItemById(ITEM_PHILOSOPHERS_STONE)  
+        this.itemHandle = createItem(ITEM_PHILOSOPHERS_STONE, hero.getPos())
+        hero.addItemHandle(itemHandle)
+        //this.itemHandle = hero.addItemById(ITEM_PHILOSOPHERS_STONE)  
         itemHandle.setPawnable(false)
         this.hero.disableAbility(ABILITY_CREATE_PHILOSOPHERS_STONE, true, false)
         hero.getOwner().setAbilityIcon(ABILITY_ALCHEMIST_SPELLBOOK, Icons.bTNHeartOfSearinox)            
