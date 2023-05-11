@@ -34,7 +34,7 @@ public constant TT_HEALING_POTION = "" +
     .format(POT_HEAL.toToolTipGreen())
 
 @compiletime function createAbil() returns ChannelAbilityPreset
-    return createItemChannelCast(ABILITY_HEALING_POTION)
+    return createItemChannelCast(ABILITY_HEALING_EXTRACT)
     ..setName(NAME)
     ..presetTargetTypes(Targettype.UNIT)
     ..setManaCost(1, 0)
