@@ -22,6 +22,8 @@ import LocalObjectIDs
 import LocalAssets
 import Classes
 import IdListConstant
+import InventoryEvent
+import UnitExtensions
 
 constant TT_ELK_TROPHY_HIDE ="\n\nElk hide: "+
                              "\n +1 ".color(ENERGY_COLOR)+"armor."+ 
@@ -116,6 +118,7 @@ class TrophyHide
 
     construct(unit hero)
         this.hero = hero
+        hero.addPermanentAbility(ABILITY_INVENTORY_4_SLOT)
         hero.addItemToSlot(ITEM_HUNTER_TROPHY_HIDE_DUMMY, 3)
         nullTimer() ->            
             hunterDummyItem = hero.getItemById(ITEM_HUNTER_TROPHY_HIDE_DUMMY)   
@@ -131,20 +134,13 @@ class TrophyHide
                 else
                     updateAttachment(-1)
                     trophyHide = null
-                    if hero.isInventoryFull()                        
-                        hero.removeItemFromSlot(4)
-                    nullTimer() ->
-                        if hero.addItemHandle(hunterDummyItem)
-                        else 
-                            cb = doPeriodically(ANIMATION_PERIOD) (CallbackPeriodic cb) ->
-                                hero.removeItemFromSlot(4)
-                                hero.addItemHandle(hunterDummyItem)
-                                if hero.hasItem(hunterDummyItem)
-                                    destroy cb    
-                                
-                                
+                    let itm =hero.itemInSlot(3)
+                    if itm !=null and itm != hunterDummyItem and itm != trophyHide and not HIDE_LIST.has(itm.getTypeId())                   
+                        hero.removeItemFromSlot(3)                       
+                    hero.addItemHandleToSlot(hunterDummyItem, 3)
+                    if itm !=null
+                        hero.addItemHandle(itm)       
                 replaceTrophyWithHide(itemHandle)
-
     //find next hide of highest index of HIDE_LIST
     function findNextHide() returns item            
         item nextHide = null
@@ -158,20 +154,16 @@ class TrophyHide
         let trophy= hideToTrophyMap.get(itemHandle.getTypeId())
         updateAttachment(itemHandle.getTypeId())         
         itemHandle.remove()       
-        nullTimer() -> 
-            trophyHide = hero.addItemById(trophy)
-            /*
-            doAfter(ANIMATION_PERIOD) ->
-                cb = doPeriodically(ANIMATION_PERIOD) (CallbackPeriodic cb) ->
-                    if not hero.hasItem(hunterDummyItem) or not hero.hasItem(trophyHide)
-                        hero.removeItemFromSlot(4)
-                        hero.addItemHandle(hunterDummyItem)
-                        updateAttachment(-1)
-                        trophyHide = null                        
-                    else
-                        destroy cb 
-                        */                 
-                           
+        nullTimer() ->
+            trophyHide =createItem(trophy, hero.getPos())
+            let itm =hero.itemInSlot(3)
+            if itm != null
+                hero.dropItemSlot(itm, 3)
+                nullTimer() ->                     
+                    hero.addItemHandleToSlot(trophyHide, 3)
+                hero.addItemHandle(itm)
+            else 
+                hero.addItemHandleToSlot(trophyHide, 3)                                            
 
     function updateAttachment(int newAttachment)
         if trophyHide != null
@@ -197,6 +189,18 @@ class TrophyHide
             nullTimer() -> 
                 hunterDummyItem.setVisible(false)
                 replaceHideWithTrophy(itemHandle)
+
+    function onItemMoved()
+        let itm =hero.itemInSlot(3)
+        if trophyHide != null
+            replaceTrophyWithHide(trophyHide)       
+        if not HIDE_LIST.contains(itm.getTypeId())
+            hero.removeItem(itm)
+            hero.addItemHandleToSlot(hunterDummyItem, 3)
+        else 
+            if itm != trophyHide
+                replaceHideWithTrophy(itm)
+
 
     ondestroy
         let pos = trophyHide.getPos()
@@ -244,8 +248,19 @@ function initializeAttachmentsIds()
     attachments.get(ITEM_JUNGLE_WOLF_HIDE).setIDs(id2)
     attachments.get(ITEM_JUNGLE_BEAR_HIDE).setIDs(id3)               
 
+function onItemMoved()
+    let hero = getInventoryManipulatingUnit()
+    let itm = getInventoryManipulatedItem()
+    let itmSwapped = getInventorySwappedItem()
+    let instance = instances.get(hero)
+    if instance != null
+        //instance.onItemMoved()
+
 init
     initializeAttachmentsIds()
+
+    registerInventoryEvent(EVENT_ITEM_INVENTORY.MOVE)->
+        onItemMoved()
 
     EventListener.add(EVENT_PLAYER_UNIT_DEATH) -> 
         onUnitLeave(GetTriggerUnit()) 

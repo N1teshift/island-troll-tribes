@@ -14,6 +14,7 @@ import Mixing
 import Tanning
 import Transmute
 import SimError
+import TrollUnitTextConstant
 
 public class QuickMake
     // The requirements in slot order, each of which is a list of allowed type IDs.
@@ -61,9 +62,17 @@ public class QuickMake
             range = 300
         else
             range = 700
-
         // Drop each item to simplify the search for matches.
-        caster.dropItems()
+        if caster.isTroll()
+            int baseInventorySize = 3
+            for key in trollInventoryAbilityMap
+                if trollInventoryAbilityMap.get(key).has(caster.getTypeId())
+                    caster.dropItems(baseInventorySize)
+                    //print("base inventory size is {0}".format(baseInventorySize.toString()))
+                else  
+                    baseInventorySize++   
+        else
+            caster.dropItems()
 
         // Fill in the recipe slots in order.
         for itemIds in itemLists
@@ -99,7 +108,7 @@ public class QuickMake
                 else
                     for i =0 to bj_MAX_PLAYER_SLOTS-1
                         if IsUnitSelected(caster, players[i]) and players[i].isAllyOf(caster.getOwner()) 
-                            simError(players[i], "No {0} in radius".format(GetObjectName(itemId)))
+                           // simError(players[i], "No {0} in radius".format(GetObjectName(itemId)))
             if found == null
                 break
         // Restore the visibility of the items used for matches.

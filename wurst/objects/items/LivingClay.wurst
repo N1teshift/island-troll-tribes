@@ -111,8 +111,13 @@ let dummies = new HashMap<unit, unit>()
 
 
 @compiletime function createExplosionAbility()
-    new AbilityDefinition(EXPLOSION_ABIL_ID, AbilityIds.mineexploding)
+    new AbilityDefinitionMine(EXPLOSION_ABIL_ID)
         ..presetTargetsAllowed(lvl -> TARGETS)
+        ..presetInvisibilityTransitionTime(lvl -> 99999.)
+            
+            
+            
+            
 
 @compiletime function createLivingClayUnit()
     new UnitDefinition(UNIT_LIVING_CLAY, UnitIds.goblinlandmine)
@@ -148,7 +153,7 @@ let dummies = new HashMap<unit, unit>()
         ..setInterfaceIcon(LocalIcons.bTNGreenSentryWard)
         ..setModelUsed(Units.sentryWard)
         ..setNumberofCharges(3)
-        ..setGoldCost(5)
+        ..setLumberCost(5)
         ..setCooldownGroup(PLACE_ABIL_ID.toRawCode())
         ..setDroppedWhenCarrierDies(true)
         ..setName("Living Clay")
