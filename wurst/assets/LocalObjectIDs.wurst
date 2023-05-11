@@ -5,6 +5,7 @@ import ObjectIdGenerator
 
 // Third-party imports:
 import ObjectIDManager
+public let ABILITY_HEALING_EXTRACT                     = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_HEALING_EXTRACT")
 public let ABILITY_ALCHEMIST_DISEASE_POTION_DUMMY       = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_ALCHEMIST_DISEASE_POTION_DUMMY")
 public let ABILITY_ALCHEMIST_FERVOR_POTION             = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_ALCHEMIST_FERVOR_POTION")
 public let ABILITY_ALCHEMIST_HEALING_POTION            = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_ALCHEMIST_HEALING_POTION")
@@ -518,6 +519,7 @@ public let ABILITY_ACID_BOMB                            = compiletime(ABIL_ID_GE
 public let ABILITY_ZAP                                 = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_ZAP")
 public let ABILITY_HAWK_PET                            = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_HAWK_PET")
 public let ABILITY_ALCHEMIST_OMNICURE_POTION_DUMMY     = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_ALCHEMIST_OMNICURE_POTION_DUMMY")
+public let ABILITY_ANIMAL_TRAINING                       = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_ANIMAL_TRAINING")
 public let BUFF_ALCHEMIST_OMNICURE_POTION        = compiletime(BUFF_ID_GEN.next())..registerObjectID("BUFF_ALCHEMIST_OMNICURE_POTION_DUMMY")
 public let BUFF_ALCHEMIST_DISEASE_POTION                = compiletime(BUFF_ID_GEN.next())..registerObjectID("BUFF_ALCHEMIST_DISEASE_POTION")
 public let BUFF_ANCHOR_SOUL                            = compiletime(BUFF_ID_GEN.next())..registerObjectID("BUFF_ANCHOR_SOUL")
@@ -649,6 +651,7 @@ public let ITEM_REFINED_POISON_SPEAR                   = compiletime(ITEM_ID_GEN
 public let ITEM_REPAIR_HAMMER                          = compiletime(ITEM_ID_GEN.next())..registerObjectID("ITEM_REPAIR_HAMMER")
 public let ITEM_RIVER_ROOT                             = compiletime(ITEM_ID_GEN.next())..registerObjectID("ITEM_RIVER_ROOT")
 public let ITEM_RIVER_STEM                             = compiletime(ITEM_ID_GEN.next())..registerObjectID("ITEM_RIVER_STEM")
+public let ITEM_HEALING_EXTRACT                        = compiletime(ITEM_ID_GEN.next())..registerObjectID("ITEM_HEALING_EXTRACT")
 public let ITEM_SALVE_ARMOR                            = 'I052'..registerObjectID("ITEM_SALVE_ARMOR")
 public let ITEM_SALVE_HEALING                          = 'I053'..registerObjectID("ITEM_SALVE_HEALING")
 public let ITEM_SALVE_HYPNOSIS                         = 'I054'..registerObjectID("ITEM_SALVE_HYPNOSIS")
