@@ -30,7 +30,7 @@ constant TT_WOLF_TROPHY_HIDE="\n\nWolf hide: "+
                              "\n +2 ".color(ENERGY_COLOR)+"armor."+ 
                              "\n +15% ".color(ENERGY_COLOR)+"attack speed."
 constant TT_BEAR_TROPHY_HIDE="\n\nBear hide: "+
-                             "\n +5 ".color(ENERGY_COLOR)+"armor."                    
+                             "\n +4 ".color(ENERGY_COLOR)+"armor."                    
 constant TT_TROPHY ="A hunter's trophy, worn on the back to display his combat prowess."
 constant TT_DUMMY_ITEM_EXTENDED = "Hunter can wear an animal hide as a trophy cloak, gaining bonuses depending on the type of the hide:"+
                                     TT_ELK_TROPHY_HIDE+
@@ -41,8 +41,8 @@ constant TT_LIST = asList(TT_ELK_TROPHY_HIDE,
                           TT_BEAR_TROPHY_HIDE)
 
 constant ABILITY_ELK_TROPHY_HIDE = asList(ABILITY_MOVESPEED_20, ABILITY_ARMOR_BONUS_1)
-constant ABILITY_WOLF_TROPHY_HIDE = asList(ABILITY_ATTACK_SPEED_20, ABILITY_ARMOR_BONUS_2)
-constant ABILITY_BEAR_TROPHY_HIDE = asList(ABILITY_ARMOR_BONUS_5)
+constant ABILITY_WOLF_TROPHY_HIDE = asList(ABILITY_ATTACK_SPEED_15, ABILITY_ARMOR_BONUS_2)
+constant ABILITY_BEAR_TROPHY_HIDE = asList(ABILITY_ARMOR_BONUS_4)
 constant TROPHY_HIDE_ABILITY_LIST = asList(ABILITY_ELK_TROPHY_HIDE,
                                            ABILITY_WOLF_TROPHY_HIDE,
                                            ABILITY_BEAR_TROPHY_HIDE)

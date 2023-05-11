@@ -42,7 +42,7 @@ function createHunter(int unitId) returns HeroDefinition
 function createWarrior(int unitId) returns HeroDefinition
     return createSubTroll(unitId)
         ..setNameEnhance("Warrior")
-        ..setAttackDamage(16)
+        ..setAttackDamage(14)
         ..setAttackSpeed(1.65)
         ..setModelFile(LocalUnits.trollOverlord)
         ..setIcons(LocalIcons.bTNTrollPredator)

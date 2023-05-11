@@ -70,9 +70,10 @@ class ElkAttackerDefinition extends ElkDefinition
         this.setAttacksEnabled(1)
         this.setAttack1RangeMotionBuffer(250)
         this.setSpeedBase(350)
-        this.setLevel(0)
+        this.setLevel(3)
         this.setPointValue(200)
         this.setNameEditorSuffix("(Attacker)(Wurst)")
+        this.setCollisionSize(8.)
 
 class AdultElkAttackerDefinition extends ElkAttackerDefinition
     construct(int unitId)
@@ -88,8 +89,9 @@ class AdultElkAttackerDefinition extends ElkAttackerDefinition
         this.setAttack1DamageBase(8)
         this.setHitPointsMaximumBase(140)
         this.setPointValue(400)
-        this.setLevel(0)
+        this.setLevel(5)
         this.setName("Adult Elk")
+        this.setCollisionSize(8.)       
 
 @compiletime function createElks()
     new ElkDefinition(UNIT_ELK)

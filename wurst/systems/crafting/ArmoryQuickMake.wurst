@@ -44,8 +44,7 @@ init
  
     new QuickMake(ABILITY_QM_WOLFS_STAMINA_BOOTS)
     ..add(ITEM_WOLF_SKIN_BOOTS)
-    ..add(ITEM_STEEL_INGOT)
-    ..add(ITEM_ANABOLIC_POTION)
+    ..add(ITEM_IRON_INGOT) 
     ..add(ITEM_SPIRIT_WIND)
     ..add(ITEM_SPIRIT_WATER)
     ..add(ITEM_MAGIC)
@@ -60,7 +59,7 @@ init
 
     new QuickMake(ABILITY_QM_BEARS_TENACITY_BOOTS)
     ..add(ITEM_BEAR_SKIN_BOOTS)
-    ..add(ITEM_STEEL_INGOT)
+    ..add(ITEM_IRON_INGOT)
     ..add(ITEM_ANTI_MAGIC_POTION)
     //..add(ITEM_ANTI_MAGIC_POTION)   
     ..add(ITEM_SPIRIT_WIND)
@@ -69,7 +68,7 @@ init
 
     new QuickMake(ABILITY_QM_BEARS_GREED_PAWS)
     ..add(ITEM_BEAR_SKIN_GLOVES)
-    ..add(ITEM_STEEL_INGOT)
+    ..add(ITEM_IRON_INGOT)
     ..add(ITEM_BEE_HIVE)
     ..add(ITEM_SPIRIT_WIND)
     ..add(ITEM_SPIRIT_WATER)
@@ -83,14 +82,9 @@ init
     ..add(ITEM_SPIRIT_WATER)
     ..add(ITEM_MAGIC)
 
-    let temp = new QuickMake(ABILITY_QM_WOLFS_VORACITY_COAT)
+    new QuickMake(ABILITY_QM_WOLFS_VORACITY_COAT)
     ..add(ITEM_WOLF_SKIN_COAT)
-    ..add(ITEM_STEEL_INGOT)
     ..add(ITEM_SPIRIT_DARKNESS)
-    //for i=0 to 9               
-    //    temp..add(ITEM_COOKED_MEAT)
-    ..add(ITEM_SPIRIT_WIND)
-    ..add(ITEM_SPIRIT_WATER)
     ..add(ITEM_MAGIC)
     
             

@@ -91,7 +91,7 @@ function createMerchantShip(int newId) returns UnitDefinition
                 ITEM_MAGIC,
                 ITEM_ENSNARE_TRAP_KIT,
                 ITEM_OMNITOWER_KIT,
-                ITEM_MAGIC_SEED,
+                ITEM_LIVING_CLAY,
                 ITEM_STONE,
                 ITEM_MANA_CRYSTAL
             )
@@ -104,7 +104,7 @@ function createMerchantShip(int newId) returns UnitDefinition
             commaList(
                 ITEM_SCROLL_FIREBALL,
                 ITEM_SCROLL_STONE_ARMOR,
-                ITEM_SCROLL_HASTE,
+                ITEM_MUD_HUT_KIT,
                 ITEM_JUNGLE_WOLF_HIDE,
                 ITEM_JUNGLE_BEAR_HIDE,
                 ITEM_TANNERY_KIT,
@@ -112,7 +112,8 @@ function createMerchantShip(int newId) returns UnitDefinition
                 ITEM_STEEL_INGOT,
                 ITEM_SPIRIT_WIND,
                 ITEM_SPIRIT_WATER,
-                ITEM_ANTI_MAGIC_POTION
+                ITEM_ANTI_MAGIC_POTION,
+                ITEM_MUD_HUT_KIT
                 
             )
         )

@@ -8,11 +8,9 @@ init
     new QuickMake(ABILITY_QM_HEALING_POTION)
     ..add(ITEM_SPIRIT_WATER)
     ..add(ITEM_ATHELAS_SEED)
-    ..add(ITEM_ATHELAS_SEED)
 
     new QuickMake(ABILITY_QM_MANA_POTION)
     ..add(ITEM_SPIRIT_WIND)
-    ..add(ITEM_ATHELAS_SEED)
     ..add(ITEM_ATHELAS_SEED)
 
     new QuickMake(ABILITY_QM_CURE_ALL)
@@ -33,7 +31,9 @@ init
     ..add(ITEM_RIVER_STEM)
 
     new QuickMake(ABILITY_QM_DISEASE_POTION, 2)
-    ..add(ITEM_POISON)
+    ..add(ITEM_MUSHROOM)
+    ..add(ITEM_MUSHROOM)
+    ..add(ITEM_MUSHROOM)
     ..add(ITEM_RIVER_STEM)
 
     new QuickMake(ABILITY_QM_BEE_HIVE, 1)
@@ -62,8 +62,6 @@ init
     ..add(ITEM_ATHELAS_SEED)
 
     new QuickMake(ABILITY_QM_ANABOLIC_POTION)
-    ..add(ITEM_RIVER_STEM)
-    ..add(ITEM_RIVER_STEM)
     ..add(ITEM_RIVER_STEM)
     ..add(ITEM_RIVER_STEM)
 

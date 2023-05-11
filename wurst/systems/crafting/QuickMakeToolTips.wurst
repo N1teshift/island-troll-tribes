@@ -97,8 +97,8 @@ public let BUILDING_CRAFT_TOOLTIP         = "Look here to construct buildings, t
 
 // Mixing Pot
 
-public let HEALING_POTION_RECIPE          = "2x " + "Healing Potion.".color(COLOR_GREEN) + TT_HEALING_POTION + "\n\n1x " +WATER+ " + 2x " +ATHELAS_SEED
-public let MANA_POTION_RECIPE             = "2x Mana Potion, restore 80 mana to the consumer :\n\n1x " +WIND+ " + 2x " +ATHELAS_SEED
+public let HEALING_POTION_RECIPE          = "2x " + "Healing Potion.".color(COLOR_GREEN) + TT_HEALING_POTION + "\n\n1x " +WATER+ " + 1x " +ATHELAS_SEED
+public let MANA_POTION_RECIPE             = "2x Mana Potion, restore 80 mana to the consumer :\n\n1x " +WIND+ " + 1x " +ATHELAS_SEED
 public let CURE_ALL_RECIPE                = "a Cure All, remove positive/negative buff & effect on the target ally :\n\n3x "+ATHELAS_SEED
 public let ESSENCE_BEES_RECIPE            = "an " + "Essence of Bees. ".color(COLOR_ORANGE) + TT_ESSENCE_BEES + "\n\n"+
                                             "2x "+SPECIAL_HERB+" 1 + 1x "+SPECIAL_HERB+ " 2 + 1x "+SPECIAL_HERB+" 3\nOr\n1x "+SPECIAL_HERB+" 1/2/3/4"+SPECIAL_MIX_WARNING
@@ -116,11 +116,11 @@ public let FERVER_POTION_RECIPE           = "Increase the consumer attack speed 
                                             "\n\n2x "+SPECIAL_HERB+" 1 + 1x "+SPECIAL_HERB+" 2 + 1x "+ATHELAS_SEED+SPECIAL_MIX_WARNING
 
 public let DISEASE_POTION_RECIPE          = "a " + "Disease Potion. " + TT_DISEASE_POTION + "\n\n"+
-                                            "1x "+POISON+" 1 + 1x "+RIVER_STEM
+                                            "3x "+MUSHROOM+" + 1x "+RIVER_STEM
 
 public let ANTI_MAGIC_POTION_RECIPE       = "an " + "Anti-Magic Potion. ".color(COLOR_GREEN) + TT_ANTI_MAGIC_POTION + "\n\n1x "+SPECIAL_HERB+" + 1x "+ATHELAS_SEED
 
-public let ANABOLIC_POTION_RECIPE         = "an " + "Anabolic Potion. ".color(COLOR_ORANGE) + TT_ANABOLIC_POTION + "\n\n4x "+RIVER_STEM
+public let ANABOLIC_POTION_RECIPE         = "an " + "Anabolic Potion. ".color(COLOR_ORANGE) + TT_ANABOLIC_POTION + "\n\n2x "+RIVER_STEM
 public let ORACLE_POTION_RECIPE           = "a Oracle Potion, grant true sight to the consumer."+makeToolTipDuration(20, 20, 20)+"\n\n1x "+SPECIAL_HERB+" + 2x "+ATHELAS_SEED
 public let ELEMENTAL_SHIELD_POTION_RECIPE = "an Elemental Shield Potion, grant lighting shield to the consumer, dealing 4 damage per second."+
                                             makeToolTipDuration(10, 10, 30)+ "\n\n1x "+SPECIAL_HERB+" + 1x "+ATHELAS_SEED+" + 1x "+RIVER_STEM
@@ -180,17 +180,17 @@ public let BATTLE_SHIELD_RECIPE         = BATTLE_SHIELD_TOOLTIP+
 public let ANABOLIC_BOOTS_RECIPE        = "a pair of " + "Anabolic Boots. ".color(COLOR_VIOLET) + TT_ANA_BOOTS + "\n\n1x " + "Bone Boots".color(COLOR_ORANGE) +
                                           " + 1x " + WIND + " + 1x " + WATER + " + 1x " + MC + " + 2x " + ANABOLIC
 public let WOLFS_STAMINA_BOOTS_RECIPE  = "Boots of Wolf's Stamina. \n".color(COLOR_VIOLET) +TT_WOLFS_STAMINA_BOOTS
-                                        +"\n\n1x " + "Wolf Skin Boots ".color(COLOR_ORANGE) + " + 1x "+STEEL+" + 1x "+ANABOLIC+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MAGIC                                     
+                                        +"\n\n1x " + "Wolf Skin Boots ".color(COLOR_ORANGE) + " + 1x "+IRON+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MAGIC                                     
 public let WOLFS_BLOODLUST_CLAWS_RECIPE   = "Claws of Wolf's Bloodlust. \n".color(COLOR_VIOLET) + TT_WOLF_BLOODLUST_CLAWS
                                         +"\n\n1x " + "Wolf Skin Gloves ".color(COLOR_ORANGE) + " +1x "+STEEL+" + 1x "+"Fervor potion ".color(COLOR_MAROON) + " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MAGIC                                        
 public let WOLFS_VORACITY_COAT_RECIPE   = "Coat of Wolf's Voracity. \n".color(COLOR_VIOLET) + TT_WOLF_VORACITY_COAT
-                                        +"\n\n1x " + "Wolf Skin Coat ".color(COLOR_ORANGE) + " + 1x "+STEEL+" + 1x " +DARKNESS+ " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MAGIC
+                                        +"\n\n1x " + "Wolf Skin Coat ".color(COLOR_ORANGE) +" 1x " +DARKNESS+ " + 1x "+MAGIC
 public let BEARS_GREED_PAWS_RECIPE      = "Paws of Bear's Greed. \n".color(COLOR_ORANGE) + TT_BEARS_GREED_PAWS
-                                        +"\n\n1x " + "Bear Skin Gloves ".color(COLOR_ORANGE) +" + "  +STEEL+" 1x " + "Bee Hive ".color(COLOR_YELLOW)+ " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MAGIC
+                                        +"\n\n1x " + "Bear Skin Gloves ".color(COLOR_ORANGE) +" + "  +IRON+" 1x " + "Bee Hive ".color(COLOR_YELLOW)+ " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MAGIC
 public let BEAR_PRESENCE_COAT_RECIPE    = "Coat of Bear's Terrifying Presence. \n".color(COLOR_RED) + TT_BEAR_PRESENCE_COAT
                                          +"\n\n1x " + "Bear Skin Coat ".color(COLOR_ORANGE)+" + " +STEEL+" + 1x " + DARKNESS+  " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MAGIC                                                                          
 public let ITEM_BEARS_TENACITY_BOOTS_RECIPE = "Boots of Bear's Tenacity. \n".color(COLOR_RED) + TT_BEARS_TENACITY_BOOTS
-                                        +"\n\n1x " + "Bear Skin Boots ".color(COLOR_ORANGE)+" + " +STEEL+" 1x " +"Anti-Magic Potion".color(COLOR_MAROON)+ " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MAGIC 
+                                        +"\n\n1x " + "Bear Skin Boots ".color(COLOR_ORANGE)+" + " +IRON+" 1x " +"Anti-Magic Potion".color(COLOR_MAROON)+ " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MAGIC 
 
 // Witch Doctors Hut
 

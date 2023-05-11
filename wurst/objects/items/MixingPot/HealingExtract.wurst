@@ -1,0 +1,69 @@
+package HealingExtract
+
+// Standard lib Imports:
+import Assets
+import ChannelAbilityPreset
+
+// Local lib Imports:
+import Items
+import LocalAssets
+import LocalItemObjEditing
+import LocalObjectIDs
+import ToolTipsUtils
+import ClosureEvents
+
+public constant POT_HEAL = 80.
+public constant CAST_RANGE = 400.
+public constant NAME = "Healing Extract"
+public constant ICON =Icons.bTNLesserRejuvPotion
+public constant COOLDOWN = 5.
+public constant DURATION = 10.
+public constant TARGETS_ALLOWED = commaList(
+                            TargetsAllowed.friend,
+                            TargetsAllowed.ground,
+                            TargetsAllowed.hero,
+                            TargetsAllowed.invulnerable,
+                            TargetsAllowed.organic,
+                            TargetsAllowed.self,
+                            TargetsAllowed.vulnerable
+                            )
+
+public constant TT_HEALING_POTION = "" +
+    "A dilute potion made from Athelas Seed. "+
+    "Instantly restores {0} Health point to a target ally."
+    .format(POT_HEAL.toToolTipGreen())
+
+@compiletime function createAbil() returns ChannelAbilityPreset
+    return createItemChannelCast(ABILITY_HEALING_POTION)
+    ..setName(NAME)
+    ..presetTargetTypes(Targettype.UNIT)
+    ..setManaCost(1, 0)
+    ..setCooldown(1, 0)
+    ..setArtTarget(Abilities.healingSalveTarget)
+    ..setCastRange(1, CAST_RANGE)
+    ..setTargetsAllowed(1, TARGETS_ALLOWED)
+
+@compiletime function createHealingPotion() returns ItemDefinition
+    return createPerishableItem(ITEM_HEALING_EXTRACT)
+        ..setInterfaceIcon(ICON)
+        ..setModelUsed(LocalItems.potionPurpleLesser)
+        ..setNameEnhance(NAME)
+        ..setTooltipExtended(TT_HEALING_POTION)
+        ..setDescription(TT_HEALING_POTION)
+        ..setLumberCost(10)
+        ..setAbilities(commaList(ABILITY_HEALING_POTION))
+        ..setScalingValue(0.7)
+        ..setCooldownGroup(commaList(ABILITY_HEALING_POTION))
+        ..setStockReplenishInterval(120)
+        ..setNumberofCharges(2)
+
+function onHealingExtract(unit target)
+    
+    
+    
+
+
+init
+    EventListener.onTargetCast(ABILITY_HEALING_POTION) (unit caster, unit target) ->
+        onHealingExtract(target)
+        

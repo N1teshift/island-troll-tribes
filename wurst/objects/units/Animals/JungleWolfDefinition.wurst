@@ -66,7 +66,8 @@ class AdolescentJungleWolfDefinition extends JungleWolfDefinition
             ))
         this.setName("Adolescent Jungle Wolf")
         this.setHitPointsRegenerationRate(0)
-        this.setLevel(0)
+        this.setLevel(5)
+        this.setCollisionSize(8.)
 
 class AdultJungleWolfDefinition extends AdolescentJungleWolfDefinition
     construct(int unitId)
@@ -85,6 +86,8 @@ class AdultJungleWolfDefinition extends AdolescentJungleWolfDefinition
         this.setPointValue(500)
         this.setName("Adult Jungle Wolf")
         this.setNameEditorSuffix("(Wurst)")
+        this.setCollisionSize(8.)
+        this.setLevel(7)
 
 @compiletime function createJungleWolf()
     new WolfPupDefinition(UNIT_WOLF_PUP)

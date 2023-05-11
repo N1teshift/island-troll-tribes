@@ -4,6 +4,7 @@ package LocalAssets
 import ObjectIdGenerator
 
 public class LocalIcons
+    static constant bTNAnimalTraining = "ReplaceableTextures\\CommandButtons\\BTNAnimalTraining.blp"
     static constant bTNWolfTrophyHide = "ReplaceableTextures\\CommandButtons\\BTNWolfTrophyHide.blp"
     static constant bTNTrophyHideDummy = "ReplaceableTextures\\CommandButtons\\BTNTrophyHideDummy.blp"
     static constant bTNBearTrophyHide ="ReplaceableTextures\\CommandButtons\\BTNBearTrophyHide.blp"
@@ -187,6 +188,7 @@ public class LocalAbilities
     static constant test                           = "Models\\Abilities\\Test.mdx"
 
 public class LocalItems
+    static constant bearsGreedPaws               = "Models\\Items\\bearsGreedPaws.mdx"
     static constant wolfTrophyHide                 = "Models\\Items\\WolfTrophyHide.mdx"
     static constant bearTrophyHide                 = "Models\\Items\\BearTrophyHide.mdx"
     static constant elkTrophyHide                  = "Models\\Items\\ElkTrophyHide.mdx"

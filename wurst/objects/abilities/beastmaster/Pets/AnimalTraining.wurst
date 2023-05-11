@@ -1,0 +1,55 @@
+package AnimalTraining
+
+// Standard library imports:
+import ClosureTimers
+import ChannelAbilityPreset
+// Local imports:
+import LocalObjectIDs
+import PlayerExtensions
+import Pets
+import LocalAssets
+
+
+let TT = "Beastmaster's pet has undergone training increasing it's movement speed to match hero's and reducing its collision size."
+
+@compiletime function createPanic() returns AbilityDefinitionHardenedSkin
+    return new AbilityDefinitionHardenedSkin(ABILITY_ANIMAL_TRAINING)
+        ..setIconNormal(LocalIcons.bTNAnimalTraining)
+        ..setButtonPositionNormalY(1)
+        ..setCheckDependencies(false)
+        ..setChancetoReduceDamage(1, 0)
+        ..setIgnoredDamage(1, 0.)
+        ..setMinimumDamage(1, 0.)
+        ..setEditorSuffix("(Wurst)")
+        ..setHotkeyNormal("")
+        ..setName("Animal Training")
+        ..setRequirements("")
+        ..setTooltipNormal(1, "Animal Training")
+        ..setTooltipNormalExtended(1, TT)
+
+
+function addPhasingAndMs(unit pet)
+    let hero = pet.getOwner().getTroll()
+    var heroMS = hero.getMoveSpeed()
+    if heroMS < hero.getDefaultMovespeed()
+        heroMS = hero.getDefaultMovespeed()
+    var petMS = pet.getMoveSpeed()
+    if heroMS != petMS
+        pet.setMoveSpeed(heroMS)
+    if pet.hasAbility(GHOST_VIS_ID)
+        pet.removeAbility(GHOST_VIS_ID)
+        nullTimer() -> 
+            pet.addPermanentAbility(GHOST_VIS_ID)
+
+function getPets()
+    for i=0 to GetBJMaxPlayerSlots()-1
+        let pet = players[i].getPet()
+        if pet != null
+            addPhasingAndMs(pet)
+
+init
+    doPeriodically(ANIMATION_PERIOD) (CallbackPeriodic cb) ->
+        getPets()
+        
+    
+    

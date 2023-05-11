@@ -30,7 +30,9 @@ public function mixIt(LinkedList<item> inv)
         if items.getTypeId() == ITEM_SPIRIT_WIND
             items.remove()
         if items.getTypeId() == ITEM_POISON
-            items.remove()                
+            items.remove()
+        if items.getTypeId() == ITEM_MUSHROOM
+            items.remove()                    
 
 public function mix(unit caster)
     let count = caster.getInventoryItemCountMap()
@@ -48,6 +50,7 @@ public function mix(unit caster)
     let water = count.get(ITEM_SPIRIT_WATER)
     let wind = count.get(ITEM_SPIRIT_WIND)
     let poison =count.get(ITEM_POISON)
+    let mushroom =count.get(ITEM_MUSHROOM) 
 
     let specCount = blue + oran + purp + yell
 
@@ -91,7 +94,7 @@ public function mix(unit caster)
         return
 
     // Disease Potion
-    if poison > 0 and stem > 0
+    if mushroom > 2 and stem > 0
         mixIt(inventory)
         caster.addItemById(ITEM_DISEASE_POTION)
         return
@@ -115,7 +118,7 @@ public function mix(unit caster)
         return
 
     // Anabolic Potion
-    if stem > 3
+    if stem > 2
         mixIt(inventory)
         caster.addItemById(ITEM_ANABOLIC_POTION)
         return
@@ -133,13 +136,13 @@ public function mix(unit caster)
         return
 
     // Mana
-    if wind > 0 and athelas > 1
+    if wind > 0 and athelas > 0
         mixIt(inventory)
         caster.addItemById(ITEM_MANA_POTION)
         return
 
     // Healing
-    if water > 0 and athelas > 1
+    if water > 0 and athelas > 0
         mixIt(inventory)
         caster.addItemById(ITEM_HEALING_POTION)
         return

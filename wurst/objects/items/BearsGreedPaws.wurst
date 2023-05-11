@@ -45,7 +45,7 @@ let TT = new StringBuilder()
     new ChannelAbilityPreset(ABILITY_BEARS_GREED_PAWS_ACTIVE, 1, true)
         ..presetCastingTime(lvl ->0.5)
         ..presetCastRange(lvl -> 100)
-        ..presetCooldown(lvl -> 60)
+        ..presetCooldown(lvl -> 100)
         ..presetTargetTypes(Targettype.UNIT)
         ..presetTargetsAllowed(lvl ->commaList(
             TargetsAllowed.neutral,
@@ -81,22 +81,25 @@ function onItemUse(unit caster, unit target)
     caster.getItemById(ITEM_BEARS_GREED_PAWS).setDroppable(false)    
     doAfter(caster.getAbilityCooldown(ABILITY_BEARS_GREED_PAWS_ACTIVE, 1)) ->
         caster.getItemById(ITEM_BEARS_GREED_PAWS).setDroppable(true)        
-    if (foundItem.getCharges()<1)
-        caster.addItemById(ITEM_HONEYCOMB)
-        foundItem.setPawnable(false)     
+    if foundItem == null
+        let itm = createItem(ITEM_HONEYCOMB, caster.getPos())
+        caster.addItemHandle(itm)
+        nullTimer() -> 
+            itm.setPawnable(false)
+            itm.setCharges(2)   
         return
     if (foundItem.getCharges()<8)
-        foundItem.setCharges(foundItem.getCharges()+1)
+        foundItem.setCharges(foundItem.getCharges()+2)
         foundItem.setPawnable(false)
-    else
-        new HealingInstance(caster, caster, HONEY_HEAL, HealingType.ITEM)  
+    //else
+        //new HealingInstance(caster, caster, HONEY_HEAL, HealingType.ITEM)  
 
 function onPickupGloves(unit u)
     if not instances.has(u)
         instances.put(u, new BearsGreedPawsInstance(u))
 
 
-function onDropCoat(unit u)
+function onDropGloves(unit u)
     if instances.has(u)
         destroy instances.getAndRemove(u)
 
@@ -107,6 +110,6 @@ init
 
     EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
         if GetManipulatedItem().getTypeId() == ITEM_BEARS_GREED_PAWS
-            onDropCoat(GetManipulatingUnit())
+            onDropGloves(GetManipulatingUnit())
 
 //@compiletime createconsume
