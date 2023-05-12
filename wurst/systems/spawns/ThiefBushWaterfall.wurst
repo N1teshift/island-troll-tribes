@@ -25,6 +25,7 @@ init
     let thiefBushEntrance_SE_A = CreateRegion()..addRect(gg_rct_Thief_Bush_SE_A_In)
     let thiefBushEntrance_SW_A = CreateRegion()..addRect(gg_rct_Thief_Bush_SW_A_In)
     let thiefBushEntrance_SW_C = CreateRegion()..addRect(gg_rct_Thief_Bush_SW_C_In)
+    let waterFallEntrance_NW_A = CreateRegion()..addRect(gg_rct_Oasis_waterfall_In)
 
     entranceToExitMap
     ..put(thiefBushEntrance_NW_A, gg_rct_Thief_Bush_NW_A_Out)
@@ -33,6 +34,7 @@ init
     ..put(thiefBushEntrance_SE_A, gg_rct_Thief_Bush_SE_A_Out)
     ..put(thiefBushEntrance_SW_A, gg_rct_Thief_Bush_SW_A_Out)
     ..put(thiefBushEntrance_SW_C, gg_rct_Thief_Bush_SW_C_Out)
+    ..put(waterFallEntrance_NW_A, gg_rct_Oasis_Waterfall_Out)
 
     CreateTrigger()
     ..registerEnterRegion(thiefBushEntrance_NW_A, null)
@@ -41,4 +43,5 @@ init
     ..registerEnterRegion(thiefBushEntrance_SE_A, null)
     ..registerEnterRegion(thiefBushEntrance_SW_A, null)
     ..registerEnterRegion(thiefBushEntrance_SW_C, null)
+    ..registerEnterRegion(waterFallEntrance_NW_A, null)
     ..addCondition(Condition(function waterfallEntrance))

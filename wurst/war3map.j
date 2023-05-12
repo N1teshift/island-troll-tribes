@@ -118,8 +118,8 @@ globals
     rect                    gg_rct_Thief_Bush_Cliff_SW_1 = null
     rect                    gg_rct_Thief_Bush_Cliff_SW_2 = null
     rect                    gg_rct_Thief_Bush_Cliff_NW = null
-    rect                    gg_rct_Oasis_WaterFall_In  = null
-    rect                    gg_rct_Oasis_WaterFall_Out = null
+    rect                    gg_rct_Oasis_waterfall_In  = null
+    rect                    gg_rct_Oasis_Waterfall_Out = null
 endglobals
 
 function InitGlobals takes nothing returns nothing
@@ -425,8 +425,8 @@ function CreateRegions takes nothing returns nothing
     set gg_rct_Thief_Bush_Cliff_SW_1 = Rect( -2848.0, -7744.0, -2464.0, -7168.0 )
     set gg_rct_Thief_Bush_Cliff_SW_2 = Rect( -6336.0, -3744.0, -5888.0, -3328.0 )
     set gg_rct_Thief_Bush_Cliff_NW = Rect( -8064.0, 1920.0, -7424.0, 2304.0 )
-    set gg_rct_Oasis_WaterFall_In = Rect( -2176.0, 7712.0, -1856.0, 7808.0 )
-    set gg_rct_Oasis_WaterFall_Out = Rect( -2112.0, 7936.0, -1856.0, 8032.0 )
+    set gg_rct_Oasis_waterfall_In = Rect( -2176.0, 7712.0, -1856.0, 7808.0 )
+    set gg_rct_Oasis_Waterfall_Out = Rect( -2112.0, 7936.0, -1856.0, 8032.0 )
 endfunction
 
 //***************************************************************************
