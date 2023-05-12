@@ -63,7 +63,7 @@ init
 
     new QuickMake(ABILITY_QM_ANABOLIC_POTION)
     ..add(ITEM_RIVER_STEM)
-    ..add(ITEM_RIVER_STEM)
+    ..add(ITEM_RIVER_ROOT)
 
     new QuickMake(ABILITY_QM_FERVOR_POTION, 2)
     ..add(ITEM_ATHELAS_SEED)

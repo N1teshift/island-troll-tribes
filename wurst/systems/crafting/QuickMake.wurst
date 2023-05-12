@@ -15,6 +15,7 @@ import Tanning
 import Transmute
 import SimError
 import TrollUnitTextConstant
+import Classes
 
 public class QuickMake
     // The requirements in slot order, each of which is a list of allowed type IDs.
@@ -63,14 +64,17 @@ public class QuickMake
         else
             range = 700
         // Drop each item to simplify the search for matches.
+        var baseInventory = inventory.size()
         if caster.isTroll()
             int baseInventorySize = 3
             for key in trollInventoryAbilityMap
                 if trollInventoryAbilityMap.get(key).has(caster.getTypeId())
                     caster.dropItems(baseInventorySize)
-                    //print("base inventory size is {0}".format(baseInventorySize.toString()))
+                    baseInventory =inventory.size()-baseInventorySize
                 else  
-                    baseInventorySize++   
+                    baseInventorySize++
+            for i = 1 to baseInventory
+                inventory.pop()
         else
             caster.dropItems()
 

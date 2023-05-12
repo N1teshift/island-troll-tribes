@@ -157,13 +157,14 @@ class TrophyHide
         nullTimer() ->
             trophyHide =createItem(trophy, hero.getPos())
             let itm =hero.itemInSlot(3)
-            if itm != null
+            if itm != null and itm != hunterDummyItem and itm != trophyHide
                 hero.dropItemSlot(itm, 3)
                 nullTimer() ->                     
                     hero.addItemHandleToSlot(trophyHide, 3)
                 hero.addItemHandle(itm)
-            else 
-                hero.addItemHandleToSlot(trophyHide, 3)                                            
+            else
+                if itm != hunterDummyItem and itm != trophyHide 
+                    hero.addItemHandleToSlot(trophyHide, 3)                                            
 
     function updateAttachment(int newAttachment)
         if trophyHide != null

@@ -118,7 +118,7 @@ public function mix(unit caster)
         return
 
     // Anabolic Potion
-    if stem > 2
+    if stem >0 and root>0
         mixIt(inventory)
         caster.addItemById(ITEM_ANABOLIC_POTION)
         return
