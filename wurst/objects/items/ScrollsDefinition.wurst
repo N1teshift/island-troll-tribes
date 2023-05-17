@@ -19,47 +19,47 @@ import LocalObjectIDs
 import ColorUtils
 import UnitExtensions
 
-let ABIL_ABILITY_SPEED_BONUS_60 = compiletime(ABIL_ID_GEN.next())
-let ABILITY_HASTE = commaList(ABILITY_HASTE_AOE, ABILITY_SPEED_BONUS_60)
+public let ABIL_ABILITY_SPEED_BONUS_60 = compiletime(ABIL_ID_GEN.next())
+public let ABILITY_HASTE = commaList(ABILITY_HASTE_AOE, ABILITY_SPEED_BONUS_60)
 
-let ROOT_DMG            = 5.
-let FIRE_DMG            = 60.
-let STONE_ARMOR         = 5.
-let TSUNAMI_DMG         = 25.
+public let ROOT_DMG            = 5.
+public let FIRE_DMG            = 60.
+public let STONE_ARMOR         = 5.
+public let TSUNAMI_DMG         = 25.
 // The TOTAL damage a crushing wave can do
-let TSUNAMI_MAX_DMG     = 200.
-let TSUNAMI_STRUCT_DMG  = 30.
-let SKELETAL_MINION_DMG = 7
-let HASTE_SPEED_BONUS   = 5.
+public let TSUNAMI_MAX_DMG     = 200.
+public let TSUNAMI_STRUCT_DMG  = 30.
+public let SKELETAL_MINION_DMG = 7
+public let HASTE_SPEED_BONUS   = 5.
 
-let ROOT_DURATION_HERO        = 2.
-let ROOT_DURATION_NORMAL      = 8.
-let FIRE_DURATION_HERO        = 0.1
-let FIRE_DURATION_NORMAL      = 1.
-let SKELETAL_DURATION         = 15.
-let STONE_ARMOR_DURATION      = 15.
-let HASTE_DURATION            = 7.
-let CYCLONE_DURATION_HERO     = 5.
-let CYCLONE_DURATION_NORMAL   = 10.
-let STONE_ARMOR_SLOW_DURATION = 2.
+public let ROOT_DURATION_HERO        = 2.
+public let ROOT_DURATION_NORMAL      = 8.
+public let FIRE_DURATION_HERO        = 0.1
+public let FIRE_DURATION_NORMAL      = 1.
+public let SKELETAL_DURATION         = 15.
+public let STONE_ARMOR_DURATION      = 15.
+public let HASTE_DURATION            = 7.
+public let CYCLONE_DURATION_HERO     = 5.
+public let CYCLONE_DURATION_NORMAL   = 10.
+public let STONE_ARMOR_SLOW_DURATION = 2.
 
-let ROOT_COOLDOWN        = 20.
-let FIRE_COOLDOWN        = 22.
-let SKELETAL_COOLDOWN    = 35.
-let STONE_ARMOR_COOLDOWN = 40.
-let TSUNAMI_COOLDOWN     = 15.
-let HASTE_COOLDOWN       = 35.
-let CYCLONE_COOLDOWN     = 35.
+public let ROOT_COOLDOWN        = 20.
+public let FIRE_COOLDOWN        = 22.
+public let SKELETAL_COOLDOWN    = 35.
+public let STONE_ARMOR_COOLDOWN = 40.
+public let TSUNAMI_COOLDOWN     = 15.
+public let HASTE_COOLDOWN       = 35.
+public let CYCLONE_COOLDOWN     = 35.
 
-let ROOT_CAST_RANGE    = 450.
-let FIRE_CAST_RANGE    = 450.
-let STONE_CAST_RANGE   = 400.
-let TSUNAMI_CAST_RANGE = 600.
-let CYCLONE_CAST_RANGE = 500.
+public let ROOT_CAST_RANGE    = 450.
+public let FIRE_CAST_RANGE    = 450.
+public let STONE_CAST_RANGE   = 400.
+public let TSUNAMI_CAST_RANGE = 600.
+public let CYCLONE_CAST_RANGE = 500.
 
-let TSUNAMI_DISTANCE = 600.
-let SKELETAL_AOE = 500.
-let HASTE_AOE = 600.
+public let TSUNAMI_DISTANCE = 600.
+public let SKELETAL_AOE = 500.
+public let HASTE_AOE = 600.
 
 public let FIREBALL_TT = "Grants the unit the ability to cast Fire Ball dealing {0} damage and stunning the target for {1}/{2} seconds."
                           .format(FIRE_DMG.toToolTipRed(), FIRE_DURATION_HERO.toString().color(COLOR_ORANGE), FIRE_DURATION_NORMAL.toToolTipOrange())
@@ -149,11 +149,12 @@ public let CYCLONE_TT = "Grants the unit the ability to cast Cyclone which tosse
         ..setDurationNormal(1, FIRE_DURATION_NORMAL)
         ..setCooldown(1, FIRE_COOLDOWN)
         ..setEditorSuffix("(Wurst)")
+        
 
 // Create 2 skeleton warrior following the caster
 // Skeleton warrior got the locust ability, meaning they can't be targetted/attacked and randomly move around, attacking surrounding units
 @compiletime function createSkeletalMinionAbility() returns AbilityDefinitionCryptLordLocustSwarm
-    return new AbilityDefinitionCryptLordLocustSwarm(ABILITY_SKELETAL_MINION)
+    return new AbilityDefinitionCryptLordLocustSwarm(ABILITY_SKELETAL_MINION) 
         ..setName("Scroll of Living Dead")
         ..setCheckDependencies(false)
         ..setDamageReturnFactor(1, 0)
@@ -212,7 +213,7 @@ public let CYCLONE_TT = "Grants the unit the ability to cast Cyclone which tosse
         ..setEditorSuffix("(Wurst)")
 
 @compiletime function createHasteAbility() returns AbilityDefinitionItemSpeedAoe
-    return new AbilityDefinitionItemSpeedAoe(ABILITY_HASTE_AOE)
+    return new AbilityDefinitionItemSpeedAoe(ABILITY_HASTE_AOE)  
         ..setName("Scroll of Haste")
         ..setBuffs(1, BUFF_HASTE.toRawCode())
         ..setMovementSpeedIncrease(1, HASTE_SPEED_BONUS)
@@ -232,7 +233,7 @@ public let CYCLONE_TT = "Grants the unit the ability to cast Cyclone which tosse
         ..setEditorSuffix("(Wurst)")
 
 @compiletime function createCycloneAbility() returns AbilityDefinitionCycloneAIcy
-    return new AbilityDefinitionCycloneAIcy(ABILITY_CYCLONE)
+    return new AbilityDefinitionCycloneAIcy(ABILITY_CYCLONE) 
         ..setName("Scroll of Cyclone")
         ..setDurationHero(1, CYCLONE_DURATION_HERO)
         ..setDurationNormal(1, CYCLONE_DURATION_NORMAL)
@@ -414,5 +415,8 @@ function onRoot(unit caster, unit target)
 
 init
     EventListener.onTargetCast(ABILITY_CYCLONE, (unit caster, unit target) -> onCyclone(target))
+    EventListener.onTargetCast(ABILITY_GRIMOIRE_CYCLONE_SCROLL, (unit caster, unit target) -> onCyclone(target))
     EventListener.onPointCast(ABILITY_TSUNAMI, (unit caster, vec2 target) -> onTsunami(caster, target))
+    EventListener.onPointCast(ABILITY_GRIMOIRE_TSUNAMI, (unit caster, vec2 target) -> onTsunami(caster, target))
     EventListener.onTargetCast(ABILITY_ROOT_CAST, (unit caster, unit target) -> onRoot(caster, target))
+    EventListener.onTargetCast(ABILITY_GRIMOIRE_ENTANGLE, (unit caster, unit target) -> onRoot(caster, target))

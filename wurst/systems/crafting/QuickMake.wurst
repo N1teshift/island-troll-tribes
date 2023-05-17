@@ -112,7 +112,7 @@ public class QuickMake
                 else
                     for i =0 to bj_MAX_PLAYER_SLOTS-1
                         if IsUnitSelected(caster, players[i]) and players[i].isAllyOf(caster.getOwner()) 
-                           // simError(players[i], "No {0} in radius".format(GetObjectName(itemId)))
+                            simError(players[i], "No {0} in radius".format(GetObjectName(itemId)))
             if found == null
                 break
         // Restore the visibility of the items used for matches.

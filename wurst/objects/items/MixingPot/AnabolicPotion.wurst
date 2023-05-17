@@ -53,7 +53,7 @@ public constant TT_ANABOLIC_POTION = ""+
         ..setNameEnhance(NAME)
         ..setTooltipExtended(TT_ANABOLIC_POTION)
         ..setDescription(TT_ANABOLIC_POTION)
-        ..setLumberCost(18)
+        ..setLumberCost(9)
         ..setAbilities(commaList(ABILITY_ANABOLIC_POTION))
         ..setCooldownGroup(commaList(ABILITY_ANABOLIC_POTION))
         ..setScalingValue(0.70)

@@ -1,0 +1,184 @@
+package ScrollSpells
+
+// Standard Library Import :
+import Assets
+import BuffObjEditing
+import ClosureEvents
+import ClosureTimers
+import ChannelAbilityPreset
+import InstantDummyCaster
+import DummyCaster
+import OrderIds
+
+// Local Import :
+import Items
+import LocalAssets
+import ToolTipsUtils
+import LocalItemObjEditing
+import LocalObjectIDs
+import ColorUtils
+import UnitExtensions
+import ScrollsDefinition
+import AbilityObjEditing
+import ObjEditingUtils
+import BuffIds
+import Icons
+import TargetsAllowed
+import LinkedList
+
+public LinkedList<int>GRIMOIRE_SPELL_LIST = asList(ABILITY_GRIMOIRE_ENTANGLE, ABILITY_GRIMOIRE_FIREBALL, ABILITY_GRIMOIRE_STONE_ARMOR, 
+                                    ABILITY_GRIMOIRE_LIVING_DEAD, ABILITY_GRIMOIRE_TSUNAMI, 
+                                    ABILITY_GRIMOIRE_HASTE_SCROLL, ABILITY_GRIMOIRE_CYCLONE_SCROLL, ABILITY_SPELLBOOK_PLACEHOLDER, ABILITY_GRIMOIRE_ADD_SCROLL)
+
+
+@compiletime function createScrolls()
+    createItemChannelCast(ABILITY_GRIMOIRE_ENTANGLE)
+        ..setTooltipNormal(1, "Entangling Root Scroll")
+        ..setName("Entangling Root Scroll")    
+        ..setCooldown(1, ROOT_COOLDOWN)
+        ..setCastRange(1, ROOT_CAST_RANGE)
+        ..presetTargetTypes(Targettype.UNIT)
+        ..setTargetsAllowed(1, commaList(
+            TargetsAllowed.ground,
+            TargetsAllowed.enemies,
+            TargetsAllowed.organic
+        ))
+        ..setTooltipNormalExtended(1, ENTANGLING_ROOT_TT)
+        ..setManaCost(1, 0)
+        ..setHeroAbility(true)
+        ..setButtonPositionNormalX(0)
+        ..setButtonPositionNormalY(0)
+        ..setHotkeyNormal("Q")
+        ..setIconNormal(Icons.bTNScrollOfRegenerationGreen)
+   
+    new AbilityDefinitionFireBoltwarlock(ABILITY_GRIMOIRE_FIREBALL) 
+        ..setTooltipNormal(1, "Scroll of Fire Ball")
+        ..setName("Scroll of Fire Ball")
+        ..setDamage(1, FIRE_DMG)
+        ..setMissileArt(Abilities.phoenix_Missile)
+        ..setCastRange(1, FIRE_CAST_RANGE)
+        ..setManaCost(1, 0)
+        ..setDurationHero(1, FIRE_DURATION_HERO)
+        ..setDurationNormal(1, FIRE_DURATION_NORMAL)
+        ..setCooldown(1, FIRE_COOLDOWN)
+        ..setButtonPositionNormalX(0)
+        ..setButtonPositionNormalY(1)
+        ..setHeroAbility(true)
+        ..setTooltipNormalExtended(1, FIREBALL_TT)
+        ..setHotkeyNormal("W")
+        ..setIconNormal(Icons.bTNScrollOfHealing)        
+        ..setEditorSuffix("(Wurst)")
+
+    new AbilityDefinitionFrostArmorcreep(ABILITY_GRIMOIRE_STONE_ARMOR)
+        ..setTooltipNormal(1, "Scroll of Stone Armor")
+        ..setName("Scroll of Stone Armor")
+        ..setBuffs(1, BUFF_STONE_ARMOR.toRawCode())
+        ..setArmorBonus(1, STONE_ARMOR)
+        ..setArmorDuration(1, STONE_ARMOR_DURATION)
+        ..presetTargetsAllowed(lvl -> commaList(
+            TargetsAllowed.air,
+            TargetsAllowed.friend,
+            TargetsAllowed.ground,
+            TargetsAllowed.neutral,
+            TargetsAllowed.self
+        ))
+        ..setHeroAbility(true)
+        ..setManaCost(1, 0)
+        ..setDurationHero(1, STONE_ARMOR_SLOW_DURATION)
+        ..setDurationNormal(1, STONE_ARMOR_SLOW_DURATION)
+        ..setButtonPositionNormalX(0)
+        ..setButtonPositionNormalY(2)
+        ..setTooltipNormalExtended(1, STONE_ARMOR_TT)
+        ..setHotkeyNormal("E")
+        ..setCastRange(1, STONE_CAST_RANGE)
+        ..setCooldown(1, STONE_ARMOR_COOLDOWN)
+        ..setIconNormal(Icons.bTNScrollUber)        
+        ..setEditorSuffix("(Wurst)")  
+
+    new AbilityDefinitionCryptLordLocustSwarm(ABILITY_GRIMOIRE_LIVING_DEAD)
+        ..setTooltipNormal(1, "Scroll of Living Dead") 
+        ..setName("Scroll of Living Dead")
+        ..setCheckDependencies(false)
+        ..setIconNormal(Icons.bTNSnazzyScroll)
+        ..setDamageReturnFactor(1, 0)
+        ..setNumberofSwarmUnits(1, 2)
+        ..setDamageReturnThreshold(1, 600)
+        ..setMaxSwarmUnitsPerTarget(1, 4)
+        ..setButtonPositionNormalX(0)
+        ..setButtonPositionNormalY(3)
+        ..setHotkeyNormal("R")
+        ..setSwarmUnitType(1, UNIT_LOCUST_SKELETON.toRawCode())        
+        ..setEffectSoundLooping("")
+        ..presetTargetsAllowed(lvl -> commaList(
+            TargetsAllowed.air,
+            TargetsAllowed.enemies,
+            TargetsAllowed.ground
+        ))
+        ..setHeroAbility(true)
+        ..setItemAbility(false)
+        ..setTooltipNormalExtended(1, LIVING_DEAD_TT)
+        ..setManaCost(1, 0)
+        ..setDurationHero(1, SKELETAL_DURATION)
+        ..setDurationNormal(1, SKELETAL_DURATION)
+        ..setCooldown(1, SKELETAL_COOLDOWN)
+        ..setAreaofEffect(1, SKELETAL_AOE)
+        ..setIconNormal(Icons.bTNSnazzyScroll)        
+        ..setEditorSuffix("(Wurst)")
+
+    new AbilityDefinitionCrushingWave(ABILITY_GRIMOIRE_TSUNAMI)
+        ..setTooltipNormal(1, "Scroll of Tsunami") 
+        ..setName("Scroll of Tsunami")
+        ..setDamage(1, TSUNAMI_DMG)
+        ..setMaxDamage(1, TSUNAMI_MAX_DMG)
+        ..setCastRange(1, TSUNAMI_CAST_RANGE)
+        ..setDistance(1, TSUNAMI_DISTANCE)
+        ..setCooldown(1, TSUNAMI_COOLDOWN)
+        ..setButtonPositionNormalX(1)
+        ..setButtonPositionNormalY(0)
+        ..setHotkeyNormal("A")
+        ..setItemAbility(false)
+        ..setHeroAbility(true)
+        ..setTooltipNormalExtended(1, TSUNAMI_TT)
+        ..setManaCost(1, 0)
+        ..setIconNormal(Icons.bTNSnazzyScrollPurple)        
+        ..setEditorSuffix("(Wurst)")
+
+    new AbilityDefinitionItemSpeedAoe(ABILITY_GRIMOIRE_HASTE_SCROLL)
+        ..setTooltipNormal(1, "Scroll of Haste") 
+        ..setName("Scroll of Haste")
+        ..setBuffs(1, BUFF_HASTE.toRawCode())
+        ..setMovementSpeedIncrease(1, HASTE_SPEED_BONUS)
+        ..setAreaofEffect(1, HASTE_AOE)
+        ..setDurationHero(1, HASTE_DURATION)
+        ..setDurationNormal(1, HASTE_DURATION)
+        ..presetTargetsAllowed(lvl -> commaList(
+            TargetsAllowed.air,
+            TargetsAllowed.ground,
+            TargetsAllowed.friend,
+            TargetsAllowed.self,
+            TargetsAllowed.vulnerable,
+            TargetsAllowed.invulnerable,
+            TargetsAllowed.nonsapper
+        ))
+        ..setButtonPositionNormalX(1)
+        ..setButtonPositionNormalY(1)
+        ..setHotkeyNormal("S")
+        ..setHeroAbility(true)
+        ..setTooltipNormalExtended(1, HASTE_TT)
+        ..setCooldown(1, HASTE_COOLDOWN)
+        ..setIconNormal(Icons.bTNScrollOfHaste)        
+        ..setEditorSuffix("(Wurst)")
+
+    new AbilityDefinitionCycloneAIcy(ABILITY_GRIMOIRE_CYCLONE_SCROLL)
+        ..setTooltipNormal(1, "Scroll of Cyclone") 
+        ..setName("Scroll of Cyclone")
+        ..setDurationHero(1, CYCLONE_DURATION_HERO)
+        ..setDurationNormal(1, CYCLONE_DURATION_NORMAL)
+        ..setCooldown(1, CYCLONE_COOLDOWN)
+        ..setCastRange(1, CYCLONE_CAST_RANGE) 
+        ..setTooltipNormalExtended(1, CYCLONE_TT)
+        ..setHeroAbility(true)
+        ..setIconNormal(Icons.bTNBansheeMaster)
+        ..setButtonPositionNormalX(1)
+        ..setButtonPositionNormalY(2)
+        ..setHotkeyNormal("D")             

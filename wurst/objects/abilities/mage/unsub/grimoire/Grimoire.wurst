@@ -1,0 +1,205 @@
+package Grimoire
+import Classes
+import LocalObjectIDs
+import HashMap
+import OnUnitEnterLeave
+import Items
+import LocalAssets
+import Icons
+import ObjectIds
+import AbilityObjEditing
+import UnitExtensions
+import InstantDummyCaster
+import ChannelAbilityPreset
+import Orders
+import RegisterEvents
+import ScrollSpells
+import ToolTipsUtils
+import ClosureEvents
+import SimError
+import Abilities
+import ClosureTimers
+
+
+
+@compiletime function createGrimoireAbilities()
+    new AbilityDefinitionSpellBook(ABILITY_GRIMOIRE_SPELLBOOK)
+        ..setName("Mage's Grimoire")
+        ..setHeroAbility(true)
+        ..setSpellList(1, commaList(GRIMOIRE_SPELL_LIST))
+        ..setItemAbility(true)
+        ..setLevels(1)
+        ..presetMaximumSpells(lvl -> 11)
+        ..presetMinimumSpells(lvl -> 11)
+        ..presetCooldown(lvl -> 10)
+        ..setSharedSpellCooldown(1, false)
+        ..setCooldown(1, 10)
+        ..presetBaseOrderID(lvl -> "unsummon")
+
+
+@compiletime function createGrimmoire()
+    createUsableItem(ITEM_MAGE_GRIMOIRE)
+        ..setAbilities(ABILITY_GRIMOIRE_SPELLBOOK.toRawCode())
+        ..setDescription("Mage's Grimoire.")
+        ..setInterfaceIcon(Icons.bTNNecromancerMaster)
+        ..setLumberCost(100)
+        ..setName("Mage's Grimoire")
+        ..setCanBeSoldToMerchants(false)
+        ..setCanBeSoldByMerchants(false)
+        ..setTooltipBasic("Mage's Grimmoire")
+        ..setTooltipExtended("Mage can add a scroll to its Grimoire permanently gaining it's powers. `\n\nMage gains 2 intelligence per page added to the Grimoire.")
+        ..setCooldownGroup(ABILITY_GRIMOIRE_SPELLBOOK.toRawCode())
+        ..setCanBeDropped(false)
+
+
+@compiletime function createAddScrollAbility()
+    new ChannelAbilityPreset(ABILITY_GRIMOIRE_ADD_SCROLL, 1, true)
+        ..presetCastingTime(lvl-> 0)
+        ..presetManaCost(lvl -> 0)
+        ..presetCooldown(lvl -> 1.0)
+        ..setHeroAbility(true)
+        ..setHotkeyNormal("Z")
+        ..setName("Add a scroll to your Grimoire")
+        ..presetTooltipNormal(lvl -> makeToolTipNorm("Z", "Permanently add a scroll to your Grimoire"))
+        ..presetTooltipNormalExtended(lvl -> "Add a scroll to your Grimoire")
+        ..setIconNormal(Icons.bTNSpellSteal)
+        ..setIconResearch(Icons.bTNSpellSteal)
+        ..setIconTurnOff(Icons.bTNSpellSteal)
+        ..setButtonPositionNormalX(2)
+        ..setButtonPositionNormalY(0)
+        ..setFollowThroughTime(1, 0)
+        ..setEditorSuffix("(Wurst)")
+
+
+IterableMap<int, int> scrollSpells = new IterableMap<int, int>()
+..put(ITEM_SCROLL_ENTANGLING_ROOTS, ABILITY_ROOT_CAST)
+..put(ITEM_SCROLL_FIREBALL, ABILITY_FIREBOLT)
+..put(ITEM_SCROLL_STONE_ARMOR, ABILITY_FROST_ARMOR)
+..put(ITEM_SCROLL_LIVING_DEAD, ABILITY_SKELETAL_MINION)
+..put(ITEM_SCROLL_TSUNAMI, ABILITY_TSUNAMI)
+..put(ITEM_SCROLL_HASTE, ABILITY_HASTE_AOE)
+..put(ITEM_SCROLL_CYCLONE, ABILITY_CYCLONE)
+
+IterableMap<int, int> scrolls = new IterableMap<int, int>()
+..put(ITEM_SCROLL_ENTANGLING_ROOTS, ABILITY_GRIMOIRE_ENTANGLE)
+..put(ITEM_SCROLL_FIREBALL, ABILITY_GRIMOIRE_FIREBALL)
+..put(ITEM_SCROLL_STONE_ARMOR, ABILITY_GRIMOIRE_STONE_ARMOR)
+..put(ITEM_SCROLL_LIVING_DEAD, ABILITY_GRIMOIRE_LIVING_DEAD)
+..put(ITEM_SCROLL_TSUNAMI, ABILITY_GRIMOIRE_TSUNAMI)
+..put(ITEM_SCROLL_HASTE, ABILITY_GRIMOIRE_HASTE_SCROLL)
+..put(ITEM_SCROLL_CYCLONE, ABILITY_GRIMOIRE_CYCLONE_SCROLL)
+
+public constant TARGETS_ALLOWED = commaList(
+                                TargetsAllowed.air,
+                                TargetsAllowed.enemies,
+                                TargetsAllowed.ground,
+                                TargetsAllowed.organic
+                                )
+
+IterableMap<unit, Grimoire> instances = new IterableMap<unit, Grimoire>()
+
+class Grimoire
+    unit hero = null
+    item grimoire
+    IterableMap<int, int> lockedScrolls    
+
+    construct(unit hero)
+        this.hero = hero
+        this.lockedScrolls = scrolls
+        //hero.removeAbility(ABILITY_INVENTORY_3_SLOT)
+        hero.addAbility(ABILITY_INVENTORY_4_SLOT)
+        hero.makeAbilityPermanent(ABILITY_INVENTORY_4_SLOT, true)
+        grimoire = createItem(ITEM_MAGE_GRIMOIRE, hero.getPos())
+        hero.addItemHandleToSlot(grimoire, 3)
+        instances.put(hero, this)
+        lockSpells()
+
+    function lockSpells()
+        for key in lockedScrolls
+            let spell = lockedScrolls.get(key)
+            if spell != ABILITY_GRIMOIRE_ADD_SCROLL
+                hero.disableAbility(spell, true, false)           
+
+    function onCast()
+        for scroll in scrolls
+            if hero.hasItemById(scroll)
+                let abilId = lockedScrolls.getAndRemove(scroll)
+                if abilId ==0
+                    simError(hero.getOwner(), "You already have this scroll in your Grimoire.")
+                else          
+                    hero.disableAbility(abilId, false, false)
+                    let itm = hero.getItemById(scroll)
+                    flashEffect(Abilities.tomeOfRetrainingCaster, hero.getPos())
+                    itm.remove()
+                    hero.addInt(2)
+
+    
+    function onGrimoireDrop()
+        nullTimer()->
+            grimoire.setVisible(false)
+            
+
+    ondestroy
+        instances.remove(hero)
+
+
+function onUnitEnter(unit troll)
+    if troll.getTrollBaseClass() == UNIT_MAGE
+        if not instances.has(troll)
+            instances.put(troll, new Grimoire(troll))
+        else
+            if not troll.isAlive()
+                return
+            troll.addItemHandleToSlot(instances.get(troll).grimoire, 3)
+            instances.get(troll).lockSpells()
+
+
+function onAddScroll(unit caster)
+    let grimoire = instances.get(caster)
+    grimoire.onCast()
+
+function onGrimoireDrop(unit hero)
+    let instance = instances.get(hero)
+    if instance != null
+        instance.onGrimoireDrop()
+
+function onScrollPickup(unit troll, item itm)
+    if GetTriggerUnit().getTrollBaseClass() == UNIT_MAGE
+        let instance = instances.get(troll)
+        if instance == null
+            return
+        for scroll in scrollSpells
+            if scroll == itm.getTypeId() 
+                if not instance.lockedScrolls.has(scroll)
+                    let abilId = scrollSpells.get(scroll)
+                    itm.removeAbility(abilId)
+
+function onScrollDrop(unit troll, item itm)
+    for scroll in scrollSpells
+        if scroll == itm.getTypeId()
+            let abilId = scrollSpells.get(scroll)
+            itm.addAbility(abilId)
+            
+
+
+init
+    onEnter(()->onUnitEnter(getEnterLeaveUnit()))
+
+    EventListener.onCast(ABILITY_GRIMOIRE_ADD_SCROLL) (unit caster) ->
+        onAddScroll(caster)
+
+    EventListener.add(EVENT_PLAYER_HERO_REVIVE_FINISH)->
+        onUnitEnter(GetTriggerUnit())
+
+    EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
+        if GetTriggerUnit().getTrollBaseClass() == UNIT_MAGE and GetManipulatedItem().getTypeId() == ITEM_MAGE_GRIMOIRE
+            onGrimoireDrop(GetTriggerUnit())
+
+    EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
+        if GetTriggerUnit().getTrollBaseClass() == UNIT_MAGE
+            onScrollDrop(GetManipulatingUnit(), GetManipulatedItem())
+
+    EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->
+        onScrollPickup(GetManipulatingUnit(), GetManipulatedItem())
+
+

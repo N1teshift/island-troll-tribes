@@ -118,6 +118,7 @@ class TrophyHide
 
     construct(unit hero)
         this.hero = hero
+        //hero.removeAbility(ABILITY_INVENTORY_3_SLOT)
         hero.addPermanentAbility(ABILITY_INVENTORY_4_SLOT)
         hero.addItemToSlot(ITEM_HUNTER_TROPHY_HIDE_DUMMY, 3)
         nullTimer() ->            
