@@ -12,6 +12,100 @@ import GameConfig
 import DummyUnits
 import LocalObjectIDs
 import LocalAssets
+import LinkedList
+
+public LinkedList<int>tradeShip1Items = asList(
+                ITEM_CLAY_BALL,
+                ITEM_MAGIC,
+                ITEM_SCROLL_ENTANGLING_ROOTS,
+                ITEM_TINDER,
+                ITEM_ENSNARE_TRAP_KIT,
+                ITEM_STONE,
+                ITEM_MUD_HUT_KIT,
+                ITEM_FORGE_KIT,
+                ITEM_WORKSHOP_KIT,
+                ITEM_FIRE_KIT,
+                ITEM_STICK,
+                ITEM_FLINT
+            )
+
+public LinkedList<int>tradeShip2Items = asList(
+                ITEM_MUD_HUT_KIT,
+                ITEM_FLINT,
+                ITEM_FORGE_KIT,
+                ITEM_WORKSHOP_KIT,
+                ITEM_TANNERY_KIT,
+                ITEM_IRON_INGOT,
+                ITEM_MAGIC,
+                ITEM_ENSNARE_TRAP_KIT,
+                ITEM_OMNITOWER_KIT,
+                ITEM_LIVING_CLAY,
+                ITEM_STONE,
+                ITEM_MANA_CRYSTAL
+            )
+
+public LinkedList<int>tradeShip3Items = asList(
+                ITEM_SCROLL_FIREBALL,
+                ITEM_SCROLL_STONE_ARMOR,
+                ITEM_MUD_HUT_KIT,
+                ITEM_JUNGLE_WOLF_HIDE,
+                ITEM_JUNGLE_BEAR_HIDE,
+                ITEM_TANNERY_KIT,
+                ITEM_ARMORY_KIT,
+                ITEM_STEEL_INGOT,
+                ITEM_SPIRIT_WIND,
+                ITEM_SPIRIT_WATER,
+                ITEM_ANTI_MAGIC_POTION,
+                ITEM_MUD_HUT_KIT,
+                ITEM_MANA_CRYSTAL            
+            )
+
+public LinkedList<int>tradeShip4Items = asList(
+                ITEM_ARMORY_KIT,     
+                ITEM_MUD_HUT_KIT,
+                ITEM_FLINT,
+                ITEM_HEALING_POTION,
+                ITEM_MANA_POTION,
+                ITEM_STEEL_INGOT,
+                ITEM_IRON_INGOT,
+                ITEM_MAGIC,
+                ITEM_ENSNARE_TRAP_KIT,
+                ITEM_OMNITOWER_KIT,
+                ITEM_POISON,
+                ITEM_STONE,
+                ITEM_MANA_CRYSTAL
+            )
+
+public LinkedList<int>tradeShip5Items = asList(
+                ITEM_SCROLL_LIVING_DEAD,
+                ITEM_SCROLL_STONE_ARMOR,
+                ITEM_SCROLL_ENTANGLING_ROOTS,
+                ITEM_SCROLL_CYCLONE,
+                ITEM_IRON_SHIELD,
+                ITEM_IRON_AXE,
+                ITEM_NETS,
+                ITEM_SMOKE_BOMB,
+                ITEM_POISON,
+                ITEM_SPIRIT_DARKNESS,
+                ITEM_IRON_INGOT,
+                ITEM_STEEL_INGOT
+            )         
+
+public LinkedList<int>tradeShip6Items = asList(
+                ITEM_STEEL_AXE,
+                ITEM_STEEL_SHIELD,
+                ITEM_SCROLL_ENTANGLING_ROOTS,
+                ITEM_SCROLL_CYCLONE,
+                ITEM_IRON_BOOTS,
+                ITEM_IRON_COAT,
+                ITEM_IRON_GLOVES,
+                ITEM_MAGIC,
+                ITEM_EMP,
+                ITEM_NETS,
+                ITEM_SPIRIT_DARKNESS,
+                ITEM_ULTRA_POISON
+            )
+
 
 function createMerchant(int newId, int oldId) returns UnitDefinition
     return new UnitDefinition(newId, oldId)
@@ -61,122 +155,42 @@ function createMerchantShip(int newId) returns UnitDefinition
     createMerchantShip(UNIT_TRADE_SHIP_1)
         ..setModelFile(Units.orcishTransportShip)
         ..setItemsSold(
-            commaList(
-                ITEM_CLAY_BALL,
-                ITEM_MAGIC,
-                ITEM_SCROLL_ENTANGLING_ROOTS,
-                ITEM_TINDER,
-                ITEM_ENSNARE_TRAP_KIT,
-                ITEM_STONE,
-                ITEM_MUD_HUT_KIT,
-                ITEM_FORGE_KIT,
-                ITEM_WORKSHOP_KIT,
-                ITEM_FIRE_KIT,
-                ITEM_STICK,
-                ITEM_FLINT
-            )
+            commaList(tradeShip1Items)
         )
 
 @compiletime function createMerchantShip2()
     createMerchantShip(UNIT_TRADE_SHIP_2)
         ..setModelFile(Units.humanTransportShip1)
         ..setItemsSold(
-            commaList(
-                ITEM_MUD_HUT_KIT,
-                ITEM_FLINT,
-                ITEM_FORGE_KIT,
-                ITEM_WORKSHOP_KIT,
-                ITEM_TANNERY_KIT,
-                ITEM_IRON_INGOT,
-                ITEM_MAGIC,
-                ITEM_ENSNARE_TRAP_KIT,
-                ITEM_OMNITOWER_KIT,
-                ITEM_LIVING_CLAY,
-                ITEM_STONE,
-                ITEM_MANA_CRYSTAL
-            )
+            commaList(tradeShip2Items)
         )
 
 @compiletime function createMerchantShip3()
     createMerchantShip(UNIT_TRADE_SHIP_3)
         ..setModelFile(Units.orcishDestroyerShip1)
         ..setItemsSold(
-            commaList(
-                ITEM_SCROLL_FIREBALL,
-                ITEM_SCROLL_STONE_ARMOR,
-                ITEM_MUD_HUT_KIT,
-                ITEM_JUNGLE_WOLF_HIDE,
-                ITEM_JUNGLE_BEAR_HIDE,
-                ITEM_TANNERY_KIT,
-                ITEM_ARMORY_KIT,
-                ITEM_STEEL_INGOT,
-                ITEM_SPIRIT_WIND,
-                ITEM_SPIRIT_WATER,
-                ITEM_ANTI_MAGIC_POTION,
-                ITEM_MUD_HUT_KIT
-                
-            )
+            commaList(tradeShip3Items)
         )
 
 @compiletime function createMerchantShip4()
     createMerchantShip(UNIT_TRADE_SHIP_4)
         ..setModelFile(Units.humanDestroyerShip1)
         ..setItemsSold(
-            commaList(
-                ITEM_ARMORY_KIT,     
-                ITEM_MUD_HUT_KIT,
-                ITEM_FLINT,
-                ITEM_HEALING_POTION,
-                ITEM_MANA_POTION,
-                ITEM_STEEL_INGOT,
-                ITEM_IRON_INGOT,
-                ITEM_MAGIC,
-                ITEM_ENSNARE_TRAP_KIT,
-                ITEM_OMNITOWER_KIT,
-                ITEM_POISON,
-                ITEM_STONE,
-                ITEM_MANA_CRYSTAL
-            )
+            commaList(tradeShip4Items)
         )
 
 @compiletime function createMerchantShip5()
     createMerchantShip(UNIT_TRADE_SHIP_5)
         ..setModelFile(Units.nightElfDestroyerShip1)
         ..setItemsSold(
-            commaList(
-                ITEM_SCROLL_LIVING_DEAD,
-                ITEM_SCROLL_STONE_ARMOR,
-                ITEM_SCROLL_ENTANGLING_ROOTS,
-                ITEM_SCROLL_CYCLONE,
-                ITEM_IRON_SHIELD,
-                ITEM_IRON_AXE,
-                ITEM_NETS,
-                ITEM_SMOKE_BOMB,
-                ITEM_POISON,
-                ITEM_SPIRIT_DARKNESS,
-                ITEM_IRON_INGOT,
-                ITEM_STEEL_INGOT
-            )
+            commaList(tradeShip5Items)
         )
 
 @compiletime function createMerchantShip6()
     createMerchantShip(UNIT_TRADE_SHIP_6)
         ..setModelFile(Units.nightElfBattleship)
         ..setItemsSold(
-            commaList(
-                ITEM_STEEL_AXE,
-                ITEM_STEEL_SHIELD,
-                ITEM_SCROLL_ENTANGLING_ROOTS,
-                ITEM_SCROLL_CYCLONE,
-                ITEM_IRON_BOOTS,
-                ITEM_IRON_COAT,
-                ITEM_IRON_GLOVES,
-                ITEM_MAGIC,
-                ITEM_EMP,
-                ITEM_NETS,
-                ITEM_SPIRIT_DARKNESS,
-                ITEM_ULTRA_POISON
-            )
+            commaList(tradeShip6Items)
         )
 
 @compiletime function createTrollMerchant()

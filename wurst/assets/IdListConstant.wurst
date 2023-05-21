@@ -45,6 +45,8 @@ public constant BEASTMASTER_CLASS_LIST = asList(
 
 public constant THIEF_CLASS_LIST = asList(
     UNIT_THIEF,
+    UNIT_ROGUE,
+    UNIT_TELETHIEF,
     UNIT_ESCAPE_ARTIST,
     UNIT_CONTORTIONIST,
     UNIT_ASSASSIN
@@ -85,11 +87,14 @@ public constant SUB_TROLL_UNIT_LIST = asList(
     UNIT_SHAPESHIFTER_WOLF,
     UNIT_DRUID,
     UNIT_ESCAPE_ARTIST,
+    UNIT_ROGUE,
+    UNIT_TELETHIEF,
     UNIT_CONTORTIONIST,
     UNIT_OBSERVER,
     UNIT_TRAPPER,
     UNIT_RADAR_GATHERER,
-    UNIT_HERB_MASTER
+    UNIT_HERB_MASTER,
+    UNIT_ALCHEMIST
 )
 
 public constant SUPERSUB_TROLL_UNIT_LIST = asList(
@@ -150,18 +155,19 @@ public constant DRAGON_LIST = asList(
 )
 
 public constant TROLL_INVENTORY_SLOT_3_LIST = new LinkedList<int>()
-    ..addAll(MAGE_CLASS_LIST)
-    ..addAll(HUNTER_CLASS_LIST)    
+   
 
 public constant TROLL_INVENTORY_SLOT_4_LIST = new LinkedList<int>()  
+    ..addAll(MAGE_CLASS_LIST)
+    ..addAll(HUNTER_CLASS_LIST) 
     ..addAll(PRIEST_CLASS_LIST)
     ..addAll(BEASTMASTER_CLASS_LIST)
 
 public constant TROLL_INVENTORY_SLOT_5_LIST = new LinkedList<int>()
-    ..addAll(THIEF_CLASS_LIST)
     ..addAll(SCOUT_CLASS_LIST)
 
 public constant TROLL_INVENTORY_SLOT_6_LIST = new LinkedList<int>()
+    ..addAll(THIEF_CLASS_LIST)
     ..addAll(GATHERER_CLASS_LIST)
 
 public constant CRAFTING_BUILDING_LIST = asList(

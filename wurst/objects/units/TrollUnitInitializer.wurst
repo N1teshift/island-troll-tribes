@@ -494,7 +494,7 @@ function createThief(int unitId) returns HeroDefinition
     return createBasicTroll(unitId)
         ..setNameEnhance("Thief")
         ..setAttackDamage(10)
-        ..setAttackSpeed(2.00)
+        ..setAttackSpeed(1.8)
         ..setModelFile(Units.darkTrollTrapper1)
         ..setIcons(Icons.bTNDarkTrollTrapper)
         ..setUnitSoundSet(Soundsets.iceTroll)
@@ -531,11 +531,34 @@ function createEscapeArtist(int unitId) returns HeroDefinition
         ..setTooltipExtended(TOOLTIP_ESCAPE_ARTIST)
         ..setProperNames(NAME_ESCAPE_ARTIST)
         ..setProperNamesUsed(3)
-        ..setHotkey("W")
+        ..setHotkey("Q")
         ..setAbilitiesEnhance(NORMAL_SPELLS_ESCAPE_ARTIST, HERO_SPELLS_ESCAPE_ARTIST)
 
 @compiletime function createEscapeArtist()
     createEscapeArtist(UNIT_ESCAPE_ARTIST)
+
+function createRogue(int unitId) returns HeroDefinition
+    return createSubTroll(unitId)
+        ..setNameEnhance("Rogue")
+        ..setAttackDamage(12)
+        ..setAttackSpeed(1.7)
+        ..setModelFile(Units.darkTroll1)
+        ..setIcons(Icons.bTNDarkTroll)
+        ..setUnitSoundSet(Soundsets.iceTroll)
+        ..setSpeedBase(300)
+        ..setButtonPositionX(1)
+        ..setButtonPositionY(0)
+        ..setScalingValue(1)
+        ..setSightRadiusDay(1400)
+        ..setSightRadiusNight(1800)
+        ..setTooltipExtended(TOOLTIP_ROGUE)
+        ..setProperNames(NAME_ESCAPE_ARTIST)
+        ..setProperNamesUsed(3)
+        ..setHotkey("Q")
+        ..setAbilitiesEnhance(NORMAL_SPELLS_ROGUE, HERO_SPELLS_ROGUE)
+
+@compiletime function createRogue()
+    createRogue(UNIT_ROGUE)
 
 
 function createContortionist(int unitId) returns HeroDefinition
@@ -560,6 +583,29 @@ function createContortionist(int unitId) returns HeroDefinition
 
 @compiletime function createContortionist()
     createContortionist(UNIT_CONTORTIONIST)
+
+function createTeleThief(int unitId) returns HeroDefinition
+    return createSubTroll(unitId)
+        ..setNameEnhance("Telethief")
+        ..setAttackDamage(11)
+        ..setAttackSpeed(1.75)
+        ..setModelFile(LocalUnits.troll_for_Super_Panda)
+        ..setIcons(LocalIcons.bTNContortionist)
+        ..setUnitSoundSet(Soundsets.iceTroll)
+        ..setSpeedBase(300)
+        ..setButtonPositionX(2)
+        ..setButtonPositionY(0)
+        ..setScalingValue(1)
+        ..setSightRadiusDay(1400)
+        ..setSightRadiusNight(1800)
+        ..setTooltipExtended(TOOLTIP_TELETHIEF)
+        ..setProperNames(NAME_CONTORTIONIST)
+        ..setProperNamesUsed(3)
+        ..setHotkey("W")
+        ..setAbilitiesEnhance(NORMAL_SPELLS_TELETHIEF, HERO_SPELLS_TELETHIEF)
+
+@compiletime function createTeleThief()
+    createTeleThief(UNIT_TELETHIEF)
 
 
 function createAssassin(int unitId) returns HeroDefinition
@@ -772,7 +818,7 @@ function createAlchemist(int unitId) returns HeroDefinition
         ..setProperNames("Waltuh")
         ..setProperNamesUsed(1)
         ..setHotkey("E")
-        ..setAbilitiesEnhance(NORMAL_SPELLS_ALCHEMIST, HERO_SPELLS_ALCHEMIST) //ABILITY_ALCHEMIST_ACID_BOMB NORMAL_SPELLS_ALCHEMIST
+        ..setAbilitiesEnhance(NORMAL_SPELLS_ALCHEMIST, HERO_SPELLS_ALCHEMIST)
 
 @compiletime function createAlchemist()
     createAlchemist(UNIT_ALCHEMIST)

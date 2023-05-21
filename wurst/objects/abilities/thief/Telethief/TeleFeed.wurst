@@ -1,0 +1,85 @@
+package TeleFeed
+
+// Standard-library imports:
+import Assets
+import BuffObjEditing
+import ClosureTimers
+import ClosureEvents
+import ClosureForGroups
+import ChannelAbilityPreset
+import GroupUtils
+import HashMap
+import HashSet
+import InstantDummyCaster
+import OnUnitEnterLeave
+import OrderIds
+
+// Third-party imports:
+import Lodash
+
+// Local imports:
+import LocalObjectIDs
+import ToolTipsUtils
+import UnitExtensions
+import DamageListeners
+import HealingSystem
+import ThiefsPocket
+import ColorUtils
+import LinkedList
+
+HashMap<int, real>foodItems = new HashMap<int,real>()
+    ..put(ITEM_COOKED_MEAT, 50.)
+    ..put(ITEM_BANANA, 38.)
+    ..put(ITEM_HONEYCOMB, 90.)
+
+
+let TT_TELE_FEED ="Feed a piece of food directly to your ally using dimentional magic."+
+                    "\n5 ".color(ENERGY_COLOR)+ "seconds cooldown."
+
+@compiletime function createTeleFeedAbility()
+    new ChannelAbilityPreset(ABILITY_TELE_FEED, 1, true)
+        ..presetTooltipNormal(lvl -> "Telefeed")
+        ..presetTooltipNormalExtended(lvl-> TT_TELE_FEED)        
+        ..presetCastingTime(lvl ->0.1)
+        ..presetCastRange(lvl -> 600)
+        ..presetCooldown(lvl -> 5)
+        ..presetHotkey("F")
+        ..setButtonPositionNormalX(3)
+        ..setButtonPositionNormalY(1)
+        ..presetTargetTypes(Targettype.UNIT)
+        ..setIconNormal(Icons.bTNMonsterLure)
+        ..presetTargetsAllowed(lvl ->commaList(
+            TargetsAllowed.ground,
+            TargetsAllowed.friend,
+            TargetsAllowed.vulnerable,
+            TargetsAllowed.invulnerable,
+            TargetsAllowed.alive,
+            TargetsAllowed.organic,
+            TargetsAllowed.hero,
+            TargetsAllowed.nonhero
+        )) 
+
+
+
+
+function onCast(unit caster, unit target)
+    let inventory = caster.getInventory()
+    for itm in inventory
+        if foodItems.has(itm.getTypeId())
+            let healingAmount = foodItems.get(itm.getTypeId())
+            new HealingInstance(target, healingAmount, HealingType.ITEM)
+        let charges = itm.getCharges()
+        if charges == 1
+            itm.remove()
+            return
+        itm.setCharges(charges-1)
+
+    
+
+
+init 
+    EventListener.onTargetCast(ABILITY_TELE_FEED) (unit caster, unit target) ->
+        flashEffect(Abilities.blinkTarget, target.getPos())
+        onCast(caster, target)        
+        
+    

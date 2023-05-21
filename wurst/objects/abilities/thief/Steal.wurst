@@ -1,0 +1,174 @@
+package Steal
+
+import Classes
+import LocalObjectIDs
+import HashMap
+import OnUnitEnterLeave
+import Items
+import LocalAssets
+import Icons
+import ObjectIds
+import AbilityObjEditing
+import UnitExtensions
+import InstantDummyCaster
+import ChannelAbilityPreset
+import Orders
+import RegisterEvents
+import ScrollSpells
+import ToolTipsUtils
+import ClosureEvents
+import SimError
+import Abilities
+import ClosureTimers
+import LinkedList
+import InventoryEvent
+import Transformation
+import HashSet
+import Merchants
+import ThiefsPocket
+import ColorUtils
+
+
+
+LinkedList<int>tradeShips = asList(UNIT_TRADE_SHIP_1,UNIT_TRADE_SHIP_2,UNIT_TRADE_SHIP_3,UNIT_TRADE_SHIP_4,UNIT_TRADE_SHIP_5,UNIT_TRADE_SHIP_6)
+
+HashMap<int, LinkedList<int>> tradeShipItemsHashMap = new HashMap<int, LinkedList<int>>()
+    ..put(UNIT_TRADE_SHIP_1, tradeShip1Items)
+    ..put(UNIT_TRADE_SHIP_2, tradeShip2Items)
+    ..put(UNIT_TRADE_SHIP_3, tradeShip3Items)
+    ..put(UNIT_TRADE_SHIP_4, tradeShip4Items)
+    ..put(UNIT_TRADE_SHIP_5, tradeShip5Items)
+    ..put(UNIT_TRADE_SHIP_6, tradeShip6Items)
+
+LinkedList<int>stealFromPlayesList = asList(ITEM_STONE, ITEM_ELK_HIDE, ITEM_MANA_CRYSTAL, ITEM_FLINT)
+
+let TT_STEAL = "Steal an item from a target. Different targets are allowed depending on the lvl of the Rogue:"+
+                "\n\nLvl 2".color(COLOR_GOLD)+ "- Can be used on thief's bush to find a hidden item."+
+                "\n\nLvl 3".color(COLOR_GOLD)+ "- Can be used on enemy trolls to steal a stone/hide/mana crystal/flint."+
+                "\n\nLvl 4".color(COLOR_GOLD)+ "- Can be used on a trading ship to steal a random item. You can only steal a single item from a ship."+
+                "\n "+"60 ".color(ENERGY_COLOR)+ "seconds cooldown"
+
+let TT_TELE_STEAL ="\n\nTele-thief's mastery over dimentional magic greatly increases range of this ability".color(ENERGY_COLOR)                
+
+
+@compiletime function createStealAbility()
+    new ChannelAbilityPreset(ABILITY_STEAL, 2, true)
+        ..setName("Steal")
+        ..setTooltipNormal(1, "Steal")
+        ..presetTooltipNormalExtended(lvl->TT_STEAL)
+        ..presetCastingTime(lvl ->0.1)
+        ..presetCastRange(lvl -> 150)
+        ..presetCooldown(lvl -> 60)
+        ..presetHotkey("Q")
+        ..setButtonPositionNormalX(0)
+        ..setButtonPositionNormalY(0)
+        ..presetTargetTypes(Targettype.UNIT)
+        ..setIconNormal(Icons.bTNPickUpItem)
+        ..presetTargetsAllowed(lvl ->commaList(
+            TargetsAllowed.ground,
+            TargetsAllowed.neutral,
+            TargetsAllowed.structure,
+            TargetsAllowed.invulnerable,
+            TargetsAllowed.vulnerable,
+            TargetsAllowed.enemies,
+            TargetsAllowed.hero,
+            TargetsAllowed.nonhero
+        )) 
+
+@compiletime function createTeleStealAbility()
+    new ChannelAbilityPreset(ABILITY_TELE_STEAL, 1, true)
+        ..setName("Steal")
+        ..setTooltipNormal(1, "Tele-Steal")
+        ..presetTooltipNormalExtended(lvl->TT_STEAL+TT_TELE_STEAL)
+        ..presetCastingTime(lvl ->0.1)
+        ..presetCastRange(lvl -> 450)
+        ..presetCooldown(lvl -> 60)
+        ..presetHotkey("Q")
+        ..setButtonPositionNormalX(0)
+        ..setButtonPositionNormalY(0)
+        ..presetTargetTypes(Targettype.UNIT)
+        ..setIconNormal(Icons.bTNPickUpItem)
+        ..setBaseOrderID(1, "breathoffrost") 
+        ..setOrderStringUseTurnOn("breathoffrost")
+        ..presetTargetsAllowed(lvl ->commaList(
+            TargetsAllowed.ground,
+            TargetsAllowed.neutral,
+            TargetsAllowed.structure,
+            TargetsAllowed.invulnerable,
+            TargetsAllowed.vulnerable,
+            TargetsAllowed.enemies,
+            TargetsAllowed.hero,
+            TargetsAllowed.nonhero
+        ))         
+
+public function stealFromThiefsBush(unit caster, unit target) returns item
+    let itm = generateThiefsBushItem(caster)
+    stolenItems.add(itm)
+    caster.addItemHandle(itm)
+    return itm
+
+function stealFromTroll(unit caster, unit target)
+    if not caster.getLevel()>=3
+        simError(caster.getOwner(), "You need to be level 3 to be able to do that")
+        doAfter(ANIMATION_PERIOD) ->   
+            caster.endAbilityCooldown(ABILITY_STEAL)
+        return
+    for stealableItemId in stealFromPlayesList
+        let itm = target.getItemById(stealableItemId)
+        if itm != null
+            target.removeItem(itm)
+            stolenItems.add(itm)
+            caster.addItemHandle(itm)
+            print("found")
+            return
+    doAfter(ANIMATION_PERIOD) ->   
+        caster.endAbilityCooldown(ABILITY_STEAL)
+
+
+        
+        
+
+function stealFromTradeShip(unit caster, unit target)
+    if not caster.getLevel()>=3
+        simError(caster.getOwner(), "You need to be level 4 to be able to do that")
+        return
+    let instance = instances.get(caster)
+    if instance == null
+        return
+    if instance.robbedTradingShips.has(target)
+        simError(caster.getOwner(), "You have already stolen from this ship")
+        doAfter(ANIMATION_PERIOD) ->   
+            caster.endAbilityCooldown(ABILITY_STEAL)
+        return
+    for tradeShip in tradeShips
+        if tradeShip == target.getTypeId()
+            let itemList = tradeShipItemsHashMap.get(tradeShip)
+            let itemId = itemList.getRandomElement()
+            let itm = createItem(itemId, caster.getPos())
+            stolenItems.add(itm)
+            caster.addItemHandle(itm)
+            instance.addRobbedShip(target)
+            
+
+function onSteal(unit caster, unit target)
+    if target.getTypeId() == UNIT_THIEFS_BUSH
+        stealFromThiefsBush(caster, target)
+    else if target.isTroll()
+        stealFromTroll(caster, target)  
+    else if tradeShips.has(target.getTypeId())
+        stealFromTradeShip(caster, target)
+    else 
+        doAfter(ANIMATION_PERIOD) ->  
+            caster.endAbilityCooldown(ABILITY_STEAL)
+
+
+
+init
+    EventListener.onTargetCast(ABILITY_STEAL) (unit caster, unit target) ->
+        onSteal(caster, target)
+
+    EventListener.onTargetCast(ABILITY_TELE_STEAL) (unit caster, unit target) ->
+        flashEffect(Abilities.blinkTarget, target.getPos())
+        onSteal(caster, target)
+
+

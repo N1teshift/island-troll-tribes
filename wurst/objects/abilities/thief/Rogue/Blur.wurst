@@ -20,6 +20,8 @@ import Lodash
 // Local imports:
 import LocalObjectIDs
 import ToolTipsUtils
+import UnitExtensions
+import DamageListeners
 
 let DAZZLE_ABILITY_ID = compiletime(ABIL_ID_GEN.next())
 let DAZZLE_BUFF_ID    = compiletime(BUFF_ID_GEN.next())
@@ -29,12 +31,15 @@ let COOLDOWN = 40.
 let MANACOST = 30
 
 let CHANCE_TO_MISS = .3
+let ATTACK_SPEED_BONUS = .3
 let DURATION = 11.
 let DURATION_DAZZLE = 3.
 let TOOLTIP_NORM = "Blur"
-let TOOLTIP_EXTENDED = "Makes the Escape Artist sprint as fast as he can, leaving blurs. If an enemy comes in contact "+
-                       "with blurs, its attack accuracy is temporarily decreased by {0}."
-                       .format(CHANCE_TO_MISS.toToolTipOrange())+makeToolTipDuration(DURATION, COOLDOWN)
+let TOOLTIP_EXTENDED = "Makes the Rogue move as fast as he can, leaving blurs.\nIf an enemy comes in contact "+ //Makes the Rogue move as fast as he can, leaving blurs. While active Rogue gains {0} increased attack speed, movement speed
+                       "with blurs, its attack accuracy is temporarily decreased by {0}.".format(CHANCE_TO_MISS.toToolTipOrange())+
+                       "\nWhile active, Rogue gains {0}".format(ATTACK_SPEED_BONUS.toToolTipOrange())+"increased attack speed."+
+                       "\nEvery time Rogue gets hit by a troll, cooldown is reduced by 1.\n"+
+                        makeToolTipDuration(DURATION, COOLDOWN)
 
 let EA_AFTER_IMAGE = compiletime(UNIT_ID_GEN.next())
 let AS_AFTER_IMAGE = compiletime(UNIT_ID_GEN.next())
@@ -129,6 +134,12 @@ class Blur extends AbilityDefinitionItemSpeed
         this.setBuffs(1, toRawCode(BLUR_BUFF_ID))
         this.setMovementSpeedIncrease(1, 2.0)
 
+function createBlurAttackSpeedBuff()
+    new AbilityDefinitionAttackSpeedIncrease(ABILITY_BLUR_ATTACK_SPEED)
+        ..setAttackSpeedIncrease(1, ATTACK_SPEED_BONUS)
+        ..setName("Attack Speed Increase 30")
+        ..setEditorSuffix("(Wurst)")
+
 
 @compiletime function createBlur()
     new Blur(ABILITY_BLUR, "W", new Pair(1, 0))
@@ -137,6 +148,7 @@ class Blur extends AbilityDefinitionItemSpeed
     new AfterImageUnit(AS_AFTER_IMAGE, Units.darkTrollTrapper1)
     createDazzleBuff()
     createBlurBuff()
+    createBlurAttackSpeedBuff()
 
 class State
     // The group of in-effect afterimages for this casting.
@@ -158,6 +170,7 @@ class State
     private CallbackCounted callback
 
     construct(unit caster)
+        
         // Decode the type of unit used for the afterimages.
         afterimageType = EA_AFTER_IMAGE
 
@@ -170,6 +183,7 @@ class State
         // Cache the caster for later use.
         this.caster = caster
 
+        caster.addAbility(ABILITY_BLUR_ATTACK_SPEED)
         // Cache the owner.
         owner = caster.getOwner()
 
@@ -196,6 +210,7 @@ class State
         // Release the groups.
         afterimages.release()
         lastTargets.release()
+        caster.removeAbility(ABILITY_BLUR_ATTACK_SPEED)
 
         // Remove this from the global state.
         if STATES.get(caster)..remove(this).size() == 0
@@ -318,10 +333,22 @@ class State
             and not target.isType(UNIT_TYPE_STRUCTURE)
         )
 
+
+function updateCooldown(unit caster)
+    let remainingCd = caster.getAbilityCooldownRemaining(ABILITY_BLUR)
+    caster.endAbilityCooldown(ABILITY_BLUR)
+    nullTimer() -> 
+        caster.startAbilityCooldown(ABILITY_BLUR, remainingCd-1)
+    caster.setAbilityCooldown(ABILITY_BLUR, 1, COOLDOWN)
+
 init
     EventListener.onCast(ABILITY_BLUR) caster ->
         // All work is managed by the state.
         new State(caster)
+
+    DamageEvent.addListener(DamageListenerPriorities.PANTHER_INSTINCT castTo int) ->
+        if DamageEvent.getSource().isTroll() and DamageEvent.getType() == DamageType.ATTACK and DamageEvent.getTarget().getTypeId() == UNIT_ESCAPE_ARTIST
+            updateCooldown(DamageEvent.getTarget())
 
     onLeave() ->
         State.cancel(getEnterLeaveUnit())

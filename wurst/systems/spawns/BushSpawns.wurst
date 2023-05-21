@@ -12,6 +12,8 @@ import UnitExtensions
 
 let BUSH_SPAWN_PERIOD = 0.1
 
+public BushPool thiefsBush
+
 class BushPool
     // The global collection of all bushes.
     static let bushes = CreateGroup()
@@ -77,7 +79,7 @@ public function addItemsToBushes()
             iter.close()
 
 init
-    new BushPool(UNIT_THIEFS_BUSH, 'd106')
+    thiefsBush = new BushPool(UNIT_THIEFS_BUSH, 'd106')
         ..addItem(ITEM_NETS,           15)
         ..addItem(ITEM_MANA_CRYSTAL,   15)
         ..addItem(ITEM_SMOKE_BOMB,     15)

@@ -12,7 +12,7 @@ import LocalAssets
 
 let TT = "Beastmaster's pet has undergone training increasing it's movement speed to match hero's and reducing its collision size."
 
-@compiletime function createPanic() returns AbilityDefinitionHardenedSkin
+@compiletime function createAnimalTraining() returns AbilityDefinitionHardenedSkin
     return new AbilityDefinitionHardenedSkin(ABILITY_ANIMAL_TRAINING)
         ..setIconNormal(LocalIcons.bTNAnimalTraining)
         ..setButtonPositionNormalY(1)

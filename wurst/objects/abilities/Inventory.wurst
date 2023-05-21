@@ -39,6 +39,11 @@ function createInventoryAbilityUnit(int abilId) returns AbilityDefinitionInvento
         ..presetItemCapacity(lvl -> 5)
         ..setName("Inventory Unit 5 Slot")
 
+@compiletime function createInventoryUnit6Slott() returns AbilityDefinitionInventory
+    return createInventoryAbilityUnit(ABILITY_INVENTORY_6_SLOT)
+        ..presetItemCapacity(lvl -> 6)
+        ..setName("Inventory Unit 6 Slot")
+
 @compiletime function createInventoryBuilding2Slot() returns AbilityDefinitionInventory
     return createInventoryAbilityBuilding(ABILITY_INVENTORY_BUILDING_2_SLOT)
         ..presetItemCapacity(lvl -> 2)

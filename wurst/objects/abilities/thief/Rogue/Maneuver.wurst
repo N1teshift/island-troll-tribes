@@ -1,0 +1,50 @@
+package Maneuver
+
+// Standard-library imports:
+import Assets
+import ClosureEvents
+import ChannelAbilityPreset
+
+// Local imports:
+import LocalObjectIDs
+import ColorUtils
+
+let TT_MANEUVER = "Attempt a close range combat maneuver, swapping places with an ally."+
+                    "\n30 ".color(ENERGY_COLOR)+ "sconds cooldown"
+
+@compiletime function createManeuverAbility()
+    new ChannelAbilityPreset(ABILITY_MANEUVER, 1, true)
+        ..presetTooltipNormal(lvl->"Maneuver")
+        ..presetTooltipNormalExtended(lvl->TT_MANEUVER)             
+        ..presetCastingTime(lvl ->0.1)
+        ..presetCastRange(lvl -> 150)
+        ..presetCooldown(lvl -> 30)
+        ..presetHotkey("F")
+        ..setButtonPositionNormalX(3)
+        ..setButtonPositionNormalY(1)
+        ..presetTargetTypes(Targettype.UNIT)
+        ..setIconNormal(Icons.bTNDispelMagic)
+        ..presetTargetsAllowed(lvl ->commaList(
+            TargetsAllowed.ground,
+            TargetsAllowed.neutral,
+            TargetsAllowed.vulnerable,
+            TargetsAllowed.alive,
+            TargetsAllowed.organic,
+            TargetsAllowed.allies,
+            TargetsAllowed.friend
+        )) 
+
+function onCast(unit caster, unit target)
+    let casterPos = caster.getPos()
+    let targetPos = target.getPos()
+    caster.setXY(targetPos)
+    target.setXY(casterPos)
+    flashEffect(Abilities.blinkCaster, casterPos)
+    flashEffect(Abilities.blinkTarget, targetPos)
+
+
+init
+    EventListener.onTargetCast(ABILITY_MANEUVER) (unit caster, unit target) ->
+        onCast(caster, target)
+
+        

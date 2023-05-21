@@ -10,7 +10,7 @@ let MAX_RANGE = 600.
 let COOLDOWN = 30.
 let MANACOST = 0
 let DURATION = 0
-let TOOLTIP_NORM = "Teleport"
+let TOOLTIP_NORM = "Blink"
 let TOOLTIP_EXTENDED = "The thief teleports a short distance. Has {0} seconds cooldown.".format(COOLDOWN.toToolTipLightBlue())
 
 class Teleport extends AbilityDefinitionWardenBlink

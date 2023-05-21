@@ -167,6 +167,15 @@ function AbilityDefinition.setRequiredTrollLevel(int level, boolean requiresSub)
         ..presetHotkey("E")
         ..setBaseOrderID(1, "manashieldoff")
 
+@compiletime function createUpgradeAbilityRogue() returns ChannelAbilityPreset
+    return createUpgradeAbility(ABILITY_ROGUE)
+        ..setUpgradeTarget("Rogue")
+        ..presetTooltipNormalExtended(lvl -> TOOLTIP_ROGUE)
+        ..setIconNormal(Icons.bTNDarkTroll)
+        ..setRequiredTrollLevel(6, false)
+        ..presetHotkey("Q")
+        ..setBaseOrderID(1, "manaflareon")
+
 @compiletime function createUpgradeAbilityEscapeArtist() returns ChannelAbilityPreset
     return createUpgradeAbility(ABILITY_ESCAPE_ARTIST)
         ..setUpgradeTarget("Escape Artist")
@@ -180,6 +189,15 @@ function AbilityDefinition.setRequiredTrollLevel(int level, boolean requiresSub)
     return createUpgradeAbility(ABILITY_CONTORTIONIST)
         ..setUpgradeTarget("Contortionist")
         ..presetTooltipNormalExtended(lvl -> TOOLTIP_CONTORTIONIST)
+        ..setIconNormal(LocalIcons.bTNContortionist)
+        ..setRequiredTrollLevel(6, false)
+        ..presetHotkey("W")
+        ..setBaseOrderID(1, "manaflareoff")
+
+@compiletime function createUpgradeAbilityTelethief() returns ChannelAbilityPreset
+    return createUpgradeAbility(ABILITY_TELETHIEF)
+        ..setUpgradeTarget("Telethief")
+        ..presetTooltipNormalExtended(lvl -> TOOLTIP_TELETHIEF)
         ..setIconNormal(LocalIcons.bTNContortionist)
         ..setRequiredTrollLevel(6, false)
         ..presetHotkey("W")

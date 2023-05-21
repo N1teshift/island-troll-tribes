@@ -1,0 +1,107 @@
+package DimentionalPocket
+
+// Standard-library imports:
+import Assets
+import BuffObjEditing
+import ClosureTimers
+import ClosureEvents
+import ClosureForGroups
+import ChannelAbilityPreset
+import GroupUtils
+import HashMap
+import HashSet
+import InstantDummyCaster
+import OnUnitEnterLeave
+import OrderIds
+
+// Third-party imports:
+import Lodash
+
+// Local imports:
+import LocalObjectIDs
+import ToolTipsUtils
+import UnitExtensions
+import DamageListeners
+import HealingSystem
+import ThiefsPocket
+import ColorUtils
+import LinkedList
+import InventoryEvent
+
+
+
+
+LinkedList<item>conjuredItems = new LinkedList<item>()
+
+let TT_TELE_FEED ="Telethif uses his dimentional magic to reach into a random thief's on the map bush and steal a consumable item."+
+                    "\n Items stolen this can only be held in thief's pocket. Casting this ability will replace an item currently held in thief's pocket."+
+                    "\n At lvl 4 Telethief acquires mastery of this ability, doubling the charges of the stolen item."+
+                    "\n60 ".color(ENERGY_COLOR)+ "seconds cooldown."
+
+@compiletime function createDimentionalPocketAbility()
+    new ChannelAbilityPreset(ABILITY_DIMENTIONAL_POCKET, 1, true)
+        ..presetTooltipNormal(lvl -> "Dimentional pocket")
+        ..presetTooltipNormalExtended(lvl-> TT_TELE_FEED)        
+        ..presetCastingTime(lvl ->0.1)
+        ..presetCooldown(lvl -> 1)
+        ..presetHotkey("W")
+        ..setButtonPositionNormalX(1)
+        ..setButtonPositionNormalY(0)
+        ..setIconNormal(Icons.bTNControlMagic)
+
+
+function conjureItem(unit caster) returns item
+    var itm = generateThiefsBushItem(caster)
+    if itm.getTypeId() == ITEM_MANA_CRYSTAL or itm.getTypeId() == ITEM_SPIRIT_WATER
+        itm.remove()
+        doAfter(ANIMATION_PERIOD) ->             
+        itm = conjureItem(caster)
+    else
+        return itm
+    return itm
+
+
+function onItemMoved(unit troll, item itm)
+    if conjuredItems.has(itm)
+        conjuredItems.remove(itm)
+        itm.remove()
+        flashEffect(Abilities.blinkCaster, troll.getPos())
+
+function onItemDropped(unit troll, item itm)
+    if conjuredItems.has(itm)
+        conjuredItems.remove(itm)
+        nullTimer() ->            
+            let pos = itm.getPos()
+            itm.remove()
+            flashEffect(Abilities.blinkCaster, pos)
+        
+function onCast(unit caster)
+    let itmInThiefsPocket =caster.itemInSlot(5)
+    itmInThiefsPocket.remove()
+    let itm = conjureItem(caster)
+    itm.setPawnable(false)
+    nullTimer() -> 
+        stolenItems.add(itm)
+        conjuredItems.add(itm)
+    if itm.getTypeId() != ITEM_THIEF_MED and caster.getLevel() >=4
+        let charges = itm.getCharges()
+        itm.setCharges(charges*2)
+    if itm != null
+        caster.addItemHandleToSlot(itm, 5)
+    flashEffect(Abilities.tomeOfRetrainingCaster, caster.getPos())
+
+
+    
+
+
+init
+    registerInventoryEvent(EVENT_ITEM_INVENTORY.MOVE)->
+        onItemMoved(getInventoryManipulatingUnit(), getInventoryManipulatedItem())    
+
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_DROP_ITEM)->
+        onItemDropped(GetTriggerUnit(), GetManipulatedItem())
+
+    EventListener.onCast(ABILITY_DIMENTIONAL_POCKET) (unit caster) ->
+        onCast(caster)        
+        
+    

@@ -30,7 +30,7 @@ constant TT_ELK_TROPHY_HIDE ="\n\nElk hide: "+
                              "\n +20 ".color(ENERGY_COLOR)+"movement speed."
 constant TT_WOLF_TROPHY_HIDE="\n\nWolf hide: "+
                              "\n +2 ".color(ENERGY_COLOR)+"armor."+ 
-                             "\n +15% ".color(ENERGY_COLOR)+"attack speed."
+                             "\n +10% ".color(ENERGY_COLOR)+"attack speed."
 constant TT_BEAR_TROPHY_HIDE="\n\nBear hide: "+
                              "\n +4 ".color(ENERGY_COLOR)+"armor."                    
 constant TT_TROPHY ="A hunter's trophy, worn on the back to display his combat prowess."
@@ -43,7 +43,7 @@ constant TT_LIST = asList(TT_ELK_TROPHY_HIDE,
                           TT_BEAR_TROPHY_HIDE)
 
 constant ABILITY_ELK_TROPHY_HIDE = asList(ABILITY_MOVESPEED_20, ABILITY_ARMOR_BONUS_1)
-constant ABILITY_WOLF_TROPHY_HIDE = asList(ABILITY_ATTACK_SPEED_15, ABILITY_ARMOR_BONUS_2)
+constant ABILITY_WOLF_TROPHY_HIDE = asList(ABILITY_ATTACK_SPEED_10, ABILITY_ARMOR_BONUS_2)
 constant ABILITY_BEAR_TROPHY_HIDE = asList(ABILITY_ARMOR_BONUS_4)
 constant TROPHY_HIDE_ABILITY_LIST = asList(ABILITY_ELK_TROPHY_HIDE,
                                            ABILITY_WOLF_TROPHY_HIDE,
@@ -119,7 +119,7 @@ class TrophyHide
     construct(unit hero)
         this.hero = hero
         //hero.removeAbility(ABILITY_INVENTORY_3_SLOT)
-        hero.addPermanentAbility(ABILITY_INVENTORY_4_SLOT)
+       // hero.addPermanentAbility(ABILITY_INVENTORY_4_SLOT)
         hero.addItemToSlot(ITEM_HUNTER_TROPHY_HIDE_DUMMY, 3)
         nullTimer() ->            
             hunterDummyItem = hero.getItemById(ITEM_HUNTER_TROPHY_HIDE_DUMMY)   

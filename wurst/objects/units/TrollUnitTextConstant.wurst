@@ -50,6 +50,11 @@ public constant trollInventoryAbilityMap = new IterableMap<int, LinkedList<int>>
 ..put(ABILITY_INVENTORY_5_SLOT, TROLL_INVENTORY_SLOT_5_LIST)
 ..put(AbilityIds.inventory, TROLL_INVENTORY_SLOT_6_LIST)
 
+public constant LinkedList<int> trollInventoryPseudoSlotList  = new LinkedList<int>()
+                                                            ..addAll(MAGE_CLASS_LIST)
+                                                            ..addAll(HUNTER_CLASS_LIST)
+                                                            ..addAll(THIEF_CLASS_LIST)
+
 // Basic Troll Spells
 public constant BASIC_TROLL_SPELLS = commaList(ABILITY_PANIC,ABILITY_SLEEP_OUTSIDE,ABILITY_BUILDING_CRAFT_SPELLBOOK_ID,LocalAbilityIds.corpseGrab0,LocalAbilityIds.corpseConsume,ABILITY_HERO_GLOW)
 
@@ -60,15 +65,15 @@ public constant HERO_SPELLS_PRIEST       = commaList(ABILITY_PRIEST_SPELLBOOK, A
 // The first ability is just a placeholder that is stripped during creation of the class menu.
 // TODO: Fix this hack by properly listing out abilities and class selection separately.
 public constant HERO_SPELLS_BEASTMASTER = commaList(ABILITY_SPIRIT_BEAST,     ABILITY_SHAPESHIFTER,   ABILITY_DRUID)
-public constant HERO_SPELLS_THIEF        = commaList(ABILITY_CLOAK,            ABILITY_ESCAPE_ARTIST,  ABILITY_CONTORTIONIST,ABILITY_ASSASSIN)
+public constant HERO_SPELLS_THIEF        = commaList(ABILITY_CLOAK,            ABILITY_ROGUE,  ABILITY_TELETHIEF,   ABILITY_ASSASSIN)
 public constant HERO_SPELLS_SCOUT        = commaList(ABILITY_REVEAL_ID,        ABILITY_OBSERVER,       ABILITY_TRAPPER,      ABILITY_SPY)
 public constant HERO_SPELLS_GATHERER     = commaList(ABILITY_ITEM_RADAR,       ABILITY_RADAR_GATHERER, ABILITY_HERB_MASTER,  ABILITY_OMNIGATHERER, ABILITY_ALCHEMIST)
 // Unsub Normal Spells
 public constant  NORMAL_SPELLS_HUNTER       = commaList(ABILITY_HUNTER_WEB)
 public constant  NORMAL_SPELLS_MAGE         = commaList(ABILITY_NEGATIVE_BLAST)
 public constant  NORMAL_SPELLS_PRIEST       = commaList(ABILITY_THE_GLOW)
-public constant  NORMAL_SPELLS_BEASTMASTER = commaList(ABILITY_PET_SPELLS,ABILITY_SPIRIT_BEAST)
-public constant  NORMAL_SPELLS_THIEF        = commaList(ABILITY_TELEPORT)
+public constant  NORMAL_SPELLS_BEASTMASTER  = commaList(ABILITY_PET_SPELLS,ABILITY_SPIRIT_BEAST)
+public constant  NORMAL_SPELLS_THIEF        = commaList(ABILITY_TELEPORT, ABILITY_THIEF_SPELLBOOK)
 public constant  NORMAL_SPELLS_SCOUT        = commaList(ABILITY_PING_ENEMY)
 public constant  NORMAL_SPELLS_GATHERER     = commaList(ABILITY_SALVE_RECIPE)
 
@@ -80,6 +85,8 @@ public constant HERO_SPELLS_HYPNOTIST      = commaList(ABILITY_HYPNOTIST_SPELLBO
 public constant HERO_SPELLS_BOOSTER        = commaList(ABILITY_BOOSTER_SPELLBOOK,          ABILITY_SAGE)
 public constant HERO_SPELLS_MASTER_HEALER  = commaList(ABILITY_MASTER_HEALER_SPELLBOOK,    ABILITY_SAGE)
 public constant HERO_SPELLS_ESCAPE_ARTIST  = commaList(ABILITY_ESCAPE_ARTIST_SPELLBOOK,    ABILITY_ASSASSIN)
+public constant HERO_SPELLS_ROGUE          = commaList(ABILITY_ROGUE_SPELLBOOK,            ABILITY_ASSASSIN)
+public constant HERO_SPELLS_TELETHIEF      = commaList(ABILITY_TELETHIEF_SPELLBOOK,        ABILITY_ASSASSIN)
 public constant HERO_SPELLS_CONTORTIONIST  = commaList(ABILITY_CONTORTIONIST_SPELLBOOK,    ABILITY_ASSASSIN)
 public constant HERO_SPELLS_TRAPPER        = commaList(ABILITY_TRAPPER_SPELLBOOK,          ABILITY_SPY)
 public constant HERO_SPELLS_OBSERVER       = commaList(ABILITY_OBSERVER_WARD_AREA,         ABILITY_SPY)
@@ -95,9 +102,11 @@ public constant NORMAL_SPELLS_ELEMENTALIST   = commaList(ABILITY_SUB_MAGE_INHERI
 public constant NORMAL_SPELLS_HYPNOTIST      = commaList(ABILITY_SUB_MAGE_INHERITED_SPELLBOOK)
 public constant NORMAL_SPELLS_BOOSTER        = commaList(ABILITY_SUB_PRIEST_SPELLBOOK)
 public constant NORMAL_SPELLS_MASTER_HEALER  = commaList(ABILITY_SUB_PRIEST_SPELLBOOK)
-public constant NORMAL_SPELLS_DRUID          = commaList(ABILITY_PET_SPELLS)
+public constant NORMAL_SPELLS_DRUID          = commaList(ABILITY_PET_SPELLS)    
 public constant NORMAL_SPELLS_ESCAPE_ARTIST  = commaList(ABILITY_TELEPORT)
+public constant NORMAL_SPELLS_ROGUE          = commaList(ABILITY_TELEPORT)
 public constant NORMAL_SPELLS_CONTORTIONIST  = commaList(ABILITY_TELEPORT)
+public constant NORMAL_SPELLS_TELETHIEF      = commaList(ABILITY_TELEPORT)
 public constant NORMAL_SPELLS_TRAPPER        = commaList(ABILITY_GREATER_REVEAL_ID)
 public constant NORMAL_SPELLS_OBSERVER       = commaList(ABILITY_OBSERVER_SPELLBOOK,ABILITY_GREATER_REVEAL_ID)
 public constant NORMAL_SPELLS_RADAR_GATHERER = commaList(ABILITY_RADAR_GATHERER_SPELLBOOK)
@@ -229,9 +238,19 @@ public constant  TOOLTIP_ESCAPE_ARTIST   = "" +
     "The Escape Artist is adept at using pure physical power to escape from enemies. "+
     SUBCLASS_WARNING+DIFFICULTY_EASY
 
+public constant TOOLTIP_ROGUE            = "" +
+    "Rogue has developed formidable combat skills as well as adapted his thief's skills to help him in combat. "+
+    "Rogue is adept at physical combat and maneuvering."+
+    SUBCLASS_WARNING+DIFFICULTY_EASY
+
 public constant  TOOLTIP_CONTORTIONIST   = "" +
     "When a thief decides that the best way to steal is by using magic, he becomes a Contortionist. The Contortionist is "+
     "adept at evading enemies through magic spells. "+
+    SUBCLASS_WARNING+DIFFICULTY_MEDIUM
+
+public constant TOOLTIP_TELETHIEF       = "" +
+    "When a thief decides that the best way to steal is by using magic, he becomes a TeleThief. TeleThief has "+
+    "dimentional magic, providing combat utility to his thief abilities  "+
     SUBCLASS_WARNING+DIFFICULTY_MEDIUM
 
 public constant  TOOLTIP_OBSERVER        = "" +
@@ -318,6 +337,8 @@ public constant trollIcons = new HashMap<int,string>()
     ..put(UNIT_SAGE,                 Icons.bTNForestTrollShadowPriest)
     ..put(UNIT_THIEF,                Icons.bTNDarkTrollTrapper)
     ..put(UNIT_ESCAPE_ARTIST,        Icons.bTNDarkTroll)
+    ..put(UNIT_ROGUE,                Icons.bTNDarkTroll)
+    ..put(UNIT_TELETHIEF,            LocalIcons.bTNContortionist)
     ..put(UNIT_CONTORTIONIST,        LocalIcons.bTNContortionist)
     ..put(UNIT_ASSASSIN,             Icons.bTNDarkTrollTrapper)
     ..put(UNIT_SCOUT,                LocalIcons.bTNScout)
@@ -328,4 +349,4 @@ public constant trollIcons = new HashMap<int,string>()
     ..put(UNIT_RADAR_GATHERER,       LocalIcons.bTNTerrorTroll)
     ..put(UNIT_HERB_MASTER,          Icons.bTNIceTrollShadowPriest)
     ..put(UNIT_OMNIGATHERER,         LocalIcons.bTNTerrorTroll)
-    ..put(UNIT_ALCHEMIST,            Icons.bTNTemp)
+    ..put(UNIT_ALCHEMIST,            LocalIcons.bTNAlchemist)
