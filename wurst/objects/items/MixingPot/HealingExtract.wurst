@@ -11,13 +11,19 @@ import LocalItemObjEditing
 import LocalObjectIDs
 import ToolTipsUtils
 import ClosureEvents
+import ClosureTimers
+import HealingSystem
+import BuffObjEditing
+import DamageEvent
+import DamageListeners
 
 public constant POT_HEAL = 80.
-public constant CAST_RANGE = 400.
+public constant CAST_RANGE = 600.
 public constant NAME = "Healing Extract"
 public constant ICON =Icons.bTNLesserRejuvPotion
 public constant COOLDOWN = 5.
 public constant DURATION = 10.
+let HEAL_BUFF_TT   = "This unit benefits from Health Rejuvenation; it is healing health points over time." 
 public constant TARGETS_ALLOWED = commaList(
                             TargetsAllowed.friend,
                             TargetsAllowed.ground,
@@ -33,17 +39,23 @@ public constant TT_HEALING_POTION = "" +
     "Instantly restores {0} Health point to a target ally."
     .format(POT_HEAL.toToolTipGreen())
 
-@compiletime function createAbil() returns ChannelAbilityPreset
-    return createItemChannelCast(ABILITY_HEALING_EXTRACT)
+@compiletime function createAbilityRejuvenationHealth() returns AbilityDefinitionRejuvinationcreep
+    return new AbilityDefinitionRejuvinationcreep(ABILITY_HEALING_EXTRACT)
     ..setName(NAME)
-    ..presetTargetTypes(Targettype.UNIT)
+    ..setBuffs(1, BUFF_HEALING_EXTRACT.toRawCode())       
+    //..presetTargetTypes(Targettype.UNIT)
+    ..setArtTarget(Abilities.scroll_Regen_Target)
+    ..setArtEffect("")
+    ..setArtSpecial("")
+    ..setHitPointsGained(1, 1)
+    ..setManaPointsGained(1, 0)
     ..setManaCost(1, 0)
     ..setCooldown(1, 0)
-    ..setArtTarget(Abilities.healingSalveTarget)
+    //..setArtTarget(Abilities.healingSalveTarget)
     ..setCastRange(1, CAST_RANGE)
     ..setTargetsAllowed(1, TARGETS_ALLOWED)
 
-@compiletime function createHealingPotion() returns ItemDefinition
+@compiletime function createHealingExtract() returns ItemDefinition
     return createPerishableItem(ITEM_HEALING_EXTRACT)
         ..setInterfaceIcon(ICON)
         ..setModelUsed(LocalItems.potionPurpleLesser)
@@ -51,19 +63,36 @@ public constant TT_HEALING_POTION = "" +
         ..setTooltipExtended(TT_HEALING_POTION)
         ..setDescription(TT_HEALING_POTION)
         ..setLumberCost(10)
-        ..setAbilities(commaList(ABILITY_HEALING_POTION))
+        ..setAbilities(commaList(ABILITY_HEALING_EXTRACT))
         ..setScalingValue(0.7)
         ..setCooldownGroup(commaList(ABILITY_HEALING_POTION))
         ..setStockReplenishInterval(120)
         ..setNumberofCharges(2)
 
-function onHealingExtract(unit target)
-    
-    
-    
+@compiletime function createBuffRejuvenationHealth() returns BuffDefinition
+    return new BuffDefinition(BUFF_HEALING_EXTRACT, BuffIds.rejuvenation) // Rejuvination
+        ..setName(1, "Healing Extract")
+        ..setIcon(Icons.bTNReplenishHealth)
+        ..setArtTarget(1, Abilities.scroll_Regen_Target)
+        ..setTooltipNormal(1, "Health Rejuvenation")
+        ..setTooltipNormalExtended(1, HEAL_BUFF_TT)
+        ..setEditorSuffix(1, "(Wurst)")
 
+function onHealingExtract(unit caster, unit target)
+    doPeriodicallyTimed(ANIMATION_PERIOD, DURATION) (CallbackCounted cb) ->
+        if not target.hasAbility(BUFF_HEALING_EXTRACT)
+            destroy cb
+        new HealingInstance(target, caster,  (POT_HEAL/DURATION)*ANIMATION_PERIOD, HealingType.ITEM, false)
+        
+        
 
 init
-    EventListener.onTargetCast(ABILITY_HEALING_POTION) (unit caster, unit target) ->
-        onHealingExtract(target)
+    EventListener.onTargetCast(ABILITY_HEALING_EXTRACT) (unit caster, unit target) ->
+        doAfter(ANIMATION_PERIOD) -> 
+            onHealingExtract(caster, target)
+        
+    DamageEvent.addListener(DamageListenerPriorities.PANTHER_INSTINCT castTo int) ->
+        if DamageEvent.getTarget().hasAbility(BUFF_HEALING_EXTRACT)
+            and DamageEvent.getType() == DamageType.ATTACK or DamageEvent.getType() == DamageType.SPELL
+            DamageEvent.getTarget().removeAbility(BUFF_HEALING_EXTRACT)
         

@@ -4,6 +4,13 @@ package LocalAssets
 import ObjectIdGenerator
 
 public class LocalIcons
+    static constant bTNCoconut = "ReplaceableTextures\\CommandButtons\\BTNCoconut.blp"
+    static constant bTNTeleStealMeat = "ReplaceableTextures\\CommandButtons\\BTNTeleStealMeat.blp"
+    static constant bTNTeleFeedMeat = "ReplaceableTextures\\CommandButtons\\BTNTeleFeedMeat.blp"
+    static constant bTNTeleSteal = "ReplaceableTextures\\CommandButtons\\BTNTeleSteal.blp"
+    static constant bTNThiefPouch = "ReplaceableTextures\\CommandButtons\\BTNThiefPouch.blp"
+    static constant bTNStealMeat = "ReplaceableTextures\\CommandButtons\\BTNStealMeat.blp"
+    static constant bTNFeedMeat = "ReplaceableTextures\\CommandButtons\\BTNFeedMeat.blp"
     static constant bTNAnimalTraining = "ReplaceableTextures\\CommandButtons\\BTNAnimalTraining.blp"
     static constant bTNWolfTrophyHide = "ReplaceableTextures\\CommandButtons\\BTNWolfTrophyHide.blp"
     static constant bTNTrophyHideDummy = "ReplaceableTextures\\CommandButtons\\BTNTrophyHideDummy.blp"
@@ -188,6 +195,7 @@ public class LocalAbilities
     static constant test                           = "Models\\Abilities\\Test.mdx"
 
 public class LocalItems
+    static constant coconut               = "Models\\Items\\Coconut.mdx"
     static constant bearsGreedPaws               = "Models\\Items\\bearsGreedPaws.mdx"
     static constant wolfTrophyHide                 = "Models\\Items\\WolfTrophyHide.mdx"
     static constant bearTrophyHide                 = "Models\\Items\\BearTrophyHide.mdx"

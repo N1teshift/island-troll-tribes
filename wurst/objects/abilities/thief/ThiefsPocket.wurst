@@ -38,7 +38,7 @@ let TT_TOOLTIP = "Thief has a secret pocket granting him an extra slot. \nThief'
 
 @compiletime function createThiefsPocketDummyAbility() returns AbilityDefinitionHardenedSkin
     return new AbilityDefinitionHardenedSkin(ABILITY_THIEFS_POCKET)
-        ..setIconNormal(Icons.bTNPackBeast)
+        ..setIconNormal(LocalIcons.bTNThiefPouch)
         ..setButtonPositionNormalY(1)
         ..setCheckDependencies(false)
         ..setChancetoReduceDamage(1, 0)

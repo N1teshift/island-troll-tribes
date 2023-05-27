@@ -27,6 +27,7 @@ import HashSet
 import Merchants
 import ThiefsPocket
 import ColorUtils
+import IdListConstant
 
 
 
@@ -57,7 +58,7 @@ let TT_TELE_STEAL ="\n\nTele-thief's mastery over dimentional magic greatly incr
         ..setTooltipNormal(1, "Steal")
         ..presetTooltipNormalExtended(lvl->TT_STEAL)
         ..presetCastingTime(lvl ->0.1)
-        ..presetCastRange(lvl -> 150)
+        ..presetCastRange(lvl -> 200)
         ..presetCooldown(lvl -> 60)
         ..presetHotkey("Q")
         ..setButtonPositionNormalX(0)
@@ -81,13 +82,13 @@ let TT_TELE_STEAL ="\n\nTele-thief's mastery over dimentional magic greatly incr
         ..setTooltipNormal(1, "Tele-Steal")
         ..presetTooltipNormalExtended(lvl->TT_STEAL+TT_TELE_STEAL)
         ..presetCastingTime(lvl ->0.1)
-        ..presetCastRange(lvl -> 450)
+        ..presetCastRange(lvl -> 500)
         ..presetCooldown(lvl -> 60)
         ..presetHotkey("Q")
         ..setButtonPositionNormalX(0)
         ..setButtonPositionNormalY(0)
         ..presetTargetTypes(Targettype.UNIT)
-        ..setIconNormal(Icons.bTNPickUpItem)
+        ..setIconNormal(LocalIcons.bTNTeleSteal)
         ..setBaseOrderID(1, "breathoffrost") 
         ..setOrderStringUseTurnOn("breathoffrost")
         ..presetTargetsAllowed(lvl ->commaList(
@@ -104,11 +105,15 @@ let TT_TELE_STEAL ="\n\nTele-thief's mastery over dimentional magic greatly incr
 public function stealFromThiefsBush(unit caster, unit target) returns item
     let itm = generateThiefsBushItem(caster)
     stolenItems.add(itm)
-    caster.addItemHandle(itm)
+    let slot =caster.itemInSlot(5)
+    if slot == null
+        caster.addItemHandleToSlot(itm, 5)
+    else
+        caster.addItemHandle(itm)
     return itm
 
 function stealFromTroll(unit caster, unit target)
-    if not caster.getLevel()>=3
+    if not caster.getLevel()>=3 and not SUB_TROLL_UNIT_LIST.has(caster.getTypeId())
         simError(caster.getOwner(), "You need to be level 3 to be able to do that")
         doAfter(ANIMATION_PERIOD) ->   
             caster.endAbilityCooldown(ABILITY_STEAL)
@@ -118,8 +123,11 @@ function stealFromTroll(unit caster, unit target)
         if itm != null
             target.removeItem(itm)
             stolenItems.add(itm)
-            caster.addItemHandle(itm)
-            print("found")
+            let slot =caster.itemInSlot(5)
+            if slot == null
+                caster.addItemHandleToSlot(itm, 5)
+            else
+                caster.addItemHandle(itm)
             return
     doAfter(ANIMATION_PERIOD) ->   
         caster.endAbilityCooldown(ABILITY_STEAL)
@@ -129,8 +137,10 @@ function stealFromTroll(unit caster, unit target)
         
 
 function stealFromTradeShip(unit caster, unit target)
-    if not caster.getLevel()>=3
+    if not caster.getLevel()>=4 and not  SUB_TROLL_UNIT_LIST.has(caster.getTypeId())
         simError(caster.getOwner(), "You need to be level 4 to be able to do that")
+        doAfter(ANIMATION_PERIOD) ->   
+            caster.endAbilityCooldown(ABILITY_STEAL)
         return
     let instance = instances.get(caster)
     if instance == null
@@ -146,7 +156,11 @@ function stealFromTradeShip(unit caster, unit target)
             let itemId = itemList.getRandomElement()
             let itm = createItem(itemId, caster.getPos())
             stolenItems.add(itm)
-            caster.addItemHandle(itm)
+            let slot =caster.itemInSlot(5)
+            if slot == null
+                caster.addItemHandleToSlot(itm, 5)
+            else
+                caster.addItemHandle(itm)
             instance.addRobbedShip(target)
             
 

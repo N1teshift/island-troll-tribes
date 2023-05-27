@@ -25,6 +25,7 @@ import DamageListeners
 import HealingSystem
 import ThiefsPocket
 import ColorUtils
+import LocalAssets
 
 let TT_STEAL_MEAT ="Steal a piece of meat from an enemy. If your inventory is full, it is gonna be automatically consumed."+
                     "\n30 ".color(ENERGY_COLOR)+ "seconds cooldown."
@@ -41,7 +42,7 @@ let TT_TELE_STEAL_MEAT ="\n\nTele-thief's mastery over dimentional magic greatly
         ..setButtonPositionNormalX(3)
         ..setButtonPositionNormalY(0)
         ..presetTargetTypes(Targettype.UNIT)
-        ..setIconNormal(Icons.bTNMonsterLure)
+        ..setIconNormal(LocalIcons.bTNStealMeat)
         ..presetTargetsAllowed(lvl ->commaList(
             TargetsAllowed.ground,
             TargetsAllowed.enemies,
@@ -64,7 +65,7 @@ let TT_TELE_STEAL_MEAT ="\n\nTele-thief's mastery over dimentional magic greatly
         ..setButtonPositionNormalX(3)
         ..setButtonPositionNormalY(0)
         ..presetTargetTypes(Targettype.UNIT)
-        ..setIconNormal(Icons.bTNMonsterLure)
+        ..setIconNormal(LocalIcons.bTNTeleStealMeat)
         ..presetTargetsAllowed(lvl ->commaList(
             TargetsAllowed.ground,
             TargetsAllowed.enemies,

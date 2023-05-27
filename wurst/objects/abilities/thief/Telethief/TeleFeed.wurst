@@ -26,6 +26,7 @@ import HealingSystem
 import ThiefsPocket
 import ColorUtils
 import LinkedList
+import LocalAssets
 
 HashMap<int, real>foodItems = new HashMap<int,real>()
     ..put(ITEM_COOKED_MEAT, 50.)
@@ -47,7 +48,7 @@ let TT_TELE_FEED ="Feed a piece of food directly to your ally using dimentional 
         ..setButtonPositionNormalX(3)
         ..setButtonPositionNormalY(1)
         ..presetTargetTypes(Targettype.UNIT)
-        ..setIconNormal(Icons.bTNMonsterLure)
+        ..setIconNormal(LocalIcons.bTNTeleFeedMeat)
         ..presetTargetsAllowed(lvl ->commaList(
             TargetsAllowed.ground,
             TargetsAllowed.friend,

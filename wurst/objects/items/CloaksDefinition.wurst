@@ -52,8 +52,8 @@ let RESTORE_DURATION      = 15.
 let FROST_CASTER_DURATION = 5.
 let FROST_TARGET_DURATION = 2.
 
-let HEAL_BUFF_TT   = "This unit benefit from Mana Rejuvenation; it is restoring mana points over time."
-let MANA_BUFF_TT   = "This unit benefit from Health Rejuvenation; it is healing health points over time."
+let HEAL_BUFF_TT   = "This unit benefits from Health Rejuvenation; it is healing health points over time." 
+let MANA_BUFF_TT   = "This unit benefits from Mana Rejuvenation; it is restoring mana points over time."
 let FROST_CASTER_BUFF_TT  = "This unit is engulfed in a Ice Veil; it slows and damage nearby enemies over time."
 let FROST_TARGET_BUFF_TT  = "This unit is cold; it is slowed."
 

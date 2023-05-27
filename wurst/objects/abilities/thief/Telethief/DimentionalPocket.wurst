@@ -43,11 +43,11 @@ let TT_TELE_FEED ="Telethif uses his dimentional magic to reach into a random th
         ..presetTooltipNormal(lvl -> "Dimentional pocket")
         ..presetTooltipNormalExtended(lvl-> TT_TELE_FEED)        
         ..presetCastingTime(lvl ->0.1)
-        ..presetCooldown(lvl -> 1)
+        ..presetCooldown(lvl -> 60)
         ..presetHotkey("W")
         ..setButtonPositionNormalX(1)
         ..setButtonPositionNormalY(0)
-        ..setIconNormal(Icons.bTNControlMagic)
+        ..setIconNormal(Icons.bTNFaerieFire)
 
 
 function conjureItem(unit caster) returns item

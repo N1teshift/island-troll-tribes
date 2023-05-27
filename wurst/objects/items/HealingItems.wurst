@@ -15,10 +15,12 @@ import LocalObjectIDs
 import LocalAssets
 import ToolTipsUtils
 import HealingPotion
+import StandardTextTags
 
 public constant ABIL_MEAT   = compiletime(ABIL_ID_GEN.next())
 public constant ABIL_BANANA = compiletime(ABIL_ID_GEN.next())
 public constant ABIL_HONEY  = compiletime(ABIL_ID_GEN.next())
+public constant ABIL_COCONUT = compiletime(ABIL_ID_GEN.next())
 
 constant MEAT_ICON   = Icons.bTNMonsterLure
 constant BANANA_ICON = LocalIcons.bTNBanana
@@ -31,10 +33,13 @@ constant HONEY_MODEL  = LocalItems.honeycomb
 public constant MEAT_HEAL   = 50.
 public constant BANANA_HEAL = 38.
 public constant HONEY_HEAL  = 90.
+public constant COCONUT_HEAL = 20.
+public constant COCONUT_MANA = 20.
 
 constant TT_MEAT  = "A well done steak. Instantly heals {0} health point on use.".format(MEAT_HEAL.toToolTipGreen())
 constant TT_BANANA = "A banana left by an animal. Restores {0} health point on use.".format(BANANA_HEAL.toToolTipGreen())
 constant TT_HONEY = "A portion of honeycomb left by an animal. Restores {0} health point on use.".format(HONEY_HEAL.toToolTipGreen())
+constant TT_COCONUT = "A refreshing coconut. Restores {0} health and {1} mana point on use.".format(COCONUT_HEAL.toToolTipGreen(), COCONUT_MANA.toToolTipBlue())
 
 @compiletime function createHealingItems()
     createItemBerserkCast(ABIL_MEAT)
@@ -49,6 +54,11 @@ constant TT_HONEY = "A portion of honeycomb left by an animal. Restores {0} heal
 
     createItemBerserkCast(ABIL_HONEY)
         ..setName("Honeycomb Heal")
+        ..setCooldown(1, 0)
+        ..setArtCaster(Abilities.healTarget)
+
+    createItemBerserkCast(ABIL_COCONUT)
+        ..setName("Coconut")
         ..setCooldown(1, 0)
         ..setArtCaster(Abilities.healTarget)
 
@@ -97,6 +107,20 @@ constant TT_HONEY = "A portion of honeycomb left by an animal. Restores {0} heal
         ..setNumberofCharges(1)
         ..setClassification("Purchasable")
 
+@compiletime function createCoconut() returns ItemDefinition
+    return createPerishableItem(ITEM_COCONUT)
+        ..setInterfaceIcon(LocalIcons.bTNCoconut)
+        ..setModelUsed(LocalItems.coconut)
+        ..setName("Coconut")
+        ..setTooltipExtended(TT_COCONUT)
+        ..setDescription(TT_COCONUT)
+        ..setLumberCost(3)
+        ..setScalingValue(0.6)
+        ..setAbilities(ABIL_COCONUT.toRawCode())
+        ..setCooldownGroup(ABIL_COCONUT.toRawCode())
+        ..setNumberofCharges(1)
+        ..setClassification("Purchasable")
+
 HashMap<int, real> itemSelfHealAmount = null
 HashMap<int, real> itemTargetedHealAmount = null
 
@@ -106,6 +130,7 @@ function initHealItemTable()
     itemSelfHealAmount.put(ITEM_COOKED_MEAT, MEAT_HEAL)
     itemSelfHealAmount.put(ITEM_BANANA, BANANA_HEAL)
     itemSelfHealAmount.put(ITEM_HONEYCOMB, HONEY_HEAL)
+    itemSelfHealAmount.put(ITEM_COCONUT, COCONUT_HEAL)
 
 function initHealAbilityTable()
     itemTargetedHealAmount = new HashMap<int,real>()
@@ -129,6 +154,15 @@ function onSpellEffect()
         new HealingInstance(target, caster, itemTargetedHealAmount.get(spellId), HealingType.ITEM)
 
 init
+    EventListener.onCast(ABIL_COCONUT) (unit caster) ->
+        caster.addMana(COCONUT_MANA)
+        standardTextTag(
+                caster.getPos(),
+                "+{0}".format(COCONUT_MANA.floor().toString())
+            )
+                ..setColor(colorA(0, 131, 191, 255))
+                ..setPos(caster.getPos().x, caster.getPos().y-70, 0.)
+                ..matchVisibility(caster) 
     initHealItemTable()
     initHealAbilityTable()
     EventListener.add(EVENT_PLAYER_UNIT_USE_ITEM) ->

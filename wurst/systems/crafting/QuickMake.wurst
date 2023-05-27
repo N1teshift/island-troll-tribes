@@ -64,9 +64,9 @@ public class QuickMake
         else
             range = 700
         // Drop each item to simplify the search for matches.
-        var baseInventory = inventory.size()
         if caster.isTroll() and trollInventoryPseudoSlotList.has(caster.getTypeId())
             inventory.pop()
+            caster.dropItems(inventory.size())
             /*
             int baseInventorySize = 3
             for key in trollInventoryAbilityMap
@@ -78,8 +78,8 @@ public class QuickMake
             for i = 1 to baseInventory
                 inventory.pop()
                 */
-        //else
-            caster.dropItems(inventory.size())
+        else
+            caster.dropItems()
 
         // Fill in the recipe slots in order.
         for itemIds in itemLists

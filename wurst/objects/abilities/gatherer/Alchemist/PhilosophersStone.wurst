@@ -14,6 +14,7 @@ import ClosureTimers
 import Items
 import LocalItemObjEditing
 import Abilities
+import SimError
 
 
 let TT_PHILOSOPHERS_STONE = "Philosopher's stone accumulates energy over time. It can be used to conjure Potion effects"
@@ -96,7 +97,11 @@ function onDropPhilosophersStone(unit u, item itm)
 
 init
     EventListener.onCast(ABILITY_CREATE_PHILOSOPHERS_STONE) (unit caster) ->
-        onAbilityCreatePhilosophersStone(caster)        
+        if caster.isInventoryFull()
+            simError(caster.getOwner(), "Your inventory is full")
+        else
+            onAbilityCreatePhilosophersStone(caster)        
     EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
         if GetManipulatedItem().getTypeId() == ITEM_PHILOSOPHERS_STONE
             onDropPhilosophersStone(GetManipulatingUnit(), GetManipulatedItem())
+

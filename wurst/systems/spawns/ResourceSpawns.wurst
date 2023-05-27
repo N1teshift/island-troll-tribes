@@ -281,6 +281,7 @@ function initItemSpawnInfo()
     new ItemSpawnInfo(ITEM_FLINT, 300, 250, 300)
     new ItemSpawnInfo(ITEM_MANA_CRYSTAL, 0, 160, 420)
     new ItemSpawnInfo(ITEM_STONE, 110, 280, 560)
+    new ItemSpawnInfo(ITEM_COCONUT, 220, 280, 560)
     new ItemSpawnInfo(ITEM_MUSHROOM, 0, 120, 360)
     new ItemSpawnInfo(ITEM_MAGIC, 25, 25, 1)
 
