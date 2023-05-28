@@ -15,6 +15,10 @@ import Lodash
 import DrunkPotion
 import InstantDummyCaster
 import SimError
+import BuffObjEditing
+import BuffIds
+import Abilities
+import ClosureTimers
 
 //constant NAME =""
 //constant COOLDOWN = 0
@@ -44,7 +48,7 @@ constant TARGETS_ALLOWED = commaList(TargetsAllowed.alive,
         ..setName(NAME)
         ..presetTooltipNormal(lvl -> makeToolTipNorm(HOTKEY, TT))
         ..presetTooltipNormalExtended(lvl -> TT_EXTENDED)
-        ..presetTargetsAllowed(lvl->TARGETS_ALLOWED)            
+        ..presetTargetsAllowed(lvl->TARGETS_ALLOWED)         
         ..setIconNormal(ICON)
         ..setIconResearch(ICON)
         ..setIconTurnOff(ICON)
@@ -54,6 +58,11 @@ constant TARGETS_ALLOWED = commaList(TargetsAllowed.alive,
         ..setEditorSuffix("(Wurst)")
         ..presetCastRange(lvl->CAST_RANGE)
         ..presetTargetTypes(Targettype.UNIT)
+
+
+
+
+
 
 function onCast()
     let target = GetSpellTargetUnit()
@@ -65,6 +74,10 @@ function onCast()
         if itm.getCharges() >= POTION_COST
             InstantDummyCaster.castTarget(caster.getOwner(), ABILITY_DRUNK_POTION, 1, Orders.drunkenhaze, target)
             itm.setCharges(itm.getCharges()-POTION_COST)
+            doAfter(ANIMATION_PERIOD) ->     
+                for each in GetUnitsInRangeOfLocAll(600, target.getLoc())
+                    if (each.isAllyOf(caster.getOwner()) or each.getOwner() == caster.getOwner()) and each.hasAbility(BuffIds.drunkenHaze)
+                        each.removeAbility(BuffIds.drunkenHaze)
         else
             caster.issueImmediateOrder("stop")
             simError(caster.getOwner(), errorMsg)

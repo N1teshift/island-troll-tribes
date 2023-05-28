@@ -18,7 +18,7 @@ import ToolTipsUtils
 
 
 public let DISEASE_HEALING_REDUCTION_FACTOR = 0.
-public constant DURATION = 20.
+public constant DURATION = 25.
 let DAMAGE_TICK_INTERVAL = 0.5
 let DAMAGE_PER_SECOND = 5
 public constant CAST_RANGE = 600.
@@ -29,7 +29,7 @@ HashMap<unit, DiseaseInstance> diseaseInstances = new HashMap<unit,DiseaseInstan
 public constant NAME = "Disease Potion"
 public constant TT_DISEASE_POTION = "" +
     ("Biological warfare! Throw at an enemy to give him  "+
-    "a disease. Dealing {0} damage per second. Last {2} seconds.")
+    "a disease. Dealing {0} damage per second. Last {1} seconds.")
     .format(DAMAGE_PER_SECOND.toReal().toToolTipRed(),
     DURATION.toToolTipLightBlue())
 

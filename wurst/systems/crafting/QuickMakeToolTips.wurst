@@ -21,6 +21,7 @@ import ShieldsDefinition
 import BootsDefinition
 import CloaksDefinition
 import CoatDefinition
+import HealingSalve
 
 // Herbs
 let SPECIAL_HERB       = "Special Herb".color(SPECIAL_COLOR)
@@ -115,6 +116,8 @@ public let FERVER_POTION_RECIPE           = "Increase the consumer attack speed 
                                             .format(0.20.toToolTipOrange(), 8..toToolTipRed(), 6..toToolTipGreen(), 9..toToolTipRed()) + makeToolTipDuration(20, 5)+
                                             "\n\n2x "+SPECIAL_HERB+" 1 + 1x "+SPECIAL_HERB+" 2 + 1x "+ATHELAS_SEED+SPECIAL_MIX_WARNING
 
+public let HEALING_SALVE_RECIPE            ="3x"+" Healing Salve ".color(COLOR_GREEN)+TT_HEALING_SALVE + "\n\n 1x "+ATHELAS_SEED + " + 1x"+" Banana".color(COLOR_YELLOW)
+
 public let DISEASE_POTION_RECIPE          = "a " + "Disease Potion. " + TT_DISEASE_POTION + "\n\n"+
                                             "3x "+MUSHROOM+" + 1x "+RIVER_STEM
 
@@ -172,7 +175,7 @@ public let STEEL_BOOTS_RECIPE = "a pair of " + "Steel Boots. " .color(COLOR_TURQ
 // Armory
 public let BATTLE_GLOVES_RECIPE         = "a pair of " + "Battle Gloves. ".color(COLOR_VIOLET) + TT_BATTLE_GLOVES
                                           +"\n\n1x " + "Bone Gloves".color(COLOR_ORANGE) + " + 2x "+STEEL+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
-public let BATTLE_AXE_RECIPE            = "a Battle Axe. A two handed axe, increase damage by 14, attack speed by"+" 20%".color(ENERGY_COLOR)+", can cast purge, removing all buffs from a target unit and slowing it."+makeToolTipDuration(5, 15, 60)+
+public let BATTLE_AXE_RECIPE            = "a Battle Axe. A two handed axe, increase damage by 14, attack speed by"+" 20%".color(ENERGY_COLOR)+
                                           "\n\n1x "+"Fervor potion ".color(COLOR_MAROON)+" + 2x "+STEEL+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
 public let BATTLE_ARMOR_RECIPE          = TT_BATTLE_ARMOR+"\n\n"+"1x " + "Bone Coat".color(COLOR_ORANGE) + " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
 public let BATTLE_SHIELD_RECIPE         = BATTLE_SHIELD_TOOLTIP+

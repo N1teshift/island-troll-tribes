@@ -32,7 +32,9 @@ public function mixIt(LinkedList<item> inv)
         if items.getTypeId() == ITEM_POISON
             items.remove()
         if items.getTypeId() == ITEM_MUSHROOM
-            items.remove()                    
+            items.remove()
+        if items.getTypeId() == ITEM_BANANA
+            items.remove()                         
 
 public function mix(unit caster)
     let count = caster.getInventoryItemCountMap()
@@ -50,7 +52,8 @@ public function mix(unit caster)
     let water = count.get(ITEM_SPIRIT_WATER)
     let wind = count.get(ITEM_SPIRIT_WIND)
     let poison =count.get(ITEM_POISON)
-    let mushroom =count.get(ITEM_MUSHROOM) 
+    let mushroom =count.get(ITEM_MUSHROOM)
+    let banana = count.get(ITEM_BANANA) 
 
     let specCount = blue + oran + purp + yell
 
@@ -176,6 +179,13 @@ public function mix(unit caster)
         mixIt(inventory)
         caster.addItemById(ITEM_CURE_ALL)
         return
+
+    // Healing salve
+    if athelas > 0 and banana > 0
+        mixIt(inventory)
+        caster.addItemById(ITEM_HEALING_SALVE)
+        return
+
 
 function onCast()
     let caster = GetSpellAbilityUnit()

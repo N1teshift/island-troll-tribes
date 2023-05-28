@@ -35,7 +35,7 @@ let ABIL_STONE  = commaList(ABIL_DMG_STONE, ABILITY_ATTACK_TREE)
 let ABIL_IRON   = commaList(ABIL_DMG_IRON, ABILITY_ATTACK_TREE)
 let ABIL_STEEL  = commaList(ABIL_DMG_STEEL, ABILITY_ATTACK_TREE)
 let ABIL_MASHER = commaList(ABIL_SILENCE, ABIL_DMG_MASHER, ABILITY_ATTACK_TREE)
-let ABIL_BATTLE = commaList(ABIL_PURGE, ABIL_DMG_BATTLE, ABILITY_ATTACK_TREE, ABILITY_ATTACK_SPEED_20)
+let ABIL_BATTLE = commaList(ABIL_DMG_BATTLE, ABILITY_ATTACK_TREE, ABILITY_ATTACK_SPEED_20)
 
 let DMG_STONE  = 6
 let DMG_IRON   = 8
@@ -91,9 +91,9 @@ public let TT_MM = new StringBuilder()
         DRAIN_MIN_AMOUNT.toToolTipLightBlue()
     )
 
-let TT_BA = "A two handed axe. " + TT_COMMON +" Increased attack speed by "+"20%.".color(ENERGY_COLOR)+
-    " Can cast purge, removes all buffs from a target unit, and slows its movement speed." +
-    formatCooldown(ABIL_PURGE) + formatDuration(ABIL_PURGE)
+let TT_BA = "A two handed axe. " + TT_COMMON +" Increased attack speed by "+"20%.".color(ENERGY_COLOR)
+    //" Can cast purge, removes all buffs from a target unit, and slows its movement speed." +
+    //formatCooldown(ABIL_PURGE) + formatDuration(ABIL_PURGE)
 
 
 @compiletime function createCutTreeAbility() returns AbilityDefinitionFireDamageBonus

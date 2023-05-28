@@ -287,12 +287,12 @@ let TT_THIEF_SPELLBOOK        = "Thief's skills"
         ..setNameEnhance("E", "Druidic Spells")
 
 @compiletime function createHeroSpellSpellBookAlchemist()
-    createHeroSpellBook(ABILITY_ALCHEMIST_SPELLBOOK, 3)
+    createHeroSpellBook(ABILITY_ALCHEMIST_SPELLBOOK, 4)
         ..setNameEnhance("R", "Philosopher's Stone conjuration powers")
         ..setTooltipNormalExtended(1, TT_ALCHEMIST)
         ..setAbilitiesPerLevel(ALCHEMIST_ABILITY_HASH)
-        ..setRequiredLevel(0)
-        ..setLevelSkipRequirement(0)        
+        ..setRequiredLevel(1)
+        ..setLevelSkipRequirement(1)        
         ..presetButtonPosNormal(2, 1)
         ..setIconNormal(Icons.bTNtemp)        
 

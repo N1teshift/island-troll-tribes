@@ -24,7 +24,7 @@ constant MIXING_POT_SPELLBOOK = commaList(
     ABILITY_QM_NETHER_POTION,
     ABILITY_QM_DRUNKS_POTION,
     ABILITY_QM_FERVOR_POTION,
-    ABILITY_QM_ELEMENTAL_SHIELD_POTION
+    ABILITY_QM_HEALING_SALVE
 )
 
 constant ARMOR_SPELLBOOK = commaList(
@@ -238,7 +238,7 @@ function getQuickMakeSpells() returns LinkedList<QuickMakeSpell>
         new QuickMakeSpell("Nether Potion"           , MIX_TOOLTIP+NETHER_POTION_RECIPE           , "PotionOfOmniscience"     , ABILITY_QM_NETHER_POTION           , 0, 2, "F", QM_TOOLIP, "defend"),
         new QuickMakeSpell("Drunks Potion"           , MIX_TOOLTIP+DRUNKS_POTION_RECIPE           , "LesserInvulneralbility"  , ABILITY_QM_DRUNKS_POTION           , 2, 2, "Z", QM_TOOLIP, "divineshield"),
         new QuickMakeSpell("Fervor Potion"           , MIX_TOOLTIP+FERVER_POTION_RECIPE           , "GreaterInvulneralbility" , ABILITY_QM_FERVOR_POTION           , 1, 2, "X", QM_TOOLIP, "fanofknives"),
-        new QuickMakeSpell("Elemental Shield Potion" , MIX_TOOLTIP+ELEMENTAL_SHIELD_POTION_RECIPE , "PotionOfRestoration"     , ABILITY_QM_ELEMENTAL_SHIELD_POTION , 2, 2, "C", QM_TOOLIP, "chemicalrage"),
+        new QuickMakeSpell("Healing Salve"           , MIX_TOOLTIP+HEALING_SALVE_RECIPE           , "BronzeBowlFullGreen"     , ABILITY_QM_HEALING_SALVE           , 2, 2, "C", QM_TOOLIP, "chemicalrage"),
 
 
         // Armory

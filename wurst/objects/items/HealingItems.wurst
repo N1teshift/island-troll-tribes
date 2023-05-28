@@ -115,7 +115,7 @@ constant TT_COCONUT = "A refreshing coconut. Restores {0} health and {1} mana po
         ..setTooltipExtended(TT_COCONUT)
         ..setDescription(TT_COCONUT)
         ..setLumberCost(3)
-        ..setScalingValue(0.6)
+        ..setScalingValue(0.75)
         ..setAbilities(ABIL_COCONUT.toRawCode())
         ..setCooldownGroup(ABIL_COCONUT.toRawCode())
         ..setNumberofCharges(1)

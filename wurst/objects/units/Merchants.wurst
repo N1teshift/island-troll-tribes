@@ -56,7 +56,6 @@ public LinkedList<int>tradeShip3Items = asList(
                 ITEM_SPIRIT_WIND,
                 ITEM_SPIRIT_WATER,
                 ITEM_ANTI_MAGIC_POTION,
-                ITEM_MUD_HUT_KIT,
                 ITEM_MANA_CRYSTAL            
             )
 
