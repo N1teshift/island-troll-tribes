@@ -80,7 +80,8 @@ constant WDH_SPELLBOOK = commaList(
     ABILITY_QM_SCROLL_CYCLONE,
     ABILITY_QM_SCROLL_HASTE,
     ABILITY_QM_MAGIC_SEED,
-    ABILITY_QM_SPIRIT_WARD
+    ABILITY_QM_SPIRIT_WARD,
+    ABILITY_QM_NECROMANCERS_CLOAK
 )
 
 constant WORKSHOP_SPELLBOOK = commaList(
@@ -274,7 +275,7 @@ function getQuickMakeSpells() returns LinkedList<QuickMakeSpell>
         new QuickMakeSpell("Spirit Ward"               , TRANSMUTE_TOOLTIP+SPIRIT_WARD_RECIPE        , "AbsorbMagic"               , ABILITY_QM_SPIRIT_WARD        , 2, 2, "S", QM_TOOLIP, "manaflareoff"),
         new QuickMakeSpell("Poison"                    , TRANSMUTE_TOOLTIP+POISON_RECIPE             , "HealingSalve"              , ABILITY_QM_POISON             , 0, 2, "Z", QM_TOOLIP, "manaflareon"),
         new QuickMakeSpell("Ultra Poison"              , TRANSMUTE_TOOLTIP+ULTRA_POISON_RECIPE       , "VialFull"                  , ABILITY_QM_ULTRA_POISON       , 1, 2, "X", QM_TOOLIP, "manashieldoff"),
-
+        new QuickMakeSpell("Necromancer's cloak"       , TRANSMUTE_TOOLTIP+NECROMANCERS_CLOAK_RECIPE , "SkullShroudGlowIncreased"  , ABILITY_QM_NECROMANCERS_CLOAK , 1, 1, "S", QM_TOOLIP, "howlofterror"),
 
         // Workshop
         new QuickMakeSpell("Ensnare Trap"         , TRANSMUTE_TOOLTIP+ENSNARE_TRAP_RECIPE         , "COP"                    , ABILITY_QM_ENSNARE_TRAP         , 0, 0, "Q", QM_TOOLIP, "immolation"),
@@ -359,7 +360,7 @@ function getQuickMakeSpells() returns LinkedList<QuickMakeSpell>
         new QuickMakeSpell("Mixing Pot Kit"        , TRANSMUTE_CRAFT_BUILDING_TOOLTIP+MIXING_POT_KIT_RECIPE        , "SacrificialPit"       , ABILITY_QM_MIXING_POT_KIT        , 2, 1, "D", QM_BUILD_TOOLIP, "chemicalrage"),
         new QuickMakeSpell("Witch Doctors Hut Kit" , TRANSMUTE_CRAFT_BUILDING_TOOLTIP+WITCH_DOCTORS_HUT_KIT_RECIPE , "VoodooLounge"         , ABILITY_QM_WITCH_DOCTORS_HUT_KIT , 3, 1, "F", QM_BUILD_TOOLIP, "creepanimatedead"),
         new QuickMakeSpell("Tannery Kit"           , TRANSMUTE_CRAFT_BUILDING_TOOLTIP+TANNERY_KIT_RECIPE           , "PigFarm"              , ABILITY_QM_TANNERY_KIT           , 0, 2, "Z", QM_BUILD_TOOLIP, "thunderclap"),
-        new QuickMakeSpell("Omnitower Kit"         , TRANSMUTE_CRAFT_BUILDING_TOOLTIP+OMNI_TOWER_KIT_RECIPE        , "OrcTower"             , ABILITY_QM_OMNI_TOWER_KIT        , 1, 2, "X", QM_BUILD_TOOLIP, "manashieldon"),
+        new QuickMakeSpell("Omnitower Kit"         , TRANSMUTE_CRAFT_BUILDING_TOOLTIP+OMNI_TOWER_KIT_RECIPE        , "OrcTower"             , ABILITY_QM_OMNI_TOWER_KIT        , 1, 2, "X", QM_BUILD_TOOLIP, "avatar"),
         new QuickMakeSpell("Armory Kit"            , TRANSMUTE_CRAFT_BUILDING_TOOLTIP+ARMORY_KIT_RECIPE            , "Armory"               , ABILITY_QM_ARMORY_KIT            , 2, 2, "A", QM_BUILD_TOOLIP, "locustswarm"),
         new QuickMakeSpell("Teleport Beacon Kit"   , TRANSMUTE_CRAFT_BUILDING_TOOLTIP+TELEPORT_BEACON_KIT_RECIPE   , "EnergyTower"          , ABILITY_QM_TELEPORT_BEACON_KIT   , 0, 0, "E", QM_BUILD_TOOLIP, "summonwareagle")
     )

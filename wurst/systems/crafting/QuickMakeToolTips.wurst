@@ -214,6 +214,8 @@ public let CLOAK_FLAMES_RECIPE  = "a " + "Cloak Of Flames. " .color(COLOR_RED   
 public let CLOAK_FROST_RECIPE   = "a " + "Cloak Of Frost. "  .color(COLOR_TURQUOISE) + CLOAK_FROST_TT   + "\n\n1x "+ MAGIC +" + 1x " + "Bone Coat".color(COLOR_ORANGE) + " + 1x " + WATER
 public let CLOAK_HEALING_RECIPE = "a " + "Cloak Of Healing. ".color(COLOR_GREEN    ) + CLOAK_HEALING_TT + "\n\n1x "+ MAGIC +" + 1x " + "Bone Coat".color(COLOR_ORANGE) + " + 1x " + HEALING
 public let CLOAK_MANA_RECIPE    = "a " + "Cloak Of Mana. "   .color(COLOR_VIOLET   ) + CLOAK_MANA_TT    + "\n\n1x "+ MAGIC +" + 1x " + "Bone Coat".color(COLOR_ORANGE) + " + 1x " + MANA
+public let NECROMANCERS_CLOAK_RECIPE    = "a " + "Necromancer's cloak. "   .color(COLOR_VIOLET   ) + CLOAK_NECROMANCER_TT    + "\n\n1x "+ MAGIC +" + 1x " + "Bone Coat".color(COLOR_ORANGE) + " + 1x " + "Scroll of Living Dead".color(COLOR_YELLOW)
+
 // Workshop
 
 public let ENSNARE_TRAP_RECIPE = "an Ensnare Trap. Deals few ranged damage, can net trolls & animals, good for killing hawk :\n\n1x "               +TINDER     +" + 1x "+BONE +" + 1x "+STICK

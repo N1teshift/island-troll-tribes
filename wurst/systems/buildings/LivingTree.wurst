@@ -1,6 +1,13 @@
 package LivingTree
 import RegisterEvents
 import LocalObjectIDs
+import ObjEditingNatives
+
+
+@compiletime function create_w3b_B006()
+	let def = createObjectDefinition("w3b", DEST_NORMAL_TREE, 'ZTtw')
+	..setUnreal("bhps", 120.0)
+	..setString("bnam", "Normal Tree")
 
 init
     registerPlayerUnitEvent(EVENT_PLAYER_UNIT_CONSTRUCT_FINISH) ->

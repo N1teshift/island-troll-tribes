@@ -9,6 +9,7 @@ import ChannelAbilityPreset
 import InstantDummyCaster
 import DummyCaster
 import OrderIds
+import OnUnitEnterLeave
 
 // Local Import :
 import Items
@@ -58,7 +59,7 @@ public let TSUNAMI_CAST_RANGE = 600.
 public let CYCLONE_CAST_RANGE = 500.
 
 public let TSUNAMI_DISTANCE = 600.
-public let SKELETAL_AOE = 500.
+public let SKELETAL_AOE = 300.
 public let HASTE_AOE = 600.
 
 public let FIREBALL_TT = "Grants the unit the ability to cast Fire Ball dealing {0} damage and stunning the target for {1}/{2} seconds."
@@ -172,8 +173,8 @@ public let CYCLONE_TT = "Grants the unit the ability to cast Cyclone which tosse
         ..setHeroAbility(false)
         ..setItemAbility(true)
         ..setManaCost(1, 0)
-        ..setDurationHero(1, SKELETAL_DURATION)
-        ..setDurationNormal(1, SKELETAL_DURATION)
+        ..setDurationHero(1, SKELETAL_DURATION*999)
+        ..setDurationNormal(1, SKELETAL_DURATION*999)
         ..setCooldown(1, SKELETAL_COOLDOWN)
         ..setAreaofEffect(1, SKELETAL_AOE)
         ..setEditorSuffix("(Wurst)")
@@ -266,11 +267,13 @@ public let CYCLONE_TT = "Grants the unit the ability to cast Cyclone which tosse
         ..setNormalAbilities("Aloc")
         ..setAttack1AttackType(AttackType.Magic)
         ..setAttack1DamageBase(SKELETAL_MINION_DMG)
+        ..setAttack1AnimationBackswingPoint(0.01)
+        ..setAttack1AnimationDamagePoint(0.2)
         ..setAttack1CooldownTime(0.75)
         ..setName("Skeleton Minion")
         ..setAttack1DamageNumberofDice(1)
         ..setAttack1DamageSidesperDie(1)
-        ..setSpeedBase(360)
+        ..setSpeedBase(522)
         ..setAttack1TargetsAllowed(commaList(
             TargetsAllowed.debris,
             TargetsAllowed.ground,
@@ -420,3 +423,4 @@ init
     EventListener.onPointCast(ABILITY_GRIMOIRE_TSUNAMI, (unit caster, vec2 target) -> onTsunami(caster, target))
     EventListener.onTargetCast(ABILITY_ROOT_CAST, (unit caster, unit target) -> onRoot(caster, target))
     EventListener.onTargetCast(ABILITY_GRIMOIRE_ENTANGLE, (unit caster, unit target) -> onRoot(caster, target))
+    

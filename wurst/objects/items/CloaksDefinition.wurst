@@ -26,6 +26,7 @@ import ColorUtils
 let ABILITY_CLOAK_HEALING = compiletime(ABIL_ID_GEN.next())
 let ABILITY_CLOAK_MANA    = compiletime(ABIL_ID_GEN.next())
 let ABILITY_CLOAK_FROST   = compiletime(ABIL_ID_GEN.next())
+let ABILITY_CLOAK_NECROMANCER   = compiletime(ABIL_ID_GEN.next())
 
 let FLAMES_WEARER_MODEL = Abilities.immolationREDTarget
 let FLAMES_TARGET_MODEL = Abilities.immolationRedDamage
@@ -80,6 +81,14 @@ public let CLOAK_FROST_TT   = COMMON_TT + ("can be cast to emit {0} ice waves, e
                                        FROST_TARGET_DURATION.toToolTipLightBlue()) +
                               makeToolTipCooldown(FROST_COOLDOWN)
 
+public let CLOAK_NECROMANCER_TT = COMMON_TT +"grants the power to command living dead, permanently raising two skeletal warriors. "+
+                                "Cloak can be used to recall your minions. "+
+                                "\n\nSkeletal bodyguards can be empowered by collecting 10 bones.".color(COLOR_YELLOW)
+
+public let CLOAK_NECROMANCER_EMPOWERED_TT = COMMON_TT+"grants the power to command living dead, permanently raising two greater skeletal warriors. "+
+                                "Cloak can be used to recall your minions. "+
+                                "\n\nSkeletal minions have been empowered with bones collected, greatly increasing their damage and reducing attack speed.".color(COLOR_TEAL)
+
 public let CLOAK_HEALING_TT = COMMON_TT + "can be cast to restore all {0} health points to nearby allies over {1} seconds."
                               .format(HEALTH_RESTORED.toToolTipGreen(), RESTORE_DURATION.toToolTipLightBlue()) + makeToolTipCooldown(RESTORE_COOLDOWN)
 public let CLOAK_MANA_TT    = COMMON_TT + "can be cast to restore {0} mana points to nearby allies over {1} seconds."
@@ -91,6 +100,7 @@ function createCloak(int newId) returns ItemDefinition
         ..setScalingValue(1)
         ..setModelUsed(LocalItems.cloak)
         ..setCooldownGroup(commaList(ABILITY_CLOAK_FLAMES))
+
 
 @compiletime function createCloakOfFlames() returns ItemDefinition
     return createCloak(ITEM_CLOAK_OF_FLAMES)
@@ -136,6 +146,28 @@ function createCloak(int newId) returns ItemDefinition
         ..setTintingColor3Blue(255)
         ..setAbilities(commaList(ABILITY_CLOAK_FROST, ABILITY_ARMOR_BONUS_3, AbilityIds.allPlus3)) // Mana Cast,+ 3 Armor, +3 all stats
 
+@compiletime function createNecromancersCloak() returns ItemDefinition
+    return createCloak(ITEM_NECROMANCERS_CLOAK)
+        ..setInterfaceIcon(LocalIcons.bTNSkullShroudGlowIncreased)
+        ..setNameEnhance("Necromancer's Cloak")
+        ..setTooltipExtended(CLOAK_NECROMANCER_TT)
+        ..setLumberCost(74)
+        ..setTintingColor1Red(50)
+        ..setTintingColor2Green(89)
+        ..setTintingColor3Blue(89)
+        ..setAbilities(commaList(ABILITY_NECROMANCERS_CLOAK_SKELETONS, ABILITY_ARMOR_BONUS_3, AbilityIds.allPlus3)) //+ 3 Armor, +3 all stats
+
+@compiletime function createEmpoweredNecromancersCloak() returns ItemDefinition
+    return createCloak(ITEM_EMPOWERED_NECROMANCERS_CLOAK)
+        ..setInterfaceIcon(LocalIcons.bTNSavageGladiatorChain)
+        ..setNameEnhance("Empowered Necromancer's Cloak")
+        ..setTooltipExtended(CLOAK_NECROMANCER_EMPOWERED_TT)
+        ..setLumberCost(90)
+        ..setTintingColor1Red(0)
+        ..setTintingColor2Green(26)
+        ..setTintingColor3Blue(26)
+        ..setAbilities(commaList(ABILITY_NECROMANCERS_CLOAK_GREATER_SKELETONS, ABILITY_ARMOR_BONUS_3, AbilityIds.allPlus3)) //+ 3 Armor, +3 all stats
+
 
 // Cloaks Item Cast
 @compiletime function createCloakItemCast()
@@ -148,6 +180,10 @@ function createCloak(int newId) returns ItemDefinition
         ..setCooldown(1, RESTORE_COOLDOWN)
 
     createItemBerserkCast(ABILITY_CLOAK_FROST)
+        ..setName("Frost Cloak Cast")
+        ..setCooldown(1, FROST_COOLDOWN)
+
+    createItemBerserkCast(ABILITY_CLOAK_NECROMANCER)
         ..setName("Frost Cloak Cast")
         ..setCooldown(1, FROST_COOLDOWN)
 
@@ -385,3 +421,4 @@ init
     EventListener.onCast(ABILITY_CLOAK_HEALING, caster -> castRejuv(caster, ABILITY_REJUV_HEALING))
     EventListener.onCast(ABILITY_CLOAK_MANA, caster -> castRejuv(caster, ABILITY_REJUV_MANA))
     EventListener.onCast(ABILITY_CLOAK_FROST, caster -> castIceVeil(caster))
+

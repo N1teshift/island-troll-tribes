@@ -24,6 +24,7 @@ import Classes
 import IdListConstant
 import InventoryEvent
 import UnitExtensions
+import Orders
 
 constant TT_ELK_TROPHY_HIDE ="\n\nElk hide: "+
                              "\n +1 ".color(ENERGY_COLOR)+"armor."+ 
@@ -118,8 +119,6 @@ class TrophyHide
 
     construct(unit hero)
         this.hero = hero
-        //hero.removeAbility(ABILITY_INVENTORY_3_SLOT)
-       // hero.addPermanentAbility(ABILITY_INVENTORY_4_SLOT)
         hero.addItemToSlot(ITEM_HUNTER_TROPHY_HIDE_DUMMY, 3)
         nullTimer() ->            
             hunterDummyItem = hero.getItemById(ITEM_HUNTER_TROPHY_HIDE_DUMMY)   
@@ -196,7 +195,7 @@ class TrophyHide
         let itm =hero.itemInSlot(3)
         if trophyHide != null
             replaceTrophyWithHide(trophyHide)       
-        if not HIDE_LIST.contains(itm.getTypeId())
+        if not HIDE_LIST.has(itm.getTypeId())
             hero.removeItem(itm)
             hero.addItemHandleToSlot(hunterDummyItem, 3)
         else 
@@ -204,11 +203,15 @@ class TrophyHide
                 replaceHideWithTrophy(itm)
 
 
+
+
     ondestroy
-        let pos = trophyHide.getPos()
-        trophyHide.remove()
-        createItem(trophyToHideMap.get(trophyHide.getTypeId()), pos)
-        hunterDummyItem.remove()           
+        doAfter(ANIMATION_PERIOD) ->          
+            let pos = hero.getPos()
+            let itm = trophyToHideMap.get(trophyHide.getTypeId())
+            createItem(itm, pos)
+            trophyHide.remove()
+            hunterDummyItem.remove()           
 
 function cacheAttachmentIds()
     attachments.get(ITEM_ELK_HIDE).setIDs(id1)
@@ -230,8 +233,6 @@ function onTrophyPickup(unit hero, item itemHandle)
         nullTimer() ->
             let itmId =  trophyToHideMap.get(trophy)
             hero.addItemById(trophyToHideMap.get(trophy))
-   // else
-       // if hero.hasItem(instances.get(hero).hunterDummyItem)
             
 
 function onUnitEnter(unit troll)
@@ -258,8 +259,31 @@ function onItemMoved()
     if instance != null
         //instance.onItemMoved()
 
+function onTargetOrder()
+    let order = GetIssuedOrderId()
+    let u = GetOrderedUnit()
+    if order != Orders.smart or not u.isInventoryFull() or not instances.has(u)
+        return
+    let target = GetOrderTargetItem()
+
+    // Smart pickup system -> simulate picking up meat like an item if full inventory, like in Bannars StackNSplit system
+    // Used to pick up ammo even if inventory's full
+    // TODO: Currently only work when troll is in pick up range, make it so the troll move toward ammo even if inventory is full
+    if (target != null
+        and target.isPickupable()
+        and u.isInventoryFull()
+        and u.hasItemById(ITEM_HUNTER_TROPHY_HIDE_DUMMY))
+        let collisionSize = u.getCollisionSize()
+        let rangeSq = (150.0 + collisionSize).pow(2)
+        if u.getPos().distanceToSq(target.getPos()) <= rangeSq
+            and HIDE_LIST.has(target.getTypeId())
+            instances.get(u).onHidePickup(target)
+
+
 init
     initializeAttachmentsIds()
+
+    EventListener.add(EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER, () -> onTargetOrder())    
 
     registerInventoryEvent(EVENT_ITEM_INVENTORY.MOVE)->
         onItemMoved()

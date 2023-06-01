@@ -31,6 +31,7 @@ constant ABIL_TP_BEACON    = compiletime(ABIL_ID_GEN.next())
 constant ABIL_WDH          = compiletime(ABIL_ID_GEN.next())
 constant ABIL_HATCHERY     = compiletime(ABIL_ID_GEN.next())
 constant ABIL_MAGIC_SEED   = compiletime(ABIL_ID_GEN.next())
+constant ABIL_MAGIC_TREE_SEED   = compiletime(ABIL_ID_GEN.next())
 constant ABIL_FORGE        = compiletime(ABIL_ID_GEN.next())
 constant ABIL_SHIP         = compiletime(ABIL_ID_GEN.next())
 
@@ -52,6 +53,7 @@ constant TT_TP_BEACON    = "Creates a Teleport Beacon at target location. Telepo
 constant TT_WDH          = "Creates a Witch Doctor's Hut at target location."
 constant TT_HATCHERY     = "Creates a Hatchery at target location."
 constant TT_MAGIC_SEED   = "This seed can grow a tree really fast when planted."
+constant TT_MAGIC_TREE_SEED = "This seed will grow a Magic Palm Tree, which produces a coconut every minute"
 constant TT_FORGE        = "Create a Forge at target location, the Forge is used to create ingots"
 constant TT_SHIP         = "Creates a ship somewhere in the water."
 
@@ -186,6 +188,13 @@ function createKitAbility(int abilId) returns AbilityDefinitionBuildTinyCastle
         ..setName("Build Magic Seed")
         ..setDurationNormal(1, 5.0)
         ..setUnitCreatedperplayerrace(1,  commaList(UNIT_BUILDING_TREE))
+
+@compiletime function createMagicTreeSeedAbility() returns AbilityDefinitionBuildTinyCastle
+    return createKitAbility(ABIL_MAGIC_TREE_SEED)
+        ..setIconNormal(Icons.bTNTemp)
+        ..setName("Build Magic palm Tree")
+        ..setDurationNormal(1, 5.0)
+        ..setUnitCreatedperplayerrace(1,  commaList(UNIT_BUILDING_MAGIC_TREE))
 
 @compiletime function createForgeAbility() returns AbilityDefinitionBuildTinyCastle
     return createKitAbility(ABIL_FORGE)
@@ -429,6 +438,19 @@ function createKit(int itemId) returns ItemDefinition
     ..setScalingValue(0.65)
     ..setStockReplenishInterval(30)
     ..setNumberofCharges(2)
+
+
+@compiletime function createMagicTreeSeed() returns ItemDefinition
+    return createKit(ITEM_MAGIC_TREE_SEED)
+    ..setInterfaceIcon(Icons.bTNAcorn)
+    ..setModelUsed(Objects.crystalShard)
+    ..setNameEnhance("Magic Palm Tree Seed")
+    ..setDescription("Build a Magic Palm tree")
+    ..setTooltipExtended(TT_MAGIC_TREE_SEED)
+    ..setLumberCost(10)
+    ..setAbilities(commaList(ABIL_MAGIC_TREE_SEED))
+    ..setScalingValue(0.65)
+    ..setStockReplenishInterval(30)
 
 @compiletime function createForgeKit() returns ItemDefinition
     return createKit(ITEM_FORGE_KIT)

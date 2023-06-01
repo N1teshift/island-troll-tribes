@@ -70,3 +70,8 @@ init
     ..add(ITEM_MANA_CRYSTAL)
     ..add(ITEM_MANA_CRYSTAL)
     ..add(ITEM_STICK)
+
+    new QuickMake(ABILITY_QM_NECROMANCERS_CLOAK)
+    ..add(ITEM_MAGIC)
+    ..add(ITEM_BONE_COAT)
+    ..add(ITEM_SCROLL_LIVING_DEAD)   

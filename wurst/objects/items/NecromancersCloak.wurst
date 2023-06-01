@@ -1,0 +1,254 @@
+package NecromancersCloak
+
+
+// Standard library imports:
+import AbilityObjEditing
+import HashMap
+import ClosureEvents
+import ObjectIdGenerator
+import ClosureTimers
+import ChannelAbilityPreset
+import ObjEditingUtils
+import OnUnitEnterLeave
+import ScrollsDefinition
+
+// Local imports:
+import LocalObjectIDs
+import HealingItems
+import Panic
+import StringBuilder
+import ToolTipsUtils
+import LocalAssets
+import ObjectIds
+import ItemIds
+import HealingSystem
+import Orders
+import UnitExtensions
+import HashList
+import UnitIds
+
+
+//IterableMap<unit, NecromancersCloak> instances = new IterableMap<unit, NecromancersCloak>()
+//IterableMap<player, NecromancersCloak> owners = new IterableMap<player, NecromancersCloak>()
+
+@compiletime function createNecromancersCloakAbility() returns AbilityDefinitionCryptLordLocustSwarm
+    return new AbilityDefinitionCryptLordLocustSwarm(ABILITY_NECROMANCERS_CLOAK_SKELETONS) 
+        ..setName("Necromancer's Cloak")
+        ..setCheckDependencies(false)
+        ..setDamageReturnFactor(1, 0)
+        ..setNumberofSwarmUnits(1, 2)
+        ..setDamageReturnThreshold(1, 99999)
+        ..setMaxSwarmUnitsPerTarget(1, 4)
+        ..setUnitReleaseIntervalseconds(1, 0.01)
+        ..setSwarmUnitType(1, UNIT_LOCUST_SKELETON.toRawCode())
+        ..setIconNormal(Icons.bTNSkeletonWarrior)
+        ..setEffectSoundLooping("")
+        ..presetTargetsAllowed(lvl -> commaList(
+            TargetsAllowed.air,
+            TargetsAllowed.enemies,
+            TargetsAllowed.ground
+        ))
+        ..setHeroAbility(false)
+        ..setItemAbility(true)
+        ..setManaCost(1, 0)
+        ..setDurationHero(1, 9999.)
+        ..setDurationNormal(1, 9999.)
+        ..setCooldown(1, 5)
+        ..setAreaofEffect(1, SKELETAL_AOE)
+        ..setEditorSuffix("(Wurst)")
+
+@compiletime function createNecromancersGreaterCloakAbility() returns AbilityDefinitionCryptLordLocustSwarm
+    return new AbilityDefinitionCryptLordLocustSwarm(ABILITY_NECROMANCERS_CLOAK_GREATER_SKELETONS) 
+        ..setName("Necromancer's Cloak")
+        ..setCheckDependencies(false)
+        ..setDamageReturnFactor(1, 0)
+        ..setNumberofSwarmUnits(1, 2)
+        ..setDamageReturnThreshold(1, 99999)
+        ..setMaxSwarmUnitsPerTarget(1, 4)
+        ..setUnitReleaseIntervalseconds(1, 0.01)
+        ..setSwarmUnitType(1, UNIT_GREATER_SKELETON.toRawCode())
+        ..setIconNormal(Icons.bTNSkeletonWarrior)
+        ..setEffectSoundLooping("")
+        ..presetTargetsAllowed(lvl -> commaList(
+            TargetsAllowed.air,
+            TargetsAllowed.enemies,
+            TargetsAllowed.ground
+        ))
+        ..setHeroAbility(false)
+        ..setItemAbility(true)
+        ..setManaCost(1, 0)
+        ..setDurationHero(1, 9999.)
+        ..setDurationNormal(1, 9999.)
+        ..setCooldown(1, 5)
+        ..setAreaofEffect(1, SKELETAL_AOE)
+        ..setEditorSuffix("(Wurst)")
+
+@compiletime function createUnitSkeletalMinion() returns UnitDefinition
+    return new UnitDefinition(UNIT_GREATER_SKELETON, UnitIds.skeletonwarrior)
+        ..setNormalAbilities("Aloc")
+        ..setAttack1AttackType(AttackType.Magic)
+        ..setAttack1DamageBase(SKELETAL_MINION_DMG*4)
+        ..setAttack1AnimationBackswingPoint(0.01)
+        ..setAttack1AnimationDamagePoint(0.2)
+        ..setTintingColorRed(120)
+        ..setTintingColorGreen(83)
+        ..setTintingColorBlue(140)
+        ..setScalingValue(1.2)
+        ..setAttack1CooldownTime(0.75*3)
+        ..setName("Skeleton Minion")
+        ..setAttack1DamageNumberofDice(1)
+        ..setAttack1DamageSidesperDie(1)
+        ..setSpeedBase(522)
+        ..setAttack1TargetsAllowed(commaList(
+            TargetsAllowed.debris,
+            TargetsAllowed.ground,
+            TargetsAllowed.item_t,
+            TargetsAllowed.structure,
+            TargetsAllowed.ward
+            ))
+
+/*
+
+class NecromancersCloak
+    unit troll
+    item itm
+    HashList<unit> skeletons = new HashList<unit>()
+
+    construct(unit troll, item itm)
+        instances.put(troll, this)
+        this.troll =troll
+        this.itm = itm
+        spawnSkeletons()
+        print("created")
+                
+
+    function addSkeleton(unit skeleton)
+        skeletons.add(skeleton)
+        print("added")
+
+    function removeSkeleton(unit skeleton)
+        for each in skeletons
+            each.kill()
+            each.remove()
+            skeletons.remove(each)
+            print("removed")
+            if skeletons.isEmpty()
+                spawnSkeletons()
+                print("reused")
+                return
+
+    function spawnSkeletons()
+        doAfter(ANIMATION_PERIOD) -> 
+            if troll.useItem(itm)               
+                print("spawned") 
+                doAfter(ANIMATION_PERIOD) -> 
+                    troll.endAbilityCooldown(ABILITY_NECROMANCERS_CLOAK_SKELETONS)   
+
+
+                
+
+    function onPickUp()
+
+    ondestroy
+        instances.remove(troll)
+        owners.remove(troll.getOwner())
+        print("destroyed")
+
+
+
+
+
+function onPickUp(unit troll, item itm)
+    owners.put(troll.getOwner(), new NecromancersCloak(troll, itm))
+
+function onDrop(unit troll, item itm)
+    let instance = instances.get(troll)
+    destroy instance
+    
+
+function onUnitEnter(unit u)
+    for owner in owners
+        if owner == u.getOwner()
+            owners.get(owner).addSkeleton(u)
+
+function onUnitLeave(unit u)
+    print("unitLeave")
+    for owner in owners
+        if owner == u.getOwner()
+            owners.get(owner).removeSkeleton(u)
+
+*/
+
+function onTargetOrder()
+    let order = GetIssuedOrderId()
+    let u = GetOrderedUnit()
+    if order != Orders.smart or not u.isInventoryFull()
+        return
+
+    let target = GetOrderTargetItem()
+
+    // Smart pickup system -> simulate picking up meat like an item if full inventory, like in Bannars StackNSplit system
+    // Used to pick up ammo even if inventory's full
+    // TODO: Currently only work when troll is in pick up range, make it so the troll move toward ammo even if inventory is full
+    if (target != null
+        and target.isPickupable()
+        and target.getTypeId() == ITEM_BONE
+        and u.isInventoryFull()
+        and u.hasItemById(ITEM_NECROMANCERS_CLOAK))
+        let collisionSize = u.getCollisionSize()
+        let rangeSq = (150.0 + collisionSize).pow(2)
+        let charges = u.getItemById(ITEM_NECROMANCERS_CLOAK).getCharges()
+        if u.getPos().distanceToSq(target.getPos()) <= rangeSq
+            and charges <10
+            let itm =u.getItemById(ITEM_NECROMANCERS_CLOAK)
+            if charges >=9
+                itm.remove()
+                nullTimer() -> 
+                    u.addItemById(ITEM_EMPOWERED_NECROMANCERS_CLOAK)
+            itm.setCharges(charges+1)
+            target.remove()
+
+
+function onPickUp(unit troll, item itm)
+    if itm.getTypeId() == ITEM_NECROMANCERS_CLOAK or itm.getTypeId() == ITEM_EMPOWERED_NECROMANCERS_CLOAK
+        doAfter(ANIMATION_PERIOD) -> 
+            if troll.useItem(itm)               
+                doAfter(ANIMATION_PERIOD) -> 
+                    troll.endAbilityCooldown(ABILITY_NECROMANCERS_CLOAK_SKELETONS)
+                    troll.endAbilityCooldown(ABILITY_NECROMANCERS_CLOAK_GREATER_SKELETONS)
+    else if itm.getTypeId() == ITEM_BONE and troll.hasItemById(ITEM_NECROMANCERS_CLOAK)
+        let cloak = troll.getItemById(ITEM_NECROMANCERS_CLOAK)
+        let charges = cloak.getCharges()
+        if charges < 10
+            itm.remove()
+            cloak.setCharges(charges+1)
+    else if itm.getTypeId() == ITEM_SCROLL_LIVING_DEAD and  (troll.hasItemById(ITEM_NECROMANCERS_CLOAK) or troll.hasItemById(ITEM_EMPOWERED_NECROMANCERS_CLOAK))
+        troll.disableAbility(ABILITY_SKELETAL_MINION, true, true)
+
+      
+
+init
+    EventListener.add(EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER, () -> onTargetOrder())
+
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->
+        //if GetManipulatedItem().getTypeId() == ITEM_NECROMANCERS_CLOAK
+        onPickUp(GetTriggerUnit(), GetManipulatedItem())  
+/*    
+    onEnter()->
+        if getEnterLeaveUnit().getTypeId() == UNIT_LOCUST_SKELETON
+            onUnitEnter(getEnterLeaveUnit())
+
+    onLeave()->
+        if getEnterLeaveUnit().getTypeId() == UNIT_LOCUST_SKELETON
+            //onUnitLeave(getEnterLeaveUnit())  
+
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_DEATH)->
+        if GetTriggerUnit().getTypeId() == UNIT_LOCUST_SKELETON
+            onUnitLeave(GetTriggerUnit()) 
+
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_DROP_ITEM) ->
+        if GetManipulatedItem().getTypeId() == ITEM_NECROMANCERS_CLOAK
+            onDrop(GetTriggerUnit(), GetManipulatedItem())
+*/
+               
+
