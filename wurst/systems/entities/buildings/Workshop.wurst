@@ -16,9 +16,11 @@ public class Workshop extends Building
     override function postCreate()
         super.postCreate()
 
+        getUnit().addAbility(ABILITY_QM_MAGIC)
+        getUnit().addAbility(ABILITY_QM_HEALING_SALVE)
         getUnit().addAbility(ABILITY_QM_POISON_THISTLES)
         getUnit().addAbility(ABILITY_QM_HUNTING_NET)
-        getUnit().addAbility(ABILITY_QM_DARK_THISTLES)
+        getUnit().addAbility(ABILITY_QM_MAGIC_TREE_SEED)
         getUnit().addAbility(ABILITY_QM_ENSNARE_TRAP)
         getUnit().addAbility(ABILITY_QM_MANA_CRYSTAL)
         getUnit().addAbility(ABILITY_QM_POISON_SPEAR)
@@ -27,6 +29,7 @@ public class Workshop extends Building
         getUnit().addAbility(ABILITY_QM_NETS)
         getUnit().addAbility(ABILITY_QM_BLOW_GUN)
         getUnit().addAbility(ABILITY_WORKSHOP_SPELLBOOK_ID)
+
 
 init
     Workshop.initialize()

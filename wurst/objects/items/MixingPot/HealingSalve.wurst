@@ -17,12 +17,12 @@ import BuffObjEditing
 import DamageEvent
 import DamageListeners
 
-public constant HEALING = 100.
+public constant HEALING = 210.
 public constant CAST_RANGE = 600.
 public constant NAME = "Healing Salve"
 public constant ICON =Icons.bTNLesserRejuvPotion
 public constant COOLDOWN = 5.
-public constant DURATION = 10.
+public constant DURATION = 8.
 let HEAL_BUFF_TT   = "This unit benefits from Health Rejuvenation; it is healing health points over time." 
 public constant TARGETS_ALLOWED = commaList(
                             TargetsAllowed.friend,

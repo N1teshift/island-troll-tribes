@@ -58,10 +58,10 @@ class MagicTree
     construct(unit treeBuilder)
         let pos =treeBuilder.getPos()
         treeBuilder.remove()
-        tree = createDestructable(DEST_NORMAL_TREE, pos, angle(0), 1.6, 0)
+        tree = createDestructable(DEST_NORMAL_TREE, pos, angle(0), 1.8, 0)
         tree.setOccluderHeight(0.)
-        tree.setLife(300.)
-        cb =doPeriodically(1) (CallbackPeriodic cb) ->
+        tree.setLife(360.)
+        cb =doPeriodically(60) (CallbackPeriodic cb) ->
             if not tree.isAliveTrick()
                 destroy this
             CreateItem(ITEM_COCONUT, pos.x+GetRandomReal(-100, 100), pos.y+GetRandomReal(-100, 100))

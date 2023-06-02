@@ -45,8 +45,8 @@ let RPOISON_DMG = [20., 10.]
 let UPOISON_DMG = [40., 16.]
 
 // Attack and movement speed reduction for each type of poison.
-let POISON_DEBUFF  = [0.30, 0.20]
-let RPOISON_DEBUFF = [0.40, 0.30]
+let POISON_DEBUFF  = [0.30, 0.90]
+let RPOISON_DEBUFF = [0.30, 0.30]
 let UPOISON_DEBUFF = [0.50, 0.40]
 
 // The cooldown for each spear.
@@ -180,22 +180,10 @@ function createSpear(int spearId) returns ItemDefinition
         ..setTintingColor2Green(0)
         ..setTintingColor3Blue(0)
 
-@compiletime function createPoisonSpear() returns ItemDefinition
-    return createSpear(ITEM_POISON_SPEAR)
-        ..setNameEnhance("Poison Spear")
-        ..setInterfaceIcon(LocalIcons.bTNPoisonSpear)
-        ..setHotkey("Q")
-        ..setTooltipExtended(TT_POISON)
-        ..setLumberCost(10)
-        ..setAbilities(commaList(ABILITY_SPEAR_POISON))
-        ..setStockReplenishInterval(120)
-        ..setTintingColor1Red(100)
-        ..setTintingColor2Green(255)
-        ..setTintingColor3Blue(100)
 
 @compiletime function createRefinedPoisonSpear() returns ItemDefinition
-    return createSpear(ITEM_REFINED_POISON_SPEAR)
-        ..setNameEnhance("Refined Poison Spear")
+    return createSpear(ITEM_POISON_SPEAR)
+        ..setNameEnhance("Poison Spear")
         ..setInterfaceIcon(Icons.bTNEnvenomedSpear)
         ..setHotkey("Q")
         ..setTooltipExtended(TT_RPOISON)

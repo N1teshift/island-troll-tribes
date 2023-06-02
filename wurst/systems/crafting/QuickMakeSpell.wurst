@@ -14,17 +14,13 @@ constant COOLDOWN = 1.
 
 // Additional pages for Quick Make
 constant MIXING_POT_SPELLBOOK = commaList(
-    ABILITY_QM_DISEASE_POTION,
     ABILITY_QM_ACID_BOMB,
     ABILITY_QM_BEE_HIVE,
     ABILITY_QM_ESSENCE_BEES,
     ABILITY_QM_GEM_OF_KNOWLEDGE,
-    ABILITY_QM_OMNICURE,
-    ABILITY_QM_TWIN_ISLANDS,
     ABILITY_QM_NETHER_POTION,
-    ABILITY_QM_DRUNKS_POTION,
-    ABILITY_QM_FERVOR_POTION,
-    ABILITY_QM_HEALING_SALVE
+    ABILITY_QM_CURE_ALL,
+    ABILITY_QM_ANTI_MAGIC_POTION
 )
 
 constant ARMOR_SPELLBOOK = commaList(
@@ -89,7 +85,7 @@ constant WORKSHOP_SPELLBOOK = commaList(
     ABILITY_QM_FIRE_BOMB,
     ABILITY_QM_EMP,
     ABILITY_QM_TRANSPORT_SHIP,
-    ABILITY_QM_MAGIC
+    ABILITY_QM_DARK_THISTLES
 )
 
 public constant BUILDING_CRAFT_SPELLBOOK = commaList(
@@ -220,27 +216,23 @@ function getQuickMakeSpells() returns LinkedList<QuickMakeSpell>
         // Mixing Pot
         new QuickMakeSpell("Healing Potion"          , MIX_TOOLTIP+HEALING_POTION_RECIPE          , "LesserRejuvPotion"       , ABILITY_QM_HEALING_POTION          , 0, 0, "Q", QM_TOOLIP, "stop"),
         new QuickMakeSpell("Mana Potion"             , MIX_TOOLTIP+MANA_POTION_RECIPE             , "PotionBlueSmall"         , ABILITY_QM_MANA_POTION             , 1, 0, "W", QM_TOOLIP, "holdposition"),
-        new QuickMakeSpell("Cure All"                , MIX_TOOLTIP+CURE_ALL_RECIPE                , "LesserClarityPotion"     , ABILITY_QM_CURE_ALL                , 2, 0, "E", QM_TOOLIP, "frenzy"),
-        new QuickMakeSpell("Anti-Magic Potion"       , MIX_TOOLTIP+ANTI_MAGIC_POTION_RECIPE       , "PotionOfClarity"         , ABILITY_QM_ANTI_MAGIC_POTION       , 3, 0, "R", QM_TOOLIP, "immolation"),
+        new QuickMakeSpell("Disease Potion"          , MIX_TOOLTIP+DISEASE_POTION_RECIPE          , "PotionGreen"             , ABILITY_QM_DISEASE_POTION          , 2, 0, "E", QM_TOOLIP, "berserk"),
+        new QuickMakeSpell("Drunks Potion"           , MIX_TOOLTIP+DRUNKS_POTION_RECIPE           , "LesserInvulneralbility"  , ABILITY_QM_DRUNKS_POTION           , 3, 0, "R", QM_TOOLIP, "divineshield"),
         new QuickMakeSpell("Spirit Of Wind"          , MIX_TOOLTIP+SPIRIT_WIND_RECIPE             , "OrbOfLightning"          , ABILITY_QM_SPIRIT_WIND             , 0, 1, "A", QM_TOOLIP, "winwalk"),
         new QuickMakeSpell("Spirit Of Water"         , MIX_TOOLTIP+SPIRIT_WATER_RECIPE            , "OrbOfFrost"              , ABILITY_QM_SPIRIT_WATER            , 1, 1, "S", QM_TOOLIP, "ambush"),
         new QuickMakeSpell("Spirit Of Darkness"      , MIX_TOOLTIP+SPIRIT_DARKNESS_RECIPE         , "OrbOfDarkness"           , ABILITY_QM_SPIRIT_DARKNESS         , 2, 1, "D", QM_TOOLIP, "animatedead"),
         new QuickMakeSpell("Anabolic Potion"         , MIX_TOOLTIP+ANABOLIC_POTION_RECIPE         , "PotionRed"               , ABILITY_QM_ANABOLIC_POTION         , 0, 2, "Z", QM_TOOLIP, "avatar"),
-        new QuickMakeSpell("Oracle Potion"           , MIX_TOOLTIP+ORACLE_POTION_RECIPE           , "GreaterInvisibility"     , ABILITY_QM_ORACLE_POTION           , 2, 2, "C", QM_TOOLIP, "battlestations"),
+        new QuickMakeSpell("Fervor Potion"           , MIX_TOOLTIP+FERVER_POTION_RECIPE           , "GreaterInvulneralbility" , ABILITY_QM_FERVOR_POTION           , 2, 2, "C", QM_TOOLIP, "fanofknives"),
 
         // Special Herb Page
-        new QuickMakeSpell("Disease Potion"          , MIX_TOOLTIP+DISEASE_POTION_RECIPE          , "PotionGreen"             , ABILITY_QM_DISEASE_POTION          , 0, 0, "Q", QM_TOOLIP, "berserk"),
-        new QuickMakeSpell("Acid Bomb"               , MIX_TOOLTIP+ACID_BOMB_RECIPE               , "AcidBomb"                , ABILITY_QM_ACID_BOMB               , 1, 0, "W", QM_TOOLIP, "burrow"),
-        new QuickMakeSpell("Bee Hive"                , MIX_TOOLTIP+BEE_HIVE_RECIPE                , "Crate"                   , ABILITY_QM_BEE_HIVE                , 2, 0, "E", QM_TOOLIP, "cannibalize"),
-        new QuickMakeSpell("Essences Of Bees"        , MIX_TOOLTIP+ESSENCE_BEES_RECIPE            , "BeeHive"                 , ABILITY_QM_ESSENCE_BEES            , 3, 0, "R", QM_TOOLIP, "howlofterror"),
-        new QuickMakeSpell("Gem Of Knowledge"        , MIX_TOOLTIP+GEM_OF_KNOWLEDGE_RECIPE        , "EnchantedGemstone"       , ABILITY_QM_GEM_OF_KNOWLEDGE        , 0, 1, "A", QM_TOOLIP, "creepanimatedead"),
-        new QuickMakeSpell("Omnicure"                , MIX_TOOLTIP+OMNICURE_RECIPE                , "MinorRejuvPotion"        , ABILITY_QM_OMNICURE                , 1, 1, "S", QM_TOOLIP, "thunderclap"),
-        new QuickMakeSpell("Twin Islands Potion"     , MIX_TOOLTIP+TWIN_ISLANDS_POTION_RECIPE     , "PotionGreenSmall"        , ABILITY_QM_TWIN_ISLANDS            , 2, 1, "D", QM_TOOLIP, "stomp"),
-        new QuickMakeSpell("Nether Potion"           , MIX_TOOLTIP+NETHER_POTION_RECIPE           , "PotionOfOmniscience"     , ABILITY_QM_NETHER_POTION           , 0, 2, "F", QM_TOOLIP, "defend"),
-        new QuickMakeSpell("Drunks Potion"           , MIX_TOOLTIP+DRUNKS_POTION_RECIPE           , "LesserInvulneralbility"  , ABILITY_QM_DRUNKS_POTION           , 2, 2, "Z", QM_TOOLIP, "divineshield"),
-        new QuickMakeSpell("Fervor Potion"           , MIX_TOOLTIP+FERVER_POTION_RECIPE           , "GreaterInvulneralbility" , ABILITY_QM_FERVOR_POTION           , 1, 2, "X", QM_TOOLIP, "fanofknives"),
-        new QuickMakeSpell("Healing Salve"           , MIX_TOOLTIP+HEALING_SALVE_RECIPE           , "BronzeBowlFullGreen"     , ABILITY_QM_HEALING_SALVE           , 2, 2, "C", QM_TOOLIP, "chemicalrage"),
-
+        
+        new QuickMakeSpell("Acid Bomb"               , MIX_TOOLTIP+ACID_BOMB_RECIPE               , "AcidBomb"                , ABILITY_QM_ACID_BOMB               , 0, 0, "Q", QM_TOOLIP, "burrow"),
+        new QuickMakeSpell("Bee Hive"                , MIX_TOOLTIP+BEE_HIVE_RECIPE                , "Crate"                   , ABILITY_QM_BEE_HIVE                , 1, 0, "W", QM_TOOLIP, "cannibalize"),
+        new QuickMakeSpell("Essences Of Bees"        , MIX_TOOLTIP+ESSENCE_BEES_RECIPE            , "BeeHive"                 , ABILITY_QM_ESSENCE_BEES            , 2, 0, "E", QM_TOOLIP, "howlofterror"),
+        new QuickMakeSpell("Gem Of Knowledge"        , MIX_TOOLTIP+GEM_OF_KNOWLEDGE_RECIPE        , "EnchantedGemstone"       , ABILITY_QM_GEM_OF_KNOWLEDGE        , 3, 0, "R", QM_TOOLIP, "creepanimatedead"),
+        new QuickMakeSpell("Nether Potion"           , MIX_TOOLTIP+NETHER_POTION_RECIPE           , "PotionOfOmniscience"     , ABILITY_QM_NETHER_POTION           , 0, 1, "A", QM_TOOLIP, "defend"),
+        new QuickMakeSpell("Cure All"                , MIX_TOOLTIP+CURE_ALL_RECIPE                , "LesserClarityPotion"     , ABILITY_QM_CURE_ALL                , 1, 1, "S", QM_TOOLIP, "frenzy"),
+        new QuickMakeSpell("Anti-Magic Potion"       , MIX_TOOLTIP+ANTI_MAGIC_POTION_RECIPE       , "PotionOfClarity"         , ABILITY_QM_ANTI_MAGIC_POTION       , 2, 1, "D", QM_TOOLIP, "immolation"),
 
         // Armory
         new QuickMakeSpell("Battle Gloves"           , TRANSMUTE_TOOLTIP+BATTLE_GLOVES_RECIPE        , "ImprovedUnholyStrength" , ABILITY_QM_BATTLE_GLOVES        , 0, 0, "Q", QM_TOOLIP, "berserk"),
@@ -275,26 +267,28 @@ function getQuickMakeSpells() returns LinkedList<QuickMakeSpell>
         new QuickMakeSpell("Spirit Ward"               , TRANSMUTE_TOOLTIP+SPIRIT_WARD_RECIPE        , "AbsorbMagic"               , ABILITY_QM_SPIRIT_WARD        , 2, 2, "S", QM_TOOLIP, "manaflareoff"),
         new QuickMakeSpell("Poison"                    , TRANSMUTE_TOOLTIP+POISON_RECIPE             , "HealingSalve"              , ABILITY_QM_POISON             , 0, 2, "Z", QM_TOOLIP, "manaflareon"),
         new QuickMakeSpell("Ultra Poison"              , TRANSMUTE_TOOLTIP+ULTRA_POISON_RECIPE       , "VialFull"                  , ABILITY_QM_ULTRA_POISON       , 1, 2, "X", QM_TOOLIP, "manashieldoff"),
-        new QuickMakeSpell("Necromancer's cloak"       , TRANSMUTE_TOOLTIP+NECROMANCERS_CLOAK_RECIPE , "SkullShroudGlowIncreased"  , ABILITY_QM_NECROMANCERS_CLOAK , 1, 1, "S", QM_TOOLIP, "howlofterror"),
+        new QuickMakeSpell("Necromancer's cloak"       , TRANSMUTE_TOOLTIP+NECROMANCERS_CLOAK_RECIPE , "SkullShroudGlowIncreased"  , ABILITY_QM_NECROMANCERS_CLOAK , 1, 1, "S", QM_TOOLIP, "avatar"),
+
 
         // Workshop
         new QuickMakeSpell("Ensnare Trap"         , TRANSMUTE_TOOLTIP+ENSNARE_TRAP_RECIPE         , "COP"                    , ABILITY_QM_ENSNARE_TRAP         , 0, 0, "Q", QM_TOOLIP, "immolation"),
-        new QuickMakeSpell("Blow Gun"             , TRANSMUTE_TOOLTIP+BLOW_GUN_RECIPE             , "AlleriaFlute"           , ABILITY_QM_BLOW_GUN             , 2, 0, "E", QM_TOOLIP, "divineshield"),
-        new QuickMakeSpell("Dark Thistles"        , TRANSMUTE_TOOLTIP+DARK_THISTLES_RECIPE        , "QuillSpray"             , ABILITY_QM_DARK_THISTLES        , 3, 0, "R", QM_TOOLIP, "berserk"),
-        new QuickMakeSpell("Poison Thistles"      , TRANSMUTE_TOOLTIP+POISON_THISTLES_RECIPE      , "PoisonQuill"            , ABILITY_QM_POISON_THISTLES      , 3, 0, "U", QM_TOOLIP, "manaflareon"),
-        new QuickMakeSpell("Mana Crystal"         , TRANSMUTE_TOOLTIP+MANA_CRYSTAL_RECIPE         , "ManaCrystal"            , ABILITY_QM_MANA_CRYSTAL         , 1, 0, "W", QM_TOOLIP, "manashieldon"),
-        new QuickMakeSpell("Poison Spear"         , TRANSMUTE_TOOLTIP+POISON_SPEAR_RECIPE         , "PoisonSpear"            , ABILITY_QM_POISON_SPEAR         , 0, 1, "A", QM_TOOLIP, "creepanimatedead"),
-        new QuickMakeSpell("Refined Poison Spear" , TRANSMUTE_TOOLTIP+REFINED_POISON_SPEAR_RECIPE , "EnvenomedSpear"         , ABILITY_QM_REFINED_POISON_SPEAR , 1, 1, "S", QM_TOOLIP, "thunderclap"),
-        new QuickMakeSpell("Ultra Poison Spear"   , TRANSMUTE_TOOLTIP+ULTRA_POISON_SPEAR_RECIPE   , "UltraPoisonSpear"       , ABILITY_QM_ULTRA_POISON_SPEAR   , 2, 1, "D", QM_TOOLIP, "stomp"),
+        new QuickMakeSpell("Blow Gun"             , TRANSMUTE_TOOLTIP+BLOW_GUN_RECIPE             , "AlleriaFlute"           , ABILITY_QM_BLOW_GUN             , 1, 0, "W", QM_TOOLIP, "divineshield"),
+        new QuickMakeSpell("Poison Thistles"      , TRANSMUTE_TOOLTIP+POISON_THISTLES_RECIPE      , "PoisonQuill"            , ABILITY_QM_POISON_THISTLES      , 2, 0, "E", QM_TOOLIP, "manaflareon"),        
+        new QuickMakeSpell("Magic Tree Seed"      , TRANSMUTE_TOOLTIP+MAGIC_TREE_SEED_RECIPE      , "Acorn"                  , ABILITY_QM_MAGIC_TREE_SEED      , 3, 0, "R", QM_TOOLIP, "berserk"),
+        new QuickMakeSpell("Mana Crystal"         , TRANSMUTE_TOOLTIP+MANA_CRYSTAL_RECIPE         , "ManaCrystal"            , ABILITY_QM_MANA_CRYSTAL         , 0, 1, "A", QM_TOOLIP, "manashieldon"),
+        new QuickMakeSpell("Magic"                , TRANSMUTE_TOOLTIP+MAGIC_RECIPE                , "MoonStone"              , ABILITY_QM_MAGIC                , 1, 1, "S", QM_TOOLIP, "locustswarm"),
+        new QuickMakeSpell("Poison Spear"         , TRANSMUTE_TOOLTIP+POISON_SPEAR_RECIPE         , "EnvenomedSpear"         , ABILITY_QM_POISON_SPEAR         , 2, 1, "D", QM_TOOLIP, "creepanimatedead"),
         new QuickMakeSpell("Nets"                 , TRANSMUTE_TOOLTIP+NETS_RECIPE                 , "Ensnare"                , ABILITY_QM_NETS                 , 0, 2, "Z", QM_TOOLIP, "defend"),
         new QuickMakeSpell("Hunting Net"          , TRANSMUTE_TOOLTIP+HUNTING_NET_RECIPE          , "HuntingNet"             , ABILITY_QM_HUNTING_NET          , 1, 2, "X", QM_TOOLIP, "howlofterror"),
+        new QuickMakeSpell("Healing Salve"        , TRANSMUTE_TOOLTIP+HEALING_SALVE_RECIPE        , "BronzeBowlFullGreen"    , ABILITY_QM_HEALING_SALVE        , 2, 2, "C", QM_TOOLIP, "chemicalrage"),
 
         // Second Page
         new QuickMakeSpell("Smoke Bomb"           , TRANSMUTE_TOOLTIP+SMOKE_BOMB_RECIPE           , "SmokePot"               , ABILITY_QM_SMOKE_BOMB           , 0, 0, "Q", QM_TOOLIP, "locustswarm"),
         new QuickMakeSpell("Fire Bomb"            , TRANSMUTE_TOOLTIP+FIRE_BOMB_RECIPE            , "LiquidFire"             , ABILITY_QM_FIRE_BOMB            , 1, 0, "W", QM_TOOLIP, "manashieldon"),
         new QuickMakeSpell("EMP"                  , TRANSMUTE_TOOLTIP+EMP_RECIPE                  , "WispSplode"             , ABILITY_QM_EMP                  , 2, 0, "E", QM_TOOLIP, "manaflareoff"),
         new QuickMakeSpell("Transport Ship"       , TRANSMUTE_TOOLTIP+TRANSPORT_SHIP_RECIPE       , "NightElfTransport"      , ABILITY_QM_TRANSPORT_SHIP       , 3, 0, "R", QM_TOOLIP, "manaflareon"),
-        new QuickMakeSpell("Magic"                , TRANSMUTE_TOOLTIP+MAGIC_RECIPE                , "MoonStone"              , ABILITY_QM_MAGIC                , 0, 1, "A", QM_TOOLIP, "creepanimatedead"),
+        new QuickMakeSpell("Dark Thistles"        , TRANSMUTE_TOOLTIP+DARK_THISTLES_RECIPE        , "QuillSpray"             , ABILITY_QM_DARK_THISTLES        , 0, 1, "A", QM_TOOLIP, "avatar"),
+          
 
         // Tannery
         new QuickMakeSpell("Elk Skin Boots"          , TRANSMUTE_TOOLTIP+ELK_SKIN_BOOTS_RECIPE          , "ElkHideBoots"   , ABILITY_QM_ELK_SKIN_BOOTS          , 0, 0, "Q", QM_TOOLIP, "berserk"),
@@ -372,7 +366,7 @@ function getQuickMakeSpellBookSpells() returns LinkedList<QuickMakeSpellBook>
         new QuickMakeSpellBook(ABILITY_ARMOR_SPELLBOOK_ID     , "Armor Quick Make Page"                 , "F", ARMOR_SPELLBOOK_TOOLTIP   , FORGE_SPELLBOOK    , 3, 1 , "cripple"  ),
         new QuickMakeSpellBook(ABILITY_FORGE_SPELLBOOK_ID    , "More Forge Quick Make Page"           , "C", FORGE_SPELLBOOK_TOOLTIP  , FORGE_SECOND_SPELLBOOK    , 2, 2 , "spellbook"),
         new QuickMakeSpellBook(ABILITY_WDH_SPELLBOOK_ID       , "More Witch Doctors Hut Quick Make Page", "C", WDH_SPELLBOOK_TOOLTIP     , WDH_SPELLBOOK       , 2, 2 , "spellbook"),
-        new QuickMakeSpellBook(ABILITY_WORKSHOP_SPELLBOOK_ID  , "More Workshop Quick Make Page"         , "C", WORKSHOP_SPELLBOOK_TOOLTIP, WORKSHOP_SPELLBOOK  , 2, 2 , "spellbook"),
+        new QuickMakeSpellBook(ABILITY_WORKSHOP_SPELLBOOK_ID  , "More Workshop Quick Make Page"         , "F", WORKSHOP_SPELLBOOK_TOOLTIP, WORKSHOP_SPELLBOOK  , 3, 2 , "spellbook"),
 
         new QuickMakeSpellBook(ABILITY_BUILDING_CRAFT_SPELLBOOK_ID       , "Buildings Craft Recipe"  , "B", BUILDING_CRAFT_TOOLTIP, BUILDING_CRAFT_SPELLBOOK       , 0, 1 , "charm", "BasicStruct")
     )

@@ -24,7 +24,7 @@ init
     ..add(ITEM_SPIRIT_WATER)
 
     new QuickMake(ABILITY_QM_POISON_SPEAR)
-    ..add(ITEM_MUSHROOM)
+    ..add(ITEM_POISON)
     ..add(ITEM_SPEAR)
 
     new QuickMake(ABILITY_QM_REFINED_POISON_SPEAR)
@@ -57,7 +57,7 @@ init
     ..add(ITEM_CLAY_BALL)
     ..add(ITEM_ELK_HIDE)
     ..add(ITEM_ELK_HIDE)
-    
+
     new QuickMake(ABILITY_QM_MAGIC)
     ..add(ITEM_MANA_CRYSTAL)
     ..add(ITEM_MANA_CRYSTAL)
@@ -77,3 +77,11 @@ init
     new QuickMake(ABILITY_QM_LIVING_CLAY)
     ..add(ITEM_CLAY_BALL)
     ..add(ITEM_MANA_CRYSTAL)
+
+    new QuickMake(ABILITY_QM_HEALING_SALVE)
+    ..add(ITEM_ATHELAS_SEED)
+    ..add(ITEM_BANANA)
+    
+    new QuickMake(ABILITY_QM_MAGIC_TREE_SEED)
+    ..add(ITEM_MAGIC)
+    ..add(ITEM_COCONUT)  

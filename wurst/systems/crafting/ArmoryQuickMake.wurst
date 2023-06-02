@@ -20,16 +20,13 @@ init
 
     new QuickMake(ABILITY_QM_BATTLE_AXE)
     ..add(ITEM_FERVOR_POTION)
-    ..add(ITEM_STEEL_INGOT)
-    ..add(ITEM_STEEL_INGOT)
+    ..add(ITEM_STEEL_AXE)
     ..add(ITEM_SPIRIT_WIND)
     ..add(ITEM_SPIRIT_WATER)
     ..add(ITEM_MANA_CRYSTAL)
 
     new QuickMake(ABILITY_QM_BATTLE_GLOVES)
-    ..add(ITEM_BONE_GLOVES)
-    ..add(ITEM_STEEL_INGOT)
-    ..add(ITEM_STEEL_INGOT)
+    ..add(ITEM_STEEL_GLOVES)
     ..add(ITEM_SPIRIT_WIND)
     ..add(ITEM_SPIRIT_WATER)
     ..add(ITEM_MANA_CRYSTAL)

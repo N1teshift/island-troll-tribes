@@ -6,6 +6,7 @@ import ObjectIdGenerator
 // Third-party imports:
 import ObjectIDManager
 
+public let ABILITY_QM_MAGIC_TREE_SEED               =compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_QM_MAGIC_TREE_SEED")
 public let ABILITY_QM_NECROMANCERS_CLOAK               =compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_QM_NECROMANCERS_CLOAKK")
 public let ABILITY_NECROMANCERS_CLOAK_GREATER_SKELETONS =compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_NECROMANCERS_CLOAK_GREATER_SKELETONS")
 public let ABILITY_NECROMANCERS_CLOAK_SKELETONS         =compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_NECROMANCERS_CLOAK_SKELETONS")

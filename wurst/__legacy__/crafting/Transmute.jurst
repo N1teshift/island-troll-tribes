@@ -407,7 +407,7 @@ library Transmute initializer onInit requires LocalObjectIDs, UnitExtensions, It
             //     call UnitAddItem(GetTriggerUnit(), added)
             //     call lowerItem(3)
             // endif
-            if i[0] ==  ITEM_FERVOR_POTION and i[1] == ITEM_STEEL_INGOT and i[2] == ITEM_STEEL_INGOT and i[3] == ITEM_SPIRIT_WIND and i[4] == ITEM_SPIRIT_WATER and i[5] == ITEM_MANA_CRYSTAL then
+            if i[0] ==  ITEM_FERVOR_POTION and i[1] == ITEM_STEEL_AXE and i[2] == ITEM_SPIRIT_WIND and i[3] == ITEM_SPIRIT_WATER and i[4] == ITEM_MANA_CRYSTAL then
                 if GetItemCharges(t[0]) > 1 then
                     call SetItemCharges(t[0], GetItemCharges(t[0]) - 1 )
                 else
@@ -417,7 +417,6 @@ library Transmute initializer onInit requires LocalObjectIDs, UnitExtensions, It
                 call RemoveItem(t[2])
                 call RemoveItem(t[3])
                 call RemoveItem(t[4])
-                call RemoveItem(t[5])
                 call UnitAddItemByIdSwapped( ITEM_BATTLE_AXE, GetTriggerUnit() )
                 call lowerItem(1)
             endif
@@ -460,13 +459,11 @@ library Transmute initializer onInit requires LocalObjectIDs, UnitExtensions, It
                 call UnitAddItemByIdSwapped( ITEM_ANABOLIC_BOOTS, GetTriggerUnit() )
                 call lowerItem(1)
             endif
-            if i[0] == ITEM_BONE_GLOVES and i[1] == ITEM_STEEL_INGOT and i[2] == ITEM_STEEL_INGOT and i[3] == ITEM_SPIRIT_WIND and i[4] == ITEM_SPIRIT_WATER and i[5] == ITEM_MANA_CRYSTAL then
+            if i[0] == ITEM_STEEL_GLOVES and i[1] == ITEM_SPIRIT_WIND and i[2] == ITEM_SPIRIT_WATER and i[3] == ITEM_MANA_CRYSTAL then
                 call RemoveItem(t[0])
                 call RemoveItem(t[1])
                 call RemoveItem(t[2])
                 call RemoveItem(t[3])
-                call RemoveItem(t[4])
-                call RemoveItem(t[5])
                 call UnitAddItemByIdSwapped( ITEM_BATTLE_GLOVES, GetTriggerUnit() )
                 call lowerItem(1)
             endif
@@ -726,24 +723,6 @@ library Transmute initializer onInit requires LocalObjectIDs, UnitExtensions, It
                     call RemoveItem(t[0])
                 endif
                 call RemoveItem(t[1])
-                call UnitAddItemByIdSwapped( ITEM_REFINED_POISON_SPEAR, GetTriggerUnit() )
-            endif
-            if i[0] == ITEM_ULTRA_POISON and i[1] == ITEM_SPEAR then
-                if GetItemCharges(t[0]) > 1 then
-                    call SetItemCharges(t[0], GetItemCharges(t[0]) - 1 )
-                else
-                    call RemoveItem(t[0])
-                endif
-                call RemoveItem(t[1])
-                call UnitAddItemByIdSwapped( ITEM_ULTRA_POISON_SPEAR, GetTriggerUnit() )
-            endif
-            if i[0] == ITEM_MUSHROOM and i[1] == ITEM_SPEAR then
-                if GetItemCharges(t[0]) > 1 then
-                    call SetItemCharges(t[0], GetItemCharges(t[0]) - 1 )
-                else
-                    call RemoveItem(t[0])
-                endif
-                call RemoveItem(t[1])
                 call UnitAddItemByIdSwapped( ITEM_POISON_SPEAR, GetTriggerUnit() )
                 call lowerItem(2)
             endif
@@ -823,6 +802,26 @@ library Transmute initializer onInit requires LocalObjectIDs, UnitExtensions, It
                 set added = CreateItem(ITEM_MAGIC, GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit()))
                 call UnitAddItem(GetTriggerUnit(), added)
             endif
+            if i[0] == ITEM_ATHELAS_SEED and i[1] == ITEM_BANANA then
+                call RemoveItem(t[0])
+                if GetItemCharges(t[1]) > 1 then
+                    call SetItemCharges(t[1], GetItemCharges(t[1]) - 1 )
+                else
+                    call RemoveItem(t[1])
+                endif
+                call UnitAddItemByIdSwapped( ITEM_HEALING_SALVE, GetTriggerUnit() )
+                call lowerItem(1)
+            endif
+            if i[0] == ITEM_COCONUT and i[1] == ITEM_MAGIC then
+                if GetItemCharges(t[0]) > 1 then
+                    call SetItemCharges(t[0], GetItemCharges(t[0]) - 1 )
+                else
+                    call RemoveItem(t[0])
+                call RemoveItem(t[1])
+                endif
+                call UnitAddItemByIdSwapped( ITEM_MAGIC_TREE_SEED, GetTriggerUnit() )
+                call lowerItem(1)
+            endif            
         endif
         set t[0] = null
         set t[1] = null
