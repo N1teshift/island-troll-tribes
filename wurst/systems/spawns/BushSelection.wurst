@@ -5,6 +5,8 @@ import InventoryUtils
 import Classes
 import UnitUtils
 import LocalObjectIDs
+import PlayerExtensions
+import ThiefsPocket
 
 let MAX_DIST = 300
 
@@ -15,7 +17,6 @@ let map = new HashMap<int, int>()
 function transferItems(unit u, player p)
     // Look up the type ID for the units that can use the bush.
     let targetID = map.get(u.getTypeId())
-
     // Exit if the selection unit is not a bush.
     if targetID == 0
         return
@@ -29,6 +30,14 @@ function transferItems(unit u, player p)
 
     // Deliver the items
     if match != null
+        //Deliver first item to Thief's Pocket if its empty
+        if match.getTrollBaseClass() == UNIT_THIEF
+            for slot = 0 to 5
+                let itm = u.itemInSlot(slot)
+                if itm != null and match.itemInSlot(5).getTypeId() == ITEM_THIEFS_POCKET_DUMMY
+                    addItemToThiefsPocket(match, itm)
+                    break
+
         u.transferItems(match)
 
 

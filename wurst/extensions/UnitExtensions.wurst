@@ -20,9 +20,11 @@ import IdListConstant
 import LocalObjectIDs
 
 
-constant DUMMY_ITEM_ID = compiletime(ITEM_ID_GEN.next())
+public constant DUMMY_ITEM_ID = compiletime(ITEM_ID_GEN.next())
 @compiletime function createDummyItem()
     new ItemDefinition(DUMMY_ITEM_ID, 'bspd')
+        ..setCanBeSoldToMerchants(false)
+        ..setAbilities("")
 
 /**
     Adds an item by handle to the given slot.

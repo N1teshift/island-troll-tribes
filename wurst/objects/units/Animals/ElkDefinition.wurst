@@ -25,6 +25,7 @@ class ElkDefinition extends UnitDefinition
         this.setName("Elk")
         this.setNameEditorSuffix("(Wurst)")
 
+
 public class FawnDefinition extends UnitDefinition
     construct(int unitId)
         super(unitId, UnitIds.deer)

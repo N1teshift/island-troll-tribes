@@ -106,8 +106,8 @@ public function stealFromThiefsBush(unit caster, unit target) returns item
     let itm = generateThiefsBushItem(caster)
     stolenItems.add(itm)
     let slot =caster.itemInSlot(5)
-    if slot == null
-        caster.addItemHandleToSlot(itm, 5)
+    if slot.getTypeId() == ITEM_THIEFS_POCKET_DUMMY
+        addItemToThiefsPocket(caster, itm)
     else
         caster.addItemHandle(itm)
     return itm
@@ -124,8 +124,8 @@ function stealFromTroll(unit caster, unit target)
             target.removeItem(itm)
             stolenItems.add(itm)
             let slot =caster.itemInSlot(5)
-            if slot == null
-                caster.addItemHandleToSlot(itm, 5)
+            if slot.getTypeId() == ITEM_THIEFS_POCKET_DUMMY
+                addItemToThiefsPocket(caster, itm)
             else
                 caster.addItemHandle(itm)
             return
@@ -157,8 +157,8 @@ function stealFromTradeShip(unit caster, unit target)
             let itm = createItem(itemId, caster.getPos())
             stolenItems.add(itm)
             let slot =caster.itemInSlot(5)
-            if slot == null
-                caster.addItemHandleToSlot(itm, 5)
+            if slot.getTypeId() == ITEM_THIEFS_POCKET_DUMMY
+                addItemToThiefsPocket(caster, itm)
             else
                 caster.addItemHandle(itm)
             instance.addRobbedShip(target)

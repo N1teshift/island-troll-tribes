@@ -23,6 +23,7 @@ import Pool
 import LocalAssets
 import ColorUtils
 import Toolkit
+import HashList
 
 let itemSpawnInfoMap = new IterableMap<int, SpawnInfo>()
 let animalSpawnInfoMap = new IterableMap<int, SpawnInfo>()
@@ -32,6 +33,7 @@ let FISH_PER_AREA = 1
 var gameStartTime = 0.
 
 var itemCurrent = 0
+unit lastSpawnedUnit =null
 
 let spawnRegion = CreateRegion()
     ..addRect(gg_rct_spawn_area_1_1)
@@ -91,7 +93,12 @@ class IslandSpawner
     private Pool<VoidBiFunction<real, real>> animalPool = null
     private let spawnsPerType = new HashMap<int, int>()
     private let referenceItemCount = new HashMap<int,real>()
+    HashList<unit> animalList = new HashList<unit>()
+    int itemMaxAmount = (gameConfig.getItemMax()/4).ceil()
+    int animalMaxAmount = (gameConfig.getMaxAnimals()/4).ceil()
+    int itemCurrent
     int itemsSpawnCount
+    int animalCurrent
     int animalsSpawnCount
     private int itemsSpawnedTotal = 0
     private Pool<int> itemPool = null
@@ -217,62 +224,50 @@ class IslandSpawner
 public function lowerItem(int count)
     itemCurrent -= count
 
+public function lowerAnimal(unit animal)
+    for island in islandSpawnList
+        if island.animalList.has(animal)
+            island.animalCurrent -=1
+            island.animalList.remove(animal)
+
+
 public function handleItemSpawning()
     for island in islandSpawnList
         island.generateItemPool()
 
-    let spawnedCount = new IterableMap<IslandSpawner, int>()
-
-    //Use animation period * 2 since the old system was WAY slower than this
-    doPeriodically(ANIMATION_PERIOD*2) itemLoop ->
-        //Spawn one item on each island until they all reached the max count
-        bool loopDidSpawn = false
-        for island in islandSpawnList
-            //Abruptly stop loop if item limit reached
-            if itemCurrent >= gameConfig.getItemMax()
-                loopDidSpawn = false
-                break
-
+    for island in islandSpawnList
+        let spawnedCount = new HashMap<IslandSpawner, int>()
+        spawnedCount.put(island,0)
+        //Use animation period * 2 since the old system was WAY slower than this
+        doPeriodically(ANIMATION_PERIOD*2) itemLoop ->
             //Spawn item if island-specific spawn count is not yet achieved
-            if not spawnedCount.has(island) or (spawnedCount.get(island) < (island.itemsSpawnCount * gameConfig.getItemBase()).ceil())
+            if island.itemCurrent < island.itemMaxAmount
+                and spawnedCount.get(island)<(island.itemsSpawnCount * gameConfig.getItemBase()).ceil()
                 island.spawnItemFromPool()
-                itemCurrent += 1
+                island.itemCurrent += 1
                 spawnedCount.put(island, spawnedCount.get(island) + 1)
-                loopDidSpawn = true
-
-        //Return when all islandSpawners iterated without any spawns (or abrupt stop condition reached)
-        if not loopDidSpawn
-            destroy spawnedCount
-            destroy itemLoop //Break
+            else
+                destroy itemLoop 
 
 
 public function handleAnimalSpawning()
     for island in islandSpawnList
         island.generateAnimalPool()
 
-    let spawnedCount = new HashMap<IslandSpawner, int>()
-
-    //Use animation period * 2 since the old system was WAY slower than this
-    doPeriodically(ANIMATION_PERIOD*2) animalLoop ->
-        //Spawn one animal on each island until they all reached the max count
-        bool loopDidSpawn = false
-        for island in islandSpawnList
-            //Abruptly stop loop if animal limit reached
-            if (udg_ANIMAL_CURRENT >= gameConfig.getMaxAnimals())
-                loopDidSpawn = false
-                break
-
-            //Spawn item if island-specific spawn count is not yet achieved
-            if not spawnedCount.has(island) or (spawnedCount.get(island) < (island.animalsSpawnCount * gameConfig.getFoodBase()).ceil())
+    for island in islandSpawnList
+        let spawnedCount = new HashMap<IslandSpawner, int>()
+        spawnedCount.put(island,0)
+        //Use animation period * 2 since the old system was WAY slower than this
+        doPeriodically(ANIMATION_PERIOD*2) animalLoop ->
+            //Spawn one animal on each island until they all reached the max count
+            if island.animalCurrent < island.animalMaxAmount 
+                and spawnedCount.get(island)<(island.animalsSpawnCount * gameConfig.getFoodBase()).ceil()
                 island.spawnAnimalFromPool()
-                udg_ANIMAL_CURRENT += 1
+                island.animalCurrent += 1
+                island.animalList.add(lastSpawnedUnit)
                 spawnedCount.put(island, spawnedCount.get(island) + 1)
-                loopDidSpawn = true
-
-        //Return when all islandSpawners iterated without any spawns (or abrupt stop condition reached)
-        if not loopDidSpawn
-            destroy spawnedCount
-            destroy animalLoop //Break
+            else
+                destroy animalLoop 
 
 function initItemSpawnInfo()
     new ItemSpawnInfo(ITEM_TINDER, 450, 90, 860)
@@ -293,15 +288,15 @@ function initAnimalSpawnInfo()
     new AnimalSpawnInfo(UNIT_PANTHER, 0, 45, 240)
 
     animalSpawnFunctions.put(UNIT_ELK) (x, y) ->
-        createUnit(players[PLAYER_NEUTRAL_AGGRESSIVE], UNIT_ELK, vec2(x, y), randomAngle())
+        lastSpawnedUnit = createUnit(players[PLAYER_NEUTRAL_AGGRESSIVE], UNIT_ELK, vec2(x, y), randomAngle())
     animalSpawnFunctions.put(UNIT_SNAKE) (x, y) ->
-        createUnit(players[PLAYER_NEUTRAL_AGGRESSIVE], UNIT_SNAKE, vec2(x, y), randomAngle())
+        lastSpawnedUnit = createUnit(players[PLAYER_NEUTRAL_AGGRESSIVE], UNIT_SNAKE, vec2(x, y), randomAngle())
     animalSpawnFunctions.put(UNIT_JUNGLE_WOLF) (x, y) ->
-        createUnit(players[PLAYER_NEUTRAL_AGGRESSIVE], UNIT_JUNGLE_WOLF, vec2(x, y), randomAngle())
+        lastSpawnedUnit = createUnit(players[PLAYER_NEUTRAL_AGGRESSIVE], UNIT_JUNGLE_WOLF, vec2(x, y), randomAngle())
     animalSpawnFunctions.put(UNIT_JUNGLE_BEAR) (x, y) ->
-        createUnit(players[PLAYER_NEUTRAL_AGGRESSIVE], UNIT_JUNGLE_BEAR, vec2(x, y), randomAngle())
+        lastSpawnedUnit = createUnit(players[PLAYER_NEUTRAL_AGGRESSIVE], UNIT_JUNGLE_BEAR, vec2(x, y), randomAngle())
     animalSpawnFunctions.put(UNIT_PANTHER) (x, y) ->
-        createUnit(players[PLAYER_NEUTRAL_AGGRESSIVE], UNIT_PANTHER, vec2(x, y), randomAngle())
+        lastSpawnedUnit = createUnit(players[PLAYER_NEUTRAL_AGGRESSIVE], UNIT_PANTHER, vec2(x, y), randomAngle())
 
 // From Marsunpaisti :
 // this is the part that handles the island balance
@@ -339,7 +334,7 @@ function startSpawnCycle()
         handleAnimalSpawning()
         doAfter(5) ->
             handleItemSpawning()
-            adjustBaseSpawnrates()
+            //adjustBaseSpawnrates()
 
     //Another loop because 1 spawned fish per area per 240 seconds is hard to cut in half
     doPeriodically(240) fishHawkCallback ->

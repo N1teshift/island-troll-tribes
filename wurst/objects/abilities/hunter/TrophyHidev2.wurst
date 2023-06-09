@@ -12,6 +12,7 @@ import ItemObjEditing
 import Items
 import Cosmetics
 import OnUnitEnterLeave
+import Reflection
 
 // Third-party imports:
 import Lodash
@@ -211,7 +212,9 @@ class TrophyHide
             let itm = trophyToHideMap.get(trophyHide.getTypeId())
             createItem(itm, pos)
             trophyHide.remove()
-            hunterDummyItem.remove()           
+            hunterDummyItem.remove()
+            destroy cb
+            destroy attachment           
 
 function cacheAttachmentIds()
     attachments.get(ITEM_ELK_HIDE).setIDs(id1)
@@ -255,8 +258,8 @@ function onItemMoved()
     let hero = getInventoryManipulatingUnit()
     let itm = getInventoryManipulatedItem()
     let itmSwapped = getInventorySwappedItem()
-    let instance = instances.get(hero)
-    if instance != null
+    var instance = instances.get(hero)
+    if instance ==null
         //instance.onItemMoved()
 
 function onTargetOrder()
@@ -279,8 +282,21 @@ function onTargetOrder()
             and HIDE_LIST.has(target.getTypeId())
             instances.get(u).onHidePickup(target)
 
+string highestInstanceCountType = null
+int instanceCount = 0
+function reflection()
+    for i=0 to maxTypeId()
+        if instanceCount(i) > 0 //instanceCount// and typeIdToTypeName(i)!= "LinkedList.LLEtry"
+            highestInstanceCountType = typeIdToTypeName(i)
+            instanceCount = instanceCount(i)
+            print("Instance count = "+instanceCount.toString())
+            print("Instance name = "+highestInstanceCountType)        
+
 
 init
+    doPeriodically(10.) (CallbackPeriodic cb) ->
+        reflection()
+        
     initializeAttachmentsIds()
 
     EventListener.add(EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER, () -> onTargetOrder())    

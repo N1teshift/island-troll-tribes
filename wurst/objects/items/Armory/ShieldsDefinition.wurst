@@ -12,14 +12,18 @@ import ObjectIds
 import LocalObjectIDs
 import ToolTipsUtils
 import LocalAssets
+import Items
+import ColorUtils
 
 // I've been really lazy down here
 
 constant COOLDOWN = 15.
 constant DURATION = 2.
+public constant MAKRURA_CARAPACE_COOLDOWN = 7.
 
 constant ABILITY_SHIELD_AMUL = 'A09N'
 
+constant SHIELD_DAMAGE_BLOCK0 = 0.
 constant SHIELD_DAMAGE_BLOCK1 = 3.
 constant SHIELD_DAMAGE_BLOCK2 = 5.
 constant SHIELD_DAMAGE_BLOCK3 = 7.
@@ -33,7 +37,13 @@ public constant STEEL_SHIELD_TOOLTIP = "A Steel Shield, reduce damage taken by {
 public constant BATTLE_SHIELD_TOOLTIP = "A Battle Shield, reduce damage taken by {0}, gives {1} armor.".format(SHIELD_DAMAGE_BLOCK4.toToolTipOrange(), 7..toToolTipGreen())
                                     +" Has a bash ability, silences and disarms the target."+makeToolTipDuration(DURATION, COOLDOWN)
 
-
+public constant MAKRURA_CARAPACE_TOOLTIP = "A Makrura's carapace of a medium size, can be used as a shield. "+ 
+                                            "\nProvides {0} armor".format(3..toToolTipGreen())+" and {0} magic resistance. ".format(0.10.toToolTipLightBlue())+
+                                            "Carapace".color(COLOR_TURQUOISE)+
+                                            ": \nAllows wearer to block an attack once every {0} ".format(MAKRURA_CARAPACE_COOLDOWN.toToolTipBlue())+
+                                            "seconds returning premitigation damage to the attacker."
+constant ABILITY_DUMMY2_SHIELD_BLOCK_ID = compiletime(ABIL_ID_GEN.next())
+constant ABILITY_DUMMY_SHIELD_BLOCK_ID = compiletime(ABIL_ID_GEN.next())
 constant ABILITY_BASIC_SHIELD_BLOCK_ID = compiletime(ABIL_ID_GEN.next())
 constant ABILITY_BONE_SHIELD_BLOCK_ID  = compiletime(ABIL_ID_GEN.next())
 constant ABILITY_IRON_SHIELD_BLOCK_ID  = compiletime(ABIL_ID_GEN.next())
@@ -46,6 +56,8 @@ constant BONE_SHIELD_ABILITIES   = commaList(ABILITY_BONE_SHIELD_BLOCK_ID, ABILI
 constant IRON_SHIELD_ABILITIES   = commaList(ABILITY_IRON_SHIELD_BLOCK_ID, ABILITY_ARMOR_BONUS_2)
 constant STEEL_SHIELD_ABILITIES  = commaList(ABILITY_STEEL_SHIELD_BASH_ID, ABILITY_STEEL_SHIELD_BLOCK_ID, ABILITY_ARMOR_BONUS_4)
 constant BATTLE_SHIELD_ABILITIES = commaList(ABILITY_STEEL_SHIELD_BASH_ID, ABILITY_IRON_SHIELD_BLOCK_ID, ABILITY_ARMOR_BONUS_7)
+constant MAKRURA_CARAPACE_ABILITIES = commaList(ABILITY_ARMOR_BONUS_3)
+constant MAKRURA_CARAPACE_DUMMY_ABILITIES = commaList(ABILITY_CARAPACE_DUMMY, ABILITY_ARMOR_BONUS_3)
 
 
 class AttackTypes
@@ -58,6 +70,7 @@ public class Shield
     int id = 0
     int abilId = 0
     int goldCost = 0
+    real scale = 0
     real ignoreDamage = 0
     string name = ""
     string tooltip = ""
@@ -66,6 +79,21 @@ public class Shield
     string modelPath = ""
 
     construct(int id, string name, int abilId, real ignoreDamage, string tooltip, string iconPath, string modelPath, string abilities, int goldCost)
+        this.scale = 0.8
+        this.id = id
+        this.name = name
+        this.abilId = abilId
+        this.tooltip = tooltip
+        this.goldCost = goldCost
+        this.iconPath += iconPath+".blp"
+        this.ignoreDamage = ignoreDamage
+        this.abilities = abilities
+        if id != ITEM_BATTLE_SHIELD
+            this.abilities += "," + ABILITY_MAGIC_RESIST.toRawCode() // 10% magic resistance ability
+        this.modelPath = modelPath
+
+    construct(int id, string name, int abilId, real ignoreDamage, string tooltip, string iconPath, string modelPath, string abilities, int goldCost, real scale)
+        this.scale=scale
         this.id = id
         this.name = name
         this.abilId = abilId
@@ -92,7 +120,7 @@ public class Shield
         ..setInterfaceIcon(iconPath)
         ..setDescription(tooltip)
         ..setDroppedWhenCarrierDies(true)
-        ..setScalingValue(0.80)
+        ..setScalingValue(scale)
         ..setActivelyUsed(true)
         ..setCooldownGroup("defend")
         ..setHitPoints(75)
@@ -113,12 +141,16 @@ public class Shield
 
 function getShield() returns LinkedList<Shield>
     return asList(
-        new Shield(ITEM_SHIELD        , "Basic Shield"  , ABILITY_BASIC_SHIELD_BLOCK_ID  , SHIELD_DAMAGE_BLOCK1 , BASIC_SHIELD_TOOLTIP  , "SteelArmor"         , LocalItems.shield       , BASIC_SHIELD_ABILITIES , 13),
+        new Shield(ITEM_SHIELD        , "Basic Shield"  , ABILITY_BASIC_SHIELD_BLOCK_ID  , SHIELD_DAMAGE_BLOCK1 , BASIC_SHIELD_TOOLTIP  , "SteelArmor"         , LocalItems.shield      , BASIC_SHIELD_ABILITIES , 13),
         new Shield(ITEM_BONE_SHIELD   , "Bone Shield"   , ABILITY_BONE_SHIELD_BLOCK_ID   , SHIELD_DAMAGE_BLOCK2 , BONE_SHIELD_TOOLTIP   , "ImprovedUnholyArmor", LocalItems.boneShield  , BONE_SHIELD_ABILITIES  , 20),
         new Shield(ITEM_IRON_SHIELD   , "Iron Shield"   , ABILITY_IRON_SHIELD_BLOCK_ID   , SHIELD_DAMAGE_BLOCK3 , IRON_SHIELD_TOOLTIP   , "HumanArmorUpOne"    , LocalItems.ironShield  , IRON_SHIELD_ABILITIES  , 46),
         new Shield(ITEM_STEEL_SHIELD  , "Steel Shield"  , ABILITY_STEEL_SHIELD_BLOCK_ID  , SHIELD_DAMAGE_BLOCK4 , STEEL_SHIELD_TOOLTIP  , "ThoriumArmor"       , LocalItems.steelShield , STEEL_SHIELD_ABILITIES , 66),
-        new Shield(ITEM_BATTLE_SHIELD , "Battle Shield" , ABILITY_BATTLE_SHIELD_BLOCK_ID , SHIELD_DAMAGE_BLOCK4 , BATTLE_SHIELD_TOOLTIP , "ArcaniteArmor"      , LocalItems.battleShield, BATTLE_SHIELD_ABILITIES , 82)
+        new Shield(ITEM_BATTLE_SHIELD , "Battle Shield" , ABILITY_BATTLE_SHIELD_BLOCK_ID , SHIELD_DAMAGE_BLOCK4 , BATTLE_SHIELD_TOOLTIP , "ArcaniteArmor"      , LocalItems.battleShield, BATTLE_SHIELD_ABILITIES , 82),
+        new Shield(ITEM_MAKRURA_CARAPACE , "Makrura Carapace" , ABILITY_DUMMY_SHIELD_BLOCK_ID  , SHIELD_DAMAGE_BLOCK0 , MAKRURA_CARAPACE_TOOLTIP , "MakruraCarapace"      , LocalItems.makruraCarapace, MAKRURA_CARAPACE_ABILITIES , 41, 1.25),
+        new Shield(ITEM_MAKRURA_CARAPACE_DUMMY , "Makrura Carapace" , ABILITY_DUMMY2_SHIELD_BLOCK_ID  , SHIELD_DAMAGE_BLOCK0 , MAKRURA_CARAPACE_TOOLTIP , "MakruraCarapace", LocalItems.makruraCarapace, MAKRURA_CARAPACE_DUMMY_ABILITIES , 41, 1.25)
     )
+
+
 
 @compiletime function createShieldSpell()
     new AbilityDefinitionBrewmasterDrunkenHaze(ABILITY_STEEL_SHIELD_BASH_ID)
@@ -147,6 +179,10 @@ function getShield() returns LinkedList<Shield>
     ..setItemAbility(true)
     ..setManaCost(1, 0)
     ..setName("Shield Bash")
+
+    createItemBerserkCast(ABILITY_CARAPACE_DUMMY)
+        ..setName("Makrura Carapace cooldown")
+        ..setCooldown(1, MAKRURA_CARAPACE_COOLDOWN)
 
 @compiletime function buildShield()
     getShield().forEach(shield -> shield.buildShield())

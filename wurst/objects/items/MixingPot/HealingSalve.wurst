@@ -17,7 +17,7 @@ import BuffObjEditing
 import DamageEvent
 import DamageListeners
 
-public constant HEALING = 210.
+public constant HEALING = 120.
 public constant CAST_RANGE = 600.
 public constant NAME = "Healing Salve"
 public constant ICON =Icons.bTNLesserRejuvPotion

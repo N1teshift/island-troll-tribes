@@ -35,7 +35,7 @@ class GameConfig
     var statLowerInterval = 3.00
     var clothsHeatupInterval = 35.00
 
-    var maxItems = 350
+    var maxItems = 400
     var maxFishes = 100
 
     var itemBase = 1.00

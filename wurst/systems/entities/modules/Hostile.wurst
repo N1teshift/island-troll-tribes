@@ -21,12 +21,15 @@ import initlater Fish
 import initlater Hawk
 import initlater Mammoth
 import initlater DiscoDuck
+import ResourceSpawns
 
 public abstract class Hostile extends UnitEntity
     private boolean dropOnDeath = true
+    unit whichUnit
 
     construct(unit whichUnit)
         super(whichUnit)
+        this.whichUnit = whichUnit
 
     function getDrops() returns LinkedList<int>
         return new LinkedList<int>()
@@ -81,7 +84,7 @@ public abstract class Hostile extends UnitEntity
                 or this instanceof GreenFish
                 udg_FISH_CURRENT -= 1
             else
-                udg_ANIMAL_CURRENT -= 1
+                lowerAnimal(whichUnit)
 
         if this instanceof Mammoth or this instanceof DiscoDuck
             PlaySound(Sounds.warning)

@@ -1,0 +1,75 @@
+package Makrura
+
+
+// Standard library imports:
+import ClosureForGroups
+import LinkedList
+import MapBounds
+
+// Local imports:
+import Hostile
+import LocalObjectIDs
+import LocalAssets
+import Pool
+import ClosureTimers
+
+// TODO: Allow the respawn mode to register events.
+
+
+constant LinkedList<int>makruraItemsList = asList(ITEM_MAKRURA_CARAPACE, ITEM_MAKRURA_CLAWS, ITEM_MAKRURA_CUIRASS)
+Pool<int> itemPool = new Pool<int>()
+    ..add(1, ITEM_MAKRURA_CARAPACE)
+    ..add(1, ITEM_MAKRURA_CLAWS)
+    ..add(1, ITEM_MAKRURA_CUIRASS)
+
+public class Makrura extends Hostile
+    private static let unitTypeId = UNIT_MAKRURA
+    private static thistype instance
+
+    static function initialize()
+        register(unitTypeId, makrura -> new Makrura(makrura))
+
+    static function getInstance() returns thistype
+        return instance
+
+    var dead = false
+
+    construct(unit whichUnit)
+        super(whichUnit)
+        //initializeItemPool()
+        
+
+    override function postCreate()
+        super.postCreate()
+
+        if instance == null
+            instance = this
+
+    override function getDrops() returns LinkedList<int>
+        let drops = super.getDrops()
+            ..add(ITEM_SPIRIT_WATER)
+            ..add(ITEM_SPIRIT_WIND)
+        return drops
+
+    override function getNumCorpses() returns int
+        return 16
+
+    override function onDeath()
+        spawnMakruraItem()
+        dead = true
+        super.onDeath()  
+
+    function spawnMakruraItem()
+        let itm = itemPool.random()
+        createItem(itm, this.getPos())
+
+
+
+    override function postDeath()
+        getUnit().remove()
+
+    function isDead() returns boolean
+        return dead
+
+init     
+    Makrura.initialize()

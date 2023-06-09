@@ -283,10 +283,10 @@ function getQuickMakeSpells() returns LinkedList<QuickMakeSpell>
         new QuickMakeSpell("Healing Salve"        , TRANSMUTE_TOOLTIP+HEALING_SALVE_RECIPE        , "BronzeBowlFullGreen"    , ABILITY_QM_HEALING_SALVE        , 2, 2, "C", QM_TOOLIP, "chemicalrage"),
 
         // Second Page
-        new QuickMakeSpell("Smoke Bomb"           , TRANSMUTE_TOOLTIP+SMOKE_BOMB_RECIPE           , "SmokePot"               , ABILITY_QM_SMOKE_BOMB           , 0, 0, "Q", QM_TOOLIP, "locustswarm"),
-        new QuickMakeSpell("Fire Bomb"            , TRANSMUTE_TOOLTIP+FIRE_BOMB_RECIPE            , "LiquidFire"             , ABILITY_QM_FIRE_BOMB            , 1, 0, "W", QM_TOOLIP, "manashieldon"),
+        new QuickMakeSpell("Smoke Bomb"           , TRANSMUTE_TOOLTIP+SMOKE_BOMB_RECIPE           , "SmokePot"               , ABILITY_QM_SMOKE_BOMB           , 0, 0, "Q", QM_TOOLIP, "frenzy"),
+        new QuickMakeSpell("Fire Bomb"            , TRANSMUTE_TOOLTIP+FIRE_BOMB_RECIPE            , "LiquidFire"             , ABILITY_QM_FIRE_BOMB            , 1, 0, "W", QM_TOOLIP, "burrow"),
         new QuickMakeSpell("EMP"                  , TRANSMUTE_TOOLTIP+EMP_RECIPE                  , "WispSplode"             , ABILITY_QM_EMP                  , 2, 0, "E", QM_TOOLIP, "manaflareoff"),
-        new QuickMakeSpell("Transport Ship"       , TRANSMUTE_TOOLTIP+TRANSPORT_SHIP_RECIPE       , "NightElfTransport"      , ABILITY_QM_TRANSPORT_SHIP       , 3, 0, "R", QM_TOOLIP, "manaflareon"),
+        new QuickMakeSpell("Transport Ship"       , TRANSMUTE_TOOLTIP+TRANSPORT_SHIP_RECIPE       , "NightElfTransport"      , ABILITY_QM_TRANSPORT_SHIP       , 3, 0, "R", QM_TOOLIP, "stomp"),
         new QuickMakeSpell("Dark Thistles"        , TRANSMUTE_TOOLTIP+DARK_THISTLES_RECIPE        , "QuillSpray"             , ABILITY_QM_DARK_THISTLES        , 0, 1, "A", QM_TOOLIP, "avatar"),
           
 

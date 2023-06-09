@@ -23,8 +23,8 @@ let BOUNCE_SEARCH_RANGE = 6000.
 let COOLDOWN = 20.
 let MANACOST = 10
 let HEAL_AMOUNT = 50.
-let HEAL_REDUCTION_BOUNCE_FACTOR = 0.1
-let BOUNCE_COUNT = 7.
+let HEAL_REDUCTION_BOUNCE_FACTOR = 0.2  
+let BOUNCE_COUNT = 3.
 let TOOLTIP_NORMAL = "Healing wave"
 let TOOLTIP_NORMAL_EXT = ("Calls forth a wave of healing energy that bounces up to {0} times, healing {1} damage on the primary target. "+
                         "Each jump heals {2} less. Bounces on an extremely large range. Has {3} seconds cooldown.")

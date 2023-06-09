@@ -1,0 +1,163 @@
+package MakruraCuirass
+
+
+// Standard library imports:
+import AbilityObjEditing
+import HashMap
+import ClosureEvents
+import ObjectIdGenerator
+import ClosureTimers
+import ChannelAbilityPreset
+import ObjEditingUtils
+import OnUnitEnterLeave
+
+// Local imports:
+import LocalObjectIDs
+import HealingItems
+import Panic
+import StringBuilder
+import ToolTipsUtils
+import LocalAssets
+import ObjectIds
+import ItemIds
+import HealingSystem
+import Orders
+import UnitExtensions
+import HashList
+import UnitIds
+import DestructableObjEditing
+import DamageEvent
+import DamageListeners
+import IdListConstant
+import LinkedList
+import Items
+import AttachmentPoints
+import BuffObjEditing
+import ColorUtils
+
+let MAKRURA_CUIRASS_COOLDOWN = 35.
+public let MAKRURA_CUIRASS_DURATION = 7.
+let MAKRURA_CUIRASS_ARMOR_VALUE = 2
+let MAKRURA_CUIRASS_REGEN_VALUE = 3
+public let MAKRURA_BUFF_TT ="This unit gains {0} armor and {1} health regeneration while in water. ".format(MAKRURA_CUIRASS_ARMOR_VALUE.toString().color(COLOR_GREEN), MAKRURA_CUIRASS_REGEN_VALUE.toString().color(COLOR_GREEN))+
+                            "\nCan be activated to apply effects outside of water,"+
+                            " tripling their strength. "+
+                            "\nLasts {0} seconds. {1} seconds cooldown. ".format(MAKRURA_CUIRASS_DURATION.toString().color(ENERGY_COLOR), MAKRURA_CUIRASS_COOLDOWN.toString().color(ENERGY_COLOR) )
+
+public let ABILITY_MAKRURA_CUIRASS_BUFF = compiletime(
+    createDummyBuffObject("Makrura Cuirass".color(COLOR_GREEN), MAKRURA_BUFF_TT, Icons.bTNNagaArmorUp3).abilId
+)
+
+@compiletime function createMakruraCuirassAbilities()
+    new AbilityDefinitionDefenseBonusPlus1(ABILITY_MAKRURA_CUIRASS_ARMOR_PASSIVE)
+        ..setLevels(3)
+        ..presetBuffs(lvl->toRawCode(ABILITY_MAKRURA_CUIRASS_BUFF))
+        ..presetDefenseBonus(lvl->lvl*MAKRURA_CUIRASS_ARMOR_VALUE)
+        ..setArtCaster("Models\\CarapaceEffect.mdx")           
+        ..setName("Armor Bonus + "+MAKRURA_CUIRASS_ARMOR_VALUE.toString())
+        ..setEditorSuffix("(Wurst)")
+    
+    new AbilityDefinitionRegenLifeArll(ABILITY_MAKRURA_CUIRASS_REGEN_PASSIVE)
+        ..setLevels(3)
+        ..presetHitPointsRegeneratedPerSecond(lvl->lvl*MAKRURA_CUIRASS_REGEN_VALUE)
+        ..setName("Hit Points Regeneration "+MAKRURA_CUIRASS_REGEN_VALUE.toString()+ "per second")
+        ..setEditorSuffix("(Wurst)")
+
+    createItemBerserkCast(ABILITY_MAKRURA_CUIRASS_ACTIVE)
+        ..setName("Makrura Carapace cooldown")
+        ..setCooldown(1, MAKRURA_CUIRASS_COOLDOWN)            
+
+
+
+
+//LinkedList<unit>instances = new LinkedList<unit>()
+HashMap<unit, MakruraCuirass>instances = new HashMap<unit, MakruraCuirass>()
+let MAKRURA_CUIRASS_ABILITY_LIST = asList(ABILITY_MAKRURA_CUIRASS_ARMOR_PASSIVE, ABILITY_MAKRURA_CUIRASS_REGEN_PASSIVE, ABILITY_MAKRURA_CUIRASS_BUFF)
+
+public class MakruraCuirass
+    unit troll
+    bool isActiveOn
+    CallbackPeriodic cb
+
+    construct(unit troll)
+        this.troll = troll
+        instances.put(troll, this)
+
+        cb = doPeriodically(ANIMATION_PERIOD) (CallbackPeriodic cb) ->
+            if not isActiveOn
+                addRemoveAbilities() 
+
+    function addRemoveAbilities()
+        let pos = troll.getPos()
+        let water = IsTerrainPathable(pos.x, pos.y, PATHING_TYPE_FLOATABILITY) // returns false in water
+
+        for abilId in MAKRURA_CUIRASS_ABILITY_LIST
+            if water 
+            and troll.hasAbility(abilId)
+                troll.removeAbility(abilId)
+            else if not water
+            and not troll.hasAbility(abilId)
+                troll.addAbility(abilId)
+                troll.hideAbility(abilId, true)
+
+    function onCast()
+        let efx = addEffect("Models\\Abilities\\Bubbles.mdx", troll, "origin")
+        doAfter(MAKRURA_CUIRASS_DURATION) -> 
+            efx.destr()
+            
+        flashEffect("Models\\WaterOrb.mdx", troll, AttachmentPoints.origin)
+        isActiveOn = true
+        for abilId in MAKRURA_CUIRASS_ABILITY_LIST
+            troll.removeAbility(abilId)
+            nullTimer() -> 
+                troll.addAbility(abilId, 3)
+        doPeriodicallyTimed(ANIMATION_PERIOD, MAKRURA_CUIRASS_DURATION) (CallbackCounted cb) ->
+            //flashEffect(path, target, attachPointName)
+            if cb.isLast()
+                isActiveOn=false                
+                for abilId in MAKRURA_CUIRASS_ABILITY_LIST
+                    troll.removeAbility(abilId)
+
+            
+
+                    
+
+    ondestroy
+        instances.remove(this.troll)
+        destroy cb
+
+
+function onPickup(unit troll)
+    new MakruraCuirass(troll)
+    
+function onDrop(unit troll)
+    destroy instances.get(troll)
+
+function onCast(unit caster)
+    let instance = instances.get(caster)
+    if instance == null 
+        return
+    instance.onCast()
+
+        
+
+
+init
+
+    EventListener.onCast(ABILITY_MAKRURA_CUIRASS_ACTIVE) (unit caster) ->
+        onCast(caster)
+        
+
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_PICKUP_ITEM)->
+        if GetManipulatedItem().getTypeId() == ITEM_MAKRURA_CUIRASS
+            onPickup(GetTriggerUnit())
+
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_DROP_ITEM)->
+        if GetManipulatedItem().getTypeId() == ITEM_MAKRURA_CUIRASS
+            onDrop(GetTriggerUnit())            
+    
+
+
+
+
+

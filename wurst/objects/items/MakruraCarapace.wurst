@@ -1,0 +1,75 @@
+package MakruraCarapace
+
+
+// Standard library imports:
+import AbilityObjEditing
+import HashMap
+import ClosureEvents
+import ObjectIdGenerator
+import ClosureTimers
+import ChannelAbilityPreset
+import ObjEditingUtils
+import OnUnitEnterLeave
+
+// Local imports:
+import LocalObjectIDs
+import HealingItems
+import Panic
+import StringBuilder
+import ToolTipsUtils
+import LocalAssets
+import ObjectIds
+import ItemIds
+import HealingSystem
+import Orders
+import UnitExtensions
+import HashList
+import UnitIds
+import DestructableObjEditing
+import DamageEvent
+import DamageListeners
+import IdListConstant
+import ShieldsDefinition
+
+
+function onAttack(unit source, unit target, real originalAmount)
+    if source.getOwner().isAllyOf(target.getOwner())
+        return
+    nullTimer() -> 
+        let currentLife = target.getLife()
+        target.setLife(currentLife+originalAmount)
+        if not source.isInvulnerable()
+            source.damageTarget(source, originalAmount, true, false, ATTACK_TYPE_HERO, DAMAGE_TYPE_NORMAL, null)
+            flashEffect("Objects\\Spawnmodels\\Naga\\NagaDeath\\NagaDeath.mdl", source.getPos())
+    let itm = target.getItemById(ITEM_MAKRURA_CARAPACE)
+    let slot = target.getItemSlot(itm)
+    itm.remove()
+    let dummyItm = createItem(ITEM_MAKRURA_CARAPACE_DUMMY, target.getPos())
+    nullTimer() -> 
+        target.addItemHandleToSlot(dummyItm, slot)
+        nullTimer() -> 
+            target.useItem(dummyItm)
+    doAfter(MAKRURA_CARAPACE_COOLDOWN) ->
+        let newSlot = target.getItemSlot(dummyItm)
+        dummyItm.remove()
+        let newItm = createItem(ITEM_MAKRURA_CARAPACE, target.getPos())
+        nullTimer() -> 
+            target.addItemHandleToSlot(newItm, newSlot)
+
+             
+        
+
+
+init
+    //filter valid targets
+    DamageEvent.addListener(DamageListenerPriorities.PANTHER_INSTINCT castTo int) ->
+        if DamageEvent.getType() == DamageType.ATTACK and DamageEvent.getTarget().hasItemById(ITEM_MAKRURA_CARAPACE) 
+            and (DamageEvent.getSource().isTroll() 
+            or DamageEvent.getSource().isBoss()
+            or HOSTILE_ANIMALS_LIST.has(DamageEvent.getSource().getTypeId())
+            or PETS_LIST.has((DamageEvent.getSource().getTypeId()))
+            )
+
+            onAttack(DamageEvent.getSource(), DamageEvent.getTarget(), DamageEvent.getOriginalAmount()) 
+            
+    

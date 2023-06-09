@@ -21,6 +21,7 @@ let indicators = new IterableMap<int, int>()
     ..put('d114', UNIT_ALLIGATOR_MAN)
     ..put('d115', UNIT_ELDER_PANTHER)
     ..put('d116', UNIT_MAMMOTH)
+    ..put('nlsn', UNIT_MAKRURA)
 
 let callbacks = new IterableMap<int, LinkedList<Callback>>()
 

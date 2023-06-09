@@ -30,8 +30,8 @@ let BLUR_BUFF_ID = compiletime(BUFF_ID_GEN.next())
 let COOLDOWN = 40.
 let MANACOST = 30
 
-let CHANCE_TO_MISS = .3
-let ATTACK_SPEED_BONUS = .3
+let CHANCE_TO_MISS = .2
+let ATTACK_SPEED_BONUS = .2
 let DURATION = 11.
 let DURATION_DAZZLE = 3.
 let TOOLTIP_NORM = "Blur"

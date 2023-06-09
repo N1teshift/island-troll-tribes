@@ -4,6 +4,8 @@ package LocalAssets
 import ObjectIdGenerator
 
 public class LocalIcons
+    static constant bTNMakruraClaws           = "ReplaceableTextures\\CommandButtons\\BTNMakruraClaws.blp"
+    static constant bTNMakruraCarapace      = "ReplaceableTextures\\CommandButtons\\bTNMakruraCarapace.blp"
     static constant bTNSavageGladiatorChain = "ReplaceableTextures\\CommandButtons\\BTNSavageGladiatorChain.blp"
     static constant bTNSkullShroudGlowIncreased = "ReplaceableTextures\\CommandButtons\\BTNSkullShroudGlowIncreased.blp"
     static constant bTNBronzeBowlFullGreen = "ReplaceableTextures\\CommandButtons\\BTNBronzeBowlFullGreen.blp"
@@ -198,6 +200,9 @@ public class LocalAbilities
     static constant test                           = "Models\\Abilities\\Test.mdx"
 
 public class LocalItems
+    static constant makruraCuirass          = "Models\\Items\\makruraCuirass.mdx"
+    static constant makruraClaws          = "Models\\Items\\makruraClaws.mdx"
+    static constant makruraCarapace          = "Models\\Items\\makruraCarapace.mdx"
     static constant healingSalve                ="Models\\Items\\healingSalve.mdx"
     static constant coconut               = "Models\\Items\\Coconut.mdx"
     static constant bearsGreedPaws               = "Models\\Items\\bearsGreedPaws.mdx"
