@@ -23,6 +23,8 @@ import CloaksDefinition
 import CoatDefinition
 import HealingSalve
 import TrollBuildingKits
+import TrollProtector
+import VenomFang
 
 // Herbs
 let SPECIAL_HERB       = "Special Herb".color(SPECIAL_COLOR)
@@ -96,6 +98,7 @@ public let MIXING_SPELLBOOK_TOOLTIP       = "More Recipes here\n\nContains Quick
 public let ARMOR_SPELLBOOK_TOOLTIP        = "More Recipes here\n\nContains Quick Make spell for Armor items recipes"
 public let FORGE_SPELLBOOK_TOOLTIP       = "More Recipes here\n\nContains Quick Make spell for Shield and ensnare trap recipes"
 public let WORKSHOP_SPELLBOOK_TOOLTIP     = "More Recipes here\n\nContains Quick Make spell for Smoke/Fire Bomb, Dark Thistles, EMP, and Transport ship"
+public let ARMORY_SPELLBOOK_TOOLTIP        ="More Recipes here\n\nContains Quick Make spell for Anabolic Boots and Troll Protector"
 public let WDH_SPELLBOOK_TOOLTIP          = "More Recipes here\n\nContains Quick Make spell for more scrolls, spirit ward, living clay and magic seeds recipes"
 public let BUILDING_CRAFT_TOOLTIP         = "Look here to construct buildings, this page contains all buildings recipes, type -crafting for explanation about crafting."
 
@@ -196,6 +199,8 @@ public let BEAR_PRESENCE_COAT_RECIPE    = "Coat of Bear's Terrifying Presence. \
                                          +"\n\n1x " + "Bear Skin Coat ".color(COLOR_ORANGE)+" + " +STEEL+" + 1x " + DARKNESS+  " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MAGIC                                                                          
 public let ITEM_BEARS_TENACITY_BOOTS_RECIPE = "Boots of Bear's Tenacity. \n".color(COLOR_RED) + TT_BEARS_TENACITY_BOOTS
                                         +"\n\n1x " + "Bear Skin Boots ".color(COLOR_ORANGE)+" + " +IRON+" 1x " +"Anti-Magic Potion".color(COLOR_MAROON)+ " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MAGIC 
+public let TROLL_PROTECTOR_RECIPE      ="Troll Protector. ".color(COLOR_TURQUOISE)+TROLL_PROTECTOR_TT_EXT
+                                        +"\n\n1x " + "Iron Shield ".color(COLOR_ORANGE) + "+1x "+ELK_HIDE+ " 1x "+MC
 
 // Witch Doctors Hut
 
@@ -211,6 +216,7 @@ public let MAGIC_SEED_RECIPE            = "a Magic Seed. Can grow a tree, has 2 
 public let SPIRIT_WARD_RECIPE           = "a Spirit Ward. Can be used to revive 1 allied troll :\n\n3x "+MC+" + 1x "+STICK
 public let POISON_RECIPE                = "a Poison salve. Can be used to craft poison spear :\n\n3x "+MUSHROOM
 public let ULTRA_POISON_RECIPE          = "an Ultra Poison salve. Can be used to craft ultra poison spear :\n\n2x "+POISON
+public let VENOM_FANG_RECIPE            = VENOM_FANG_TT.color(COLOR_TURQUOISE)+":\n\n1x "+PANTHER_FANG_NAME.color(COLOR_ORANGE)+" 2x "+POISON+" 1x "+WIND+" 1x "+WATER+" 1x "+MAGIC
 
 public let CLOAK_FLAMES_RECIPE  = "a " + "Cloak Of Flames. " .color(COLOR_RED      ) + CLOAK_FLAMES_TT  + "\n\n1x "+ MAGIC +" + 1x " + "Bone Coat".color(COLOR_ORANGE) + " + 1x " + FLINT
 public let CLOAK_FROST_RECIPE   = "a " + "Cloak Of Frost. "  .color(COLOR_TURQUOISE) + CLOAK_FROST_TT   + "\n\n1x "+ MAGIC +" + 1x " + "Bone Coat".color(COLOR_ORANGE) + " + 1x " + WATER

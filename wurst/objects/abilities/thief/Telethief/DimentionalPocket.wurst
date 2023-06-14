@@ -55,7 +55,7 @@ function conjureItem(unit caster) returns item
     if itm.getTypeId() == ITEM_MANA_CRYSTAL or itm.getTypeId() == ITEM_SPIRIT_WATER
         itm.remove()
         doAfter(ANIMATION_PERIOD) ->             
-        itm = conjureItem(caster)
+            itm = conjureItem(caster)
     else
         return itm
     return itm

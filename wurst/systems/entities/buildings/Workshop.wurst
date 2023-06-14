@@ -15,7 +15,6 @@ public class Workshop extends Building
 
     override function postCreate()
         super.postCreate()
-
         getUnit().addAbility(ABILITY_QM_MAGIC)
         getUnit().addAbility(ABILITY_QM_HEALING_SALVE)
         getUnit().addAbility(ABILITY_QM_POISON_THISTLES)

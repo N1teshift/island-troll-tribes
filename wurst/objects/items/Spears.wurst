@@ -66,10 +66,13 @@ public class Spear
 function createSpearsDefinition()
 
 function onSpearThrow(unit caster, unit target, Spear spear)
+    real poisonedSpearDuration = 0.
+    if spear.usageAbilityId == ABILITY_SPEAR_RPOISON
+        poisonedSpearDuration =40.
     // Create a persistent dummy caster.
     let dummyCaster = new DummyCaster()
         // Allow for the in-flight time of the missile.
-        ..delay(FLIGHT_ALLOWANCE)
+        ..delay(FLIGHT_ALLOWANCE+poisonedSpearDuration)
         ..owner(caster.getOwner())
         ..origin(caster.getPos())
 

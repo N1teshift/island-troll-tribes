@@ -23,7 +23,7 @@ function createBuff()
     ..setTooltipNormal(1, TOOLTIP_NORM)
     ..setTooltipNormalExtended(1, "This unit has fortitude. It has increased armor.")
 
-class Fortitude extends AbilityDefinitionPaladinDevotionAura
+public class Fortitude extends AbilityDefinitionPaladinDevotionAura
     construct(int newAbilityId, Pair<int, int> buttonPos)
         super(newAbilityId)
         this.setLevels(1)

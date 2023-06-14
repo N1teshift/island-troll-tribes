@@ -16,7 +16,7 @@ public class Armory extends Building
     override function postCreate()
         super.postCreate()
 
-        getUnit().addAbility(ABILITY_QM_ANABOLIC_BOOTS)
+        //getUnit().addAbility(ABILITY_QM_ANABOLIC_BOOTS)
         getUnit().addAbility(ABILITY_QM_BATTLE_ARMOR)
         getUnit().addAbility(ABILITY_QM_BATTLE_GLOVES)
         getUnit().addAbility(ABILITY_QM_BATTLE_AXE)
@@ -27,6 +27,7 @@ public class Armory extends Building
         getUnit().addAbility(ABILITY_QM_BEARS_TENACITY_BOOTS)
         getUnit().addAbility(ABILITY_QM_BEARS_GREED_PAWS)
         getUnit().addAbility(ABILITY_QM_BEAR_PRESENCE_COAT)
+        getUnit().addAbility(ABILITY_ARMORY_SPELLBOOK_ID)
 
 init
     Armory.initialize()

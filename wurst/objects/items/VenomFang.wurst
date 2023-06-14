@@ -1,0 +1,179 @@
+package VenomFang
+
+// Standard lib Imports:
+import AbilityObjEditing
+import Assets
+import ClosureEvents
+import ChannelAbilityPreset
+import BuffObjEditing
+import ClosureTimers
+
+// Local Imports:
+import LocalObjectIDs
+import ToolTipsUtils
+
+// Third-party imports:
+import StringBuilder
+import ColorUtils
+import LocalAssets
+import ItemObjEditing
+import Items
+import LocalItemObjEditing
+import HashMap
+import HashList
+import DamageListeners
+import UnitExtensions
+
+let ABIL_DMG_VENOM_FANG  = compiletime(ABIL_ID_GEN.next())
+let ATK_DMG_BONUS = 4
+let POISON_DURATION = 4.
+let POISON_TICK_FREAQUENCY = 1.
+let DAMAGE_MULTIPLIER_HERO = 1.5
+let DAMAGE_MULTIPLIER_NORMAL = 2.
+
+public let PANTHER_FANG_NAME = "Panther Fang"
+public let PANTHER_FANG_TT = "A Fang of the Elder Panther. "+
+                 "\n+{0} Damage. ".format(ATK_DMG_BONUS.toString().color(COLOR_GREEN))
+public let VENOM_FANG_NAME = "Venom Fang"
+public let VENOM_FANG_TT = "A Fang of the Elder Panther imbued with poison. "+
+                 "\n+{0} Damage. ".format(ATK_DMG_BONUS.toString().color(COLOR_GREEN)) +
+                 "\nVenom".color(COLOR_TURQUOISE)+":"+
+                 "\nReplaces your attack with a deadly venom, dealing {0}% of premitigation damage ".format((DAMAGE_MULTIPLIER_HERO*100).toString().color(COLOR_GREEN))+
+                 "as {0} damage over {1} seconds.".format("magic".color(COLOR_VIOLET), "3".color(ENERGY_COLOR))+
+                 "\nDoes 33% more damage to non-hero targets."+
+                 "\nDoes not stack.".color(COLOR_RED)                 
+DamageListener dmgListener
+
+
+
+IterableMap<unit, PoisonedUnit> instances = new IterableMap<unit, PoisonedUnit>()
+
+
+
+
+
+@compiletime function createVenomFangAbility()
+    new AbilityDefinitionVenomSpearsCreep(ABILITY_VENOM_FANG)
+        ..setDurationNormal(1, POISON_DURATION)
+        ..setTargetsAllowed(1, commaList(
+            TargetsAllowed.enemies,
+            TargetsAllowed.ground,
+            TargetsAllowed.neutral,
+            TargetsAllowed.organic,
+            TargetsAllowed.hero,
+            TargetsAllowed.nonhero
+            ))
+        ..setAttackSpeedFactor(1, 0.)
+        ..setMovementSpeedFactor(1, 0.)
+        ..setDamageperSecond(1, 0.)
+        ..setDurationHero(1, POISON_DURATION)
+        ..setDurationNormal(1, POISON_DURATION)
+        ..setName("Venom Fang")
+        ..setEditorSuffix("(Wurst)")
+
+class PoisonedUnit
+    unit target = null
+    unit source = null
+    real highestDamage = 0
+    HashList<Poison> poisonInstances = new HashList<Poison>()
+    CallbackPeriodic cb
+
+    construct(unit source, unit target, real damage)
+        this.source=source
+        this.target=target
+        instances.put(this.target, this)
+        createPoisonInstance(damage)
+        cb = doPeriodically(POISON_TICK_FREAQUENCY) (CallbackPeriodic cb) ->
+            if poisonInstances.isEmpty()
+                destroy cb
+                destroy this
+            else
+                applyDamage()
+
+            
+        
+    function applyDamage()
+        //find the highest damaging poison instance
+        highestDamage = 0
+        for each in poisonInstances
+            if each.damage > highestDamage
+                highestDamage = each.damage
+        let dmgMultiplier = target.isTroll() ? DAMAGE_MULTIPLIER_HERO:DAMAGE_MULTIPLIER_NORMAL
+        let dmgPerTick = POISON_TICK_FREAQUENCY/(POISON_DURATION-1)*highestDamage*dmgMultiplier
+        DamageEvent.setNextDamageFromCode()
+        UnitDamageTarget(source, target, dmgPerTick, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_MAGIC, null)          
+
+    function createPoisonInstance(real damage)
+        let poisonInstance = new Poison(damage)
+        poisonInstances.add(poisonInstance)
+        doAfter(POISON_DURATION) ->
+            poisonInstances.remove(poisonInstance)
+            destroy poisonInstance
+
+
+    ondestroy
+        destroy poisonInstances
+        instances.remove(target)
+
+
+
+class Poison
+    real damage
+    construct(real damage)
+        this.damage = damage
+
+
+function onDamage()
+    let target = DamageEvent.getTarget()
+    let source = DamageEvent.getSource()
+    let damage = DamageEvent.getUnreducedOriginalAmount()
+    // Filter for units that have Undying.
+    if not source.hasItemById(ITEM_VENOM_FANG)
+        return
+
+    // Exit if the damage is used for internal systems.
+    if DamageEvent.getElement().hasTag(FAKE_DAMAGE)
+        //print("fake dmg")
+        return
+
+    DamageEvent.setAmount(0.) 
+    //print("poison dmg = "+damage.toString()) 
+
+    let instance = instances.get(target)
+    if instance == null
+        new PoisonedUnit(source, target, damage) 
+    else
+        instance.createPoisonInstance(damage)
+            
+
+@compiletime function createBattleAxeAttackBonusAbility() returns AbilityDefinitionAttackBonusPlus1
+    return new AbilityDefinitionAttackBonusPlus1(ABIL_DMG_VENOM_FANG)
+        ..setName("Venom Fang attack bonus")
+        ..setAttackBonus(1, ATK_DMG_BONUS)
+        ..setEditorSuffix("(Wurst)")
+
+@compiletime function createVenomFang() returns ItemDefinition
+    return createBasicItem(ITEM_VENOM_FANG)
+        ..setInterfaceIcon(LocalIcons.bTNPoisonFang)
+        ..setModelUsed(LocalItems.poisonFang)
+        ..setTooltipExtended(VENOM_FANG_TT)
+        ..setScalingValue(1.)
+        ..setLumberCost(47)
+        ..setAbilities(commaList(ABILITY_VENOM_FANG, ABIL_DMG_VENOM_FANG))
+        ..setNameEnhance(VENOM_FANG_NAME)
+
+@compiletime function createPantherFang() returns ItemDefinition
+    return createBasicItem(ITEM_PANTHER_FANG)
+        ..setInterfaceIcon(LocalIcons.bTNPantherFang)
+        ..setModelUsed(LocalItems.pantherFang)
+        ..setTooltipExtended(PANTHER_FANG_TT)
+        ..setScalingValue(1.)
+        ..setLumberCost(12)
+        ..setAbilities(commaList(ABIL_DMG_VENOM_FANG))
+        ..setNameEnhance(PANTHER_FANG_NAME)
+
+init
+    DamageEvent.addListener(DamageListenerPriorities.PANIC castTo int) ->
+        if DamageEvent.getType() == DamageType.ATTACK and DamageEvent.getSource().isTroll()
+            onDamage()
+        

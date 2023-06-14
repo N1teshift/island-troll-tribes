@@ -26,7 +26,7 @@ public class WitchDoctorsHut extends Building
         getUnit().addAbility(ABILITY_QM_CLOAK_HEALING)
         getUnit().addAbility(ABILITY_QM_CLOAK_MANA)
         getUnit().addAbility(ABILITY_QM_POISON)
-        getUnit().addAbility(ABILITY_QM_ULTRA_POISON)
+        getUnit().addAbility(ABILITY_QM_VENOM_FANG)
         getUnit().addAbility(ABILITY_WDH_SPELLBOOK_ID)
 
 init

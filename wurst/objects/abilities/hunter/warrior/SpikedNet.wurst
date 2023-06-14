@@ -1,0 +1,71 @@
+package SpikedNet
+
+// Standard library imports:
+import AbilityObjEditing
+import Assets
+import ObjectIds
+import ClosureTimers
+import ClosureEvents
+
+// Third-party imports:
+import Lodash
+
+// Local imports:
+import ColorUtils
+import LocalObjectIDs
+import ToolTipsUtils
+import HunterEnsnare
+import DamageEvent
+import LocalAssets
+
+let COOLDOWN = 10.
+let CAST_RANGE = 700.
+let HERO_DURATION = 2.50
+let NORMAL_DURATION = 8.
+let DAMAGE = 24.
+let ICON = ""
+let TT_NORM = "Spiked Net"
+let INTERVAL = 0.5
+let TARGET_ALLOWED = "air,enemies,ground,neutral,nonancient,organic"
+let TT_EXTENDED = "Binds an enemy target for {0}/{1} seconds on heroes/normal units. Air units and fish will be moved next to the caster.|nDeals {2} damage per second while ensnared."
+                        .format(HERO_DURATION.toString().color(COLOR_ORANGE), NORMAL_DURATION.toString().color(COLOR_ORANGE), DAMAGE.toString().color(COLOR_RED))
+                        + makeToolTipCooldown(COOLDOWN)
+
+public class SpikedNet extends Ensnare
+    construct(int newAbilityId, Pair<int, int> buttonPos, string hotkey)
+        super(newAbilityId, buttonPos, hotkey)
+        this.setRequirements("")
+        this.setHotkeyNormal(hotkey)
+        this.setCooldown(1, COOLDOWN)
+        this.setCastRange(1, CAST_RANGE)
+        this.setCheckDependencies(false)
+        // this.setIconNormal(ICON)
+        // this.setIconTurnOff(ICON)
+        this.setDurationHero(1, HERO_DURATION)
+        this.setTargetsAllowed(1, TARGET_ALLOWED)
+        this.setButtonPositionNormalX(buttonPos.a)
+        this.setButtonPositionNormalY(buttonPos.b)
+        this.setButtonPositionTurnOffX(buttonPos.a)
+        this.setButtonPositionTurnOffY(buttonPos.b)
+        this.setDurationNormal(1, NORMAL_DURATION)
+        this.setMissileArt(Abilities.ensnaremissile)
+        this.setTooltipNormal(1, makeToolTipNorm(hotkey, TT_NORM))
+        this.setTooltipNormalExtended(1, TT_EXTENDED)
+        this.setIconNormal(LocalIcons.bTNSpikedNet)
+
+@compiletime function createSpikedNetSpell()
+    new SpikedNet(ABILITY_SPIKED_NET, new Pair(2, 1), "R")
+
+function onNet(unit caster, unit target)
+    let DURATION = target.isType(UNIT_TYPE_HERO)? HERO_DURATION : NORMAL_DURATION
+    let damagePerTick = DAMAGE/DURATION*INTERVAL
+    doPeriodicallyTimed(INTERVAL, DURATION) (CallbackCounted cb) ->
+        if not target.isAlive()
+            destroy cb
+        UnitDamageTarget(caster, target, damagePerTick, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_POISON, null)
+        
+        
+
+init
+    EventListener.onTargetCast(ABILITY_SPIKED_NET) (unit caster, unit target) ->
+        onNet(caster, target)

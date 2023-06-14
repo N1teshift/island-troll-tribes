@@ -78,7 +78,7 @@ class Blowpipe
                         ? THISTLE_HERO_ABILITY_ID
                         : ABILITY_THISTLE
                     new DummyCaster()
-                        ..delay(2)
+                        ..delay(10)
                         ..owner(caster.getOwner())
                         ..origin(caster.getPos())
                         ..castTarget(thistleAbility, 1, Orders.shadowstrike, this.target)
@@ -87,19 +87,19 @@ class Blowpipe
                         ? POISON_THISTLE_HERO_ABILITY_ID
                         : POISON_THISTLE_ABILITY
                     new DummyCaster()
-                        ..delay(2)
+                        ..delay(10)
                         ..owner(caster.getOwner())
                         ..origin(caster.getPos())
                         ..castTarget(thistleAbility, 1, Orders.shadowstrike, this.target)
                 case ITEM_BONE
                     new DummyCaster()
-                        ..delay(2)
+                        ..delay(10)
                         ..owner(caster.getOwner())
                         ..origin(caster.getPos())
                         ..castTarget(ABILITY_BONE_THISTLE, 1, Orders.creepthunderbolt, this.target)
                 case ITEM_DARK_THISTLES
                     new DummyCaster()
-                        ..delay(2)
+                        ..delay(10)
                         ..owner(caster.getOwner())
                         ..origin(caster.getPos())
                         ..castTarget(ABILITY_DARK_THISTLE, 1, Orders.shadowstrike, this.target)

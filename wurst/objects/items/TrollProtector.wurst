@@ -1,0 +1,42 @@
+package TrollProtector
+
+import ChannelAbilityPreset
+import LocalObjectIDs
+import Lodash
+import Assets
+import ToolTipsUtils
+import BuffObjEditing
+import LocalAssets
+
+let ARMOR_BONUS = 2.5
+
+public constant TROLL_PROTECTOR_TT = "Troll Protector Aura"
+public constant TROLL_PROTECTOR_TT_EXT = ("Gives {0} bonus armor to allied trolls around you.").format(ARMOR_BONUS.toToolTipGreen())
+
+let TARGET_ALLOWED = "air,allies,friend,ground,hero,invulnerable,self,vulnerable"
+
+@compiletime function createBuff()
+    new BuffDefinition(BUFF_TROLL_PROTECTOR_AURA, BuffIds.devotionAura)
+    ..setTargetAttachments(1, 1)
+    ..setTargetAttachmentPoint0(1, "overhead")
+    ..setArtTarget(1, Abilities.faerieDragon_Invis)
+    ..setIcon(LocalIcons.bTNTrollProtector)
+    ..setTooltipNormal(1, TROLL_PROTECTOR_TT)
+    ..setName(TROLL_PROTECTOR_TT)
+    ..setTooltipNormalExtended(1, "This unit is under effect of Troll Protector. It has increased armor.")
+
+class TrollProtectorAura extends AbilityDefinitionPaladinDevotionAura
+    construct(int newAbilityId)
+        super(newAbilityId)
+        this.setLevels(1)
+        this.setHeroAbility(false)
+        this.setArmorBonus(1, ARMOR_BONUS)
+        this.setName(TROLL_PROTECTOR_TT)
+        this.presetTooltipNormal(lvl -> makeToolTipNormAura(TROLL_PROTECTOR_TT))
+        this.presetTooltipNormalExtended(lvl -> TROLL_PROTECTOR_TT_EXT)
+        this.setIconNormal(Icons.pASBTNDevotion)
+        this.setTargetsAllowed(1, TARGET_ALLOWED)
+        this.setBuffs(1, toRawCode(BUFF_TROLL_PROTECTOR_AURA))
+
+@compiletime function createFortitude()
+    new TrollProtectorAura(ABILITY_TROLL_PROTECTOR_AURA)

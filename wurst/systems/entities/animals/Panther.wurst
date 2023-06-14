@@ -6,13 +6,14 @@ import LinkedList
 
 public class Panther extends Hostile
     private static let unitTypeId = UNIT_PANTHER
-
+    unit whichUnit
     static function initialize()
         register(unitTypeId, panther -> new Panther(panther))
         register(UNIT_ELDER_PANTHER, target -> new Panther(target))
 
     construct(unit whichUnit)
         super(whichUnit)
+        this.whichUnit = whichUnit
 
     override function postCreate()
         super.postCreate()
@@ -21,6 +22,8 @@ public class Panther extends Hostile
         let drops = super.getDrops()
             ..add(ITEM_BONE)
             ..add(ITEM_BONE)
+        if whichUnit.getTypeId() == UNIT_ELDER_PANTHER
+            drops.add(ITEM_PANTHER_FANG)
         return drops
 
     override function getNumCorpses() returns int

@@ -16,6 +16,8 @@ import HashSet
 import BushSpawns
 import ItemObjEditing
 import ClosuresForItems
+import ItemExtensions
+import IdListConstant
 //import Steal
 
 
@@ -151,13 +153,17 @@ function onDeath(unit troll)
             foundDummyItem.remove()    
 
 public function addItemToThiefsPocket(unit troll, item itm)
-    if stolenItems.has(itm)
-        and troll.hasItemById(ITEM_THIEFS_POCKET_DUMMY)
-        troll.removeItemById(ITEM_THIEFS_POCKET_DUMMY)
-        if troll.hasItem(itm)
-            troll.removeItem(itm)
-        nullTimer() -> 
-            troll.addItemHandleToSlot(itm, 5)
+    if stolenItems.has(itm) and troll.hasItemById(ITEM_THIEFS_POCKET_DUMMY)
+        for each in troll.getInventory()
+            if SCROLL_LIST.has(each.getTypeId()) and itm.isSpell()
+                troll.removeItem(each)
+        doAfter(ANIMATION_PERIOD) ->         
+            troll.removeItemById(ITEM_THIEFS_POCKET_DUMMY)
+            if troll.hasItem(itm)
+                troll.removeItem(itm)
+            nullTimer() -> 
+                troll.addItemHandleToSlot(itm, 5)
+
 
 
 function onTargetOrder()

@@ -1,0 +1,73 @@
+package ThrillOfBattle
+
+// Standard lib Imports:
+import AbilityObjEditing
+import Assets
+import ClosureEvents
+import ChannelAbilityPreset
+import BuffObjEditing
+import ClosureTimers
+
+// Local Imports:
+import LocalObjectIDs
+import ToolTipsUtils
+
+// Third-party imports:
+import StringBuilder
+import ColorUtils
+import LocalAssets
+
+
+let MS_FACTOR = 0.3
+let AS_FACTOR = 0.2
+let NAME = "Thrill of Battle"
+let TT = new StringBuilder()
+    ..add(
+        "The Warrior thrives in combat and is always looking for |nhis next opponent. " +
+        "He moves {0} faster and attacks {1} faster.|n"
+    )
+    .build()
+    .format(
+        MS_FACTOR.toToolTipOrange(),
+        AS_FACTOR.toToolTipOrange()
+    )
+
+@compiletime function createTheGlowBuff()
+    new BuffDefinition(BUFF_THRILL_OF_THE_BATTLE, BuffIds.enduranceAura) // buff orc aura endurance
+        ..setTooltipNormal(NAME)
+        ..setTooltipNormalExtended(TT)
+        ..setIcon(LocalIcons.bTNThrillOfBattle)
+        ..setArtTarget("")
+
+
+
+@compiletime function createSkill() returns AbilityDefinitionAuraEnduranceCreep
+    return new AbilityDefinitionAuraEnduranceCreep(ABILITY_THRILL_OF_BATTLE)
+    ..setButtonPositionNormalX(2)
+    ..setButtonPositionNormalY(2)
+    ..setBuffs(1, toRawCode(BUFF_THRILL_OF_THE_BATTLE))
+    ..setMovementSpeedIncrease(1, 0.3)
+    ..setAttackSpeedIncrease(1, 0.2)
+    //..setAreaofEffect(1, 1.)
+    ..setArtSpecial("")
+    ..setAreaEffect("")
+    ..setArtTarget("")
+    ..setIconNormal(LocalIcons.bTNThrillOfBattle)
+    ..setEditorSuffix("(Wurst)")
+    ..setHotkeyNormal("")
+    ..setName("Thrill of Battle")
+    ..setTargetsAllowed(1, TargetsAllowed.self)
+    ..setTooltipNormal(1, makeToolTipNormAura(NAME))
+    ..presetTooltipNormalExtended(lvl -> TT)
+
+
+function onCast(unit caster)
+    nullTimer() ->
+        caster.removeAbility(ABILITY_PANIC)
+        caster.addAbility(ABILITY_THRILL_OF_BATTLE)
+        caster.removeAbility(ABILITY_HUNTER_WEB)
+        caster.addAbility(ABILITY_SPIKED_NET)
+
+init
+    EventListener.onCast(ABILITY_WARRIOR) (unit caster) ->
+        onCast(caster)

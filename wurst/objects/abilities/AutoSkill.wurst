@@ -19,8 +19,8 @@ let skillMap = new HashMap<int, int>()
     // Hunter
     ..put(UNIT_HUNTER,               ABILITY_TRACK)
     ..put(UNIT_HUNTER_1,             ABILITY_TRACK)
-    ..put(UNIT_WARRIOR,              ABILITY_WARRIOR_SPELLBOOK)
-    ..put(UNIT_WARRIOR,              ABILITY_GIANT_SWING)
+    //..put(UNIT_WARRIOR,              ABILITY_WARRIOR_SPELLBOOK)
+    ..put(UNIT_WARRIOR,              ABILITY_UNDYING)
     ..put(UNIT_TRACKER,              ABILITY_TRACKER_SPELLBOOK)
     ..put(UNIT_JUGGERNAUT,           ABILITY_RAGE)
 

@@ -545,7 +545,14 @@ library Transmute initializer onInit requires LocalObjectIDs, UnitExtensions, It
                 call RemoveItem(t[5])
                 call UnitAddItemByIdSwapped( ITEM_BEARS_TENACITY_BOOTS, GetTriggerUnit() )
                 call lowerItem(1)                                                                  
-            endif            
+            endif
+            if i[0] == ITEM_IRON_SHIELD and i[1] == ITEM_ELK_HIDE and i[2] == ITEM_MANA_CRYSTAL then
+                call RemoveItem(t[0])
+                call RemoveItem(t[1])
+                call RemoveItem(t[2])
+                call UnitAddItemByIdSwapped( ITEM_TROLL_PROTECTOR, GetTriggerUnit() )
+                call lowerItem(1)                                                                                  
+            endif              
         endif
     //End of Armory Item Creation
     //Begging of Witch Doctors Hut Item Creation
@@ -607,10 +614,15 @@ library Transmute initializer onInit requires LocalObjectIDs, UnitExtensions, It
                 call UnitAddItemByIdSwapped( ITEM_POISON, GetTriggerUnit() )
                 call lowerItem(3)
             endif
-            if i[0] == ITEM_POISON and i[1] == ITEM_POISON then
+            if i[0] == ITEM_PANTHER_FANG and i[1] == ITEM_POISON and i[2] == ITEM_POISON and i[3] == ITEM_SPIRIT_WIND and i[4] == ITEM_SPIRIT_WATER and i[5] == ITEM_MAGIC then
                 call RemoveItem(t[0])
                 call RemoveItem(t[1])
-                call UnitAddItemByIdSwapped( ITEM_ULTRA_POISON, GetTriggerUnit() )
+                call RemoveItem(t[2])
+                call RemoveItem(t[3])
+                call RemoveItem(t[4])
+                call RemoveItem(t[5])
+                call UnitAddItemByIdSwapped( ITEM_VENOM_FANG, GetTriggerUnit() )
+                call lowerItem(6)
             endif
             if i[0] == ITEM_SPIRIT_WATER and i[1] == ITEM_MANA_CRYSTAL then
                 call RemoveItem(t[0])

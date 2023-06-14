@@ -148,7 +148,7 @@ function onMakruraAttacked(unit source, unit target, real originalAmount)
     let currentHp = target.getHP()
     target.setHP(currentHp+originalAmount)
     if not source.isInvulnerable()
-        source.damageTarget(source, originalAmount, true, false, ATTACK_TYPE_HERO, DAMAGE_TYPE_NORMAL, null)
+        target.damageTarget(source, originalAmount, true, false, ATTACK_TYPE_HERO, DAMAGE_TYPE_NORMAL, null)
         flashEffect("Objects\\Spawnmodels\\Naga\\NagaDeath\\NagaDeath.mdl", source.getPos())
     doAfter(MAKRURA_CARAPACE_BOSS_CD)->
         makruraCarapaceCooldown.remove(source) 
@@ -196,7 +196,7 @@ let MAKRURA_BOSS_PIN_DPS      =15.
 init
     DamageEvent.addListener(DamageListenerPriorities.PANTHER_INSTINCT castTo int) ->     
         if DamageEvent.getTarget().getTypeId() == UNIT_MAKRURA and DamageEvent.getType() == DamageType.ATTACK
-            onMakruraAttacked(DamageEvent.getSource(), DamageEvent.getTarget(), DamageEvent.getOriginalAmount())
+            onMakruraAttacked(DamageEvent.getSource(), DamageEvent.getTarget(), DamageEvent.getUnreducedOriginalAmount())
     //flasheffect for Pin
     EventListener.onTargetCast(ABILITY_MAKRURA_BOSS_PIN) (unit caster, unit target) ->
         flashEffect(Abilities.stampedeMissileDeath, target.getPos())        

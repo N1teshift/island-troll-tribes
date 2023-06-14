@@ -310,7 +310,7 @@ public constant TT_SCALE_COAT = "" +
         //..setTintingColor1Red(255)
         //..setTintingColor2Green(0)
         //..setTintingColor3Blue(128)
-        ..setScalingValue(1.5)
+        ..setScalingValue(1.)
         ..setAbilities(ABIL_MAKRURA_CUIRASS)
         ..setCooldownGroup("AIms")
 

@@ -82,7 +82,7 @@ public constant TT_HEALING_SALVE = "" +
         ..setEditorSuffix(1, "(Wurst)")
 
 function onHealingSalve(unit caster, unit target)
-    doPeriodicallyTimed(ANIMATION_PERIOD, DURATION) (CallbackCounted cb) ->
+    doPeriodicallyTimed(ANIMATION_PERIOD, DURATION+0.1) (CallbackCounted cb) ->
         if not target.hasAbility(BUFF_HEALING_SALVE)
             destroy cb
         new HealingInstance(target, caster,  (HEALING/DURATION)*ANIMATION_PERIOD, HealingType.ITEM, false)

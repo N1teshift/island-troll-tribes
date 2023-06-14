@@ -16,6 +16,7 @@ import InstantDummyCaster
 import SimError
 import BuffObjEditing
 import BuffIds
+import Abilities
 
 //constant NAME =""
 //constant COOLDOWN = 0
@@ -41,7 +42,10 @@ constant TARGET_ALLOWED = commaList(TargetsAllowed.organic,
         ..setHotkeyNormal(HOTKEY)
         ..setName(NAME)
         ..presetTooltipNormal(lvl -> makeToolTipNorm(HOTKEY, NAME))
-        ..presetTooltipNormalExtended(lvl -> TT_EXTENDED)          
+        ..presetTooltipNormalExtended(lvl -> TT_EXTENDED)  
+        ..setMissileHomingEnabled(true)
+        ..setMissileArt(Abilities.cannonTowerMissile)   
+        ..setMissileSpeed(900)    
         ..setIconNormal(ICON)
         ..setIconResearch(ICON)
         ..setIconTurnOff(ICON)

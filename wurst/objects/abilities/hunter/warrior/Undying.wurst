@@ -1,0 +1,69 @@
+package Undying
+
+// Standard lib Imports:
+import AbilityObjEditing
+import Assets
+
+// Third-party imports:
+import StringBuilder
+
+// Local Imports:
+import DamageListeners
+import LocalObjectIDs
+import ToolTipsUtils
+import LocalAssets
+
+let DMG_REDUC_1 = 0.1
+let DMG_REDUC_2 = 0.15
+let HP_THRESHOLD = 0.5
+
+let NAME = "Undying"
+let TT = new StringBuilder()
+    ..add(
+        "After countless battles the Warrior feels less and less pain from each wound.|n" +
+        "He receives {0}% less damage increasing to {1}% less |ndamage when below {2}% health. |n"
+    )
+    .build()
+    .format(
+        (DMG_REDUC_1 * 100).toToolTipOrange(),
+        (DMG_REDUC_2 * 100).toToolTipOrange(),
+        (HP_THRESHOLD * 100).toToolTipOrange()
+    )
+
+@compiletime function createUndying() returns AbilityDefinitionHardenedSkin
+    return new AbilityDefinitionHardenedSkin(ABILITY_UNDYING)
+        ..setIconNormal(Icons.bTNHeadHunterBerserker)
+        ..setButtonPositionNormalY(0)
+        ..setButtonPositionNormalX(0)
+        ..setCheckDependencies(false)
+        ..setChancetoReduceDamage(1, 0)
+        ..setIgnoredDamage(1, 0)
+        ..setMinimumDamage(1, 0)
+        ..setIconNormal(LocalIcons.bTNUndying)
+        ..setEditorSuffix("(Wurst)")
+        ..setHotkeyNormal("")
+        ..setName(NAME)
+        ..setRequirements("")
+        ..setTooltipNormal(1, makeToolTipNormAura(NAME))
+        ..setTooltipNormalExtended(1, TT)
+
+function onDamage()
+    let target = DamageEvent.getTarget()
+    // Filter for units that have Undying.
+    if not target.hasAbility(ABILITY_UNDYING)
+        return
+
+    // Exit if the damage is used for internal systems.
+    if DamageEvent.getElement().hasTag(FAKE_DAMAGE)
+        return
+
+    // Scale the damage depending on current %hp.
+    if (target.getHPRatio() > HP_THRESHOLD)
+        DamageEvent.setAmount(DamageEvent.getAmount() * (1 - DMG_REDUC_1))
+    else 
+        DamageEvent.setAmount(DamageEvent.getAmount() * (1 - DMG_REDUC_2))
+
+init
+    DamageEvent.addListener(DamageListenerPriorities.PANIC castTo int) ->
+        if DamageEvent.getType() == DamageType.ATTACK
+            onDamage()

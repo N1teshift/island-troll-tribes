@@ -115,14 +115,13 @@ class TrophyHide
     unit hero = null
     item hunterDummyItem = null
     item trophyHide = null
-    CallbackPeriodic cb
     Attachment attachment
 
     construct(unit hero)
         this.hero = hero
         hero.addItemToSlot(ITEM_HUNTER_TROPHY_HIDE_DUMMY, 3)
         nullTimer() ->            
-            hunterDummyItem = hero.getItemById(ITEM_HUNTER_TROPHY_HIDE_DUMMY)   
+            hunterDummyItem = hero.getItemById(ITEM_HUNTER_TROPHY_HIDE_DUMMY)
 
     function onHideDrop(item itemHandle)
         if not hero.isAlive()
@@ -133,7 +132,7 @@ class TrophyHide
                 if  nextHide != null
                     replaceHideWithTrophy(nextHide)
                 else
-                    updateAttachment(-1)
+                    //updateAttachment(-1)
                     trophyHide = null
                     let itm =hero.itemInSlot(3)
                     if itm !=null and itm != hunterDummyItem and itm != trophyHide and not HIDE_LIST.has(itm.getTypeId())                   
@@ -142,6 +141,7 @@ class TrophyHide
                     if itm !=null
                         hero.addItemHandle(itm)       
                 replaceTrophyWithHide(itemHandle)
+
     //find next hide of highest index of HIDE_LIST
     function findNextHide() returns item            
         item nextHide = null
@@ -153,7 +153,7 @@ class TrophyHide
 
     function replaceHideWithTrophy(item itemHandle)
         let trophy= hideToTrophyMap.get(itemHandle.getTypeId())
-        updateAttachment(itemHandle.getTypeId())         
+        //updateAttachment(itemHandle.getTypeId())         
         itemHandle.remove()       
         nullTimer() ->
             trophyHide =createItem(trophy, hero.getPos())
@@ -174,7 +174,7 @@ class TrophyHide
             if newAttachment != -1
                 attachment = attachments.get(newAttachment)
                 nullTimer() ->
-                    if attachment!= null                
+                    if attachment!= null             
                         attachment.apply(hero)        
 
     function replaceTrophyWithHide(item itemHandle)
@@ -183,7 +183,7 @@ class TrophyHide
             if not itemHandle.isOwned()
                 createItem(trophyToHideMap.get(itemHandle.getTypeId()), pos)
                 itemHandle.remove()
-            updateAttachment(-1)
+            //updateAttachment(-1)
 
     function onHidePickup(item itemHandle)
         if trophyHide == null       
@@ -213,8 +213,8 @@ class TrophyHide
             createItem(itm, pos)
             trophyHide.remove()
             hunterDummyItem.remove()
-            destroy cb
-            destroy attachment           
+            if attachment!= null
+                destroy attachment        
 
 function cacheAttachmentIds()
     attachments.get(ITEM_ELK_HIDE).setIDs(id1)
@@ -226,8 +226,10 @@ function onHideDrop(unit hero, item itemHandle)
         instances.get(hero).onHideDrop(itemHandle)
 
 function onHidePickup(unit hero, item itemHandle)
-    if instances.has(hero) 
-        instances.get(hero).onHidePickup(itemHandle)
+    nullTimer() ->
+        if hero.hasItem(itemHandle) and instances.has(hero)    
+            instances.get(hero).onHidePickup(itemHandle)
+
 
 function onTrophyPickup(unit hero, item itemHandle)
     if not instances.has(hero) or hero.hasItem(instances.get(hero).hunterDummyItem)
@@ -282,21 +284,8 @@ function onTargetOrder()
             and HIDE_LIST.has(target.getTypeId())
             instances.get(u).onHidePickup(target)
 
-string highestInstanceCountType = null
-int instanceCount = 0
-function reflection()
-    for i=0 to maxTypeId()
-        if instanceCount(i) > 0 //instanceCount// and typeIdToTypeName(i)!= "LinkedList.LLEtry"
-            highestInstanceCountType = typeIdToTypeName(i)
-            instanceCount = instanceCount(i)
-            print("Instance count = "+instanceCount.toString())
-            print("Instance name = "+highestInstanceCountType)        
 
-
-init
-    doPeriodically(10.) (CallbackPeriodic cb) ->
-        reflection()
-        
+init        
     initializeAttachmentsIds()
 
     EventListener.add(EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER, () -> onTargetOrder())    

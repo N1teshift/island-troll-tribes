@@ -4,6 +4,12 @@ package LocalAssets
 import ObjectIdGenerator
 
 public class LocalIcons
+    static constant bTNPoisonFang           = "ReplaceableTextures\\CommandButtons\\BTNPoisonFang.blp"
+    static constant bTNTrollProtector           = "ReplaceableTextures\\CommandButtons\\BTNTrollProtector.blp"
+    static constant bTNPantherFang           = "ReplaceableTextures\\CommandButtons\\BTNPantherFang.blp"
+    static constant bTNUndying           = "ReplaceableTextures\\CommandButtons\\BTNUndying.blp"
+    static constant bTNThrillOfBattle          = "ReplaceableTextures\\CommandButtons\\BTNTHrillOfBattle.blp"
+    static constant bTNSpikedNet           = "ReplaceableTextures\\CommandButtons\\BTNSpikedNet.blp"
     static constant bTNMakruraClaws           = "ReplaceableTextures\\CommandButtons\\BTNMakruraClaws.blp"
     static constant bTNMakruraCarapace      = "ReplaceableTextures\\CommandButtons\\bTNMakruraCarapace.blp"
     static constant bTNSavageGladiatorChain = "ReplaceableTextures\\CommandButtons\\BTNSavageGladiatorChain.blp"
@@ -200,6 +206,9 @@ public class LocalAbilities
     static constant test                           = "Models\\Abilities\\Test.mdx"
 
 public class LocalItems
+    static constant poisonFang                    = "Models\\Items\\poisonFang.mdx"
+    static constant pantherFang                    = "Models\\Items\\pantherfang.mdx"
+    static constant trollProtector          = "Models\\Items\\TrollProtector.mdx"
     static constant makruraCuirass          = "Models\\Items\\makruraCuirass.mdx"
     static constant makruraClaws          = "Models\\Items\\makruraClaws.mdx"
     static constant makruraCarapace          = "Models\\Items\\makruraCarapace.mdx"

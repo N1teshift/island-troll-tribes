@@ -83,6 +83,11 @@ init
     ..add(ITEM_WOLF_SKIN_COAT)
     ..add(ITEM_SPIRIT_DARKNESS)
     ..add(ITEM_MAGIC)
+
+    new QuickMake(ABILITY_QM_TROLL_PROTECTOR)
+    ..add(ITEM_IRON_SHIELD)
+    ..add(ITEM_ELK_HIDE)
+    ..add(ITEM_MANA_CRYSTAL)
     
             
 

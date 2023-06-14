@@ -70,6 +70,6 @@ init
             or PETS_LIST.has((DamageEvent.getSource().getTypeId()))
             )
 
-            onAttack(DamageEvent.getSource(), DamageEvent.getTarget(), DamageEvent.getOriginalAmount()) 
+            onAttack(DamageEvent.getSource(), DamageEvent.getTarget(), DamageEvent.getUnreducedOriginalAmount()) 
             
     
