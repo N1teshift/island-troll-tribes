@@ -9,14 +9,18 @@ import LocalObjectIDs
 import Lodash
 import ToolTipsUtils
 import LocalAssets
+import ColorUtils
+import HealingSystem
 
 let COOLDOWN = 60.
 let MANACOST = 0
-let STATS_RAISE_AMOUNT = 50.
+let BASE_STATS_RAISE_AMOUNT = 10.
+let STATS_RAISE_INT_MULTIPLIER = 1.
 
 let TOOLTIP_NORM = "Self Preservation"
-let TOOLTIP_EXTENDED = "Raises all stats (Health Point, Energy, Heat) of your troll by {0}. Has {1} seconds cooldown."
-                       .format(STATS_RAISE_AMOUNT.toToolTipGreen(), COOLDOWN.toToolTipLightBlue())
+let TOOLTIP_EXTENDED = "Raises all stats (Health Point, Energy, Heat) of your troll by {0}+{1}% of your {2}. Has {3} seconds cooldown."
+                       .format(BASE_STATS_RAISE_AMOUNT.toToolTipGreen(),(STATS_RAISE_INT_MULTIPLIER*100).toToolTipGreen(), 
+                       "Intelligence".color(COLOR_TURQUOISE), COOLDOWN.toToolTipLightBlue())
 
 
 
@@ -48,10 +52,11 @@ class SelfPreservation extends ChannelAbilityPreset
 function onCast()
     let caster = GetSpellAbilityUnit()
     let owner = caster.getOwner()
-
-    caster.setHP(caster.getHP() + STATS_RAISE_AMOUNT)
-    caster.setMana(caster.getMana() + STATS_RAISE_AMOUNT)
-    owner.setGold(min(owner.getGold() + STATS_RAISE_AMOUNT.toInt(), gameConfig.getHeatMaximum()))
+    let totalStatsRaiseAmount = BASE_STATS_RAISE_AMOUNT+caster.getInt(true)
+    new HealingInstance(caster, caster, totalStatsRaiseAmount, HealingType.ABILITY)
+    //caster.setHP(caster.getHP() + totalStatsRaiseAmount)
+    caster.setMana(caster.getMana() + totalStatsRaiseAmount)
+    owner.setGold(min(owner.getGold() + totalStatsRaiseAmount.toInt(), gameConfig.getHeatMaximum()))
 
 init
     registerSpellEffectEvent(ABILITY_SELF_PRESERVATION) ->

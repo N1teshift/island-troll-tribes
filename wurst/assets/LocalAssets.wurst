@@ -4,6 +4,9 @@ package LocalAssets
 import ObjectIdGenerator
 
 public class LocalIcons
+    static constant bTNRenew                = "ReplaceableTextures\\CommandButtons\\BTNRenew.blp"
+    static constant bTNRenew2                = "ReplaceableTextures\\CommandButtons\\BTNRenew2.blp"
+    static constant bTNRenew3                = "ReplaceableTextures\\CommandButtons\\BTNRenew3.blp"
     static constant bTNPoisonFang           = "ReplaceableTextures\\CommandButtons\\BTNPoisonFang.blp"
     static constant bTNTrollProtector           = "ReplaceableTextures\\CommandButtons\\BTNTrollProtector.blp"
     static constant bTNPantherFang           = "ReplaceableTextures\\CommandButtons\\BTNPantherFang.blp"

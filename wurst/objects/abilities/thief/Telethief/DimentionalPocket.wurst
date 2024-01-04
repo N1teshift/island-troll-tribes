@@ -79,15 +79,15 @@ function onCast(unit caster)
     let itmInThiefsPocket =caster.itemInSlot(5)
     itmInThiefsPocket.remove()
     let itm = conjureItem(caster)
-    itm.setPawnable(false)
-    nullTimer() -> 
+    doAfter(ANIMATION_PERIOD) -> 
+        itm.setPawnable(false)
         stolenItems.add(itm)
         conjuredItems.add(itm)
     if itm.getTypeId() != ITEM_THIEF_MED and caster.getLevel() >=4
         let charges = itm.getCharges()
         itm.setCharges(charges*2)
     if itm != null
-        caster.addItemHandleToSlot(itm, 5)
+        //caster.addItemHandleToSlot(itm, 5)
     flashEffect(Abilities.tomeOfRetrainingCaster, caster.getPos())
 
 

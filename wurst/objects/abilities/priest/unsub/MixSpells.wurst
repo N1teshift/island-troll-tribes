@@ -59,7 +59,12 @@ class MixHeat extends ChannelAbilityPreset
         this.setCooldown(1, COOLDOWN)
         this.setHeroAbility(false)
         this.presetTargetTypes(Targettype.UNIT)
-        this.setTargetsAllowed(1, TARGET_ALLOWED)
+        this.setTargetsAllowed(1, commaList(
+                TargetsAllowed.friend,
+                TargetsAllowed.ground,
+                TargetsAllowed.hero,
+                TargetsAllowed.notself
+            ))
         this.setHotkeyNormal(hotkey)
         this.setName(TOOLTIP_NORM+"Heat")
         this.presetTooltipNormal(lvl -> makeToolTipNorm(hotkey, TOOLTIP_NORM+"Heat"))
@@ -93,12 +98,35 @@ class MixEnergy extends ChannelAbilityPreset
         this.setBaseOrderID(1, "slow")
         this.setIconNormal(Icons.bTNManaDrain)
 
+class MixHealth extends ChannelAbilityPreset
+    construct(int newAbilityId, string hotkey, Pair<int, int> buttonPos)
+        super(newAbilityId, 1, true)
+        let toolTipExtended = "The Priest psychically links up with a target. Both unit's health is drained, pooled, and "+
+                              "redistributed equally between the 2 units. Has {0} seconds cooldown.".format(COOLDOWN.toToolTipLightBlue())
+        this.setLevels(1)
+        this.setCastRange(1, CAST_RANGE)
+        this.setManaCost(1, ENERGY_MANACOST)
+        this.setCooldown(1, COOLDOWN)
+        this.setHeroAbility(false)
+        this.presetTargetTypes(Targettype.UNIT)
+        this.setTargetsAllowed(1, TARGET_ALLOWED)
+        this.setHotkeyNormal(hotkey)
+        this.setName(TOOLTIP_NORM+"Health")
+        this.presetTooltipNormal(lvl -> makeToolTipNorm(hotkey, TOOLTIP_NORM+"Health"))
+        this.presetTooltipNormalExtended(lvl -> toolTipExtended)
+        this.setButtonPositionNormalX(buttonPos.a)
+        this.setButtonPositionNormalY(buttonPos.b)
+        this.setFollowThroughTime(1, 0.5)
+        this.setBaseOrderID(1, "slowon")
+        this.setIconNormal(Icons.bTNLifeDrain)
+
 
 @compiletime function createMixSpells()
     // Master Healer
     new MixEnergy(ABILITY_MH_MIX_ENERGY , "Q", new Pair(0, 0))
     new MixHeat  (ABILITY_MH_MIX_HEAT   , "W", new Pair(1, 0))
     // Priest
+    new MixHealth(ABILITY_MIX_HEALTH , "S", new Pair(1, 1))
     new MixEnergy(ABILITY_MIX_ENERGY , "D", new Pair(2, 1))
     new MixHeat  (ABILITY_MIX_HEAT   , "F", new Pair(3, 1))
     // Sage
@@ -173,4 +201,12 @@ init
                 COLOR_ORANGE,
                 LIGHTNING_MAGIC_LEASH
             )
-
+    EventListener.onTargetCast(ABILITY_MIX_HEALTH) (caster, target) ->
+        mix(
+            caster,
+            target,
+            unit_ -> unit_.getHP().toInt(),
+            (unit_, value) -> unit_.setHP(value.toReal()),
+            COLOR_GREEN,
+            LIGHTNING_DRAIN_LIFE
+        )

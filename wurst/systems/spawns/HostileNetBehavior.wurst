@@ -21,6 +21,7 @@ init
     //Hunter & ensnare ability
     registerSpellEffectEvent(ABILITY_ENSNARE_TRAP, () -> onCast())
     registerSpellEffectEvent(ABILITY_HUNTER_WEB, () -> onCast())
+    registerSpellEffectEvent(ABILITY_SPIKED_NET, () -> onCast())
 
     //Nets item ability
     registerSpellEffectEvent(ABILITY_ENSNARE, () -> onCast())

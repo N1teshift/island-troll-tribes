@@ -151,8 +151,8 @@ function getShield() returns LinkedList<Shield>
         new Shield(ITEM_IRON_SHIELD   , "Iron Shield"   , ABILITY_IRON_SHIELD_BLOCK_ID   , SHIELD_DAMAGE_BLOCK3 , IRON_SHIELD_TOOLTIP   , "HumanArmorUpOne"    , LocalItems.ironShield  , IRON_SHIELD_ABILITIES  , 46),
         new Shield(ITEM_STEEL_SHIELD  , "Steel Shield"  , ABILITY_STEEL_SHIELD_BLOCK_ID  , SHIELD_DAMAGE_BLOCK4 , STEEL_SHIELD_TOOLTIP  , "ThoriumArmor"       , LocalItems.steelShield , STEEL_SHIELD_ABILITIES , 66),
         new Shield(ITEM_BATTLE_SHIELD , "Battle Shield" , ABILITY_BATTLE_SHIELD_BLOCK_ID , SHIELD_DAMAGE_BLOCK4 , BATTLE_SHIELD_TOOLTIP , "ArcaniteArmor"      , LocalItems.battleShield, BATTLE_SHIELD_ABILITIES , 82),
-        new Shield(ITEM_MAKRURA_CARAPACE , "Makrura Carapace" , ABILITY_DUMMY_SHIELD_BLOCK_ID  , SHIELD_DAMAGE_BLOCK0 , MAKRURA_CARAPACE_TOOLTIP , "MakruraCarapace"      , LocalItems.makruraCarapace, MAKRURA_CARAPACE_ABILITIES , 41),
-        new Shield(ITEM_MAKRURA_CARAPACE_DUMMY , "Makrura Carapace" , ABILITY_DUMMY2_SHIELD_BLOCK_ID  , SHIELD_DAMAGE_BLOCK0 , MAKRURA_CARAPACE_TOOLTIP , "MakruraCarapace", LocalItems.makruraCarapace, MAKRURA_CARAPACE_DUMMY_ABILITIES , 41),
+        new Shield(ITEM_MAKRURA_CARAPACE , "Makrura Carapace" , ABILITY_DUMMY_SHIELD_BLOCK_ID  , SHIELD_DAMAGE_BLOCK0 , MAKRURA_CARAPACE_TOOLTIP , "MakruraCarapace"      , LocalItems.makruraCarapace, MAKRURA_CARAPACE_ABILITIES , 41, 1.0),
+        new Shield(ITEM_MAKRURA_CARAPACE_DUMMY , "Makrura Carapace" , ABILITY_DUMMY2_SHIELD_BLOCK_ID  , SHIELD_DAMAGE_BLOCK0 , MAKRURA_CARAPACE_TOOLTIP , "MakruraCarapace", LocalItems.makruraCarapace, MAKRURA_CARAPACE_DUMMY_ABILITIES , 41, 1.0),
         new Shield(ITEM_TROLL_PROTECTOR , "Troll Protector" , ABILITY_TROLL_PROTECTOR_ID  , SHIELD_DAMAGE_BLOCK3 , TROLL_PROTECTOR_TOOLTIP , "TrollProtector", LocalItems.trollProtector, TROLL_PROTECTOR_ABILITIES , 41)
     )
 

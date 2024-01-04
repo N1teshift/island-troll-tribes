@@ -10,6 +10,8 @@ import LocalObjectIDs
 import Transformation
 import UnitExtensions
 import LegacyHotkeys
+import TrollUnitTextConstant
+import IdListConstant
 
 let legacySkillMap = new HashMap<int, int>()
     ..put(ABILITY_MAGE_SPELLBOOK, ABILITY_MAGE_LEGACY_SPELLBOOK)
@@ -88,6 +90,18 @@ public function autoSkill(unit target)
 
     // Ensure that the unit has the ability.
     target.addAbility(abilityID)
+
+    let attributeGrowth = trollAttributeGrowth.get(target.getTypeId())
+    let subTrollLvls = SUB_TROLL_UNIT_LIST.has(target.getTypeId()) ? 5:0
+    let superSubTrollLvls = SUPERSUB_TROLL_UNIT_LIST.has(target.getTypeId()) ? 8:0
+    let lvl = target.getLevel()
+    let strength = (attributeGrowth.strength*(lvl+2+subTrollLvls+superSubTrollLvls)).ceil()
+    let agility = (attributeGrowth.agility*(lvl+2+subTrollLvls+superSubTrollLvls)).ceil()
+    let intelligence = (attributeGrowth.intelligence*(lvl+2+subTrollLvls+superSubTrollLvls)).ceil()
+    target.setStr(strength)
+    target.setAgi(agility)
+    target.setInt(intelligence)
+    target.setAbilityLevel(ABILITY_TROLL_MS_PER_LVL, (lvl+subTrollLvls+superSubTrollLvls))
 
     // Look up the instance of the ability.
     let skill = target.getAbility(abilityID)

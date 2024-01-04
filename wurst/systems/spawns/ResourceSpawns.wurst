@@ -49,6 +49,37 @@ let spawnRegion = CreateRegion()
     ..addRect(gg_rct_spawn_area_4_2)
     ..addRect(gg_rct_spawn_area_4_3)
 
+let spawnRecanglesNW = asList(gg_rct_spawn_area_1_1, 
+                            gg_rct_spawn_area_1_2, 
+                            gg_rct_spawn_area_1_3
+                            )
+
+let spawnRecanglesNE = asList(gg_rct_spawn_area_2_1, 
+                            gg_rct_spawn_area_2_2, 
+                            gg_rct_spawn_area_2_3
+                            )
+
+let spawnRecanglesSE = asList(gg_rct_spawn_area_3_1, 
+                            gg_rct_spawn_area_3_2, 
+                            gg_rct_spawn_area_3_3
+                            )
+
+let spawnRecanglesSW = asList(gg_rct_spawn_area_4_1, 
+                            gg_rct_spawn_area_4_2, 
+                            gg_rct_spawn_area_4_3
+                            )
+
+let spawnPoolNW = new Pool<rect>()
+let spawnPoolNE = new Pool<rect>()
+let spawnPoolSE = new Pool<rect>()
+let spawnPoolSW = new Pool<rect>()
+
+let spawnRectanglesList = asList(spawnRecanglesNW, 
+                                 spawnRecanglesNE, 
+                                 spawnRecanglesSE, 
+                                 spawnRecanglesSW)  
+
+
 let restrainedSpawnRegion = CreateRegion()
     ..addRect(gg_rct_Thief_Bush_Cliff_SE)
     ..addRect(gg_rct_Thief_Bush_Cliff_NE)
@@ -304,29 +335,38 @@ function initAnimalSpawnInfo()
 // so all areas get picked evenly
 // new IslandSpawner(23, 6, swSpawns) here the variables mean this island will get 23 items and 6 animals
 // because SW is bigger than the others
+
+
+
+
+/*
+LinkedList<Pool<rect>> spawnPools = new LinkedList<Pool<rect>>()
+    ..push(spawnPoolNW)
+    ..push(spawnPoolNE)
+    ..push(spawnPoolSE)
+    ..push(spawnPoolSW)
+*/
+
+
+
+function combineRectanglesIntoPool(Pool<rect> pool) returns Pool<rect>
+    for islandRectangles in spawnRectanglesList
+        for rectangle in islandRectangles
+            let rectWeight = rectangle.height()*rectangle.width() // use square area as weight of the region
+            pool.add(rectWeight.toInt(), rectangle)
+    return pool
+
 function initIslandSpawners()
-    let nwSpawns = new Pool<rect>()
-    nwSpawns.add(65, gg_rct_spawn_area_1_1)
-    nwSpawns.add(22, gg_rct_spawn_area_1_2)
-    nwSpawns.add(13, gg_rct_spawn_area_1_3)
+    let nwSpawns = combineRectanglesIntoPool(spawnPoolNW)
     new IslandSpawner(15, 4, nwSpawns)
 
-    let neSpawns = new Pool<rect>()
-    neSpawns.add(66, gg_rct_spawn_area_2_1)
-    neSpawns.add(16, gg_rct_spawn_area_2_2)
-    neSpawns.add(18, gg_rct_spawn_area_2_3)
+    let neSpawns =combineRectanglesIntoPool(spawnPoolNE)
     new IslandSpawner(16, 4, neSpawns)
 
-    let seSpawns = new Pool<rect>()
-    seSpawns.add(54, gg_rct_spawn_area_3_1)
-    seSpawns.add(13, gg_rct_spawn_area_3_2)
-    seSpawns.add(33, gg_rct_spawn_area_3_3)
+    let seSpawns =combineRectanglesIntoPool(spawnPoolSE)    
     new IslandSpawner(16, 4, seSpawns)
 
-    let swSpawns = new Pool<rect>()
-    swSpawns.add(88, gg_rct_spawn_area_4_1)
-    swSpawns.add(7, gg_rct_spawn_area_4_2)
-    swSpawns.add(8, gg_rct_spawn_area_4_3)
+    let swSpawns =combineRectanglesIntoPool(spawnPoolSW)    
     new IslandSpawner(23, 6, swSpawns)
 
 function startSpawnCycle()

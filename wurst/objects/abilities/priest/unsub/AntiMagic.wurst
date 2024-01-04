@@ -8,21 +8,26 @@ import Assets
 import LocalObjectIDs
 import Lodash
 import ToolTipsUtils
+import ColorUtils
 
 let AOE = 600.
 let COOLDOWN = 20.
 let MANACOST = 20
 let DURATION = 10.
 let CAST_RANGE = 600.
-let SHIELD_AMOUNT = 100.
+let BASE_SHIELD_AMOUNT = 20.
+let SHIELD_INT_MULTIPLIER = 1.
 let SINGLE_AM_MANACOST = 5
 let SINGLE_AM_COOLDOWN = 1.
 let SINGLE_AM_TOOLTIP_NORM = "Anti-Magic Shell"
 let SINGLE_AM_TOOLTIP_EXTENDED = (
-    "Grants an anti-magic barrier to target ally that absorbs {0} magic damage and blocks them "+
-    "from being ensnared by hunters or ensnare traps. Lasts {1} seconds, has {2} seconds cooldown.")
+    "Grants an anti-magic barrier to target ally that absorbs {0} + {1}% of your {2} magic damage and blocks them ".format(
+        BASE_SHIELD_AMOUNT.toToolTipGreen(),
+        (SHIELD_INT_MULTIPLIER*100).toToolTipGreen(),
+        "Intelligence".color(COLOR_TURQUOISE)
+    ) +
+    "from being ensnared by hunters or ensnare traps. \nLasts {0} seconds, has {1} seconds cooldown.")
     .format(
-        SHIELD_AMOUNT.toToolTipGreen(),
         DURATION.toToolTipLightBlue(),
         SINGLE_AM_COOLDOWN.toToolTipLightBlue()
     )
@@ -30,13 +35,15 @@ let SINGLE_AM_TOOLTIP_EXTENDED = (
 
 let TOOLTIP_NORM = "Anti-Magic Shell"
 let TOOLTIP_EXTENDED = (
-    "Grants an anti-magic barrier to allies in a {0} radius around point cast that absorbs {1} magic damage and blocks them "+
-    "from being ensnared by hunters or ensnare traps. Does block workshop ensnare. Lasts {2} seconds, has {3} seconds cooldown.")
+    "Grants an anti-magic barrier to allies in a {0} radius around point cast that absorbs magic damage equal to {0} + {1}% of your {2} and blocks them ".format(
+        BASE_SHIELD_AMOUNT.toToolTipGreen(),
+        (SHIELD_INT_MULTIPLIER*100).toToolTipGreen(),
+        "Intelligence".color(COLOR_TURQUOISE)
+    ) + 
+    "from being ensnared by hunters or ensnare traps. \nLasts {0} seconds, has {1} seconds cooldown.")
     .format(
-        AOE.toToolTipGray(),
-        SHIELD_AMOUNT.toToolTipGreen(),
         DURATION.toToolTipLightBlue(),
-        COOLDOWN.toToolTipLightBlue()
+        SINGLE_AM_COOLDOWN.toToolTipLightBlue()
     )
 
 class AntiMagic extends AbilityDefinitionAntimagicShield
@@ -44,15 +51,16 @@ class AntiMagic extends AbilityDefinitionAntimagicShield
         super(newAbilityId)
         this.setRequirements("")
         this.setCheckDependencies(false)
-        this.setShieldLife(1, SHIELD_AMOUNT.toInt())
-        this.setManaCost(1, SINGLE_AM_MANACOST)
-        this.setCastRange(1, CAST_RANGE)
-        this.setDurationHero(1, DURATION)
-        this.setDurationNormal(1, DURATION)
+        this.setLevels(80)
+        this.presetShieldLife(lvl-> (BASE_SHIELD_AMOUNT+lvl).toInt())
+        this.presetManaCost(lvl-> SINGLE_AM_MANACOST)
+        this.presetCastRange(lvl-> CAST_RANGE)
+        this.presetDurationHero(lvl-> DURATION)
+        this.presetDurationNormal(lvl-> DURATION)
         this.setName(SINGLE_AM_TOOLTIP_NORM)
         this.setTooltipNormal(1, makeToolTipNorm(hotkey, SINGLE_AM_TOOLTIP_NORM))
         this.setTooltipNormalExtended(1, SINGLE_AM_TOOLTIP_EXTENDED)
-        this.setCooldown(1, SINGLE_AM_COOLDOWN)
+        this.presetCooldown(lvl-> SINGLE_AM_COOLDOWN)
         this.presetHotkey(hotkey)
         this.setButtonPositionNormalX(buttonPos.a)
         this.setButtonPositionNormalY(buttonPos.b)
@@ -87,6 +95,7 @@ class AntiMagicAoEDummy extends ChannelAbilityPreset
 
 init
     EventListener.onPointCast(ABILITY_ANTI_MAGIC_AOE) (unit caster, vec2 target) ->
+        let amsLevel = caster.getInt(true)
         forUnitsInRange(target, AOE) u ->
             if u.isAlive()
                 and u.getOwner().isAllyOf(caster.getOwner())
@@ -96,4 +105,4 @@ init
                 new DummyCaster()
                     ..owner(caster.getOwner())
                     ..origin(target)
-                    ..castTarget(ABILITY_ANTI_MAGIC, 1, Orders.antimagicshell, u)
+                    ..castTarget(ABILITY_ANTI_MAGIC, amsLevel, Orders.antimagicshell, u)

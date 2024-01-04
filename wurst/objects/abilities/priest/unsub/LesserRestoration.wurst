@@ -1,0 +1,169 @@
+package LesserRestoration
+
+// Standard-library imports:
+import Assets
+import ClosureEvents
+import ChannelAbilityPreset
+import ClosureTimers
+
+// Third-party imports:
+import Lodash
+
+// Local imports:
+import HealingSystem
+import LocalObjectIDs
+import ToolTipsUtils
+import ColorUtils
+import BuffObjEditing
+import LocalAssets
+import DamageEvent
+import DamageListeners
+import Orders
+import OrderStringFactory
+import LinkedList
+import OnUnitEnterLeave
+import HashMap
+import SimError
+
+//let ABILITY_ID = 'XPRH'
+let CAST_RANGE = 6000.
+let BASE_HEALING_AMOUNT = 80.
+let COOLDOWN = 15.
+let MANACOST = 15
+let DURATION = 8.
+let HEAL_INT_MULTIPLIER = 1.
+let HEAL_BUFF_TT   = "This unit benefits from Health Rejuvenation; it is healing health points over time." 
+let TOOLTIP_NORM = "Lesser Restoration"
+let TOOLTIP_EXTENDED = "Restores {0} Health points over {1} seconds to a target ally. ".format(BASE_HEALING_AMOUNT.toToolTipGreen(), DURATION.toToolTipLightBlue())+
+                    "Can store up to {0} charges. ".format("3".color(ENERGY_COLOR))+
+                    "\nEffect is canceled on being attacked. \nHas {0} second cooldown.".format(COOLDOWN.toString().color(ENERGY_COLOR))                      
+let ICON_SINGLE_CHARGE = LocalIcons.bTNRenew
+let ICON_TWO_CHARGES  =LocalIcons.bTNRenew2
+let ICON_THREE_CHARGES = LocalIcons.bTNRenew3
+let iconIndex = asList(
+    ICON_SINGLE_CHARGE,
+    ICON_TWO_CHARGES,
+    ICON_THREE_CHARGES)
+
+let TARGETS_ALLOWED = commaList(
+            TargetsAllowed.air,
+            TargetsAllowed.ground,
+            TargetsAllowed.friend,
+            TargetsAllowed.vulnerable,
+            TargetsAllowed.invulnerable,
+            TargetsAllowed.self,
+            TargetsAllowed.organic,
+            TargetsAllowed.nonancient,
+            TargetsAllowed.neutral
+        )
+
+IterableMap<unit, LesserRestoration> instances = new IterableMap<unit, LesserRestoration>()
+HashMap<unit, CallbackCounted> healingInstances = new HashMap<unit, CallbackCounted>()
+let dummyBuffObject = createDummyBuffObject(
+        "Lesser Restoration".color(COLOR_GREEN),
+        HEAL_BUFF_TT,
+        LocalIcons.bTNRenew
+    )
+public let BUFF_LESSER_RESTORATION = compiletime(dummyBuffObject.abilId)
+
+class LesserRestoration
+    int charges = 1
+    unit troll
+    CallbackSingle cb
+
+    construct(unit troll)
+        instances.put(troll, this)
+        this.troll = troll
+        recharge()
+
+    function recharge()
+        if charges >=3
+            return
+        cb = doAfter(COOLDOWN) ->      
+            charges+=1
+            this.cb = null
+            updateState()            
+
+    function updateState()
+        if charges >=1
+            doAfter(ANIMATION_PERIOD) -> 
+                troll.endAbilityCooldown(ABILITY_LESSER_RESTORATION)
+        
+        troll.getOwner().setAbilityIcon(ABILITY_LESSER_RESTORATION, iconIndex.get(charges-1))
+        if cb == null and charges< 3
+            recharge()
+
+    function onCast(unit caster, unit target)
+        /*
+        let healingInstanceCb = healingInstances.getAndRemove(target)
+        if healingInstanceCb != null
+            healingInstanceCb.stop() 
+            //simError(caster.getOwner(), "Unit is already under effect of this spell")
+            //return
+        */
+        charges-=1
+        updateState()
+        target.addAbility(BUFF_LESSER_RESTORATION)
+
+        let efx =addEffect(Abilities.healingSalveTarget, target, "origin")        
+        doAfter(DURATION) ->
+            efx.destr()
+            target.removeAbility(BUFF_LESSER_RESTORATION) 
+            target.removeAbility(dummyBuffObject.buffId)
+            
+        doPeriodicallyTimed(ANIMATION_PERIOD, DURATION+0.1) (CallbackCounted cb) ->
+            if not target.hasAbility(BUFF_LESSER_RESTORATION)
+                destroy cb
+            new HealingInstance(target, caster,  (BASE_HEALING_AMOUNT/DURATION)*ANIMATION_PERIOD, HealingType.ITEM, false)    
+            healingInstances.put(target, cb)
+
+
+
+
+@compiletime function createLesserRestoration()
+    new ChannelAbilityPreset(ABILITY_LESSER_RESTORATION, 1, true)
+        ..presetTooltipNormal(lvl->TOOLTIP_NORM)
+        ..setButtonPositionNormalX(3)
+        ..setButtonPositionNormalY(0)
+        ..setHotkeyNormal("R")
+        ..presetManaCost(lvl->MANACOST)
+        ..presetCastRange(lvl -> CAST_RANGE)
+        ..presetCooldown(lvl -> COOLDOWN)
+        ..presetTargetTypes(Targettype.UNIT)
+        ..presetTargetsAllowed(lvl ->TARGETS_ALLOWED)
+        ..presetIcon(ICON_SINGLE_CHARGE)
+        ..presetTooltipNormalExtended(lvl->TOOLTIP_EXTENDED)
+        ..setOrderStringActivate("unroot")
+        ..setFollowThroughTime(1, 0.2)    
+
+
+
+
+
+function onCast(unit caster, unit target)
+    let instance = instances.get(caster)
+    if instance == null
+        return
+    instance.onCast(caster, target)
+
+        
+function onUnitEnter(unit troll)
+    if troll.getTypeId() == UNIT_PRIEST
+        and not instances.has(troll)
+        new LesserRestoration(troll)       
+
+init
+    registerPlayerUnitEvent(EVENT_PLAYER_HERO_LEVEL)->
+        onUnitEnter(GetTriggerUnit())
+
+    EventListener.onTargetCast(ABILITY_LESSER_RESTORATION) (unit caster, unit target) ->
+        doAfter(ANIMATION_PERIOD) -> 
+            onCast(caster, target)
+        
+    DamageEvent.addListener(DamageListenerPriorities.PANTHER_INSTINCT castTo int) ->
+        if DamageEvent.getTarget().hasAbility(BUFF_LESSER_RESTORATION)
+            and DamageEvent.getType() == DamageType.ATTACK or DamageEvent.getType() == DamageType.SPELL
+            DamageEvent.getTarget().removeAbility(BUFF_LESSER_RESTORATION)
+        
+
+

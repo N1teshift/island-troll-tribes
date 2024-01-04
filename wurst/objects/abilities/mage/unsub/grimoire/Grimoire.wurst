@@ -19,7 +19,26 @@ import ClosureEvents
 import SimError
 import Abilities
 import ClosureTimers
+import ColorUtils
 
+let INT_BONUS_PER_SCROLL = 3
+let GRIMOIRE_INT_BONUS_TT = "Pages collected in your Grimoire increase your {0} by ".format("Intelligence".color(COLOR_TURQUOISE))
+let GRIMOIRE_TT ="Mage can add a scroll to its Grimoire permanently gaining it's powers. `\n\nMage gains {0} {1} per page added to the Grimoire.".format(
+    INT_BONUS_PER_SCROLL.toString().color(COLOR_GREEN), "Intelligence".color(COLOR_TURQUOISE))
+
+@compiletime function createAbilityIntBonus()
+    new AbilityDefinitionAttributeModifierSkill(ABILITY_GRIMOIRE_INT_BONUS)
+        ..presetHideButton(lvl->false)
+        ..setIconNormal(Icons.bTNNecromancerMaster)
+        ..setLevels(8)
+        ..presetIntelligenceBonus(lvl->(lvl-1)*INT_BONUS_PER_SCROLL)
+        ..presetStrengthBonus(lvl->0)
+        ..presetAgilityBonus(lvl->0)
+        ..setName("Acquired Knowlede")
+        ..setTooltipNormal(1, "Acquired Knowlede")
+        ..presetTooltipNormalExtended(lvl->GRIMOIRE_INT_BONUS_TT+(3*(lvl-1)).toString().color(COLOR_GREEN))
+        ..setTooltipNormalExtended(1, GRIMOIRE_TT)
+        ..setEditorSuffix("(Wurst)")
 
 
 @compiletime function createGrimoireAbilities()
@@ -47,7 +66,7 @@ import ClosureTimers
         ..setCanBeSoldToMerchants(false)
         ..setCanBeSoldByMerchants(false)
         ..setTooltipBasic("Mage's Grimmoire")
-        ..setTooltipExtended("Mage can add a scroll to its Grimoire permanently gaining it's powers. `\n\nMage gains 2 intelligence per page added to the Grimoire.")
+        ..setTooltipExtended(GRIMOIRE_TT)
         ..setCooldownGroup(ABILITY_GRIMOIRE_SPELLBOOK.toRawCode())
         ..setCanBeDropped(false)
 
@@ -105,7 +124,7 @@ class Grimoire
 
     construct(unit hero)
         this.hero = hero
-        this.lockedScrolls = scrolls
+        this.lockedScrolls = scrolls.copy()
         //hero.removeAbility(ABILITY_INVENTORY_3_SLOT)
         //hero.addAbility(ABILITY_INVENTORY_4_SLOT)
         //hero.makeAbilityPermanent(ABILITY_INVENTORY_4_SLOT, true)
@@ -128,10 +147,12 @@ class Grimoire
                     simError(hero.getOwner(), "You already have this scroll in your Grimoire.")
                 else          
                     hero.disableAbility(abilId, false, false)
+                    let currentIntBonusLvl = hero.getAbilityLevel(ABILITY_GRIMOIRE_INT_BONUS)
+                    hero.setAbilityLevel(ABILITY_GRIMOIRE_INT_BONUS, currentIntBonusLvl+1)
                     let itm = hero.getItemById(scroll)
                     flashEffect(Abilities.tomeOfRetrainingCaster, hero.getPos())
                     itm.remove()
-                    hero.addInt(2)
+                    //hero.addInt(2)
 
     
     function onGrimoireDrop()

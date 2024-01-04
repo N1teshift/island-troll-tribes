@@ -13,6 +13,8 @@ import AutoSkill
 import Experience
 import LocalObjectIDs
 import Transformation
+import TrollUnitTextConstant
+import Reference
 
 // TODO: Build this out automatically.
 public constant trollUpgradeMap = new HashMap<int, int>()
@@ -97,9 +99,10 @@ let transformationIDs = compiletime(registerTransformations(transformations))
 function upgradeUnit(unit origin, int targetID)
     // Save the statistics for the unit for restoration after level reduction.
     // TODO: Avoid level resetting.
-    let str = origin.getStr(false)
-    let agi = origin.getAgi(false)
-    let inT = origin.getInt(false)
+    let attributeGrowth = trollAttributeGrowth.get(targetID)
+    let str = (attributeGrowth.strength*8).ceil()
+    let agi = (attributeGrowth.agility*8).ceil()
+    let inT = (attributeGrowth.intelligence*8).ceil()
 
     // Once the unit transform into a subclass, medallion of courage is researched
     // this way the super sub spell gets unlocked
@@ -119,6 +122,7 @@ function upgradeUnit(unit origin, int targetID)
     origin.setStr(str)
     origin.setAgi(agi)
     origin.setInt(inT)
+    
 
     // Apply autoskilling with the corrected level.
     // TODO: Remove level correction and use a transformation callback.

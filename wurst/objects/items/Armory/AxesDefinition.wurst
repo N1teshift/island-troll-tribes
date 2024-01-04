@@ -257,7 +257,7 @@ function onMageMasherDamage()
         return
 
     // Restrict the effect to spellcasters.
-    if not DRAIN_TARGET_CLASSES.has(target.getTrollBaseClass())
+    if not DRAIN_TARGET_CLASSES.has(target.getTrollBaseClass()) and target.getTrollBaseClass()!= UNIT_PRIEST
         return
 
     // Apply the validated effect.

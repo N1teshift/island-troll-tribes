@@ -13,16 +13,18 @@ import Lodash
 import HealingSystem
 import LocalObjectIDs
 import ToolTipsUtils
+import ColorUtils
 
 //let ABILITY_ID = 'XPRH'
 let CAST_RANGE = 6000.
-let HEALING_AMOUNT = 25.
-let COOLDOWN = 5.
-let MANACOST = 15
-let HEAL_AMOUNT = 25.
+let BASE_HEALING_AMOUNT = 20.
+let COOLDOWN = 10.
+let MANACOST = 25
+let HEAL_INT_MULTIPLIER = 1.
 let TOOLTIP_NORM = "Ranged heal"
-let TOOLTIP_EXTENDED = "Heals a friendly unit for {0} health. Can be casted from very far away. Has {1} seconds cooldown."
-                        .format(HEALING_AMOUNT.toToolTipGreen(),COOLDOWN.toToolTipLightBlue())
+let TOOLTIP_EXTENDED = "Heals a friendly unit for {0}+{1}% of your {2}. Can be casted from very far away. \nHas {3} seconds cooldown."
+                        .format(BASE_HEALING_AMOUNT.toToolTipGreen(), (HEAL_INT_MULTIPLIER*100).toToolTipGreen(), 
+                        "Intelligence".color(COLOR_TURQUOISE), COOLDOWN.toToolTipLightBlue())
 
 let HEAL_HIT_FX = Abilities.healTarget
 
@@ -62,7 +64,8 @@ class RangedHeal extends ChannelAbilityPreset
     new RangedHeal(ABILITY_RANGED_HEAL, "R", new Pair(3, 0))
 
 function onCast(unit caster, unit target)
-    new HealingInstance(target, caster, HEALING_AMOUNT, HealingType.ABILITY)
+    let totalHealingAmount = BASE_HEALING_AMOUNT+caster.getInt(true)
+    new HealingInstance(target, caster, totalHealingAmount, HealingType.ABILITY)
     let fx = target.addEffect(HEAL_HIT_FX, "origin")
     doAfter(1.5) ->
         fx.destr()

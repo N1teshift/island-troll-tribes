@@ -16,6 +16,7 @@ import Assets
 import ObjectIdGenerator
 import ObjectIds
 import LocalObjectIDs
+import ColorUtils
 
 let SLOW_ABILITY_ID   = compiletime(ABIL_ID_GEN.next())
 let BUFF_ZAP_SLOW     = compiletime(ABIL_ID_GEN.next())
@@ -23,13 +24,15 @@ let BUFF_ZAP_SLOW     = compiletime(ABIL_ID_GEN.next())
 let CAST_RANGE = 800.
 let COOLDOWN = 3.
 let CHARGE_DURATION = 15.
-let MANACOST = 8
+let MANACOST = 15
 let MAIN_DAMAGE = 20.
+let MAIN_DAMAGE_INT_MULTIPLIER = 1.
 let EXPLOSION_FORK_AMOUNT = 2
 let OVERCHARGE_FORK_AMOUNT = 3
 let OVERCHARGE_FORK_AOE = 400.
 let CHARGE_BOUNCE_RADIUS = 400.
 let CHARGE_DAMAGE = 35.
+let CHARGE_DAMAGE_INT_MULTIPLIER = 0.5
 let CHARGE_REMOVE_TIME = 12.
 let CHARGE_AS_SLOW = 0.75
 let CHARGE_MS_SLOW = 0.75
@@ -38,11 +41,12 @@ let CHARGE_SLOW_DURATION_NORM = 3.
 let EFFECT_PATH = Abilities.purgeBuffTarget
 let BOUNCE_IMPACT_EFFECT_PATH = Abilities.boltImpact
 let TOOLTIP_NORM = "Zap"
-let TOOLTIP_EXTENDED = ("Zaps the target for {0} damage. Stacks charges on the target and on the third charge, they explode slowing movement and attack "+
-                       "speed by {1} and dealing {2} bonus damage and causing another Zap to be cast on other units nearby. Charge last {3} seconds. "+
+let TOOLTIP_EXTENDED = ("Zaps the target dealing damage equal to your {0}. ".format("Intelligence".color(COLOR_TURQUOISE)) +
+                        "Stacks charges on the target and on the third charge, they explode slowing movement and attack "+
+                       "speed by {0} and dealing bonus damage equal to {1}% of your {2} and causing another Zap to be cast on other units nearby. \nCharge last {3} seconds. "+
                         "Has {4} seconds cooldown.")
-                       .format(MAIN_DAMAGE.toToolTipRed(), CHARGE_AS_SLOW.toToolTipOrange(), CHARGE_DAMAGE.toToolTipRed(), CHARGE_DURATION.toToolTipLightBlue(),
-                       COOLDOWN.toToolTipLightBlue())
+                       .format(CHARGE_AS_SLOW.toToolTipOrange(), (CHARGE_DAMAGE_INT_MULTIPLIER*100).toString().color(COLOR_RED), 
+                       "Intelligence".color(COLOR_TURQUOISE), CHARGE_DURATION.toToolTipLightBlue(), COOLDOWN.toToolTipLightBlue())
 
 constant ZAP1 = compiletime(createDummyBuffObject("Zap 1", "1 Zap Charge", Icons.bTNStasisTrap, Abilities.farseerMissile, "chest"))
 constant ZAP2 = compiletime(createDummyBuffObject("Zap 2", "2 Zap Charge", Icons.bTNStasisTrap, Abilities.farseerMissile, "chest"))
@@ -87,6 +91,7 @@ class Zap extends AbilityDefinitionChainLightningcreep
         this.setName(TOOLTIP_NORM)
         this.setTooltipNormal(1, makeToolTipNorm(hotkey, TOOLTIP_NORM))
         this.setTooltipNormalExtended(1, TOOLTIP_EXTENDED)
+        
 
 @compiletime function createZap()
     new Zap(ABILITY_ZAP, "Q", new Pair(0, 0))
@@ -156,14 +161,14 @@ function onCastEffects(unit caster, unit target, bool isOvercharged)
             handleOverchargeFork(caster, target)
 
         //Main target damage
-        UnitDamageTarget(caster, target, MAIN_DAMAGE, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_MAGIC, null)
+        UnitDamageTarget(caster, target, caster.getInt(true)*MAIN_DAMAGE_INT_MULTIPLIER, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_MAGIC, null)
         handleBuff(caster, target)
 
 function zapChargeExplosion(unit caster, unit target)
     //Main target bonus effects
     if (target.isAlive() and not target.isInvulnerable())
         InstantDummyCaster.castTarget(caster.getOwner(), SLOW_ABILITY_ID, 1, Orders.slow, target)
-        UnitDamageTarget(caster, target, CHARGE_DAMAGE, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_MAGIC, null)
+        UnitDamageTarget(caster, target, caster.getInt(true)*CHARGE_DAMAGE_INT_MULTIPLIER, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_MAGIC, null)
 
     //Charge explosion SFX
     let efx = AddSpecialEffectTargetUnitBJ("chest", target, EFFECT_PATH)..setScale(0.8)

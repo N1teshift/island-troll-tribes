@@ -75,7 +75,7 @@ function onCast()
             InstantDummyCaster.castTarget(caster.getOwner(), ABILITY_DRUNK_POTION, 1, Orders.drunkenhaze, target)
             itm.setCharges(itm.getCharges()-POTION_COST)
             doAfter(ANIMATION_PERIOD) ->     
-                for each in GetUnitsInRangeOfLocAll(600, target.getLoc())
+                for each in GetUnitsInRangeOfLocAll(600, Location(target.getPos().x, target.getPos().y))
                     if (each.isAllyOf(caster.getOwner()) or each.getOwner() == caster.getOwner()) and each.hasAbility(BuffIds.drunkenHaze)
                         each.removeAbility(BuffIds.drunkenHaze)
         else

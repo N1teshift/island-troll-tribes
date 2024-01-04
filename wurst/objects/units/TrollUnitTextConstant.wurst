@@ -11,6 +11,7 @@ import ColorUtils
 import LocalAssets
 import LocalObjectIDs
 import IdListConstant
+import Reference
 
 // Troll Names
 public constant  NAME_HUNTER          = "Wonton,Liche,Taz,Koonta"
@@ -46,8 +47,8 @@ public constant  NAME_OMNIGATHERER    = "Mortis"
 // Pretty Map to assign inventory abilities to trolls in constructor
 public constant trollInventoryAbilityMap = new IterableMap<int, LinkedList<int>>()
 ..put(ABILITY_INVENTORY_3_SLOT, TROLL_INVENTORY_SLOT_3_LIST)
-..put(ABILITY_INVENTORY_4_SLOT, TROLL_INVENTORY_SLOT_4_LIST)
-..put(ABILITY_INVENTORY_5_SLOT, TROLL_INVENTORY_SLOT_5_LIST)
+..put(ABILITY_INVENTORY_4_SLOT, TROLL_INVENTORY_SLOT_4_LIST..remove(UNIT_PRIEST))
+..put(ABILITY_INVENTORY_5_SLOT, TROLL_INVENTORY_SLOT_5_LIST..add(UNIT_PRIEST))
 ..put(AbilityIds.inventory, TROLL_INVENTORY_SLOT_6_LIST)
 
 public constant LinkedList<int> trollInventoryPseudoSlotList  = new LinkedList<int>()
@@ -55,8 +56,68 @@ public constant LinkedList<int> trollInventoryPseudoSlotList  = new LinkedList<i
                                                             ..addAll(HUNTER_CLASS_LIST)
                                                             ..addAll(THIEF_CLASS_LIST)
 
+
+public class AttributeGrowth
+    real strength = 1.
+    real agility = 1.
+    real intelligence = 1.
+    construct(real strength, real agility, real intelligence)
+        this.strength = strength
+        this.agility = agility
+        this.intelligence = intelligence
+
+public constant IterableMap<int, AttributeGrowth> trollAttributeGrowth =  new IterableMap<int, AttributeGrowth>()
+    //hunter classes new AttributeGrowth
+    ..put(UNIT_HUNTER, new AttributeGrowth(1.3, 1.2, 0.5))
+    ..put(UNIT_HUNTER_1, new AttributeGrowth(1.5, 1., 0.5))
+    ..put(UNIT_WARRIOR, new AttributeGrowth(2., 1., 0.5))
+    ..put(UNIT_TRACKER, new AttributeGrowth(1.3, 1.7, 0.5))
+    ..put(UNIT_JUGGERNAUT, new AttributeGrowth(2.5, 1.5, 0.5))
+    //mage classes attributesGworth
+    ..put(UNIT_MAGE, new AttributeGrowth(0.5, 0.5, 2.))
+    ..put(UNIT_MAGE_1, new AttributeGrowth(0.5, 0.5, 2.))
+    ..put(UNIT_ELEMENTALIST, new AttributeGrowth(0.5, 0.5, 2.5))
+    ..put(UNIT_ELEMENTALIST_1, new AttributeGrowth(0.5, 0.5, 2.5))
+    ..put(UNIT_HYPNOTIST, new AttributeGrowth(1., 0.5, 2.5))
+    ..put(UNIT_DEMENTIA_MASTER, new AttributeGrowth(1., 1., 3.))
+    //priest classes attributesGworth
+    ..put(UNIT_PRIEST, new AttributeGrowth(0.6, 0.4, 1.5))
+    ..put(UNIT_BOOSTER, new AttributeGrowth(1.5, 0.6, 1.5))
+    ..put(UNIT_BOOSTER_1, new AttributeGrowth(1.5, 0.6, 1.5))
+    ..put(UNIT_MASTER_HEALER, new AttributeGrowth(1., 0.5, 2.))
+    ..put(UNIT_MASTER_HEALER_1, new AttributeGrowth(1., 0.5, 2.))
+    ..put(UNIT_SAGE, new AttributeGrowth(1.5, 1., 3.))
+    //beastmaster classes attributesGworth
+    ..put(UNIT_BEASTMASTER, new AttributeGrowth(1.2, 1., 0.5))
+    ..put(UNIT_BEASTMASTER_1, new AttributeGrowth(1.2, 1., 0.5))
+    ..put(UNIT_SHAPESHIFTER_WOLF, new AttributeGrowth(1.5, 1.2, 0.5))
+    ..put(UNIT_SHAPESHIFTER_BEAR, new AttributeGrowth(2.5, 0.3, 0.5))
+    ..put(UNIT_SHAPESHIFTER_PANTHER, new AttributeGrowth(1., 2., 0.5))
+    ..put(UNIT_SHAPESHIFTER_TIGER, new AttributeGrowth(2., 1., 0.5))
+    ..put(UNIT_DRUID, new AttributeGrowth(1.6, 1.4, 1.6))
+    ..put(UNIT_JUNGLE_TYRANT, new AttributeGrowth(2.5, 2.2, 2.))
+    //thief classes attributesGworth
+    ..put(UNIT_THIEF, new AttributeGrowth(0.75, 1.5, 0.5))
+    ..put(UNIT_ROGUE, new AttributeGrowth(0.75, 2.3, 0.5))
+    ..put(UNIT_TELETHIEF, new AttributeGrowth(1., 1.5, 1.5))
+    ..put(UNIT_ESCAPE_ARTIST, new AttributeGrowth(1., 1., 1.))
+    ..put(UNIT_CONTORTIONIST, new AttributeGrowth(1., 1., 1.))
+    ..put(UNIT_ASSASSIN, new AttributeGrowth(1.5, 2.5, 1.5))
+    //scout classes attributesGworth
+    ..put(UNIT_SCOUT, new AttributeGrowth(1., 1.3, 1.2))
+    ..put(UNIT_OBSERVER, new AttributeGrowth(1.3, 1.5, 1.7))
+    ..put(UNIT_TRAPPER, new AttributeGrowth(1.3, 1.7, 1.5))
+    ..put(UNIT_SPY, new AttributeGrowth(1.8, 2.2, 1.9))
+    //gatherer classes attributesGworth
+    ..put(UNIT_GATHERER, new AttributeGrowth(0.8, 0.9, 1.5))
+    ..put(UNIT_HERB_MASTER, new AttributeGrowth(1.35, 1.25, 1.5))
+    ..put(UNIT_RADAR_GATHERER, new AttributeGrowth(1.25, 1.35, 1.5))
+    ..put(UNIT_OMNIGATHERER, new AttributeGrowth(2., 2., 2.))
+    ..put(UNIT_ALCHEMIST, new AttributeGrowth(1.1, 1.2, 2.))
+
+
 // Basic Troll Spells
-public constant BASIC_TROLL_SPELLS = commaList(ABILITY_PANIC,ABILITY_SLEEP_OUTSIDE,ABILITY_BUILDING_CRAFT_SPELLBOOK_ID,LocalAbilityIds.corpseGrab0,LocalAbilityIds.corpseConsume,ABILITY_HERO_GLOW)
+public constant BASIC_TROLL_SPELLS = commaList(ABILITY_PANIC,ABILITY_SLEEP_OUTSIDE,ABILITY_BUILDING_CRAFT_SPELLBOOK_ID,LocalAbilityIds.corpseGrab0,LocalAbilityIds.corpseConsume,ABILITY_HERO_GLOW, ABILITY_TROLL_MS_PER_LVL)
 
 // Unsub Hero Spells
 public constant HERO_SPELLS_HUNTER       = commaList(ABILITY_TRACK,            ABILITY_WARRIOR,        ABILITY_TRACKER)

@@ -16,19 +16,22 @@ import HealingSystem
 import LightningUtils
 import LocalObjectIDs
 import ToolTipsUtils
+import ColorUtils
 
 //let ABILITY_ID = 'XPHW'
 let CAST_RANGE = 6000.
 let BOUNCE_SEARCH_RANGE = 6000.
 let COOLDOWN = 20.
 let MANACOST = 10
-let HEAL_AMOUNT = 50.
+let BASE_HEAL_AMOUNT = 15.
+let HEAL_INT_MULTIPLIER = 1.
 let HEAL_REDUCTION_BOUNCE_FACTOR = 0.2  
 let BOUNCE_COUNT = 3.
 let TOOLTIP_NORMAL = "Healing wave"
-let TOOLTIP_NORMAL_EXT = ("Calls forth a wave of healing energy that bounces up to {0} times, healing {1} damage on the primary target. "+
-                        "Each jump heals {2} less. Bounces on an extremely large range. Has {3} seconds cooldown.")
-                        .format(BOUNCE_COUNT.toToolTipOrange(), HEAL_AMOUNT.toToolTipGreen(), HEAL_REDUCTION_BOUNCE_FACTOR.toToolTipOrange(), COOLDOWN.toToolTipLightBlue())
+let TOOLTIP_NORMAL_EXT = ("Calls forth a wave of healing energy that bounces up to {0} times, restoring health equal to {1} + {2}% of your {3} to the primary target. ".format(
+                        BOUNCE_COUNT.toToolTipOrange(), BASE_HEAL_AMOUNT.toToolTipGreen(), (HEAL_INT_MULTIPLIER*100).toToolTipGreen(), "Intelligence".color(COLOR_TURQUOISE)) +
+                        "Each jump heals {0} less. Bounces on an extremely large range. \nHas {1} seconds cooldown.")
+                        .format(HEAL_REDUCTION_BOUNCE_FACTOR.toToolTipOrange(), COOLDOWN.toToolTipLightBlue())
 let HEALING_WAVE_HIT_FX = Abilities.healingWaveTarget
 let HEAL_HIT_FX = Abilities.healTarget
 
@@ -127,7 +130,8 @@ class HealingWaveInstance
         destroy this.targetsHit
 
 function onCast(unit caster, unit target)
-    new HealingWaveInstance(caster, target, HEAL_AMOUNT, BOUNCE_COUNT.toInt())
+    let totalHealAmount = BASE_HEAL_AMOUNT+caster.getInt(true)
+    new HealingWaveInstance(caster, target, totalHealAmount, BOUNCE_COUNT.toInt())
 
 init
     EventListener.onTargetCast(ABILITY_HEALING_WAVE, (unit caster, unit target) ->  onCast(caster, target))
