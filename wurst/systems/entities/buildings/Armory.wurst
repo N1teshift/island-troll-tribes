@@ -17,7 +17,7 @@ public class Armory extends Building
         super.postCreate()
 
         //getUnit().addAbility(ABILITY_QM_ANABOLIC_BOOTS)
-        getUnit().addAbility(ABILITY_QM_BATTLE_ARMOR)
+        getUnit().addAbility(ABILITY_QM_ROBE_OF_THE_MAGI)
         getUnit().addAbility(ABILITY_QM_BATTLE_GLOVES)
         getUnit().addAbility(ABILITY_QM_BATTLE_AXE)
         getUnit().addAbility(ABILITY_QM_BATTLE_SHIELD)

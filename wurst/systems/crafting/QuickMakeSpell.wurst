@@ -55,7 +55,8 @@ constant FORGE_SECOND_SPELLBOOK = commaList(
     ABILITY_QM_SHIELD,
     ABILITY_QM_BONE_SHIELD,
     ABILITY_QM_IRON_SHIELD,
-    ABILITY_QM_STEEL_SHIELD
+    ABILITY_QM_STEEL_SHIELD,
+    ABILITY_QM_IRON_STAFF
 )
 
 constant ARMORY_SPELLBOOK = commaList(
@@ -73,7 +74,9 @@ constant ARMORY_SPELLBOOK = commaList(
 
 constant ARMORY_SECOND_SPELLBOOK = commaList(
     ABILITY_QM_ANABOLIC_BOOTS,
-    ABILITY_QM_TROLL_PROTECTOR  
+    ABILITY_QM_TROLL_PROTECTOR,
+    ABILITY_QM_CONDUCTING_ROD,
+    ABILITY_QM_BATTLE_ARMOR  
 )
 
 constant WDH_SPELLBOOK = commaList(
@@ -241,7 +244,7 @@ function getQuickMakeSpells() returns LinkedList<QuickMakeSpell>
 
         // Armory
         new QuickMakeSpell("Battle Gloves"           , TRANSMUTE_TOOLTIP+BATTLE_GLOVES_RECIPE        , "ImprovedUnholyStrength" , ABILITY_QM_BATTLE_GLOVES        , 0, 0, "Q", QM_TOOLIP, "berserk"),
-        new QuickMakeSpell("Battle Armor"            , TRANSMUTE_TOOLTIP+BATTLE_ARMOR_RECIPE         , "RobeOfTheMagi"          , ABILITY_QM_BATTLE_ARMOR         , 1, 0, "W", QM_TOOLIP, "burrow"),
+        new QuickMakeSpell("Robe of the Magi"        , TRANSMUTE_TOOLTIP+ROBE_OF_THE_MAGI_RECIPE     , "RobeOfTheMagi"          , ABILITY_QM_ROBE_OF_THE_MAGI       , 1, 0, "W", QM_TOOLIP, "burrow"),
         new QuickMakeSpell("Battle Axe"               , TRANSMUTE_TOOLTIP+BATTLE_AXE_RECIPE           , "OrcMeleeUpThree"        , ABILITY_QM_BATTLE_AXE           , 2, 0, "E", QM_TOOLIP, "cannibalize"),
         new QuickMakeSpell("Battle Shield"            , TRANSMUTE_TOOLTIP+BATTLE_SHIELD_RECIPE        , "ArcaniteArmor"          , ABILITY_QM_BATTLE_SHIELD        , 3, 0, "R", QM_TOOLIP, "chemicalrage"),
         new QuickMakeSpell("Boots of Wolf's Stamina"    , TRANSMUTE_TOOLTIP+WOLFS_STAMINA_BOOTS_RECIPE       , "BootsOfWolfStamina" , ABILITY_QM_WOLFS_STAMINA_BOOTS       , 0, 1, "S", QM_TOOLIP, "creepanimatedead"),        
@@ -254,7 +257,8 @@ function getQuickMakeSpells() returns LinkedList<QuickMakeSpell>
         // Second Page
         new QuickMakeSpell("Troll Protector"            , TRANSMUTE_TOOLTIP+TROLL_PROTECTOR_RECIPE       , "TrollProtector"          , ABILITY_QM_TROLL_PROTECTOR      , 0, 0, "W", QM_TOOLIP, "frenzy"),
         new QuickMakeSpell("Anabolic Boots"              , TRANSMUTE_TOOLTIP+ANABOLIC_BOOTS_RECIPE       , "WirtsOtherLeg"          , ABILITY_QM_ANABOLIC_BOOTS       , 0, 1, "Q", QM_TOOLIP, "fanofknives"),
-        
+        new QuickMakeSpell("Conducting Rod"              , TRANSMUTE_TOOLTIP+CONDUCTING_ROD_RECIPE       , "AdvancedStrengthOfTheMoon"          , ABILITY_QM_CONDUCTING_ROD       , 0, 2, "e", QM_TOOLIP, "locustswarm"),
+        new QuickMakeSpell("Battle Armor"            , TRANSMUTE_TOOLTIP+BATTLE_ARMOR_RECIPE         , "NagaArmorUp2"          , ABILITY_QM_BATTLE_ARMOR         , 0, 3, "R", QM_TOOLIP, "immolation"),                
 
         // Witch Doctors Hut
         new QuickMakeSpell("Scroll Of Entangling Root" , TRANSMUTE_TOOLTIP+SCROLL_ROOT_RECIPE        , "ScrollOfRegenerationGreen" , ABILITY_QM_SCROLL_ROOT        , 0, 0, "Q", QM_TOOLIP, "berserk"),
@@ -332,6 +336,8 @@ function getQuickMakeSpells() returns LinkedList<QuickMakeSpell>
         new QuickMakeSpell("Bone Shield"  , TRANSMUTE_TOOLTIP+BONE_SHIELD_RECIPE  , "ImprovedUnholyArmor"        , ABILITY_QM_BONE_SHIELD  , 1, 0, "W", QM_TOOLIP, "manashieldon"),
         new QuickMakeSpell("Iron Shield"  , TRANSMUTE_TOOLTIP+IRON_SHIELD_RECIPE  , "HumanArmorUpOne"            , ABILITY_QM_IRON_SHIELD  , 2, 0, "E", QM_TOOLIP, "manaflareoff"),
         new QuickMakeSpell("Steel Shield" , TRANSMUTE_TOOLTIP+STEEL_SHIELD_RECIPE , "ThoriumArmor"               , ABILITY_QM_STEEL_SHIELD , 3, 0, "R", QM_TOOLIP, "manaflareon"),
+        new QuickMakeSpell("Iron Staff"   , TRANSMUTE_TOOLTIP+IRON_STAFF_RECIPE   , "Wand"                    , ABILITY_QM_IRON_STAFF   , 0, 1, "A", QM_TOOLIP, "summonwareagle"),
+        
 
         // Armor Page in Forge
         new QuickMakeSpell("Bone Boots"   , TRANSMUTE_TOOLTIP+BONE_BOOTS_RECIPE   , "BoneBoots"                  , ABILITY_QM_BONE_BOOTS   , 0, 0, "Q", QM_TOOLIP, "berserk"),

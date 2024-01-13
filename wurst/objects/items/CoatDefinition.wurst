@@ -51,6 +51,7 @@ constant ABIL_BONE   = commaList(ABILITY_STR_BONUS_3, ABILITY_INT_BONUS_4, ABILI
 constant ABIL_IRON   = commaList(ABILITY_STR_BONUS_4, ABILITY_INT_BONUS_6, ABILITY_ARMOR_BONUS_3)
 constant ABIL_STEEL  = commaList(ABIL_CAST_STEEL, ABILITY_STR_BONUS_8, ABILITY_INT_BONUS_8, ABILITY_ARMOR_BONUS_5)
 constant ABIL_BATTLE = commaList(ABIL_CAST_BATTLE, ABIL_STATS_BATTLE , ABILITY_ARMOR_BONUS_7, ABIL_SPELL_RESISTANCE_BATTLE)
+constant ABIL_ROBE_OF_THE_MAGI =commaList(ABILITY_INT_BONUS_10, ABILITY_ARMOR_BONUS_3)
 constant ABIL_SCALE  = commaList(ABIL_STATS_BATTLE , ABILITY_ARMOR_BONUS_10, ABIL_HARDENED_SCALE)
 constant ABIL_MAKRURA_CUIRASS = commaList(ABILITY_MAKRURA_CUIRASS_ACTIVE, ABILITY_STR_BONUS_6 , ABILITY_ARMOR_BONUS_3, ABILITY_MAKRURA_CUIRASS_ARMOR_PASSIVE)
 
@@ -134,6 +135,11 @@ public constant TT_BATTLE_ARMOR = "" +
         BATTLE_ARMOR_SPELL_RESISTANCE_FACTOR.toToolTipBlue()
     )+
     makeToolTipCooldown(BATTLE_COOLDOWN)
+
+public constant TT_ROBE_OF_THE_MAGI ="" +
+    "A robe belonging to a great magi of old"+
+    "\n\nIntelligence +"+"10".color(COLOR_GREEN)+
+    "\nArmor +"+"3".color(COLOR_GREEN)
 
 public constant TT_SCALE_COAT = "" +
     ("A coat embedded with the scale of the Great Hydra. "+
@@ -316,7 +322,7 @@ public constant TT_SCALE_COAT = "" +
 
 @compiletime function createBattleArmor() returns ItemDefinition
     return createUsableItem(ITEM_BATTLE_ARMOR)
-        ..setInterfaceIcon(Icons.bTNRobeOfTheMagi)
+        ..setInterfaceIcon(Icons.bTNNagaArmorUp2)
         ..setModelUsed(LocalItems.armor)
         ..setNameEnhance("Battle Armor")
         ..setTooltipExtended(TT_BATTLE_ARMOR)
@@ -327,6 +333,21 @@ public constant TT_SCALE_COAT = "" +
         ..setTintingColor3Blue(128)
         ..setScalingValue(1.5)
         ..setAbilities(ABIL_BATTLE)
+        ..setCooldownGroup("AIms")
+
+@compiletime function createRobeOfMagi() returns ItemDefinition
+    return createUsableItem(ITEM_ROBE_OF_THE_MAGI)
+        ..setInterfaceIcon(Icons.bTNRobeOfTheMagi)
+        ..setModelUsed(LocalItems.armor)
+        ..setNameEnhance("Robe of the Magi")
+        ..setTooltipExtended(TT_ROBE_OF_THE_MAGI)
+        ..setDescription(TT_ROBE_OF_THE_MAGI)
+        ..setLumberCost(66)
+        ..setTintingColor1Red(255)
+        ..setTintingColor2Green(0)
+        ..setTintingColor3Blue(128)
+        ..setScalingValue(1.5)
+        ..setAbilities(ABIL_ROBE_OF_THE_MAGI)
         ..setCooldownGroup("AIms")
 
 @compiletime function createScaleCoat() returns ItemDefinition

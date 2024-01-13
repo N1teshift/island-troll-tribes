@@ -89,7 +89,20 @@ init
     ..add(ITEM_ELK_HIDE)
     ..add(ITEM_MANA_CRYSTAL)
     
-            
+    new QuickMake(ABILITY_QM_CONDUCTING_ROD)
+    ..add(ITEM_IRON_STAFF)
+    ..add(ITEM_STEEL_INGOT)
+    ..add(ITEM_NETHER_POTION)    
+    ..add(ITEM_SPIRIT_WIND)
+    ..add(ITEM_SPIRIT_WATER)
+    ..add(ITEM_MAGIC)
+
+    new QuickMake(ABILITY_QM_ROBE_OF_THE_MAGI)
+    ..add(ITEM_BONE_COAT)
+    ..add(ITEM_SPIRIT_WIND)
+    ..add(ITEM_SPIRIT_WATER)
+    ..add(ITEM_MAGIC)    
+
 
         
         

@@ -124,3 +124,9 @@ init
     new QuickMake(ABILITY_QM_DARK_SPEAR)
     ..add(ITEM_SPIRIT_DARKNESS)
     ..add(asList(ITEM_BONE, ITEM_STICK))
+
+    new QuickMake(ABILITY_QM_IRON_STAFF)
+    ..add(ITEM_STICK)
+    ..add(ITEM_MANA_CRYSTAL)
+    ..add(ITEM_IRON_INGOT)
+    ..add(ITEM_IRON_INGOT)

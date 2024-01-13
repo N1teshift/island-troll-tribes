@@ -36,7 +36,7 @@ let GRIMOIRE_TT ="Mage can add a scroll to its Grimoire permanently gaining it's
         ..presetAgilityBonus(lvl->0)
         ..setName("Acquired Knowlede")
         ..setTooltipNormal(1, "Acquired Knowlede")
-        ..presetTooltipNormalExtended(lvl->GRIMOIRE_INT_BONUS_TT+(3*(lvl-1)).toString().color(COLOR_GREEN))
+        ..presetTooltipNormalExtended(lvl->GRIMOIRE_INT_BONUS_TT+(INT_BONUS_PER_SCROLL*(lvl-1)).toString().color(COLOR_GREEN))
         ..setTooltipNormalExtended(1, GRIMOIRE_TT)
         ..setEditorSuffix("(Wurst)")
 
@@ -120,6 +120,7 @@ IterableMap<unit, Grimoire> instances = new IterableMap<unit, Grimoire>()
 class Grimoire
     unit hero = null
     item grimoire
+    int currentIntBonusLvl = 0
     IterableMap<int, int> lockedScrolls    
 
     construct(unit hero)
@@ -147,13 +148,14 @@ class Grimoire
                     simError(hero.getOwner(), "You already have this scroll in your Grimoire.")
                 else          
                     hero.disableAbility(abilId, false, false)
-                    let currentIntBonusLvl = hero.getAbilityLevel(ABILITY_GRIMOIRE_INT_BONUS)
-                    hero.setAbilityLevel(ABILITY_GRIMOIRE_INT_BONUS, currentIntBonusLvl+1)
+                    currentIntBonusLvl+=1
+                    updateIntBonus()
                     let itm = hero.getItemById(scroll)
                     flashEffect(Abilities.tomeOfRetrainingCaster, hero.getPos())
                     itm.remove()
-                    //hero.addInt(2)
 
+    function updateIntBonus()  
+        hero.setAbilityLevel(ABILITY_GRIMOIRE_INT_BONUS, currentIntBonusLvl+1)
     
     function onGrimoireDrop()
         nullTimer()->
@@ -173,6 +175,7 @@ function onUnitEnter(unit troll)
                 return
             troll.addItemHandleToSlot(instances.get(troll).grimoire, 3)
             instances.get(troll).lockSpells()
+            instances.get(troll).updateIntBonus()
 
 
 function onAddScroll(unit caster)

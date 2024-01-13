@@ -379,6 +379,14 @@ library Transmute initializer onInit requires LocalObjectIDs, UnitExtensions, It
                 set added = CreateItem(ITEM_STEEL_SHIELD, GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit()))
                 call UnitAddItem(GetTriggerUnit(), added)
             endif
+            if i[0] == ITEM_STICK and i[1] == ITEM_MANA_CRYSTAL and i[2] == ITEM_IRON_INGOT and i[3] == ITEM_IRON_INGOT then
+                call RemoveItem(t[0])
+                call RemoveItem(t[1])
+                call RemoveItem(t[2])
+                call RemoveItem(t[3])
+                call UnitAddItemByIdSwapped( ITEM_IRON_STAFF, GetTriggerUnit() )
+                call lowerItem(1)                                                                                  
+            endif             
             // End Forge Armor
         endif
     //Begging of Armory Item Creation
@@ -552,7 +560,29 @@ library Transmute initializer onInit requires LocalObjectIDs, UnitExtensions, It
                 call RemoveItem(t[2])
                 call UnitAddItemByIdSwapped( ITEM_TROLL_PROTECTOR, GetTriggerUnit() )
                 call lowerItem(1)                                                                                  
-            endif              
+            endif 
+            if i[0] == ITEM_IRON_STAFF and i[1] == ITEM_STEEL_INGOT and i[2] == ITEM_NETHER_POTION and i[3] == ITEM_SPIRIT_WIND and i[4] == ITEM_SPIRIT_WATER and i[5] == ITEM_MAGIC then
+                call RemoveItem(t[0])
+                call RemoveItem(t[1])
+                if GetItemCharges(t[2]) > 1 then
+                    call SetItemCharges(t[2], GetItemCharges(t[2]) - 1 )
+                else
+                    call RemoveItem(t[2])
+                endif
+                call RemoveItem(t[3])
+                call RemoveItem(t[4])
+                call RemoveItem(t[5])
+                call UnitAddItemByIdSwapped( ITEM_CONDUCTING_ROD, GetTriggerUnit() )
+                call lowerItem(1)                                                                  
+            endif  
+            if i[0] == ITEM_BONE_COAT and i[1] == ITEM_SPIRIT_WIND and i[2] == ITEM_SPIRIT_WATER and i[3] == ITEM_MAGIC then
+                call RemoveItem(t[0])
+                call RemoveItem(t[1])
+                call RemoveItem(t[2])
+                call RemoveItem(t[3])
+                call UnitAddItemByIdSwapped( ITEM_ROBE_OF_THE_MAGI, GetTriggerUnit() )
+                call lowerItem(1)
+            endif                                    
         endif
     //End of Armory Item Creation
     //Begging of Witch Doctors Hut Item Creation

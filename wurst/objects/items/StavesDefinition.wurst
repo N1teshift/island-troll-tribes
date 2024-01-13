@@ -1,0 +1,126 @@
+package StavesDefinition
+
+// Standard lib Imports:
+import AbilityObjEditing
+import Assets
+import LinkedList
+import ObjectIdGenerator
+import ObjectIds
+
+// Third-party imports:
+import ManaBurn
+import StringBuilder
+
+// Local Imports:
+import Classes
+import ColorUtils
+import DamageListeners
+import Items
+import LocalAssets
+import LocalItemObjEditing
+import LocalObjectIDs
+import ToolTipsUtils
+import PlayerExtensions
+
+
+let ABILITY_IRON_STAFF = asList(ABILITY_ARMOR_BONUS_2, ABILITY_INT_BONUS_10)
+let ABILITY_CONDUCTING_ROD = asList(ABILITY_ARMOR_BONUS_3, ABILITY_INT_BONUS_10)
+let ABILITY_STAFF_OF_WISDOM = asList(ABILITY_INT_BONUS_20)
+//let ABILITY_STAFF_OF_KNOWLEDGE = asList(ABILITY_INT_BONUS_20)
+
+let TT_COMMON = new StringBuilder()
+    ..add("Increases the attack damage of the wielder by ")
+    ..add("{0}", COLOR_RED.withAlpha(0))
+    ..add(" and allows them to fell trees.")
+    .build()
+    // This is needed to for the stack trace compiler to perform correctly.
+    // TODO: Remove this call once the compiler is fixed.
+    .format()
+
+public let TT_CONDUCTING_ROD ="Steel rod infused with magic for better mana conductivity."+
+                        "|nAllows wielder to ignore basic troll magic resistance and increases all spell damage done to animals by 33%."+
+                        "|nIntelligence +"+"10".color(COLOR_GREEN)+
+                        "|nArmor +"+"3".color(COLOR_GREEN)
+
+public let TT_IRON_STAFF ="A magic staff reinforced with iron."+
+                    "|nIntelligence +"+"10".color(COLOR_GREEN)+
+                    "|nArmor +"+"2".color(COLOR_GREEN)
+
+// Only purpose of this function is distinction, not sure about cooldown group, should battle axe and masher share cooldown?
+function createAxe(int staffId) returns ItemDefinition
+    return createBasicItem(staffId)
+        ..setCooldownGroup("AIas")
+        ..setStockReplenishInterval(120)
+
+@compiletime function createIronStaff() returns ItemDefinition
+    return createAxe(ITEM_IRON_STAFF)
+        ..setInterfaceIcon(Icons.bTNWand)
+        ..setModelUsed(LocalItems.ironAxe)
+        ..setNameEnhance("Iron Staff")
+        ..setHotkey("S")
+        ..setTooltipExtended(TT_IRON_STAFF)
+        ..setScalingValue(0.7)
+        ..setLumberCost(30)
+        ..setAbilities(commaList(ABILITY_IRON_STAFF))
+
+@compiletime function createConductingRod() returns ItemDefinition
+    return createAxe(ITEM_CONDUCTING_ROD)
+        ..setInterfaceIcon(Icons.bTNAdvancedStrengthOfTheMoon)
+        ..setModelUsed(LocalItems.battleAxe)
+        ..setNameEnhance("Conducting rod")
+        ..setHotkey("W")
+        ..setTooltipExtended(TT_CONDUCTING_ROD)
+        ..setScalingValue(0.7)
+        ..setLumberCost(91)
+        ..setAbilities(commaList(ABILITY_CONDUCTING_ROD))
+        ..setTintingColor1Red(120)
+        ..setTintingColor2Green(140)
+        ..setTintingColor3Blue(255)
+
+@compiletime function createStaffOfKnowledge() returns ItemDefinition
+    return createAxe(ITEM_STAFF_OF_KNOWLEDGE)
+        ..setInterfaceIcon(Icons.bTNSpiritWalkerAdeptTraining)
+        ..setModelUsed(LocalItems.steelAxe)
+        ..setNameEnhance("Staff of Wisdom")
+        ..setHotkey("W")
+        ..setTooltipExtended(TT_COMMON)
+        ..setScalingValue(0.7)
+        ..setLumberCost(48)
+        ..setAbilities(commaList(ABILITY_INT_BONUS_20))
+        ..setTintingColor1Red(120)
+        ..setTintingColor2Green(140)
+        ..setTintingColor3Blue(255)
+
+
+@compiletime function createStaffOfWisdom() returns ItemDefinition
+    return createAxe(ITEM_STAFF_OF_WISDOM)
+        ..setInterfaceIcon(Icons.bTNSpiritWalkerAdeptTraining)
+        ..setModelUsed(LocalItems.steelAxe)
+        ..setNameEnhance("Staff of Wisdom")
+        ..setHotkey("W")
+        ..setTooltipExtended(TT_COMMON)
+        ..setScalingValue(0.7)
+        ..setLumberCost(48)
+        ..setAbilities(commaList(ABILITY_INT_BONUS_20))
+        ..setTintingColor1Red(120)
+        ..setTintingColor2Green(140)
+        ..setTintingColor3Blue(255)
+
+function onDamage()
+    let caster = DamageEvent.getSource()
+    let troll = caster.getOwner().getTroll()
+    let dmg = DamageEvent.getAmount()
+    if not DamageEvent.getType()== DamageType.SPELL
+        return
+    if not troll.hasItemById(ITEM_CONDUCTING_ROD)
+        return
+    DamageEvent.setAmount(dmg*1.333)
+
+
+init
+    DamageEvent.addListener(DamageListenerPriorities.PANTHER_INSTINCT castTo int) ->
+        onDamage()
+
+
+
+

@@ -16,6 +16,7 @@ import DamageListeners
 import LocalObjectIDs
 import OverCharge
 import ToolTipsUtils
+import ColorUtils
 
 // The visual effect used to represent meditation.
 let FX_PATH = Abilities.darkRitualTarget
@@ -40,11 +41,11 @@ let TICKS_PER_FX = (FX_INTERVAL / PERIOD_INTERVAL).ceil()
 let COOLDOWN = 72.
 let MANACOST = 0
 let DURATION = 7.
-let MANA_PER_SECOND = 18.
+let intMultiplier = 5.
 let ABILITY_ICON = "ReplaceableTextures\\CommandButtons\\BTNMedidate.blp"
 let TOOLTIP_NORM = "Meditate"
 let TOOLTIP_EXTENDED = "Channels to recover {0} mana over {1} seconds. Cancels on damage. Has {2} seconds cooldown."
-    .format((MANA_PER_SECOND * DURATION).toToolTipTeal(), DURATION.toToolTipLightBlue(), COOLDOWN.toToolTipLightBlue())
+    .format(intMultiplier.toString().color(COLOR_TEAL)+"x "+"Intelligence".color(COLOR_TURQUOISE), DURATION.toToolTipLightBlue(), COOLDOWN.toToolTipLightBlue())
 
 @compiletime function createMeditate() returns AbilityDefinition
     return constructMeditate(ABILITY_MEDITATE, "D", new Pair(2, 1))
@@ -114,6 +115,7 @@ class MeditateInstance
 
     // Applies the timed effects of Meditate.
     function apply()
+        let MANA_PER_SECOND = caster.getInt(true)*5/DURATION
         // Create a loop to orchestrate the mechanical effects.
         doPeriodicallyTimed(PERIOD_INTERVAL, DURATION) cb ->
             // Check that the instance is still in effect.

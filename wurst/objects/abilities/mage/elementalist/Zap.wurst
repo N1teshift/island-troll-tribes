@@ -17,6 +17,15 @@ import ObjectIdGenerator
 import ObjectIds
 import LocalObjectIDs
 import ColorUtils
+import DummyCaster
+import UnitExtensions
+import DamageEvent
+import DamageListeners
+import IdListConstant
+import HashList
+import LinkedList
+import SimError
+import PlayerExtensions
 
 let SLOW_ABILITY_ID   = compiletime(ABIL_ID_GEN.next())
 let BUFF_ZAP_SLOW     = compiletime(ABIL_ID_GEN.next())
@@ -41,12 +50,16 @@ let CHARGE_SLOW_DURATION_NORM = 3.
 let EFFECT_PATH = Abilities.purgeBuffTarget
 let BOUNCE_IMPACT_EFFECT_PATH = Abilities.boltImpact
 let TOOLTIP_NORM = "Zap"
+let ANIMAL_EXTRA_DAMAGE = 20.
 let TOOLTIP_EXTENDED = ("Zaps the target dealing damage equal to your {0}. ".format("Intelligence".color(COLOR_TURQUOISE)) +
                         "Stacks charges on the target and on the third charge, they explode slowing movement and attack "+
-                       "speed by {0} and dealing bonus damage equal to {1}% of your {2} and causing another Zap to be cast on other units nearby. \nCharge last {3} seconds. "+
-                        "Has {4} seconds cooldown.")
+                       "speed by {0} and dealing bonus damage equal to {1}% of your {2} and causing another Zap to be cast on other units nearby."+
+                       "\nDoes {3} extra damage to animals. "+
+                       "\nCharge last {4} seconds. "+
+                        "Has {5} seconds cooldown.")
                        .format(CHARGE_AS_SLOW.toToolTipOrange(), (CHARGE_DAMAGE_INT_MULTIPLIER*100).toString().color(COLOR_RED), 
-                       "Intelligence".color(COLOR_TURQUOISE), CHARGE_DURATION.toToolTipLightBlue(), COOLDOWN.toToolTipLightBlue())
+                       "Intelligence".color(COLOR_TURQUOISE), ANIMAL_EXTRA_DAMAGE.toString().color(COLOR_RED),
+                       CHARGE_DURATION.toToolTipLightBlue(), COOLDOWN.toToolTipLightBlue())
 
 constant ZAP1 = compiletime(createDummyBuffObject("Zap 1", "1 Zap Charge", Icons.bTNStasisTrap, Abilities.farseerMissile, "chest"))
 constant ZAP2 = compiletime(createDummyBuffObject("Zap 2", "2 Zap Charge", Icons.bTNStasisTrap, Abilities.farseerMissile, "chest"))
@@ -98,12 +111,100 @@ class Zap extends AbilityDefinitionChainLightningcreep
     createBuffs()
     createSlowDummySpell()
 
+@compiletime function createZapAutoCast()
+    new AbilityDefinitionAuraSlow(ABILITY_ZAP_READY)
+        ..setArtTarget(Abilities.farseerMissile)
+        ..setTargetAttachmentPoint1("hand,right")
+        ..setTargetAttachmentPoint("hand,left")
+        ..setTargetAttachments(2)
+        ..setBuffs(1, BUFF_ZAP_READY.toRawCode())
+        //..setAttackSpeedFactor(1, .99)
+        ..setMovementSpeedFactor(1, 0)
+        ..setAreaofEffect(1, 0)
+        ..setDurationHero(1, 9999)
+        ..setDurationNormal(1, 9999)
+        ..setTargetsAllowed(1, "self")
+        ..setName("Zap auto cast")
+
+    new BuffDefinition(BUFF_ZAP_READY, BuffIds.stasisTrap)
+        ..setArtTarget(1, "")
+        ..setTooltipNormal(1, TOOLTIP_NORM)
+        ..setTooltipNormalExtended(1, "Your next attack will cast Zap.")
+        ..setIcon(Icons.bTNChainLightning)
+        ..setIconNormal(1, Icons.bTNChainLightning)
+        ..setTargetAttachments(1, 2)
+
 let timerMap = new HashMap<unit, timer>()
+let zapAutoCastInstances = new HashMap<unit, ZapAutoCast>()
+let treeIdList = asList<int>(DEST_MAGIC_TREE, 'B002', 'B006', 'B003', 'B001', 'B005', 'DM01', 'B005')
+
+class ZapAutoCast
+    unit attacker 
+    unit target
+    //CallbackPeriodic cb 
+
+    construct(unit attacker, unit target)
+        this.attacker = attacker
+        this.target = target
+        disableAttack()
+
+    function disableAttack()
+        attacker.disableAttack(true, false)
+        attacker.startAbilityCooldown(ABILITY_ZAP)
+        attacker.removeAbility(ABILITY_ZAP_READY)
+        attacker.removeAbility(BUFF_ZAP_READY)        
+        doPeriodically(ANIMATION_PERIOD) cb ->
+            if attacker.getAbilityCooldownRemaining(ABILITY_ZAP) <= 0. and attacker.isAlive() and not attacker.hasAbility(ABILITY_ZAP_READY)             
+                //efx1 = AddSpecialEffectTargetUnitBJ("hand,right", attacker, Abilities.manaFlareBase)..setColor(0, 0, 255)
+                //efx2 = AddSpecialEffectTargetUnitBJ("hand,right", attacker, Abilities.manaFlareBase)..setColor(0, 0, 255)  
+                destroy cb      
+                enableAtack()   
+
+    function enableAtack()
+        //nullTimer() ->      
+        attacker.disableAttack(false, false)           
+        attacker.addAbility(ABILITY_ZAP_READY)
+        attacker.addAbility(BUFF_ZAP_READY)
+        //doAfter(ANIMATION_PERIOD*2) ->     
+        destroy this
+
+    ondestroy
+        zapAutoCastInstances.remove(attacker)
+                         
+
 
 function onCast()
     let caster = GetSpellAbilityUnit()
+    if not caster.isTroll()
+        return
     let target = GetSpellTargetUnit()
     onCastEffects(caster, target, consumeOvercharge(caster))
+
+function onAttack(unit attacker, unit target)
+    //let target = GetAttackedUnitBJ()
+    //let attacker = GetAttacker()
+    if not attacker.getAbilityCooldownRemaining(ABILITY_ZAP) <= 0.
+        return
+    if not attacker.hasAbility(ABILITY_ZAP)
+        return
+    if zapAutoCastInstances.has(attacker)
+        return
+    if attacker.getMana()<20.
+        simError(attacker.getOwner(), "Not enough mana.")
+        return
+    zapAutoCastInstances.put(attacker, new ZapAutoCast(attacker, target))    
+      
+
+    if not GetObjectName(attacker.getTypeId()) == "Elementalist"
+        return
+    new DummyCaster()
+        ..owner(attacker.getOwner())
+        ..delay(1)
+        ..origin(attacker.getPos())
+        ..castTarget(ABILITY_ZAP, 1, OrderIds.chainlightning, target)
+    onCastEffects(attacker, target, consumeOvercharge(attacker))
+    attacker.setMana(attacker.getMana()-MANACOST)
+
 
 function handleOverchargeFork(unit caster, unit target)
     //Create new object for counting targets hit inside closure
@@ -160,8 +261,11 @@ function onCastEffects(unit caster, unit target, bool isOvercharged)
         if (isOvercharged)
             handleOverchargeFork(caster, target)
 
+        //extra damage to animals
+        let animalDamageMultiplier = (HOSTILE_ANIMALS_LIST.has(target.getTypeId()) or target.getTypeId() == UNIT_HAWK) ? ANIMAL_EXTRA_DAMAGE:0.
+
         //Main target damage
-        UnitDamageTarget(caster, target, caster.getInt(true)*MAIN_DAMAGE_INT_MULTIPLIER, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_MAGIC, null)
+        UnitDamageTarget(caster, target, caster.getInt(true)*MAIN_DAMAGE_INT_MULTIPLIER+animalDamageMultiplier, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_MAGIC, null)
         handleBuff(caster, target)
 
 function zapChargeExplosion(unit caster, unit target)
@@ -208,5 +312,87 @@ class IntObject
     construct(int value)
         this.value = value
 
+function enforceMelee(unit target)
+    //cancel attack if performed outside of melee range against allies/trees/buildings
+    let attacker = GetAttacker()
+    let attackerPos = attacker.getPos()
+    let targetPos = target.getPos()  
+    if not attacker.hasAbility(ABILITY_ZAP)
+        return
+    let distance = target.getCollisionSize()>128 ? target.getCollisionSize(): 128.
+    if ((target.isAllyOf(attacker.getOwner()) and not target.getTypeId()==UNIT_FAWN and not target.getTypeId()==UNIT_WOLF_PUP)  
+        or treeIdList.has(target.getTypeId()) or target.isStructure()) 
+        and attackerPos.distanceTo(targetPos) >distance
+        simError(attacker.getOwner(), "You should be in melee range to attack this target.")
+        attacker.issueImmediateOrder("stop")
+
+
+function enforceMelee(destructable dest)
+    if GetIssuedOrderId() !=OrderIds.attack
+        return
+    if dest == null
+        return
+    let attacker = GetOrderedUnit()
+    let attackerPos = attacker.getPos()
+    let destPos = dest.getPos()   
+    if not attacker.hasAbility(ABILITY_ZAP)
+        return
+    if attackerPos.distanceTo(destPos) >150.
+        doAfter(ANIMATION_PERIOD) ->  
+            simError(attacker.getOwner(), "You should be in melee range to cut trees.")         
+            attacker.issueImmediateOrder("stop")
+
+function enforceMelee(item itm)
+    if GetIssuedOrderId() !=OrderIds.attack
+        return
+    if itm == null
+        return
+    let attacker = GetOrderedUnit()
+    let attackerPos = attacker.getPos()
+    let itmPos = itm.getPos()   
+    if not attacker.hasAbility(ABILITY_ZAP)
+        return
+    if attackerPos.distanceTo(itmPos) >150.
+        doAfter(ANIMATION_PERIOD) -> 
+            simError(attacker.getOwner(), "You should be in melee range to destroy items.")      
+            attacker.issueImmediateOrder("stop")
+
+function onDamage()
+
+    let attacker = DamageEvent.getSource()
+    let target = DamageEvent.getTarget()
+    
+    // Filter for units that have Zap.
+    if not attacker.hasAbility(ABILITY_ZAP)
+        return
+    //Enforce melee for buildings
+    if (target.isAllyOf(attacker.getOwner()) 
+        and not target.getTypeId()==UNIT_FAWN 
+        and not target.getTypeId()==UNIT_WOLF_PUP) 
+        or not target.isAlive() or treeIdList.has(target.getTypeId())
+        enforceMelee(target)
+        return
+    // Exit if the damage is used for internal systems.
+    if DamageEvent.getElement().hasTag(FAKE_DAMAGE)
+        return
+
+    DamageEvent.setAmount(0.)
+    onAttack(attacker, target)
+
+function onRevive()
+    let instance = zapAutoCastInstances.get(GetTriggerUnit())
+    if instance == null
+        return
+    nullTimer() -> 
+        instance.enableAtack()
+
 init
+    //registerPlayerUnitEvent(EVENT_UNIT_ISSUED_ORDER, ()->onAutoCastToggle())
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_ATTACKED, () -> enforceMelee(GetAttackedUnitBJ()))
     registerSpellEffectEvent(ABILITY_ZAP, () -> onCast())
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER, ()->enforceMelee(GetOrderTargetDestructable()))
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER, ()->enforceMelee(GetOrderTargetItem()))  
+    registerPlayerUnitEvent(EVENT_PLAYER_HERO_REVIVE_FINISH, ()->onRevive())  
+    DamageEvent.addListener(DamageListenerPriorities.PANIC castTo int) ->
+        if DamageEvent.getType() == DamageType.ATTACK
+            onDamage()

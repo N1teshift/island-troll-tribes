@@ -121,7 +121,7 @@ let MAKRURA_CARAPACE_BOSS_CD = 7.
 public let ABILITY_MAKRURA_CARAPACE_BOSS_BUFF = compiletime(
     createDummyBuffObject(
         "Makrura Carapace".color(COLOR_GREEN),
-        "Makrura's impenetrable carapace allows it to block an attack and reflect premitigated damage back to attacker. "+
+        "Makrura's impenetrable carapace allows it to block an attack and reflect premitigated damage back to the attacker. "+
         "Has a separate {0} seconds cooldown.".format(MAKRURA_CARAPACE_BOSS_CD.toToolTipBlue()),
         LocalIcons.bTNMakruraCarapace
     ).abilId
