@@ -202,11 +202,11 @@ public let BEAR_PRESENCE_COAT_RECIPE    = "Coat of Bear's Terrifying Presence. \
                                          +"\n\n1x " + "Bear Skin Coat ".color(COLOR_ORANGE)+" + " +STEEL+" + 1x " + DARKNESS+  " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MAGIC                                                                          
 public let ITEM_BEARS_TENACITY_BOOTS_RECIPE = "Boots of Bear's Tenacity. \n".color(COLOR_RED) + TT_BEARS_TENACITY_BOOTS
                                         +"\n\n1x " + "Bear Skin Boots ".color(COLOR_ORANGE)+" + " +IRON+" 1x " +"Anti-Magic Potion".color(COLOR_MAROON)+ " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MAGIC 
-public let TROLL_PROTECTOR_RECIPE      ="Troll Protector. ".color(COLOR_TURQUOISE)+TROLL_PROTECTOR_TT_EXT
+public let TROLL_PROTECTOR_RECIPE      ="Troll Protector. \n".color(COLOR_TURQUOISE)+TROLL_PROTECTOR_TT_EXT
                                         +"\n\n1x " + "Iron Shield ".color(COLOR_ORANGE) + "+1x "+ELK_HIDE+ " 1x "+MC
-public let CONDUCTING_ROD_RECIPE      ="Conducting Rod. ".color(COLOR_VIOLET)+TT_CONDUCTING_ROD
+public let CONDUCTING_ROD_RECIPE      ="Conducting Rod. \n".color(COLOR_VIOLET)+TT_CONDUCTING_ROD
                                         +"\n\n1x " + "Iron Staff ".color(COLOR_ORANGE) + "+1x "+STEEL+"+1x "+"Nether Potion".color(COLOR_PINK)+ "+1x "+WIND+ "+1x "+WATER+ " 1x "+MAGIC
-public let ROBE_OF_THE_MAGI_RECIPE     ="Robe of the Magi.".color(COLOR_VIOLET)+TT_ROBE_OF_THE_MAGI
+public let ROBE_OF_THE_MAGI_RECIPE     ="Robe of the Magi. \n".color(COLOR_VIOLET)+TT_ROBE_OF_THE_MAGI
                                         +"\n\n"+"1x " + "Bone Coat".color(COLOR_ORANGE) + " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MAGIC
 // Witch Doctors Hut
 
