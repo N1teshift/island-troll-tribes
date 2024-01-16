@@ -71,7 +71,7 @@ function onItemMoved(unit troll, item itm)
                     each.remove()  
                     conjuredItems.remove(each)
                     //itm.remove()
-                    print("conjured item removed - onItemMoved()")
+                    //print("conjured item removed - onItemMoved()")
                     flashEffect(Abilities.blinkCaster, troll.getPos())
 
 
@@ -80,7 +80,7 @@ function onItemDropped(unit troll, item itm)
         conjuredItems.remove(itm)
         nullTimer() ->            
             let pos = itm.getPos()
-            print("conjured item removed - onItemDropped()")
+            //print("conjured item removed - onItemDropped()")
             itm.remove()
             flashEffect(Abilities.blinkCaster, pos)
         
@@ -98,7 +98,7 @@ function onCast(unit caster)
     caster.removeItemFromSlot(5)
     let itm = conjureItem(caster)
     if itm == null
-        print("failed item")
+        //print("failed item")
     doAfter(ANIMATION_PERIOD) -> 
         itm.setPawnable(false)
         itm.setDroppable(false)
