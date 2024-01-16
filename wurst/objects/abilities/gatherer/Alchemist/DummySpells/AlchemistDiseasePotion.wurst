@@ -17,6 +17,7 @@ import SimError
 import BuffObjEditing
 import BuffIds
 import Abilities
+import PhilosophersStone
 
 //constant NAME =""
 //constant COOLDOWN = 0
@@ -95,20 +96,20 @@ constant TARGET_ALLOWED = commaList(TargetsAllowed.organic,
         ..presetCastRange(lvl->CAST_RANGE)
         ..setEditorSuffix("(Wurst)")
 
+
 function onCast()
     let target = GetSpellTargetUnit()
     let caster = GetSpellAbilityUnit()
-    if caster.isTroll()
-        and caster.hasItemById(ITEM_PHILOSOPHERS_STONE)
-        let itm = caster.getItemById(ITEM_PHILOSOPHERS_STONE)
-        if itm.getCharges() >= POTION_COST
-            // Potion trigger is in DiseasePotion
-            InstantDummyCaster.castTarget(caster.getOwner(), ABILITY_ALCHEMIST_DISEASE_POTION_DUMMY, 1, OrderIds.slow, target)
-            itm.setCharges(itm.getCharges()-POTION_COST)
-        else
-            caster.issueImmediateOrder("stop")
-            simError(caster.getOwner(), errorMsg)
-
+    let instance = instances.get(caster)
+    if instance == null
+        return
+    if not caster.hasItemById(ITEM_PHILOSOPHERS_STONE)
+        return
+    if instance.spendCharges(POTION_COST)
+        InstantDummyCaster.castTarget(caster.getOwner(), ABILITY_ALCHEMIST_DISEASE_POTION_DUMMY, 1, OrderIds.slow, target)
+    else
+        caster.issueImmediateOrder("stop")
+        simError(caster.getOwner(), errorMsg)
 
     
 

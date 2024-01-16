@@ -1,5 +1,3 @@
-
-
 package AlchemistAcidBomb
 
 // Standard library imports:
@@ -16,6 +14,7 @@ import Lodash
 import AcidBomb
 import InstantDummyCaster
 import SimError
+import PhilosophersStone
 
 constant POTION_COST = 30
 constant errorMsg = "Philosopher's stone doesnt have enough energy"
@@ -78,16 +77,16 @@ constant HOTKEY = hotKeys.get(hotkeyIndex)
 function onCast()
     let target = GetSpellTargetUnit()
     let caster = GetSpellAbilityUnit()
-    if caster.isTroll()
-        and caster.hasItemById(ITEM_PHILOSOPHERS_STONE)
-        //let itm = caster.getItemById(ITEM_PHILOSOPHERS_STONE)
-        let itm = caster.getItemById(ITEM_PHILOSOPHERS_STONE)
-        if itm.getCharges() >= POTION_COST
-            InstantDummyCaster.castTarget(caster.getOwner(), abilId, 1, OrderIds.acidbomb, target)
-            itm.setCharges(itm.getCharges()-POTION_COST)
-        else
-            caster.issueImmediateOrder("stop")
-            simError(caster.getOwner(), errorMsg)
+    let instance = instances.get(caster)
+    if instance == null
+        return
+    if not caster.hasItemById(ITEM_PHILOSOPHERS_STONE)
+        return
+    if instance.spendCharges(POTION_COST)
+        InstantDummyCaster.castTarget(caster.getOwner(), abilId, 1, OrderIds.acidbomb, target)
+    else
+        caster.issueImmediateOrder("stop")
+        simError(caster.getOwner(), errorMsg)
 
 
     

@@ -1,0 +1,79 @@
+package MentalQuickness
+
+// Standard-library imports:
+import Assets
+import BuffObjEditing
+import ClosureTimers
+import ClosureEvents
+import ClosureForGroups
+import ChannelAbilityPreset
+import GroupUtils
+import HashMap
+import HashSet
+import InstantDummyCaster
+import OnUnitEnterLeave
+import OrderIds
+
+// Third-party imports:
+import Lodash
+
+// Local imports:
+import LocalObjectIDs
+import ToolTipsUtils
+import UnitExtensions
+import DamageListeners
+import HealingSystem
+import ThiefsPocket
+import ColorUtils
+import LinkedList
+import LocalAssets
+
+let cooldownRecoveryBonus = 0.02
+let TT_NAME = "Mental quickness."
+let TT_TOOLTIP = "Telethief's mental prowess allows him to use his abilities more often."+
+                "\n\nGain {0}% Cooldown Recovery speed per {1} beyond 14.".format(
+                    (cooldownRecoveryBonus*100).toString().color(COLOR_LIGHT_BLUE),
+                    "Intelligence".color(COLOR_TURQUOISE)
+                )+
+                "\n\nDoes not affect Cloak or Blink".color(COLOR_GOLD_STR)
+
+
+@compiletime function createMentalQuicknessDummyAbility() returns AbilityDefinitionHardenedSkin
+    return new AbilityDefinitionHardenedSkin(ABILITY_MENTAL_QUICKNESS)
+        ..setIconNormal(LocalIcons.bTNContortionist)
+        ..setButtonPositionNormalY(1)
+        ..setCheckDependencies(false)
+        ..setChancetoReduceDamage(1, 0)
+        ..setIgnoredDamage(1, 0.)
+        ..setMinimumDamage(1, 0.)
+        ..setEditorSuffix("(Wurst)")
+        ..setHotkeyNormal("")
+        ..setName(TT_NAME)
+        ..setRequirements("")
+        ..setTooltipNormal(1, TT_NAME)
+        ..setTooltipNormalExtended(1, TT_TOOLTIP)
+
+function onCast(unit caster, int abilId)
+    if caster.getTypeId() == UNIT_TELETHIEF
+        let cooldown= caster.getAbilityCooldown(abilId, 0)
+        doAfter(ANIMATION_PERIOD) -> 
+            caster.endAbilityCooldown(abilId)
+            let cooldownRecovery = (caster.getInt(true)-14)*cooldownRecoveryBonus+1
+            nullTimer() ->
+                caster.startAbilityCooldown(abilId, cooldown/cooldownRecovery)
+                //print("cdr = "+cooldownRecovery.toString())
+                //print("cd = "+cooldown.toString())
+                //print("new cd = "+(cooldown/cooldownRecovery).toString())
+            
+init
+    EventListener.onCast(ABILITY_DIMENTIONAL_POCKET) (unit caster) ->
+        onCast(caster, ABILITY_DIMENTIONAL_POCKET)
+
+    EventListener.onCast(ABILITY_TELE_STEAL) (unit caster) ->
+        onCast(caster, ABILITY_TELE_STEAL)        
+
+    EventListener.onCast(ABILITY_TELE_FEED) (unit caster) ->
+        onCast(caster, ABILITY_TELE_FEED)         
+        
+    EventListener.onCast(ABILITY_TELE_STEAL_MEAT) (unit caster) ->
+        onCast(caster, ABILITY_TELE_STEAL_MEAT)            

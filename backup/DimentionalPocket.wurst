@@ -27,14 +27,13 @@ import ThiefsPocket
 import ColorUtils
 import LinkedList
 import InventoryEvent
-import Classes
 
 
 
 
 LinkedList<item>conjuredItems = new LinkedList<item>()
 
-let TT_TELE_FEED ="Telethif uses his dimentional magic to reach into a random thief's bush on the map and steal a consumable item."+
+let TT_TELE_FEED ="Telethif uses his dimentional magic to reach into a random thief's on the map bush and steal a consumable item."+
                     "\n Items stolen this can only be held in thief's pocket. Casting this ability will replace an item currently held in thief's pocket."+
                     "\n     At lvl 4 Telethief acquires mastery of this ability, doubling the charges of the stolen item."+
                     "\n60 ".color(ENERGY_COLOR)+ "seconds cooldown."
@@ -44,7 +43,7 @@ let TT_TELE_FEED ="Telethif uses his dimentional magic to reach into a random th
         ..presetTooltipNormal(lvl -> "Dimentional pocket")
         ..presetTooltipNormalExtended(lvl-> TT_TELE_FEED)        
         ..presetCastingTime(lvl ->0.1)
-        ..presetCooldown(lvl -> 60)
+        ..presetCooldown(lvl -> 1)
         ..presetHotkey("W")
         ..setButtonPositionNormalX(1)
         ..setButtonPositionNormalY(0)
@@ -55,65 +54,42 @@ function conjureItem(unit caster) returns item
     var itm = generateThiefsBushItem(caster)
     if itm.getTypeId() == ITEM_MANA_CRYSTAL or itm.getTypeId() == ITEM_SPIRIT_WATER
         itm.remove()
-        nullTimer() ->             
-        return conjureItem(caster)
+        doAfter(ANIMATION_PERIOD) ->             
+            itm = conjureItem(caster)
     else
-        stolenItems.add(itm)
         return itm
+    return itm
 
 
 function onItemMoved(unit troll, item itm)
-    if troll.getTrollBaseClass() == UNIT_THIEF
-        doAfter(ANIMATION_PERIOD) -> 
-            //if not troll.itemInSlot(5) == itm
-            for each in troll.getInventory()   
-                if conjuredItems.has(each)
-                    each.remove()  
-                    conjuredItems.remove(each)
-                    //itm.remove()
-                    print("conjured item removed - onItemMoved()")
-                    flashEffect(Abilities.blinkCaster, troll.getPos())
-
+    if conjuredItems.has(itm)
+        conjuredItems.remove(itm)
+        itm.remove()
+        flashEffect(Abilities.blinkCaster, troll.getPos())
 
 function onItemDropped(unit troll, item itm)
     if conjuredItems.has(itm)
         conjuredItems.remove(itm)
         nullTimer() ->            
             let pos = itm.getPos()
-            print("conjured item removed - onItemDropped()")
             itm.remove()
             flashEffect(Abilities.blinkCaster, pos)
         
 function onCast(unit caster)
-    let instance = instances.get(caster)
-    if instance == null
-        return
-
-    instance.onItemDroppedFlag = false
-    instance.onItemPickUpFlag = false
-    instance.onDummyItemDropFlag = false 
-    instance.onItemMoveFlag = false
-
-    //let itmInThiefsPocket =caster.itemInSlot(5)
-    caster.removeItemFromSlot(5)
+    let itmInThiefsPocket =caster.itemInSlot(5)
+    itmInThiefsPocket.remove()
     let itm = conjureItem(caster)
-    if itm == null
-        print("failed item")
     doAfter(ANIMATION_PERIOD) -> 
         itm.setPawnable(false)
-        itm.setDroppable(false)
         stolenItems.add(itm)
         conjuredItems.add(itm)
-        if itm.getTypeId() != ITEM_THIEF_MED and caster.getLevel() >=4
-            let charges = itm.getCharges()
-            itm.setCharges(charges*2)
-        if itm != null
-            doAfter(ANIMATION_PERIOD) ->       
-                caster.addItemHandleToSlot(itm, 5)
-                nullTimer() -> 
-                    instance.onItemDroppedFlag = true
-                    instance.onItemMoveFlag = true                
-                flashEffect(Abilities.tomeOfRetrainingCaster, caster.getPos())
+    if itm.getTypeId() != ITEM_THIEF_MED and caster.getLevel() >=4
+        let charges = itm.getCharges()
+        itm.setCharges(charges*2)
+    if itm != null
+        doAfter(ANIMATION_PERIOD) ->       
+            caster.addItemHandle(itm)
+    flashEffect(Abilities.tomeOfRetrainingCaster, caster.getPos())
 
 
     

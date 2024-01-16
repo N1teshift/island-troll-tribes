@@ -15,9 +15,14 @@ import Items
 import LocalItemObjEditing
 import Abilities
 import SimError
+import ColorUtils
 
 
-let TT_PHILOSOPHERS_STONE = "Philosopher's stone accumulates energy over time. It can be used to conjure Potion effects"
+let TT_PHILOSOPHERS_STONE = "Philosopher's stone converts Alchemist's mana into energy over time. It can be used to conjure Potion effects"+
+                            "\nCosts 2 mana per 1 energy".color(COLOR_LIGHT_BLUE)+
+                            "\nMaximum energy = "+"10".color(COLOR_LIGHT_BLUE)+" +"+ "Intelligence".color(COLOR_TURQUOISE)+
+                            "\nConverts "+"0.25".color(COLOR_LIGHT_BLUE)+" + "+"0.25 ".color(COLOR_LIGHT_BLUE)+
+                            "per "+"20 Intelligence ".color(COLOR_TURQUOISE)+"energy per second."
 
 
 @compiletime function createcreatePhilosophersStone() returns ItemDefinition
@@ -44,7 +49,7 @@ let TT_PHILOSOPHERS_STONE = "Philosopher's stone accumulates energy over time. I
         ..setHotkeyNormal("E")
         ..setName("Create Philosophers's stone")
         ..presetTooltipNormal(lvl -> makeToolTipNorm("E", "Create Philosophers's stone"))
-        ..presetTooltipNormalExtended(lvl -> "Create Philosophers stone")
+        ..presetTooltipNormalExtended(lvl -> "Create Philosophers stone\n\n"+TT_PHILOSOPHERS_STONE)
         ..setIconNormal(Icons.bTNHeartOfSearinox)
         ..setIconResearch(Icons.bTNHeartOfSearinox)
         ..setIconTurnOff(Icons.bTNHeartOfSearinox)
@@ -60,27 +65,52 @@ class PhilosophersStoneInstance
     private unit hero
     private real baseClock
     private item itemHandle
+    private real charges
     private CallbackPeriodic cb
+    private real chargesRegenPeriod = 0.125
 
     construct(unit hero)
         this.hero = hero
         this.baseClock = 0
         this.itemHandle = createItem(ITEM_PHILOSOPHERS_STONE, hero.getPos())
-        hero.addItemHandle(itemHandle)
-        //this.itemHandle = hero.addItemById(ITEM_PHILOSOPHERS_STONE)  
-        itemHandle.setPawnable(false)
-        this.hero.disableAbility(ABILITY_CREATE_PHILOSOPHERS_STONE, true, false)
-        hero.getOwner().setAbilityIcon(ABILITY_ALCHEMIST_SPELLBOOK, Icons.bTNHeartOfSearinox)            
-        this.cb = doPeriodically(2) cb ->
-            let charges = itemHandle.getCharges()
-            if charges < 30
-                itemHandle.setCharges(charges+1)          
-                                 
+        doAfter(ANIMATION_PERIOD) ->       
+            hero.addItemHandle(itemHandle)
+            //this.itemHandle = hero.addItemById(ITEM_PHILOSOPHERS_STONE)  
+            itemHandle.setPawnable(false)
+            this.hero.disableAbility(ABILITY_CREATE_PHILOSOPHERS_STONE, true, false)
+            hero.getOwner().setAbilityIcon(ABILITY_ALCHEMIST_SPELLBOOK, Icons.bTNHeartOfSearinox)            
+            this.cb = doPeriodically(chargesRegenPeriod) cb ->
+                updateCharges()          
+
+    function updateCharges()
+        let chargesCap = 10+hero.getInt(true)
+        let chargesRegenPerSecond = 0.25+0.0125*hero.getInt(true)
+        if charges>=chargesCap
+            return
+        if hero.getMana()<=20. and hero.hasItem(itemHandle)
+            return
+        hero.setMana(hero.getMana()-2*chargesRegenPeriod*chargesRegenPerSecond)
+        charges=charges+chargesRegenPeriod*chargesRegenPerSecond
+        itemHandle.setCharges(charges.floor())
+
+
+    function spendCharges(int chargesSpent) returns bool
+        if charges>=chargesSpent
+            charges=charges-chargesSpent
+            return true
+        else
+            return false
+
+    function onRevive()
+        doAfter(ANIMATION_PERIOD) ->   
+            hero.addItemHandle(itemHandle)
+    
+
     ondestroy
         hero.disableAbility(ABILITY_CREATE_PHILOSOPHERS_STONE, false, false) 
         destroy cb
 
-IterableMap<unit, PhilosophersStoneInstance> instances = new IterableMap<unit, PhilosophersStoneInstance>()
+public IterableMap<unit, PhilosophersStoneInstance> instances = new IterableMap<unit, PhilosophersStoneInstance>()
 
 function onAbilityCreatePhilosophersStone(unit u)
     if u.isTroll()
@@ -93,6 +123,13 @@ function onDropPhilosophersStone(unit u, item itm)
         doAfter(ANIMATION_PERIOD) ->
             u.addItemHandle(itm) 
 
+function onRevive(unit u)
+    let instance = instances.get(u)
+    if instance == null
+        return
+    instance.onRevive() 
+        
+
 
 
 init
@@ -100,7 +137,11 @@ init
         if caster.isInventoryFull()
             simError(caster.getOwner(), "Your inventory is full")
         else
-            onAbilityCreatePhilosophersStone(caster)        
+            onAbilityCreatePhilosophersStone(caster)  
+
+    EventListener.add(EVENT_PLAYER_HERO_REVIVE_FINISH) ->
+        onRevive(GetManipulatingUnit())
+
     EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
         if GetManipulatedItem().getTypeId() == ITEM_PHILOSOPHERS_STONE
             onDropPhilosophersStone(GetManipulatingUnit(), GetManipulatedItem())

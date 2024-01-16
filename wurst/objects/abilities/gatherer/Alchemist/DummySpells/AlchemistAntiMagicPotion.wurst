@@ -14,6 +14,7 @@ import Lodash
 import AntiMagicPotion
 import InstantDummyCaster
 import SimError
+import PhilosophersStone
 
 //constant NAME =""
 //constant COOLDOWN = 0
@@ -59,21 +60,20 @@ constant TARGETS_ALLOWED = commaList(
         ..presetCastRange(lvl->CAST_RANGE)
         ..presetTargetTypes(Targettype.UNIT)
 
+
 function onCast()
     let target = GetSpellTargetUnit()
     let caster = GetSpellAbilityUnit()
-    if caster.isTroll()
-        and caster.hasItemById(ITEM_PHILOSOPHERS_STONE)
-        //let itm = caster.getItemById(ITEM_PHILOSOPHERS_STONE)
-        let itm = caster.getItemById(ITEM_PHILOSOPHERS_STONE)
-        if itm.getCharges() >= POTION_COST
-            InstantDummyCaster.castTarget(caster.getOwner(), ABILITY_ANTI_MAGIC_POTION, 1, OrderIds.antimagicshell, target)
-            itm.setCharges(itm.getCharges()-POTION_COST)
-        else
-            caster.issueImmediateOrder("stop")
-            simError(caster.getOwner(), errorMsg)
-
-
+    let instance = instances.get(caster)
+    if instance == null
+        return
+    if not caster.hasItemById(ITEM_PHILOSOPHERS_STONE)
+        return
+    if instance.spendCharges(POTION_COST)
+        InstantDummyCaster.castTarget(caster.getOwner(), ABILITY_ANTI_MAGIC_POTION, 1, OrderIds.antimagicshell, target)
+    else
+        caster.issueImmediateOrder("stop")
+        simError(caster.getOwner(), errorMsg)
     
 
 

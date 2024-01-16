@@ -18,7 +18,6 @@ import ItemObjEditing
 import ClosuresForItems
 import ItemExtensions
 import IdListConstant
-import ColorUtils
 //import Steal
 
 
@@ -56,17 +55,7 @@ let TT_TOOLTIP = "Thief has a secret pocket granting him an extra slot. \nThief'
 class ThiefsPocket
     unit hero = null
     HashSet<unit> robbedTradingShips = new HashSet<unit>()
-    item dummy = null
-    bool onTargetOrderFlag = true
-    bool onItemMoveFlag = true
-    bool onItemPickUpFlag = false
-    bool onItemDroppedFlag = true
-    //bool onHeroLevelFlag = true
-    bool onHeroReviveFlag = true
-    bool onHeroDeathFlag = true
-    bool onDummyItemDropFlag = false
-    //EventListener onTargetOrder = EventListener.add(EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER, () -> onTargetOrder())  
-    //InventoryEvent onItemMove = registerInventoryEvent(EVENT_ITEM_INVENTORY.MOVE, ()->onItemMoved(getInventoryManipulatingUnit(), getInventoryManipulatedItem()))
+    item dummy = null  
 
     construct(unit hero)
         this.hero = hero
@@ -75,27 +64,16 @@ class ThiefsPocket
         robbedTradingShips.add(target)
 
     function addDummyItem()
-        onItemDroppedFlag = false
-        onItemPickUpFlag = false
-        onDummyItemDropFlag = false 
-        onItemMoveFlag = false
-        nullTimer() ->               
-            let foundDummy = hero.getItemById(ITEM_THIEFS_POCKET_DUMMY)
-            if foundDummy != null
-                nullTimer() -> 
-                    foundDummy.remove()
+        let foundDummy = hero.getItemById(ITEM_THIEFS_POCKET_DUMMY)
+        if foundDummy != null
+            nullTimer() -> 
+                foundDummy.remove()
 
-            dummy.remove()
-            dummy = createItem(ITEM_THIEFS_POCKET_DUMMY, hero.getPos())
-            dummy.setVisible(false)        
-            nullTimer() ->        
-                hero.addItemHandleToSlot(dummy, 5)         
-                nullTimer() ->
-                    onItemPickUpFlag = true
-                    onDummyItemDropFlag = true  
-                    onItemMoveFlag = true
-                    onItemDroppedFlag = true       
-
+        dummy.remove()
+        dummy = createItem(ITEM_THIEFS_POCKET_DUMMY, hero.getPos())
+        dummy.setVisible(false)        
+        nullTimer() ->        
+            hero.addItemHandleToSlot(dummy, 5) 
 
 
 
@@ -113,34 +91,49 @@ function onUnitEnter(unit troll)
                     destroy cb
                 
 
-function onItemPickup(unit troll, item manipulatedItem)
-    let instance = instances.get(troll)
-    if instance == null
-        return
-    if instance.onItemPickUpFlag == false
-        //print("onItemPickUpFlag "+instance.onItemPickUpFlag.toString())
-        return
-    //print("OnItemPickup")
-    if not stolenItems.has(manipulatedItem)
-        //print("not stolen")      
-    if stolenItems.has(manipulatedItem) and troll.hasItemById(ITEM_THIEFS_POCKET_DUMMY)
-        //troll.removeItemById(ITEM_THIEFS_POCKET_DUMMY)
-        nullTimer() -> 
-            addItemToThiefsPocket(troll, manipulatedItem)
-            instance.onItemPickUpFlag = false
-            instance.onItemDroppedFlag = true
-            instance.onDummyItemDropFlag = false
 
-function onDummyItemDrop(unit troll, item manipulatedItem)
+
+function onItemMoved(unit troll, item manipulatedItem)
+    if not troll.isAlive()
+        return
+
+    var order = GetIssuedOrderId()
+    var u = GetTriggerUnit()
+    var orderItm = GetOrderTargetItem()
+    var slotFrom = u.getItemSlot(orderItm)
+    var slotTo = order - SpecialOrders.itemdrag00
+
     let instance = instances.get(troll)
     if instance == null
         return
-    if manipulatedItem.getTypeId()!= ITEM_THIEFS_POCKET_DUMMY
-        return
-    if instance.onDummyItemDropFlag == false
-        //print("onDummyItemDropFlag "+instance.onDummyItemDropFlag.toString())
-        return
-    //print("onDummyItemDrop")
+    nullTimer() ->                
+        let itm = troll.itemInSlot(5)
+        if itm == null and (slotFrom == 5 or slotTo == 5)
+            nullTimer() -> 
+                print("onItemMoved addDummyItem()")        
+                instance.addDummyItem()
+
+        else if stolenItems.has(itm) or (itm.getTypeId() == ITEM_THIEFS_POCKET_DUMMY and stolenItems.has(manipulatedItem))
+            if stolenItems.has(itm) and troll.hasItemById(ITEM_THIEFS_POCKET_DUMMY)
+                troll.removeItemById(ITEM_THIEFS_POCKET_DUMMY)
+            nullTimer() -> 
+                addItemToThiefsPocket(troll, manipulatedItem)
+
+        else if not stolenItems.has(itm) and itm != null and itm.getTypeId() != ITEM_THIEFS_POCKET_DUMMY
+            troll.removeItem(itm)
+            doAfter(ANIMATION_PERIOD) ->
+                troll.addItemHandle(itm)  
+            nullTimer() ->
+                print("onItemMoved else addDummyItem()")           
+                instance.addDummyItem() 
+
+
+
+function onItemDropped(unit troll, item manipulatedItem)
+    print("dropped")
+    let instance = instances.get(troll)
+    if instance == null
+        return    
     if manipulatedItem.getTypeId() == ITEM_THIEFS_POCKET_DUMMY
         if not troll.isAlive()
             nullTimer() -> 
@@ -148,79 +141,12 @@ function onDummyItemDrop(unit troll, item manipulatedItem)
             return
         nullTimer() -> 
             instance.addDummyItem()
-
-function onItemMoved(unit troll, item manipulatedItem)
-    if not troll.isAlive()
-        return
-
-    let order = GetIssuedOrderId()
-    let u = GetTriggerUnit()
-    let orderItm = GetOrderTargetItem()
-    let slotFrom = u.getItemSlot(orderItm)
-    let slotTo = order - SpecialOrders.itemdrag00
-
-    let instance = instances.get(troll)
-    if instance == null
-        return
-    if instance.onItemMoveFlag == false
-        //print("onItemMoveFlag "+instance.onItemMoveFlag.toString())
-        return
-    if slotTo >5
-        //print("slot = "+slotTo.toString())
-        return
-    //print("onItemMoved")    
-    nullTimer() ->                
-        let itm = troll.itemInSlot(5)
-        if itm == null and (slotFrom == 5 or slotTo == 5)
-            nullTimer() -> 
-                //print("onItemMoved addDummyItem()")        
-                instance.addDummyItem()
-
-        else if stolenItems.has(itm) or (itm.getTypeId() == ITEM_THIEFS_POCKET_DUMMY and stolenItems.has(manipulatedItem))
-            if stolenItems.has(itm) and troll.hasItemById(ITEM_THIEFS_POCKET_DUMMY)
-                troll.removeItemById(ITEM_THIEFS_POCKET_DUMMY)
-            nullTimer() -> 
-                addItemToThiefsPocket(troll, manipulatedItem)                
-/*
-        else if (troll.hasItemById(ITEM_THIEFS_POCKET_DUMMY) and stolenItems.has(manipulatedItem))
-            if stolenItems.has(itm) and troll.hasItemById(ITEM_THIEFS_POCKET_DUMMY)
-                troll.removeItemById(ITEM_THIEFS_POCKET_DUMMY)
-            nullTimer() -> 
-                addItemToThiefsPocket(troll, manipulatedItem)
-
-        else if (stolenItems.has(itm) and troll.hasItemById(ITEM_THIEFS_POCKET_DUMMY)) 
-            if stolenItems.has(itm) and troll.hasItemById(ITEM_THIEFS_POCKET_DUMMY)
-                troll.removeItemById(ITEM_THIEFS_POCKET_DUMMY)
-            nullTimer() -> 
-                addItemToThiefsPocket(troll, itm)
-*/
-        else if not stolenItems.has(itm) and itm != null and itm.getTypeId() != ITEM_THIEFS_POCKET_DUMMY
-            troll.removeItem(itm)
-            doAfter(ANIMATION_PERIOD) ->
-                troll.addItemHandle(itm)  
-            nullTimer() ->
-                //print("onItemMoved else addDummyItem()")           
-                instance.addDummyItem() 
-
-
-
-function onItemDropped(unit troll, item manipulatedItem)
-    let instance = instances.get(troll)
-    if instance == null
-        return 
-    if instance.onItemDroppedFlag == false
-        //print("onItemDroppedFlag "+instance.onItemDroppedFlag.toString())        
-        return
-    if manipulatedItem.getTypeId()== ITEM_THIEFS_POCKET_DUMMY        
-        return
-    //print("onItemDropped")    
-    
-    if stolenItems.has(manipulatedItem)
-        nullTimer() ->          
+    else if stolenItems.has(manipulatedItem)
+        doAfter(ANIMATION_PERIOD) ->          
             let itm = troll.itemInSlot(5)
             if itm == null
                 nullTimer() -> 
-                    instance.addDummyItem()     
+                    instance.addDummyItem()
 
 
 function onDeath(unit troll)
@@ -230,41 +156,22 @@ function onDeath(unit troll)
             foundDummyItem.remove()    
 
 public function addItemToThiefsPocket(unit troll, item itm)
-    let instance = instances.get(troll)
-    if instance == null
-        return
-    //if instance.onItemPickUpFlag == false
-    //    return
-    //print("addItemToThiefsPocket")
-    instance.onDummyItemDropFlag = false
-    instance.onItemPickUpFlag = false
-    instance.onItemMoveFlag = false
-    nullTimer() ->        
-        if stolenItems.has(itm) and troll.hasItemById(ITEM_THIEFS_POCKET_DUMMY)
-            for each in troll.getInventory()
-                if SCROLL_LIST.has(each.getTypeId()) and itm.isSpell()
-                    troll.removeItem(each)
-            nullTimer() ->
-                let dummy = troll.getItemById(ITEM_THIEFS_POCKET_DUMMY)         
-                dummy.remove()
-                if troll.hasItem(itm)
-                    troll.removeItem(itm)
-                nullTimer() -> 
-                    troll.addItemHandleToSlot(itm, 5)
-                    nullTimer() ->        
-                        instance.onItemDroppedFlag = true
-                        instance.onItemMoveFlag = true
+    if stolenItems.has(itm) and troll.hasItemById(ITEM_THIEFS_POCKET_DUMMY)
+        for each in troll.getInventory()
+            if SCROLL_LIST.has(each.getTypeId()) and itm.isSpell()
+                troll.removeItem(each)
+        doAfter(ANIMATION_PERIOD) ->         
+            troll.removeItemById(ITEM_THIEFS_POCKET_DUMMY)
+            if troll.hasItem(itm)
+                troll.removeItem(itm)
+            nullTimer() -> 
+                troll.addItemHandleToSlot(itm, 5)
 
 
 
 function onTargetOrder()
     let order = GetIssuedOrderId()
     let u = GetOrderedUnit()
-    let instance = instances.get(u)
-    if instance == null
-        return
-    if instance.onTargetOrderFlag == false
-        return
     if order != Orders.smart or not u.isInventoryFull() or not instances.has(u)
         return
     let target = GetOrderTargetItem()
@@ -287,8 +194,6 @@ function onRevive(unit troll)
     let instance = instances.get(troll)
     if instance == null
         return
-    if instance.onHeroReviveFlag == false
-        return
     instance.addDummyItem()
 
 
@@ -298,9 +203,6 @@ public function generateThiefsBushItem(unit caster) returns item
 
 function addStolenItem(item itm)
     stolenItems.add(itm)
-    let tt = itm.getDescription()
-    itm.setDescription(tt+"\nStolen".color(COLOR_RED))
-
 
 function increaseAbilityLvl(unit target)
     if target.getTypeId() == UNIT_THIEF
@@ -323,15 +225,11 @@ init
 
     EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->
         if GetManipulatingUnit().getTypeId().getTrollBaseClass() == UNIT_THIEF
-            onItemPickup(GetManipulatingUnit(), GetManipulatedItem())
+            onItemMoved(GetManipulatingUnit(), GetManipulatedItem())
 
     EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
         if GetManipulatingUnit().getTypeId().getTrollBaseClass() == UNIT_THIEF
             onItemDropped(GetManipulatingUnit(), GetManipulatedItem())
-
-    EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
-        if GetManipulatingUnit().getTypeId().getTrollBaseClass() == UNIT_THIEF
-            onDummyItemDrop(GetManipulatingUnit(), GetManipulatedItem())
 
     registerPlayerUnitEvent(EVENT_PLAYER_HERO_LEVEL) ->
         increaseAbilityLvl(GetTriggerUnit())

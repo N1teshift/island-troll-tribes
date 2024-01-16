@@ -13,6 +13,7 @@ import UnitExtensions
 import Lodash
 import HealingPotion
 import SimError
+import PhilosophersStone
 
 //constant NAME =""
 //constant COOLDOWN = 0
@@ -49,21 +50,20 @@ constant HOTKEY = hotKeys.get(hotkeyIndex)
         ..presetCastRange(lvl->CAST_RANGE)
         ..presetTargetTypes(Targettype.UNIT)
 
+
 function onCast()
     let target = GetSpellTargetUnit()
     let caster = GetSpellAbilityUnit()
-    if caster.isTroll()
-        and caster.hasItemById(ITEM_PHILOSOPHERS_STONE)
-        //let itm = caster.getItemById(ITEM_PHILOSOPHERS_STONE)
-        let itm = caster.getItemById(ITEM_PHILOSOPHERS_STONE)
-        if itm.getCharges() >= POTION_COST
-            new HealingInstance(target, caster, POT_HEAL, HealingType.ITEM)  
-            itm.setCharges(itm.getCharges()-POTION_COST)
-        else
-            caster.issueImmediateOrder("stop")
-            simError(caster.getOwner(), errorMsg)
-
-
+    let instance = instances.get(caster)
+    if instance == null
+        return
+    if not caster.hasItemById(ITEM_PHILOSOPHERS_STONE)
+        return
+    if instance.spendCharges(POTION_COST)
+        new HealingInstance(target, caster, POT_HEAL, HealingType.ITEM)    
+    else
+        caster.issueImmediateOrder("stop")
+        simError(caster.getOwner(), errorMsg)
     
 
 

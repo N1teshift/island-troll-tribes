@@ -19,6 +19,7 @@ import BuffObjEditing
 import BuffIds
 import Abilities
 import ClosureTimers
+import PhilosophersStone
 
 //constant NAME =""
 //constant COOLDOWN = 0
@@ -60,29 +61,19 @@ constant TARGETS_ALLOWED = commaList(TargetsAllowed.alive,
         ..presetTargetTypes(Targettype.UNIT)
 
 
-
-
-
-
 function onCast()
     let target = GetSpellTargetUnit()
     let caster = GetSpellAbilityUnit()
-    if caster.isTroll()
-        and caster.hasItemById(ITEM_PHILOSOPHERS_STONE)
-        //let itm = caster.getItemById(ITEM_PHILOSOPHERS_STONE)
-        let itm = caster.getItemById(ITEM_PHILOSOPHERS_STONE)
-        if itm.getCharges() >= POTION_COST
-            InstantDummyCaster.castTarget(caster.getOwner(), ABILITY_DRUNK_POTION, 1, Orders.drunkenhaze, target)
-            itm.setCharges(itm.getCharges()-POTION_COST)
-            doAfter(ANIMATION_PERIOD) ->     
-                for each in GetUnitsInRangeOfLocAll(600, Location(target.getPos().x, target.getPos().y))
-                    if (each.isAllyOf(caster.getOwner()) or each.getOwner() == caster.getOwner()) and each.hasAbility(BuffIds.drunkenHaze)
-                        each.removeAbility(BuffIds.drunkenHaze)
-        else
-            caster.issueImmediateOrder("stop")
-            simError(caster.getOwner(), errorMsg)
-
-
+    let instance = instances.get(caster)
+    if instance == null
+        return
+    if not caster.hasItemById(ITEM_PHILOSOPHERS_STONE)
+        return
+    if instance.spendCharges(POTION_COST)
+        InstantDummyCaster.castTarget(caster.getOwner(), ABILITY_DRUNK_POTION, 1, Orders.drunkenhaze, target)
+    else
+        caster.issueImmediateOrder("stop")
+        simError(caster.getOwner(), errorMsg)
     
 
 
