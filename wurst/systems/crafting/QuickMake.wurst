@@ -16,6 +16,16 @@ import Transmute
 import SimError
 import TrollUnitTextConstant
 import Classes
+import Transformation
+
+let prior = new Callbacks()
+let after = new Callbacks()
+
+public function registerQuickMakePriorEffect(Callback cb)
+    prior.push(new Pair(1, cb))
+
+public function registerQuickMakeAfterEffect(Callback cb)
+    after.push(new Pair(1, cb))
 
 public class QuickMake
     // The requirements in slot order, each of which is a list of allowed type IDs.
@@ -37,6 +47,7 @@ public class QuickMake
         EventListener.onCast(spellAbilityId, caster -> onCast(caster))
 
     function onCast(unit caster)
+        runCallbacks(prior, caster, 0)
         // The position around which matches are searched for.
         let pos = caster.getPos()
 
@@ -151,7 +162,7 @@ public class QuickMake
         // TODO: Remove this once the above logic is simplified.
         if spellAbilityId == ABILITY_QM_ESSENCE_BEES
             herbThreshold = 2
-
+        runCallbacks(after, caster, 0)
         // Clean up the local stack.
         destroy items
         destroy inventory

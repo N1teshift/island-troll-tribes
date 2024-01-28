@@ -26,7 +26,7 @@ constant ABIL_SPELL_RESISTANCE_BATTLE = compiletime(ABIL_ID_GEN.next())
 constant ABIL_CAST_BATTLE             = compiletime(ABIL_ID_GEN.next())
 constant ABIL_CAST_STEEL              = compiletime(ABIL_ID_GEN.next())
 constant ABIL_HARDENED_SCALE          = compiletime(ABIL_ID_GEN.next())
-constant ABILITY_WOLFS_VORACITY_COAT_ACTIVE = compiletime(ABIL_ID_GEN.next())
+public constant ABILITY_WOLFS_VORACITY_COAT_ACTIVE = compiletime(ABIL_ID_GEN.next())
 constant ABILITY_BEARSKIN_COAT_HERO = compiletime(ABIL_ID_GEN.next())
 constant ABILITY_BEARSKIN_COAT_NORMAL = compiletime(ABIL_ID_GEN.next())
 
@@ -44,9 +44,9 @@ constant TT_ARMOR  = "A coat reinforced with metals. " + TT_COMMON + " and provi
 
 constant ABIL_ELK    = commaList(ABILITY_STR_BONUS_2, ABILITY_INT_BONUS_2, ABILITY_ARMOR_BONUS_1)
 constant ABIL_WOLF   = commaList(ABILITY_STR_BONUS_3, ABILITY_INT_BONUS_2, ABILITY_ARMOR_BONUS_2)
-constant ABIL_WOLF_VORACITY   = commaList(ABILITY_WOLFS_VORACITY_COAT_ACTIVE, ABILITY_STR_BONUS_4, ABILITY_INT_BONUS_4, ABILITY_ARMOR_BONUS_4)
+constant ABIL_WOLF_VORACITY   = commaList(ABILITY_WOLFS_VORACITY_COAT_ACTIVE, ABILITY_STR_BONUS_6, ABILITY_AGI_BONUS_6, ABILITY_ARMOR_BONUS_4)
 constant ABIL_BEAR   = commaList(ABILITY_STR_BONUS_6, ABILITY_INT_BONUS_4, ABILITY_ARMOR_BONUS_3)
-constant ABIL_BEAR_PRESENCE   = commaList(ABILITY_STR_BONUS_10, ABILITY_ARMOR_BONUS_5, ABILITY_BEARSKIN_COAT_HERO, ABILITY_SPIRIT_BEAST)
+constant ABIL_BEAR_PRESENCE   = commaList(ABILITY_STR_BONUS_12, ABILITY_ARMOR_BONUS_6, ABILITY_BEARSKIN_COAT_HERO, ABILITY_SPIRIT_BEAST)
 constant ABIL_BONE   = commaList(ABILITY_STR_BONUS_3, ABILITY_INT_BONUS_4, ABILITY_ARMOR_BONUS_2)
 constant ABIL_IRON   = commaList(ABILITY_STR_BONUS_4, ABILITY_INT_BONUS_6, ABILITY_ARMOR_BONUS_3)
 constant ABIL_STEEL  = commaList(ABIL_CAST_STEEL, ABILITY_STR_BONUS_8, ABILITY_INT_BONUS_8, ABILITY_ARMOR_BONUS_5)
@@ -74,12 +74,12 @@ public constant TT_WOLF_VORACITY_COAT = "" +
     "Use item to consume raw meat instantly restoring 50 health.|n" +
     "Item is only droppable if you have 8 raw meat which will be consumed in the process.|n"+
     "Strength +{0}.|n" +
-    "Intelligence +{1}.|n" +
+    "Agility+{1}.|n" +
     "Armor+{2}."
     )
     .format(
-    getAbilityDataField(ABILITY_STR_BONUS_4   , "DataC1").color(COLOR_GREEN),
-    getAbilityDataField(ABILITY_INT_BONUS_4   , "DataB1").color(COLOR_GREEN),
+    getAbilityDataField(ABILITY_STR_BONUS_6   , "DataC1").color(COLOR_GREEN),
+    getAbilityDataField(ABILITY_AGI_BONUS_6   , "DataA1").color(COLOR_GREEN),
     getAbilityDataField(ABILITY_ARMOR_BONUS_4 , "DataA1").color(COLOR_GREEN)
 ) 
 
@@ -97,8 +97,8 @@ public constant TT_BEAR_PRESENCE_COAT = "" +
     "Armor +{1}."
     )
     .format(
-    getAbilityDataField(ABILITY_STR_BONUS_10  , "DataC1").color(COLOR_GREEN),
-    getAbilityDataField(ABILITY_ARMOR_BONUS_5 , "DataA1").color(COLOR_GREEN)
+    getAbilityDataField(ABILITY_STR_BONUS_12  , "DataC1").color(COLOR_GREEN),
+    getAbilityDataField(ABILITY_ARMOR_BONUS_6 , "DataA1").color(COLOR_GREEN)
 ) 
 
 public constant TT_BONE_COAT = TT_SKIN.format(

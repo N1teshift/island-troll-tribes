@@ -1,0 +1,48 @@
+package FellTree
+
+import Classes
+import LocalObjectIDs
+import HashMap
+import OnUnitEnterLeave
+import Items
+import LocalAssets
+import UnitExtensions
+import ChannelAbilityPreset
+import Orders
+import ClosureEvents
+import ClosureTimers
+import InventoryEvent
+import HashSet
+import BushSpawns
+import ItemObjEditing
+import ClosuresForItems
+import ItemExtensions
+import IdListConstant
+import ColorUtils
+import LinkedList
+import QuickMake
+import HealingSystem
+import FoodBuffs
+
+let COOLDOWN = 7.
+let MANACOST = 40
+let TT_NORM = "Fell Tree"
+let TT_EXT = "\nMight of Dire Bear allows him to fell a tree instanteniously."+
+             "\nAlso gives you an ability to fell trees with your attacks."+
+             "\nHas {0} seconds cooldown.".format(COOLDOWN.toString().color(COLOR_LIGHT_BLUE))
+
+
+@compiletime function createFellTreeAbility()
+    new AbilityDefinitionEatTree(ABILITY_FELL_TREE)
+    ..setHotkeyNormal("R")
+    ..setCastRange(1, 150)
+    ..setDurationHero(1, 0.)
+    ..setDurationNormal(1, 0.)
+    ..setEatDelay(1, 0.25)
+    ..setHitPointsGained(1, 0.)
+    ..setRipDelay(1, 0.25)
+    ..setName(TT_NORM)
+    ..presetTooltipNormal(lvl->TT_NORM)
+    ..presetTooltipNormalExtended(lvl->TT_EXT)
+    ..setCooldown(1, COOLDOWN)
+    ..setManaCost(1, MANACOST)

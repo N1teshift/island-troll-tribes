@@ -73,8 +73,10 @@ function createBearsTenacitBuff()
         ..presetTargetsAllowed(lvl->commaList(TargetsAllowed.ground,
                                               TargetsAllowed.friend,
                                               TargetsAllowed.hero,
-                                              TargetsAllowed.playerunits))
+                                              TargetsAllowed.nonhero,
+                                              TargetsAllowed.enemies))
         ..presetDurationHero(lvl->1)
+        ..presetDurationNormal(lvl->1)    
         ..setHotkeyNormal("N")
         ..setName("Bears Tenacity")
         ..setTooltipNormal(1, makeToolTipNorm("N", "Bears Tenacity"))

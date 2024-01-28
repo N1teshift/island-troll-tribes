@@ -14,6 +14,7 @@ import LocalObjectIDs
 import LocalItemObjEditing
 import BattleGlovesCritical
 import ScrollsDefinition
+import HealingItems
 
 let ABILITY_ID_ATTACK_BONUS_3 = "AIat".fromRawCode() // Item Damage bonus + 3, not implemented in stdlib
 
@@ -33,10 +34,12 @@ let TT_UNFORMAT_WOLFS_BLOODLUST_CLAWS = TT_COMMON + ", damage by {1}, armor by {
 let TT_UNFORMAT_WOLFS_BLOODLUST_CLAWS_BUFF = "Fills wearer with insatiable bloodlust, granting permanent bloodlust buff."
 
 let TT_UNFORMAT_BEARS_GREED_PAWS= TT_COMMON + ", damage by {1}, armor by {2} and strength by {3}. |n"
-let TT_UNFORM_BEARS_GREED_PAWS_ACTIVE = "Bears greed for honey is so strong it allows you to find it where there's none. |n"
-                                        +"Use this item on a hidden stash to find a honeycomb."
-                                        +"\n This item cannot be dropped while on cooldown"
-                                        + makeToolTipCooldown(60)
+let TT_UNFORM_BEARS_GREED_PAWS_ACTIVE = "Bears greed for honey is so strong it allows you to find it where there's none."
+                                        +"\nUse this item on a hidden stash to find a honeycomb."
+
+let TT_UNFORM_BEARS_GREED_PAWS_EMPTY = "Bears greed for honey is so strong it allows you to find it where there's none."
+                                        +"\nUse this item on a hidden stash to find a honeycomb for every charge of greed."
+                                        +"\nYou gain 1 charge of greed per minute up to a maximum of 4."                                
 
 let TT_UNFORMAT_BATTLE_GLOVE_STRING = "Increases wearer's attack speed by {0}, armor by {1} and all stats by {2}"
                                       + " and a critical strike for {3} damage on a {4} second cooldown."
@@ -77,10 +80,17 @@ public let TT_BEAR_SKIN_GLOVES = TT_UNFORMAT_ARMOR_GLOVE.format(
 
 public let TT_BEARS_GREED_PAWS = TT_UNFORMAT_BEARS_GREED_PAWS.format(
     getAbilityDataFieldPercent(ABILITY_ATTACK_SPEED_20 , "DataA1").color(COLOR_ORANGE),
-    getAbilityDataField(AbilityIds.attackBonusPlus4      , "DataA1").color(COLOR_RED),
+    getAbilityDataField(AbilityIds.attackBonusPlus2      , "DataA1").color(COLOR_RED),
     getAbilityDataField(ABILITY_ARMOR_BONUS_5          , "DataA1").color(COLOR_GREEN),
-    getAbilityDataField(ABILITY_STR_BONUS_4          , "DataC1").color(COLOR_GREEN)
+    getAbilityDataField(ABILITY_STR_BONUS_8          , "DataC1").color(COLOR_GREEN)
 ) + TT_UNFORM_BEARS_GREED_PAWS_ACTIVE
+
+public let TT_BEARS_GREED_PAWS_EMPTY = TT_UNFORMAT_BEARS_GREED_PAWS.format(
+    getAbilityDataFieldPercent(ABILITY_ATTACK_SPEED_20 , "DataA1").color(COLOR_ORANGE),
+    getAbilityDataField(AbilityIds.attackBonusPlus2      , "DataA1").color(COLOR_RED),
+    getAbilityDataField(ABILITY_ARMOR_BONUS_5          , "DataA1").color(COLOR_GREEN),
+    getAbilityDataField(ABILITY_STR_BONUS_6          , "DataC1").color(COLOR_GREEN)
+) + TT_UNFORM_BEARS_GREED_PAWS_EMPTY
 
 public let TT_BONE_GLOVES = TT_UNFORMAT_ARMOR_GLOVE.format(
     getAbilityDataFieldPercent(ABILITY_ATTACK_SPEED_20 , "DataA1").color(COLOR_ORANGE),
@@ -251,11 +261,11 @@ public let TT_HYDRA_CLAWS = TT_UNFORMAT_HYDRA_CLAWS_STRING.format(
 @compiletime function createPawsOfBearsGreed() returns ItemDefinition
     return createUsableItem(ITEM_BEARS_GREED_PAWS)
         ..setAbilities(commaList(
-            ABILITY_BEARS_GREED_PAWS_ACTIVE,            
+            ABIL_HONEY,            
             ABILITY_ATTACK_SPEED_20,
-            AbilityIds.attackBonusPlus4,
+            AbilityIds.attackBonusPlus2,
             ABILITY_ARMOR_BONUS_5,
-            ABILITY_STR_BONUS_4,
+            ABILITY_STR_BONUS_8,
             ABILITY_ATTACK_TREE
             )
         )
@@ -275,6 +285,32 @@ public let TT_HYDRA_CLAWS = TT_UNFORMAT_HYDRA_CLAWS_STRING.format(
         ..setActivelyUsed(true)
         ..setCooldownGroup(toRawCode(ABILITY_ATTACK_SPEED_20))        
 
+@compiletime function createPawsOfBearsGreedEmpty() returns ItemDefinition
+    return createUsableItem(ITEM_BEARS_GREED_PAWS_EMPTY)
+        ..setAbilities(commaList(
+            ABILITY_BEARS_GREED_PAWS_ACTIVE,            
+            ABILITY_ATTACK_SPEED_20,
+            AbilityIds.attackBonusPlus2,
+            ABILITY_ARMOR_BONUS_5,
+            ABILITY_STR_BONUS_8,
+            ABILITY_ATTACK_TREE
+            )
+        )
+        ..setInterfaceIcon(Icons.bTNStrengthOfTheWild)
+        ..setDescription("Increases wearer's attack speed speed, attack damage and armor. |n Allows you to collect honecombs from hidden stashes")
+        /*
+        ..setTintingColor1Red(139)
+        ..setTintingColor2Green(69)
+        ..setTintingColor3Blue(16)
+        */
+        ..setModelUsed(LocalItems.bearsGreedPaws)
+        ..setHotkey("")
+        ..setLumberCost(67)
+        ..setScalingValue(0.8)
+        ..setNameEnhance("Paws of Bear's Greed")
+        ..setTooltipExtended(TT_BEARS_GREED_PAWS_EMPTY)
+        ..setActivelyUsed(true)
+        ..setCooldownGroup(toRawCode(ABILITY_ATTACK_SPEED_20))
 
 @compiletime function createBoneGloves() returns ItemDefinition
     return createBasicItem(ITEM_BONE_GLOVES)

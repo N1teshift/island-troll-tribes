@@ -19,10 +19,12 @@ import ChannelAbilityPreset
 import ItemIds
 import HealingSystem
 import ClosureTimers
+import SimError
+import PlayerExtensions
 
 
 
-
+let BEARS_GREED_PAWS_ACTIVE_COOLDOWN = 60.
 let TT = new StringBuilder()
     ..add(
         "Causes your troll to go into a panic, making him move {0} faster, " +
@@ -41,11 +43,10 @@ let TT = new StringBuilder()
         DAMAGE_FACTOR.toToolTipRed()
     )
 
-@compiletime function BearsGreedPawsAbility()
+@compiletime function createBearsGreedPawsAbility()
     new ChannelAbilityPreset(ABILITY_BEARS_GREED_PAWS_ACTIVE, 1, true)
         ..presetCastingTime(lvl ->0.5)
         ..presetCastRange(lvl -> 100)
-        ..presetCooldown(lvl -> 100)
         ..presetTargetTypes(Targettype.UNIT)
         ..presetTargetsAllowed(lvl ->commaList(
             TargetsAllowed.neutral,
@@ -54,62 +55,98 @@ let TT = new StringBuilder()
             TargetsAllowed.invulnerable
         ))  
 
+IterableMap<item, BearsGreedPawsInstance> instancesEmpty = new IterableMap<item, BearsGreedPawsInstance>()
+IterableMap<item, BearsGreedPawsInstance> instances = new IterableMap<item, BearsGreedPawsInstance>()
 
 class BearsGreedPawsInstance
-    private unit wearer
+    private item itemHandleEmpty
     private real baseClock
-    private OnUnitCast eventListener
+    private OnUnitCast onCastEmpty
+    private EventListener onHeal
+    private int greedCharges
+    private item itemHandle
+    unit wearer
 
-    construct(unit wearer)
-        this.wearer = wearer
-        this.baseClock = 0   
-
-        this.eventListener =EventListener.onTargetCast(ABILITY_BEARS_GREED_PAWS_ACTIVE) (unit caster, unit target) ->
-            if (target.getTypeId() == UNIT_HIDDEN_STASH)
-                onItemUse(caster, target)
-                   
-                                       
-    ondestroy
-        destroy this.eventListener
-
-IterableMap<unit, BearsGreedPawsInstance> instances = new IterableMap<unit, BearsGreedPawsInstance>()
-
-function onItemUse(unit caster, unit target)
-    let foundItem=caster.getItemById(ITEM_HONEYCOMB)
-    foundItem.setDroppable(true)
-    foundItem.setPawnable(false)
-    caster.getItemById(ITEM_BEARS_GREED_PAWS).setDroppable(false)    
-    doAfter(caster.getAbilityCooldown(ABILITY_BEARS_GREED_PAWS_ACTIVE, 1)) ->
-        caster.getItemById(ITEM_BEARS_GREED_PAWS).setDroppable(true)        
-    if foundItem == null
-        let itm = createItem(ITEM_HONEYCOMB, caster.getPos())
-        caster.addItemHandle(itm)
+    construct(unit _wearer, item itm)
+        this.wearer = _wearer
+        this.itemHandleEmpty = itm
+        this.baseClock = 0
+        greedCharges = 4
+        itemHandle=createItem(ITEM_BEARS_GREED_PAWS, wearer.getPos())
+        instances.put(itemHandle, this)
         nullTimer() -> 
-            itm.setPawnable(false)
-            itm.setCharges(2)   
+            itemHandle.setVisible(false)
+        doPeriodically(BEARS_GREED_PAWS_ACTIVE_COOLDOWN) (CallbackPeriodic cb) ->
+            updateCharges()
+        itemHandleEmpty.setCharges(greedCharges)
+        onCastEmpty =EventListener.onTargetCast(ABILITY_BEARS_GREED_PAWS_ACTIVE) (unit caster, unit target) ->
+            if (target.getTypeId() == UNIT_HIDDEN_STASH)
+                onItemUse()
+        onHeal = EventListener.add(EVENT_PLAYER_UNIT_USE_ITEM) -> 
+            if GetManipulatedItem() == itemHandle
+                onHeal(GetTriggerUnit())
+
+    function onHeal(unit _wearer)
+        new HealingInstance(wearer, HONEY_HEAL, HealingType.ITEM)
+        let charges = itemHandle.getCharges()
+        nullTimer() -> 
+            if charges == 0
+                wearer.removeItem(itemHandle)
+                nullTimer() ->
+                    itemHandle.setVisible(false) 
+                    nullTimer() -> 
+                        wearer.addItemHandle(itemHandleEmpty)
+                        itemHandleEmpty.setCharges(greedCharges)         
+
+    function updateCharges()
+        if greedCharges<4
+            greedCharges+=1
+            itemHandleEmpty.setCharges(greedCharges)
+
+    function onItemUse()
+        if greedCharges == 0
+            simError(wearer.getOwner(),"Your greed is not strong enough.")               
+            return
+        wearer.removeItem(itemHandleEmpty)
+        nullTimer() -> 
+            itemHandleEmpty.setVisible(false)
+            nullTimer() -> 
+                wearer.addItemHandle(itemHandle)
+                itemHandle.setCharges(greedCharges)
+                greedCharges=0                       
+    ondestroy
+        destroy this.onCastEmpty
+        destroy this.onHeal
+
+
+
+
+function onPickupGloves(unit u, item itm)
+    BearsGreedPawsInstance instance = null
+    if itm.getTypeId() == ITEM_BEARS_GREED_PAWS_EMPTY
+        instance = instancesEmpty.get(itm)
+    else if itm.getTypeId() == ITEM_BEARS_GREED_PAWS
+        instance = instances.get(itm)
+    if instance == null 
         return
-    if (foundItem.getCharges()<8)
-        foundItem.setCharges(foundItem.getCharges()+2)
-        foundItem.setPawnable(false)
-    //else
-        //new HealingInstance(caster, caster, HONEY_HEAL, HealingType.ITEM)  
-
-function onPickupGloves(unit u)
-    if not instances.has(u)
-        instances.put(u, new BearsGreedPawsInstance(u))
+    instance.wearer = u
 
 
-function onDropGloves(unit u)
-    if instances.has(u)
-        destroy instances.getAndRemove(u)
+function onItemCreation(unit u, item itm)
+    let instance = instancesEmpty.get(itm)
+    if instance != null 
+        return
+    instancesEmpty.put(itm, new BearsGreedPawsInstance(u, itm))
+
+
 
 init
     EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->
-        if GetManipulatedItem().getTypeId() == ITEM_BEARS_GREED_PAWS
-            onPickupGloves(GetManipulatingUnit())
+        if GetManipulatedItem().getTypeId() == ITEM_BEARS_GREED_PAWS_EMPTY
+            onItemCreation(GetManipulatingUnit(), GetManipulatedItem())
 
-    EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
-        if GetManipulatedItem().getTypeId() == ITEM_BEARS_GREED_PAWS
-            onDropGloves(GetManipulatingUnit())
+    EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->
+        if GetManipulatedItem().getTypeId() == ITEM_BEARS_GREED_PAWS or GetManipulatedItem().getTypeId() == ITEM_BEARS_GREED_PAWS_EMPTY
+            onPickupGloves(GetManipulatingUnit(), GetManipulatedItem())
 
-//@compiletime createconsume
+

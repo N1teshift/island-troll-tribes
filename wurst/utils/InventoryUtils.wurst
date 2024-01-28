@@ -1,5 +1,6 @@
 package InventoryUtils
 import UnitExtensions
+import LocalObjectIDs
 
 public function transferItems(unit source, unit dest)
     let count = source.inventorySize()
@@ -7,7 +8,7 @@ public function transferItems(unit source, unit dest)
         if dest.freeSlots() == 0
             break
         let grabbed = source.itemInSlot(i)
-        if grabbed != null
+        if grabbed != null and grabbed.getTypeId()!= ITEM_HIDDEN_RAW_MEAT
             dest.addItemHandle(grabbed)
 
 public function unit.transferItems(unit dest)

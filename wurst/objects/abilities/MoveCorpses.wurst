@@ -240,7 +240,7 @@ function onDrop(unit caster)
     // Decrement the count.
     updateCount(caster, -1)
 
-function onWolfVoracityCoat(unit caster)
+public function onWolfVoracityCoat(unit caster)
     // Create the corpse that is dropped.
     //createCorpse(caster.getPos())
     // Decrement the count.
@@ -248,6 +248,21 @@ function onWolfVoracityCoat(unit caster)
         new HealingInstance(caster, caster, MEAT_HEAL, HealingType.ITEM)
     updateCount(caster, -1)
 
+public function onDireWolfDevour(unit caster)
+    let count = counts.get(caster)
+    if count+3>8
+        updateCount(caster, 8-count)
+        for i=1 to (count+3-8)
+            new HealingInstance(caster, caster, MEAT_HEAL, HealingType.ITEM)
+    else 
+        updateCount(caster, 3)
+
+public function onRipAndTear(unit caster, unit target)
+    let count = counts.get(caster)
+    if count==8
+        new HealingInstance(caster, caster, MEAT_HEAL, HealingType.ITEM)
+    else 
+        updateCount(caster, 1) 
 
 
 function onWolfVoracityCoatDrop(unit caster, item itm)
@@ -276,7 +291,7 @@ function onGrab(unit caster, unit target)
     // Increment the count.
     updateCount(caster, 1)
 
-function updateCount(unit target, int differential)
+public function updateCount(unit target, int differential)
     // Exit if no work is required.
     if differential == 0
         return     
@@ -425,5 +440,6 @@ init
         if GetManipulatingUnit().isTroll()
             if GetManipulatedItem().getTypeId() == ITEM_WOLF_VORACITY_COAT
                 onWolfVoracityCoatDrop(GetManipulatingUnit(),GetManipulatedItem())  
+          
                     
 

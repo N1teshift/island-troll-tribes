@@ -104,7 +104,7 @@ public function registerTransformations(
         bool requiresAbility)
     registerTransformations(transformations, abilityIDs, true, requiresAbility)
 
-function runCallbacks(Callbacks callbacks, unit target, int unitID)
+public function runCallbacks(Callbacks callbacks, unit target, int unitID)
     // Consider each callback in turn.
     for pair in callbacks
         // Only process currently enabled callbacks.
@@ -119,6 +119,7 @@ function runCallbacks(Callbacks callbacks, unit target, int unitID)
             pair.a++
 
 public function transformUnit(unit origin, int targetID)
+    let inventory = origin.getInventory()
     // Apply any callbacks registered as preceding the transformation.
     runCallbacks(prior, origin, targetID)
 
@@ -152,7 +153,10 @@ public function transformUnit(unit origin, int targetID)
 
         // Apply any callbacks registered as succeeding the transformation.
         runCallbacks(after, origin, originID)
-
+    
+    for each in inventory
+        if not origin.hasItem(each)
+            origin.addItemHandle(each)
     // Destroy local resources.
     destroy key
 

@@ -33,8 +33,8 @@ constant HONEY_MODEL  = LocalItems.honeycomb
 public constant MEAT_HEAL   = 50.
 public constant BANANA_HEAL = 38.
 public constant HONEY_HEAL  = 90.
-public constant COCONUT_HEAL = 20.
-public constant COCONUT_MANA = 20.
+public constant COCONUT_HEAL = 30.
+public constant COCONUT_MANA = 30.
 
 constant TT_MEAT  = "A well done steak. Instantly heals {0} health point on use.".format(MEAT_HEAL.toToolTipGreen())
 constant TT_BANANA = "A banana left by an animal. Restores {0} health point on use.".format(BANANA_HEAL.toToolTipGreen())

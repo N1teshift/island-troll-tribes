@@ -25,7 +25,7 @@ public LinkedList<int>tradeShip1Items = asList(
                 ITEM_FORGE_KIT,
                 ITEM_WORKSHOP_KIT,
                 ITEM_FIRE_KIT,
-                ITEM_STICK,
+                ITEM_MAGIC_TREE_SEED,
                 ITEM_FLINT
             )
 

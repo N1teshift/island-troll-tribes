@@ -27,6 +27,7 @@ import ThiefsPocket
 import ColorUtils
 import LinkedList
 import LocalAssets
+import SimError
 
 HashMap<int, real>foodItems = new HashMap<int,real>()
     ..put(ITEM_COOKED_MEAT, 50.)
@@ -69,11 +70,13 @@ function onCast(unit caster, unit target)
         if foodItems.has(itm.getTypeId())
             let healingAmount = foodItems.get(itm.getTypeId())
             new HealingInstance(target, healingAmount, HealingType.ITEM)
-        let charges = itm.getCharges()
-        if charges == 1
-            itm.remove()
-            return
-        itm.setCharges(charges-1)
+            let charges = itm.getCharges()
+            if charges == 1
+                itm.remove()
+                return
+            itm.setCharges(charges-1)
+    simError(caster.getOwner(), "You have no food to cast this ability")
+    caster.issueImmediateOrder("stop")        
 
     
 

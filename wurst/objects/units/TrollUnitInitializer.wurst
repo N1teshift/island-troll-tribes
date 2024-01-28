@@ -154,6 +154,7 @@ function createElementalist(int unitId) returns HeroDefinition
         ..setAttack2TargetsAllowed("debris,ground,item,structure,tree,ward,air")
         ..setAttack1Range(800)
         ..setAttack2Range(800)
+        ..setAttack1AttackType(AttackType.Magic)
         ..setAcquisitionRange(1000)
         ..setSpeedBase(280)
         ..setButtonPositionX(1)
@@ -377,6 +378,28 @@ function createWolfForm(int unitId) returns HeroDefinition
 @compiletime function createWolfForm()
     createWolfForm(UNIT_SHAPESHIFTER_WOLF)
 
+function createDireWolf(int unitId) returns HeroDefinition
+    return createSubTroll(unitId)
+        ..setNameEnhance(NAME_DIRE_WOLF)
+        ..setAttackDamage(8)
+        ..setAttackSpeed(1.50)
+        ..setModelFile(Units.direWolf1)
+        ..setIcons(Icons.bTNDireWolf)
+        ..setUnitSoundSet(Soundsets.shaman)
+        ..setSpeedBase(310)
+        ..setButtonPositionX(0)
+        ..setButtonPositionY(0)
+        ..setScalingValue(1)
+        ..setSightRadiusDay(1500)
+        ..setSightRadiusNight(1000)
+        ..setTooltipExtended(TOOLTIP_DIRE_WOLF)
+        ..setProperNames(NAME_DIRE_WOLF)
+        ..setProperNamesUsed(2)
+        ..setHotkey("Q")
+        ..setAbilitiesEnhance(NORMAL_SPELLS_DIRE_WOLF, HERO_SPELLS_DIRE_WOLF)
+
+@compiletime function createDireWolf()
+    createDireWolf(UNIT_DIRE_WOLF)
 
 function createBearForm(int unitId) returns HeroDefinition
     return createSubTroll(unitId)
@@ -400,6 +423,29 @@ function createBearForm(int unitId) returns HeroDefinition
 
 @compiletime function createBearForm()
     createBearForm(UNIT_SHAPESHIFTER_BEAR)
+
+function createDireBear(int unitId) returns HeroDefinition
+    return createSubTroll(unitId)
+        ..setNameEnhance("Dire Bear")
+        ..setAttackDamage(13)
+        ..setAttackSpeed(2.2)
+        ..setModelFile(Units.grizzlyBear)
+        ..setIcons(Icons.bTNGrizzlyBear)
+        ..setUnitSoundSet(Soundsets.shaman)
+        ..setSpeedBase(300)
+        ..setButtonPositionX(1)
+        ..setButtonPositionY(0)
+        ..setScalingValue(1.15)
+        ..setSightRadiusDay(1500)
+        ..setSightRadiusNight(1000)
+        ..setTooltipExtended(TOOLTIP_DIRE_BEAR)
+        ..setProperNames("Bill The Bear")
+        ..setProperNamesUsed(1)
+        ..setHotkey("R")
+        ..setAbilitiesEnhance(NORMAL_SPELLS_DIRE_BEAR, HERO_SPELLS_DIRE_BEAR)
+
+@compiletime function createDireBear()
+    createDireBear(UNIT_DIRE_BEAR)
 
 
 function createPantherForm(int unitId) returns HeroDefinition
@@ -668,7 +714,7 @@ function createObserver(int unitId) returns HeroDefinition
     return createSubTroll(unitId)
         ..setNameEnhance("Observer")
         ..setAttackDamage(10)
-        ..setAttackSpeed(1.70)
+        ..setAttackSpeed(1.8)
         ..setModelFile(LocalUnits.observer)
         ..setIcons(LocalIcons.bTNObserverSentry)
         ..setUnitSoundSet(Soundsets.shade)
@@ -692,7 +738,7 @@ function createTrapper(int unitId) returns HeroDefinition
     return createSubTroll(unitId)
         ..setNameEnhance("Trapper")
         ..setAttackDamage(10)
-        ..setAttackSpeed(1.70)
+        ..setAttackSpeed(1.80)
         ..setModelFile(LocalUnits.trapper)
         ..setIcons(LocalIcons.bTNTrapper)
         ..setUnitSoundSet(Soundsets.shade)

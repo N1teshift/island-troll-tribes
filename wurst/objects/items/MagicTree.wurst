@@ -58,7 +58,7 @@ class MagicTree
     construct(unit treeBuilder)
         let pos =treeBuilder.getPos()
         treeBuilder.remove()
-        tree = createDestructable('B001', pos, angle(0), 1.5, 0)
+        tree = createDestructable('B001', pos, angle(0), 1.35, 0)
         tree.setOccluderHeight(0.)
         tree.setLife(360.)
         cb =doPeriodically(60) (CallbackPeriodic cb) ->

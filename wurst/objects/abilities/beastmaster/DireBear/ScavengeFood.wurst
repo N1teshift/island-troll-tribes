@@ -1,0 +1,195 @@
+package ScavengeFood
+
+// Standard library imports:
+import HashMap
+import AbilityObjEditing
+import ClosureEvents
+import DamageEvent
+import InstantDummyCaster
+import StandardTextTags
+
+// Local imports:
+import ColorUtils
+import ChatCommands
+import ChatUtils
+import LocalObjectIDs
+import UnitExtensions
+import ToolTipsUtils
+import ObjectIds
+import Sleep
+import ChannelAbilityPreset
+import ClosureTimers
+import Orders
+import HealingSystem
+import BuffObjEditing
+import BuffIds
+import Abilities
+import StupefyField
+import DamageListeners
+import LocalAssets
+import SimError
+import FoodSlots
+import ItemPoolExtensions
+
+let TT_NAME = "Scavenge for food"
+let TT_EXT = "Scavenge for food from hidden stash or mushroom colony, attempting to collect all edible food as well as generating one unit of food."+
+             "\nScavenging extra food has a separate two minutes cooldown per stash."+
+             "\nThe amount of food scavenged is doubled at lvl {0}.".format("4".color(COLOR_GOLD_STR))
+let MANACOST = 20
+
+@compiletime function createScavengeFoodAbility()
+    new ChannelAbilityPreset(ABILITY_SCAVENGE_FOOD, 1, true)
+        ..presetCastingTime(lvl ->0.5)
+        ..presetCastRange(lvl -> 0.)
+        ..presetIcon(Icons.bTNStrengthOfTheWild)
+        ..presetTargetTypes(Targettype.UNIT)
+        ..presetHotkey("E")
+        ..setManaCost(1, MANACOST)
+        ..presetTooltipNormal(lvl->TT_NAME)
+        ..setName(TT_NAME)
+        ..presetTooltipNormalExtended(lvl->TT_EXT)    
+        ..presetTargetsAllowed(lvl ->commaList(
+            TargetsAllowed.neutral,
+            TargetsAllowed.ground,
+            TargetsAllowed.structure,
+            TargetsAllowed.invulnerable
+        )) 
+
+IterableMap<unit, ScavengedStash> stashInstances =  new IterableMap<unit, ScavengedStash>()
+
+let hiddenStashPool = CreateItemPool()
+    ..addItemType(ITEM_BANANA, 4)
+    ..addItemType(ITEM_HONEYCOMB, 1)
+                      
+
+
+class ScavengedStash
+    unit scavengedStash
+    unit troll
+    real cooldown = 120.
+    construct(unit _scavengedStash, unit _troll)
+        scavengedStash = _scavengedStash
+        troll = _troll
+        onScavengeFood()
+        doPeriodicallyTimed(1., cooldown) (CallbackCounted cb) ->
+            if cb.isLast()
+                destroy this
+
+    function onScavengeFood()
+        if scavengedStash.getTypeId() == UNIT_MUSHROOM_COLONY
+            handleMushrooms()
+        nullTimer() ->        
+            for each in scavengedStash.getInventory()
+                if bearFoodList.has(each.getTypeId())
+                    nullTimer() -> 
+                        stackAndSplitFood(each)
+            nullTimer() -> 
+                for each in scavengedStash.getInventory() 
+                    if bearFoodList.has(each.getTypeId())
+                        nullTimer() -> 
+                            moveIntoFoodSlot(each)
+                            nullTimer() -> 
+            generateFoodItem()    
+    
+    function moveFood(item food)
+        nullTimer() -> 
+            stackAndSplitFood(food) 
+        
+    function generateFoodItem()
+        item food = null    
+        if scavengedStash.getTypeId() == UNIT_HIDDEN_STASH
+            food =  hiddenStashPool.placeRandomItem(troll.getPos())
+        else if scavengedStash.getTypeId() == UNIT_MUSHROOM_COLONY
+            food =  createItem(ITEM_SCAVENGED_MUSHROOM, scavengedStash.getPos())
+        nullTimer() ->
+            if troll.getLevel()>=4
+                food.setCharges(2)
+            stackAndSplitFood(food)
+            nullTimer() -> 
+                moveIntoFoodSlot(food)   
+
+    function stackAndSplitFood(item food)
+        let bearFoodSlotInstance = bearFoodSlotInstances.get(troll) 
+        var maxCharges = 10
+        if food.getTypeId() == ITEM_HONEYCOMB
+            maxCharges = 8
+        item trollItem = null
+        for each in troll.getInventory()
+            if bearFoodList.has(each.getTypeId()) and each.getCharges()< maxCharges and each.getTypeId()==food.getTypeId()
+                trollItem =each
+        if trollItem == null
+            troll.addItemHandle(food)
+            //print("added")
+            return
+        bearFoodSlotInstance.pauseTriggers=true
+        if trollItem.getCharges()+food.getCharges()<=maxCharges
+            trollItem.setCharges(trollItem.getCharges()+food.getCharges())
+            food.remove()
+        else    
+            let diff = maxCharges-trollItem.getCharges()
+            food.setCharges(food.getCharges()-diff)
+            trollItem.setCharges(trollItem.getCharges()+diff)
+        bearFoodSlotInstance.pauseTriggers=false      
+
+    function handleMushrooms()
+        var mushroomCharges = 0 
+        for each in scavengedStash.getInventory()
+            if each.getTypeId() == ITEM_MUSHROOM
+                each.remove()
+                mushroomCharges+=1
+        if mushroomCharges<1
+            return
+        let itm = createItem(ITEM_SCAVENGED_MUSHROOM, scavengedStash.getPos())
+        nullTimer() -> 
+            itm.setCharges(mushroomCharges)
+            nullTimer() -> 
+                scavengedStash.addItemHandle(itm)
+
+                    
+      
+
+
+    function moveIntoFoodSlot(item food)
+        if not troll.hasItemById(ITEM_DIRE_BEAR_FOOD_SLOT)
+            return
+        let bearFoodSlotInstance = bearFoodSlotInstances.get(troll)
+        item dummy = null
+        if troll.hasItem(bearFoodSlotInstance.dummy2)
+            dummy = bearFoodSlotInstance.dummy2
+        else if troll.hasItem(bearFoodSlotInstance.dummy1)
+            dummy = bearFoodSlotInstance.dummy1
+        bearFoodSlotInstance.pauseTriggers=true
+        if dummy== null
+            return
+        troll.removeItem(dummy)
+        nullTimer() -> 
+            troll.addItemHandle(food)
+            nullTimer() ->           
+                bearFoodSlotInstance.pauseTriggers=false
+                bearFoodSlotInstance.updateDummyItems()
+            
+
+    ondestroy
+        stashInstances.remove(scavengedStash)
+
+function onCast(unit troll, unit target)
+    if target.getTypeId() != UNIT_HIDDEN_STASH and target.getTypeId() != UNIT_MUSHROOM_COLONY
+        target.issueImmediateOrder("stop")
+        simError(troll.getOwner(),"You can only scavenge from a hidden stash or a mushroom colony.")
+        return
+    if stashInstances.has(target)
+        target.issueImmediateOrder("stop")
+        //print(GetObjectName(target.getTypeId()))
+        simError(troll.getOwner(),"This place has been scavenged recently.")
+        return
+    else
+        stashInstances.put(target, new ScavengedStash(target, troll))
+
+init
+    EventListener.onTargetCast(ABILITY_SCAVENGE_FOOD) (unit caster, unit target) ->
+        onCast(caster, target)
+    
+            
+
+
+

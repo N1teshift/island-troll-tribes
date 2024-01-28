@@ -527,7 +527,7 @@ library Transmute initializer onInit requires LocalObjectIDs, UnitExtensions, It
                 call RemoveItem(t[3])
                 call RemoveItem(t[4])
                 call RemoveItem(t[5])
-                call UnitAddItemByIdSwapped( ITEM_BEARS_GREED_PAWS, GetTriggerUnit() )
+                call UnitAddItemByIdSwapped( ITEM_BEARS_GREED_PAWS_EMPTY, GetTriggerUnit() )
                 call lowerItem(1)
             endif                
             if i[0] == ITEM_BEAR_SKIN_COAT and i[1] == ITEM_STEEL_INGOT and i[2] == ITEM_SPIRIT_DARKNESS and i[3] == ITEM_SPIRIT_WIND and i[4] == ITEM_SPIRIT_WATER and i[5] == ITEM_MAGIC then

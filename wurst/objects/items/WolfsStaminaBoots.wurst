@@ -8,6 +8,7 @@ import ClosureEvents
 import ClosureTimers
 import ObjectIdGenerator
 import ObjectIds
+import BuffObjEditing
 
 
 // Local imports:
@@ -17,14 +18,15 @@ import Panic
 import StringBuilder
 import ToolTipsUtils
 import UnitExtensions
+import BuffIds
 
 constant ABILITY_WOLFS_STAMINA_BOOTS_PANIC = compiletime(ABIL_ID_GEN.next())
 //constant SPELLBOOK_ABILITY_ID = compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_WOLFS_STAMINA_BOOTS_PANIC)))
 
 let TT = new StringBuilder()
     ..add(
-        "Causes your troll to go into a panic, making him move {0} faster, " +
-        "but take {2} extra damage.|n"
+        "Causes your troll to go into a panic, making him move {0} faster " +
+        "and attack {1} faster.|n"
     )
     ..add(makeToolTipDuration(DURATION, COOLDOWN))
     ..add(
@@ -35,8 +37,7 @@ let TT = new StringBuilder()
     .build()
     .format(
         MS_FACTOR.toToolTipOrange(),
-        AS_FACTOR.toToolTipOrange(),
-        DAMAGE_FACTOR.toToolTipRed()
+        AS_FACTOR.toToolTipOrange()
     )
 
 @compiletime function createPanic() returns AbilityDefinitionBerserk
@@ -45,7 +46,8 @@ let TT = new StringBuilder()
         ..setCooldown(1, COOLDOWN)
         ..setManaCost(1, 0)
         ..setMovementSpeedIncrease(1, MS_FACTOR)
-        ..setAttackSpeedIncrease(1, 0)
+        ..setAttackSpeedIncrease(1, AS_FACTOR)
+        ..setBuffs(1, commaList(BUFF_WOLFS_STAMINA_BOOTS_PANIC))
         // Use a damage listener to handle this.
         ..setDamageTakenIncrease(1, 0)
         ..setDurationNormal(1, DURATION)
@@ -54,6 +56,9 @@ let TT = new StringBuilder()
         ..setName("Panic")
         ..setTooltipNormal(1, makeToolTipNorm("N", "Panic"))
         ..setTooltipNormalExtended(1, TT)
+
+@compiletime function createPanicBuff() returns BuffDefinition
+    return new BuffDefinition(BUFF_WOLFS_STAMINA_BOOTS_PANIC, BuffIds.berserk)
 
 class WolfsStaminaBootsInstance
     private unit wearer

@@ -60,7 +60,11 @@ let DRAIN_MIN_AMOUNT = 7.
 let DRAIN_PCT_AMOUNT = 0.05
 let DRAIN_TARGET_CLASSES = asList(
     UNIT_MAGE,
-    UNIT_PRIEST
+    UNIT_ELEMENTALIST,
+    UNIT_HYPNOTIST,
+    UNIT_DEMENTIA_MASTER,
+    UNIT_MASTER_HEALER,
+    UNIT_SAGE
 )
 
 let TT_COMMON = new StringBuilder()
@@ -257,9 +261,9 @@ function onMageMasherDamage()
         return
 
     // Restrict the effect to spellcasters.
-    if not DRAIN_TARGET_CLASSES.has(target.getTrollBaseClass()) and target.getTrollBaseClass()!= UNIT_PRIEST
+    if not DRAIN_TARGET_CLASSES.has(target.getTypeId()) and target.getTrollBaseClass()!= UNIT_PRIEST
         return
-
+    
     // Apply the validated effect.
     origin.burnMana(
         target,

@@ -4,6 +4,15 @@ package LocalAssets
 import ObjectIdGenerator
 
 public class LocalIcons
+    static constant bTNHungryBear           ="ReplaceableTextures\\CommandButtons\\BTNHungryBear.blp"
+    static constant bTNBearFoodSlot      = "ReplaceableTextures\\CommandButtons\\BTNBearFoodSlot.blp"
+    static constant bTNMistPeltBear01       = "ReplaceableTextures\\CommandButtons\\BTN_Misc_Pelt_Bear_01.blp"
+    static constant bTNOmnivore             = "ReplaceableTextures\\CommandButtons\\BTNOmnivore.blp"
+    static constant bTNAbilityHibernation   = "ReplaceableTextures\\CommandButtons\\BTNAbility_Hibernation.blp"
+    static constant bTNFeedPet              = "ReplaceableTextures\\CommandButtons\\BTNFeedPet.blp"
+    static constant pASBTNUnitWolf          = "ReplaceableTextures\\CommandButtons\\PASUNITWolf.blp"
+    static constant btnDireWolfDevour       = "ReplaceableTextures\\CommandButtons\\BTNLycanWolfBite.blp"
+    static constant btnLoneWolf             = "ReplaceableTextures\\CommandButtons\\BTNLoneWolf.blp"
     static constant bTNRenew                = "ReplaceableTextures\\CommandButtons\\BTNRenew.blp"
     static constant bTNRenew2                = "ReplaceableTextures\\CommandButtons\\BTNRenew2.blp"
     static constant bTNRenew3                = "ReplaceableTextures\\CommandButtons\\BTNRenew3.blp"

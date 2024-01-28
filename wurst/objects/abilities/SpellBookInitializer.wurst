@@ -23,6 +23,8 @@ let TT_MASTER_HEALER_SPELLBOOK   = "The Master Healer Healing Prowess, contains 
 let TT_SAGE_SPELLBOOK            = "The Sage Shamanic Art, contains the most powerfull buff a troll can cast ."
 let TT_SHAPESHIFTER_SPELLBOOK    = "Shapeshift into an animal form. Unlock following transformation :\n"+
         "Level 1 - Wolf\nLevel 2 - Bear\nLevel 3 - Panther\nLevel 4 - Tiger".color(GOLD_COLOR)
+let TT_DIRE_BEAR_SPELLBOOK       = "Dire Bear Abilities."
+let TT_DIRE_WOLF_SPELLBOOK        = "Dire Wolf Abilities."
 let TT_ROGUE_SPELLBOOK           = "Rogue Abilities, contains Thief and Rogue combat abilities"
 let TT_TELETHIEF_SPELLBOOK       = "Contains dimentional magic of Telethief"
 let TT_ESCAPE_ARTIST_SPELLBOOK   = "The Escape Artist Physical Abilities, contains another set of evasion spells."
@@ -177,6 +179,26 @@ let TT_THIEF_SPELLBOOK        = "Thief's skills"
         ..setRequiredLevel(1)
         ..setLevelSkipRequirement(1)
         ..setNameEnhance("R", "Shapeshifter Forms")
+
+@compiletime function createHeroSpellBookDireWolfSpells()
+    createHeroSpellBook(ABILITY_DIRE_WOLF_SPELLBOOK, 4)
+        ..setTooltipNormalExtended(1, TT_DIRE_WOLF_SPELLBOOK)
+        ..setAbilitiesPerLevel(DIRE_WOLF_ABILITY_HASH)
+        ..presetButtonPosNormal(2, 1)
+        ..setIconNormal(Icons.bTNDireWolf)
+        ..setRequiredLevel(1)
+        ..setLevelSkipRequirement(1)
+        ..setNameEnhance("R", "Direwolf Abilities")
+
+@compiletime function createHeroSpellBookDireBearSpells()
+    createHeroSpellBook(ABILITY_DIRE_BEAR_SPELLBOOK, 4)
+        ..setTooltipNormalExtended(1, TT_DIRE_BEAR_SPELLBOOK)
+        ..setAbilitiesPerLevel(DIRE_BEAR_ABILITY_HASH)
+        ..presetButtonPosNormal(2, 1)
+        ..setIconNormal(Icons.bTNBearForm)
+        ..setRequiredLevel(1)
+        ..setLevelSkipRequirement(1)
+        ..setNameEnhance("R", "Dire Bear Abilities")
 
 @compiletime function createSpellBookRendoEvolution()
     createHeroSpellBook(ABILITY_JUNGLE_TYRANT_EVOLUTION, 3)

@@ -25,23 +25,23 @@ let MANA_RESTORED_BY_HUTS = 200.
 let SLEEP_OUTSIDE_HP_PENALTY = 20.
 let SLEEP_OUTSIDE_HEAT_PENALTY = 15
 
-let INVUL_DURATION = 1.0
-let COOLDOWN = 10.
-let DURATION_HERO = 6.0
-let CAST_RANGE = 300.
-let TARGET_ALLOWED = commaList(
+public let INVUL_DURATION = 1.0
+public let COOLDOWN = 10.
+public let DURATION_HERO = 6.0
+public let CAST_RANGE = 300.
+public let TARGET_ALLOWED = commaList(
     TargetsAllowed.friend,
     TargetsAllowed.ground,
     TargetsAllowed.hero,
     TargetsAllowed.self
 )
 
-function AbilityDefinitionSleepcreep.setNameEnhance(string hotkey, string name)
+public function AbilityDefinitionSleepcreep.setNameEnhance(string hotkey, string name)
     this.setName(name)
     this.setHotkeyNormal(hotkey)
     this.setTooltipNormal(1, makeToolTipNorm(hotkey, name))
 
-function createSleepAbility(int newId) returns AbilityDefinitionSleepcreep
+public function createSleepAbility(int newId) returns AbilityDefinitionSleepcreep
     return new AbilityDefinitionSleepcreep(newId)
         ..setButtonPositionNormalX(3)
         ..setButtonPositionNormalY(2)
@@ -99,11 +99,15 @@ function onCast(unit caster, unit target, int abilId)
         case ABILITY_SLEEP_INSIDE_HUT
             target
                 ..addMana(MANA_RESTORED_BY_HUTS)
+        case ABILITY_HIBERNATE
+            target
+                ..addMana(MANA_RESTORED_BY_TROLL)
 
 init
     EventListener.onTargetCast(ABILITY_SLEEP_OUTSIDE    , (unit caster, unit target) -> onCast(caster, target, ABILITY_SLEEP_OUTSIDE))
     EventListener.onTargetCast(ABILITY_SLEEP_INSIDE_TENT, (unit caster, unit target) -> onCast(caster, target, ABILITY_SLEEP_INSIDE_TENT))
     EventListener.onTargetCast(ABILITY_SLEEP_INSIDE_HUT , (unit caster, unit target) -> onCast(caster, target, ABILITY_SLEEP_INSIDE_HUT))
+    EventListener.onTargetCast(ABILITY_HIBERNATE , (unit caster, unit target) -> onCast(caster, target, ABILITY_HIBERNATE))
 
     registerCommandAll("sleep") (triggerPlayer, args) ->
         let currentValue = protectionEnabled.get(triggerPlayer)

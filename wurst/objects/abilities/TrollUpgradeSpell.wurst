@@ -149,6 +149,15 @@ function AbilityDefinition.setRequiredTrollLevel(int level, boolean requiresSub)
         ..presetHotkey("Q")
         ..setBaseOrderID(1, "manaflareon")
 
+@compiletime function createUpgradeAbilityDireWolf() returns ChannelAbilityPreset
+    return createUpgradeAbility(ABILITY_DIRE_WOLF)
+        ..setUpgradeTarget("Dire Wolf")
+        ..presetTooltipNormalExtended(lvl -> TOOLTIP_DIRE_WOLF)
+        ..setIconNormal(Icons.bTNDireWolf)
+        ..setRequiredTrollLevel(6, false)
+        ..presetHotkey("E")
+        ..setBaseOrderID(1, "manashieldon")
+
 @compiletime function createUpgradeAbilityDruid() returns ChannelAbilityPreset
     return createUpgradeAbility(ABILITY_DRUID)
         ..setUpgradeTarget("Druid")
@@ -158,6 +167,15 @@ function AbilityDefinition.setRequiredTrollLevel(int level, boolean requiresSub)
         ..presetHotkey("W")
         ..setBaseOrderID(1, "manaflareoff")
 
+@compiletime function createUpgradeAbilityDireBear() returns ChannelAbilityPreset
+    return createUpgradeAbility(ABILITY_DIRE_BEAR)
+        ..setUpgradeTarget("Dire Bear")
+        ..presetTooltipNormalExtended(lvl -> TOOLTIP_DIRE_BEAR)
+        ..setIconNormal(Icons.bTNGrizzlyBear)
+        ..setRequiredTrollLevel(6, false)
+        ..presetHotkey("R")
+        ..setBaseOrderID(1, "manashieldoff")
+/*
 @compiletime function createUpgradeAbilityUltimateForm() returns ChannelAbilityPreset
     return createUpgradeAbility(ABILITY_JUNGLE_TYRANT)
         ..setUpgradeTarget("Jungle Tyrant")
@@ -166,6 +184,7 @@ function AbilityDefinition.setRequiredTrollLevel(int level, boolean requiresSub)
         ..setRequiredTrollLevel(9, true)
         ..presetHotkey("E")
         ..setBaseOrderID(1, "manashieldoff")
+*/
 
 @compiletime function createUpgradeAbilityRogue() returns ChannelAbilityPreset
     return createUpgradeAbility(ABILITY_ROGUE)
@@ -274,3 +293,4 @@ function AbilityDefinition.setRequiredTrollLevel(int level, boolean requiresSub)
         ..setRequiredTrollLevel(9, true)
         ..presetHotkey("E")
         ..setBaseOrderID(1, "manashieldoff")
+

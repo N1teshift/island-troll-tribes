@@ -42,14 +42,17 @@ public constant  NAME_GATHERER        = "Themoles,Chin'Jin,Zepac,Shishmortis'for
 public constant  NAME_RADAR_GATHERER  = "Themoles,Unpa,Zepac,Shishmortis'fork"
 public constant  NAME_HERB_MASTER     = "Themoles,Unpa,Zepac,Shishmortis'fork"
 public constant  NAME_OMNIGATHERER    = "Mortis"
+public constant  NAME_DIRE_WOLF       = "Danny The Dog,sobaka"
 
 
 // Pretty Map to assign inventory abilities to trolls in constructor
 public constant trollInventoryAbilityMap = new IterableMap<int, LinkedList<int>>()
 ..put(ABILITY_INVENTORY_3_SLOT, TROLL_INVENTORY_SLOT_3_LIST)
-..put(ABILITY_INVENTORY_4_SLOT, TROLL_INVENTORY_SLOT_4_LIST..remove(UNIT_PRIEST))
+..put(ABILITY_INVENTORY_4_SLOT, TROLL_INVENTORY_SLOT_4_LIST
+        ..remove(UNIT_PRIEST)
+        ..remove(UNIT_DIRE_BEAR))
 ..put(ABILITY_INVENTORY_5_SLOT, TROLL_INVENTORY_SLOT_5_LIST..add(UNIT_PRIEST))
-..put(AbilityIds.inventory, TROLL_INVENTORY_SLOT_6_LIST)
+..put(AbilityIds.inventory, TROLL_INVENTORY_SLOT_6_LIST..add(UNIT_DIRE_BEAR))
 
 public constant LinkedList<int> trollInventoryPseudoSlotList  = new LinkedList<int>()
                                                             ..addAll(MAGE_CLASS_LIST)
@@ -69,7 +72,7 @@ public class AttributeGrowth
 public constant IterableMap<int, AttributeGrowth> trollAttributeGrowth =  new IterableMap<int, AttributeGrowth>()
     //hunter classes new AttributeGrowth
     ..put(UNIT_HUNTER, new AttributeGrowth(1.3, 1.2, 0.5))
-    ..put(UNIT_HUNTER_1, new AttributeGrowth(1.5, 1., 0.5))
+    ..put(UNIT_HUNTER_1, new AttributeGrowth(1.3, 1.2, 0.5))
     ..put(UNIT_WARRIOR, new AttributeGrowth(2., 1., 0.5))
     ..put(UNIT_TRACKER, new AttributeGrowth(1.3, 1.7, 0.5))
     ..put(UNIT_JUGGERNAUT, new AttributeGrowth(2.5, 1.5, 0.5))
@@ -90,10 +93,12 @@ public constant IterableMap<int, AttributeGrowth> trollAttributeGrowth =  new It
     //beastmaster classes attributesGworth
     ..put(UNIT_BEASTMASTER, new AttributeGrowth(1.2, 1., 0.5))
     ..put(UNIT_BEASTMASTER_1, new AttributeGrowth(1.2, 1., 0.5))
-    ..put(UNIT_SHAPESHIFTER_WOLF, new AttributeGrowth(1.5, 1.2, 0.5))
+    ..put(UNIT_SHAPESHIFTER_WOLF, new AttributeGrowth(1.5, 1.4, 0.5))
     ..put(UNIT_SHAPESHIFTER_BEAR, new AttributeGrowth(2.5, 0.3, 0.5))
     ..put(UNIT_SHAPESHIFTER_PANTHER, new AttributeGrowth(1., 2., 0.5))
     ..put(UNIT_SHAPESHIFTER_TIGER, new AttributeGrowth(2., 1., 0.5))
+    ..put(UNIT_DIRE_WOLF, new AttributeGrowth(1.5, 1.4, 0.5))
+    ..put(UNIT_DIRE_BEAR, new AttributeGrowth(2.5, 0.3, 0.5))
     ..put(UNIT_DRUID, new AttributeGrowth(1.6, 1.4, 1.6))
     ..put(UNIT_JUNGLE_TYRANT, new AttributeGrowth(2.5, 2.2, 2.))
     //thief classes attributesGworth
@@ -125,7 +130,7 @@ public constant HERO_SPELLS_MAGE         = commaList(ABILITY_MAGE_SPELLBOOK,   A
 public constant HERO_SPELLS_PRIEST       = commaList(ABILITY_PRIEST_SPELLBOOK, ABILITY_BOOSTER,        ABILITY_MASTER_HEALER,ABILITY_SAGE)
 // The first ability is just a placeholder that is stripped during creation of the class menu.
 // TODO: Fix this hack by properly listing out abilities and class selection separately.
-public constant HERO_SPELLS_BEASTMASTER = commaList(ABILITY_SPIRIT_BEAST,     ABILITY_SHAPESHIFTER,   ABILITY_DRUID)
+public constant HERO_SPELLS_BEASTMASTER = commaList(ABILITY_SPIRIT_BEAST,     ABILITY_SHAPESHIFTER,   ABILITY_DRUID, ABILITY_DIRE_WOLF, ABILITY_DIRE_BEAR)
 public constant HERO_SPELLS_THIEF        = commaList(ABILITY_CLOAK,            ABILITY_ROGUE,  ABILITY_TELETHIEF,   ABILITY_ASSASSIN)
 public constant HERO_SPELLS_SCOUT        = commaList(ABILITY_REVEAL_ID,        ABILITY_OBSERVER,       ABILITY_TRAPPER,      ABILITY_SPY)
 public constant HERO_SPELLS_GATHERER     = commaList(ABILITY_ITEM_RADAR,       ABILITY_RADAR_GATHERER, ABILITY_HERB_MASTER,  ABILITY_OMNIGATHERER, ABILITY_ALCHEMIST)
@@ -155,6 +160,8 @@ public constant HERO_SPELLS_RADAR_GATHERER = commaList(ABILITY_TELE_RADAR_GATHER
 public constant HERO_SPELLS_HERB_MASTER    = commaList(ABILITY_TELE_HERB_GATHER,                ABILITY_OMNIGATHERER)
 public constant HERO_SPELLS_DRUID          = commaList(ABILITY_DRUID_SPELLBOOK,            ABILITY_JUNGLE_TYRANT)
 public constant HERO_SPELLS_ALCHEMIST      = commaList(ABILITY_ALCHEMIST_SPELLBOOK,         ABILITY_OMNIGATHERER)
+public constant HERO_SPELLS_DIRE_WOLF      = commaList(ABILITY_DIRE_WOLF_SPELLBOOK, ABILITY_JUNGLE_TYRANT)
+public constant HERO_SPELLS_DIRE_BEAR      = commaList(ABILITY_DIRE_BEAR_SPELLBOOK, ABILITY_JUNGLE_TYRANT)
 
 // Sub Normal Spells
 public constant NORMAL_SPELLS_WARRIOR        = commaList(ABILITY_HUNTER_WEB) //ABILITY_WARRIOR_SPELLBOOK,ABILITY_HUNTER_WEB
@@ -173,6 +180,8 @@ public constant NORMAL_SPELLS_OBSERVER       = commaList(ABILITY_OBSERVER_SPELLB
 public constant NORMAL_SPELLS_RADAR_GATHERER = commaList(ABILITY_RADAR_GATHERER_SPELLBOOK)
 public constant NORMAL_SPELLS_HERB_MASTER    = commaList(ABILITY_MIX_HERBS)
 public constant NORMAL_SPELLS_ALCHEMIST      = commaList(ABILITY_CREATE_PHILOSOPHERS_STONE)
+public constant NORMAL_SPELLS_DIRE_WOLF      = commaList(ABILITY_HIDE_MEAT)
+public constant NORMAL_SPELLS_DIRE_BEAR      = commaList(ABILITY_SCAVENGE_FOOD)
 
 // Shapeshifter
 public constant HERO_SPELLS_SHAPESHIFTER_WOLF    = commaList(ABILITY_SHAPESHIFTER_FORM, ABILITY_JUNGLE_TYRANT)
@@ -182,6 +191,7 @@ public constant HERO_SPELLS_SHAPESHIFTER_TIGER   = commaList(ABILITY_SHAPESHIFTE
 
 public constant NORMAL_SPELLS_SHAPESHIFTER_WOLF    = commaList(ABILITY_WOLF_HUNGER)
 public constant NORMAL_SPELLS_SHAPESHIFTER_BEAR    = commaList(ABILITY_BEAR_BULWARK,ABILITY_ARMOR_BONUS_4)
+
 
 public constant NORMAL_SPELLS_SHAPESHIFTER_PANTHER = commaList(ABILITY_PANTHER_PROWL)
 public constant NORMAL_SPELLS_SHAPESHIFTER_TIGER   = commaList(ABILITY_TIGER_VICIOUS_STRIKE)
@@ -288,6 +298,16 @@ public constant  TOOLTIP_SHAPESHIFTER    = "" +
     "The Shapeshifter is strong in battle and versatile, he can transform "+
     "himself into a wolf,a bear,a panther or a tiger. Each form got a unique ability allowing the shapeshifter to either,"+
     "get lifesteal,buff his allies armor and health regeneration,escape or cripple the enemy. "+
+    SUBCLASS_WARNING+DIFFICULTY_MEDIUM
+
+public constant TOOLTIP_DIRE_WOLF       = "" +
+    "Permanently transform into a Dire Wolf."+
+    "\nDire Wolf can only consume raw meat and has various abilities related to generating and consuming raw meat."+
+    SUBCLASS_WARNING+DIFFICULTY_MEDIUM
+
+public constant TOOLTIP_DIRE_BEAR       = "" +
+    "Permanently transform into a Dire Bear."+
+    "\nDire Bear is strong and durable fighter."+
     SUBCLASS_WARNING+DIFFICULTY_MEDIUM
 
 public constant TOOLTIP_DRUID           = "" +
@@ -411,3 +431,5 @@ public constant trollIcons = new HashMap<int,string>()
     ..put(UNIT_HERB_MASTER,          Icons.bTNIceTrollShadowPriest)
     ..put(UNIT_OMNIGATHERER,         LocalIcons.bTNTerrorTroll)
     ..put(UNIT_ALCHEMIST,            LocalIcons.bTNAlchemist)
+    ..put(UNIT_DIRE_WOLF,            Icons.bTNDireWolf)
+    ..put(UNIT_DIRE_BEAR,            Icons.bTNGrizzlyBear)          

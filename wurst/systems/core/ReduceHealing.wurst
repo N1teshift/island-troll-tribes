@@ -105,6 +105,7 @@ class State
         this.timers = new HashSet<CallbackPeriodic>()
 
     function adjustAmountHealed(real amount)
+
         // Adjust the running sum.
         this.sum += amount
 
@@ -204,7 +205,7 @@ function onUnitHealed(HealingInstance instance)
         instance.scaleMultiplier(output / instance.amount)
 
     // Adjust the moving sum.
-    state.adjustAmountHealed(instance.amount)
+    state.adjustAmountHealed(instance.trueAmount)
 
 // Treats death the same as unit removal.
 function onUnitDeath(unit target)

@@ -19,7 +19,7 @@ import Sounds
 import Orders
 import ClosureTimers
 import Transformation
-constant ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME = compiletime(ABIL_ID_GEN.next())
+public constant ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME = compiletime(ABIL_ID_GEN.next())
 
 let TT = new StringBuilder()
     ..add(
@@ -54,7 +54,7 @@ let TT = new StringBuilder()
 
 
 
-class WolfCoatInstance
+public class WolfCoatInstance
     private unit wearer
     private real baseClock
     private EventListener eventListener
