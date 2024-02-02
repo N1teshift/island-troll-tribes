@@ -117,6 +117,11 @@ init
         mode.message("Every troll will start with a " + "fire kit".color(ENERGY_COLOR))
         gameConfig.setStartWithFire(true)
 
+    new GameMode("no-super-subs", "ns", "General", "Subbed trolls cannot level up beyond level 4. Global experience at lvl 4.") (mode, args) ->
+        mode.deregister()
+        mode.message("Subbed trolls cannot level up beyond level {0}. Global experience at lvl {1}.".format("4".color(COLOR_GOLD_STR),"4".color(COLOR_GOLD_STR)))
+        gameConfig.setNoSuperSubs(true)
+
     new GameMode("start-with-one-fire", "so", "General", "Each tribe starts with a fire kit") (mode, args) ->
         mode.deregister()
         mode.message("Each tribe will start with a " + "fire kit".color(ENERGY_COLOR))

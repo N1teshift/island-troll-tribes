@@ -41,7 +41,7 @@ let DARK_STUN_DURATION  = 0.50
 
 // Initial and decay damage for each type of poison.
 let POISON_DMG  = [10., 6. ]
-let RPOISON_DMG = [20., 10.]
+let RPOISON_DMG = [15., 15.]
 let UPOISON_DMG = [40., 16.]
 
 // Attack and movement speed reduction for each type of poison.
@@ -59,7 +59,7 @@ let RPOISON_COOLDOWN = 5.
 let UPOISON_COOLDOWN = 8.
 
 // Miscellaneous effect parameters.
-let POISON_DURATION = 40.
+let POISON_DURATION = 30.
 let POISON_TICK_INTERVAL = 3.
 
 // Basic descriptors that apply to all spears.
@@ -324,8 +324,8 @@ function createDummyPoisonSpearAbility(int newId) returns AbilityDefinitionShado
         ..setDecayingDamage(1, RPOISON_DMG [1])
         ..setMovementSpeedFactor(1, RPOISON_DEBUFF [0])
         ..setAttackSpeedFactor(1, RPOISON_DEBUFF [1])
-        ..setDurationHero(1, POISON_DURATION)
-        ..setDurationNormal(1, POISON_DURATION)
+        ..setDurationHero(1, POISON_DURATION+1.)
+        ..setDurationNormal(1, POISON_DURATION+1.)
 
     createDummyPoisonSpearAbility(DUMMY_ABILITY_SPEAR_UPOISON)
         ..setInitialDamage(1, UPOISON_DMG [0])

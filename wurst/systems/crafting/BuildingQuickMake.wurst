@@ -10,6 +10,11 @@ init
     ..add(ITEM_FLINT)
     ..add(ITEM_STICK)
 
+    new QuickMake(ABILITY_QM_CAMP_FIRE_KIT_FANG)
+    ..add(ITEM_TINDER)
+    ..add(ITEM_PANTHER_FANG)
+    ..add(ITEM_STICK)
+
     new QuickMake(ABILITY_QM_TENT_KIT)
     ..add(ITEM_STICK)
     ..add(asList(ITEM_ELK_HIDE, ITEM_JUNGLE_WOLF_HIDE, ITEM_JUNGLE_BEAR_HIDE))

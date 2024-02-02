@@ -96,9 +96,10 @@ class RavenousBeast
                 troll.disableAbility(ABIL_BANANA, true, true)
 
     function addItem()
-        triggerFlag=false
         if troll.hasItem(itemHandle)
+            //print("troll has Item")
             return
+        triggerFlag=false
         let itm = troll.itemInSlot(3)
         if itm != null
             troll.removeItem(itm)
@@ -106,6 +107,7 @@ class RavenousBeast
             troll.addItemHandle(itemHandle) 
             nullTimer() ->                
                 triggerFlag=true
+                //print("triggerFlag = "+triggerFlag.toString())
                                  
     ondestroy
         destroy this.eventListener
@@ -125,18 +127,25 @@ function consumeCorpseHeal(unit troll)
     new HealingInstance(troll, troll, MEAT_HEAL, HealingType.ITEM) 
 
 function onQuickMakePriorEffect(unit caster)
+    if caster.getTypeId()!= UNIT_DIRE_BEAR
+        return
     let instance = instances.get(caster)
     if instance == null
         return
     instance.triggerFlag = false
 
 function onQuickMakeAfterEffect(unit caster)
+    if caster.getTypeId()!= UNIT_DIRE_BEAR
+        return    
     let instance = instances.get(caster)
     if instance == null
+        //print("null instance")
         return
     nullTimer() -> 
-        instance.addItem()
+        //print("added item")
+        instance.addItem()  
     instance.triggerFlag = true
+    //print("triggerFlag = "+instance.triggerFlag.toString())
 
 function onItemDrop(unit troll, item itm)
     if itm.getTypeId() != ITEM_DIRE_WOLF_DUMMY_SLOT
@@ -145,13 +154,17 @@ function onItemDrop(unit troll, item itm)
         itm.setVisible(false)    
     let instance = instances.get(troll)
     if instance == null
+        //print("nullitem")
         return
     if instance.triggerFlag == false
+        //print("triggerFlag = "+instance.triggerFlag.toString())
         return
     if not troll.isAlive()
+        //print("troll daed")
         return
     nullTimer() ->     
         instance.addItem()
+        //print("added item")
             
     
 function onRevive(unit troll)

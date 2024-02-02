@@ -211,8 +211,8 @@ function createThistleAbility(int newId) returns AbilityDefinitionWardenShadowSt
         ..presetDecayingDamage(lvl -> POISON_THISTLE_DECAYING_HERO_DMG)
         ..presetAttackSpeedFactor(lvl -> POISON_THISTLE_HERO_AS_FACTOR)
         ..presetMovementSpeedFactor(lvl -> POISON_THISTLE_HERO_MS_FACTOR)
-        ..presetDurationNormal(lvl -> THISTLE_DURATION_NORMAL)
-        ..presetDurationHero(lvl -> POISON_THISTLE_DURATION_HERO)
+        ..presetDurationNormal(lvl -> THISTLE_DURATION_NORMAL+1.)
+        ..presetDurationHero(lvl -> POISON_THISTLE_DURATION_HERO+1.)
         ..presetDecayPower(lvl -> POISON_THISTLE_DECAY_POWER)
         ..setName("Loaded Hero Thistles")   
 

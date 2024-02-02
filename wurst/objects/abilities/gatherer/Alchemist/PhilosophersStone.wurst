@@ -16,6 +16,7 @@ import LocalItemObjEditing
 import Abilities
 import SimError
 import ColorUtils
+import QuickMake
 
 
 let TT_PHILOSOPHERS_STONE = "Philosopher's stone converts Alchemist's mana into energy over time. It can be used to conjure Potion effects"+
@@ -68,6 +69,7 @@ class PhilosophersStoneInstance
     private real charges
     private CallbackPeriodic cb
     private real chargesRegenPeriod = 0.125
+    bool isTriggerPaused = false
 
     construct(unit hero)
         this.hero = hero
@@ -119,9 +121,13 @@ function onAbilityCreatePhilosophersStone(unit u)
             flashEffect(Abilities.tomeOfRetrainingCaster, u.getPos())
 
 function onDropPhilosophersStone(unit u, item itm)
-    if instances.has(u)
-        doAfter(ANIMATION_PERIOD) ->
-            u.addItemHandle(itm) 
+    let instance = instances.get(u)
+    if instance == null 
+        return
+    if instance.isTriggerPaused
+        return    
+    doAfter(ANIMATION_PERIOD) ->
+        u.addItemHandle(itm) 
 
 function onRevive(unit u)
     let instance = instances.get(u)
@@ -129,10 +135,27 @@ function onRevive(unit u)
         return
     instance.onRevive() 
         
+function onQuickMakePriorEffect(unit troll)
+    let instance = instances.get(troll)
+    if instance == null 
+        return
+    instance.isTriggerPaused=true
+    
+function onQuickMakeAfterEffect(unit troll)
+    let instance = instances.get(troll)
+    if instance == null 
+        return
+    instance.isTriggerPaused=false
 
 
 
 init
+    registerQuickMakePriorEffect() (unit target, int unitID) ->
+        onQuickMakePriorEffect(target)
+
+    registerQuickMakeAfterEffect() (unit target, int unitID) ->
+        onQuickMakeAfterEffect(target)
+
     EventListener.onCast(ABILITY_CREATE_PHILOSOPHERS_STONE) (unit caster) ->
         if caster.isInventoryFull()
             simError(caster.getOwner(), "Your inventory is full")

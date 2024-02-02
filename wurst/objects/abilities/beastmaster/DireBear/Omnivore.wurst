@@ -23,6 +23,7 @@ import LinkedList
 import QuickMake
 import HealingSystem
 import FoodBuffs
+import PetReleasing
 
 let HEALING_PENALTY = 0.6
 let BUFF_DURATION = 60.
@@ -141,6 +142,7 @@ function onSub(unit troll)
         doAfter(ANIMATION_PERIOD)->
             if not instances.has(troll)
                 instances.put(troll, new Omnivore(troll))
+                releasePet(troll)
 
 
 function onUnitHealed(HealingInstance healingInstance)

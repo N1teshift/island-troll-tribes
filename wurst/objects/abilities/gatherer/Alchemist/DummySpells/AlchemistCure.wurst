@@ -49,6 +49,7 @@ constant HOTKEY = hotKeys.get(hotkeyIndex)
         ..setButtonPositionNormalY(POS.b)
         ..setFollowThroughTime(1, 0)
         ..setEditorSuffix("(Wurst)")
+        //..setBaseOrderID(1, "acidbomb")
         ..presetCastRange(lvl->CAST_RANGE)
         ..presetTargetTypes(Targettype.UNIT)
 

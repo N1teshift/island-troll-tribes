@@ -176,6 +176,7 @@ function onCast(unit troll, unit target)
     if target.getTypeId() != UNIT_HIDDEN_STASH and target.getTypeId() != UNIT_MUSHROOM_COLONY
         target.issueImmediateOrder("stop")
         simError(troll.getOwner(),"You can only scavenge from a hidden stash or a mushroom colony.")
+        troll.setMana(troll.getMana()+MANACOST)
         return
     if stashInstances.has(target)
         target.issueImmediateOrder("stop")

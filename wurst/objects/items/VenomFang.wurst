@@ -33,7 +33,8 @@ let DAMAGE_MULTIPLIER_NORMAL = 2.
 
 public let PANTHER_FANG_NAME = "Panther Fang"
 public let PANTHER_FANG_TT = "A Fang of the Elder Panther. "+
-                 "\n+{0} Damage. ".format(ATK_DMG_BONUS.toString().color(COLOR_GREEN))
+                 "\n+{0} Damage. ".format(ATK_DMG_BONUS.toString().color(COLOR_GREEN))+
+                 "\nCan be used to quickmake a "+"Fire Kit".color(COLOR_LIGHT_BLUE)+" using the fang instead of flint."
 public let VENOM_FANG_NAME = "Venom Fang"
 public let VENOM_FANG_TT = "A Fang of the Elder Panther imbued with poison. "+
                  "\n+{0} Damage. ".format(ATK_DMG_BONUS.toString().color(COLOR_GREEN)) +
@@ -163,13 +164,13 @@ function onDamage()
         ..setNameEnhance(VENOM_FANG_NAME)
 
 @compiletime function createPantherFang() returns ItemDefinition
-    return createBasicItem(ITEM_PANTHER_FANG)
+    return createUsableItem(ITEM_PANTHER_FANG)
         ..setInterfaceIcon(LocalIcons.bTNPantherFang)
         ..setModelUsed(LocalItems.pantherFang)
         ..setTooltipExtended(PANTHER_FANG_TT)
         ..setScalingValue(1.)
         ..setLumberCost(12)
-        ..setAbilities(commaList(ABIL_DMG_VENOM_FANG))
+        ..setAbilities(commaList(ABILITY_QM_CAMP_FIRE_KIT_FANG, ABIL_DMG_VENOM_FANG))
         ..setNameEnhance(PANTHER_FANG_NAME)
 
 init

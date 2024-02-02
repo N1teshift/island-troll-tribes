@@ -17,7 +17,7 @@ import Reference
 public constant  NAME_HUNTER          = "Wonton,Liche,Taz,Koonta"
 public constant  NAME_WARRIOR         = "TGP_Warsquirrel the Tank,WTFBBQ the Angry,AlphaMale"
 public constant  NAME_TRACKER         = "Wonton,Liche,Taz,Koonta"
-public constant  NAME_JUGGERNAUT      = "Gigantalees"
+public constant  NAME_JUGGERNAUT      = "Gigantalees,SigmaMale,Zeb"
 public constant  NAME_MAGE            = "Nomey,Hargut,Eskei,Kwee"
 public constant  NAME_ELEMENTALIST    = "Blunderblood,Arty,Bitter Tooth Joe,Andy"
 public constant  NAME_HYPNOTIST       = "Nomey,Hargut,Eskei,Kwee"
@@ -38,11 +38,11 @@ public constant  NAME_SCOUT           = "Kippy,Zan'dar,Renegade_Rogue"
 public constant  NAME_OBSERVER        = "Kippy,Icy Ded Peeple,Renegade_Rogue"
 public constant  NAME_TRAPPER         = "Kippy,Zan'dar,Renegade_Rogue"
 public constant  NAME_SPY             = "Umbrage"
-public constant  NAME_GATHERER        = "Themoles,Chin'Jin,Zepac,Shishmortis'fork"
+public constant  NAME_GATHERER        = "Themoles,Chin'Jin,Zepac,Shishmortis'fork,Sheba"
 public constant  NAME_RADAR_GATHERER  = "Themoles,Unpa,Zepac,Shishmortis'fork"
 public constant  NAME_HERB_MASTER     = "Themoles,Unpa,Zepac,Shishmortis'fork"
 public constant  NAME_OMNIGATHERER    = "Mortis"
-public constant  NAME_DIRE_WOLF       = "Danny The Dog,sobaka"
+public constant  NAME_DIRE_WOLF       = "Danny The Dog,Sobaka"
 
 
 // Pretty Map to assign inventory abilities to trolls in constructor

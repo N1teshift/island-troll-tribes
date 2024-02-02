@@ -15,6 +15,8 @@ import LocalObjectIDs
 import PlayerExtensions
 import UnitEntity
 import UnitExtensions
+import HashList
+import GameConfig
 
 constant creepExp = [3, 25]
 constant heroExp = [0, 100, 120, 160, 220, 300]
@@ -97,6 +99,52 @@ function performExperienceGain()
             if not (entity instanceof BeastMaster or entity instanceof Hunter)
                 experience = (experience * GOK_MULTIPLIER).floor()
 
+        if level>=4 and hero.getTrollClassType() != ClassType.BASE_CLASS and gameConfig.isNoSuperSubs()
+            performGlobalExperienceGain(hero, experience, dead)
+        else    
+            while experience > 0
+                let expReduction = reduceExpGain
+                    ? max(0.4, 0.9 - 0.1 * level)
+                    : 1.0
+                let expThisLevel = expPerLevel[level] - heroCurrentXp
+                let expGain = (experience * expReduction).toInt()
+                if expGain > expThisLevel
+                    heroCurrentXp += expThisLevel
+                    experience -= (expThisLevel / expReduction).toInt()
+                    level += 1
+                    if hero.getTrollClassType() == null
+                        //print("troll class type is not set for unit "+GetObjectName(hero.getTypeId()))
+                    if level>=4 and hero.getTrollClassType() != ClassType.BASE_CLASS and gameConfig.isNoSuperSubs()
+                        hero.setXp(heroCurrentXp)
+                        performGlobalExperienceGain(hero, experience, dead)
+                        //print("lvl 4 achieved")
+                        return
+
+                else
+                    heroCurrentXp += expGain
+                    experience = 0
+
+        hero.setXp(heroCurrentXp)
+
+    // Deallocate the structures used.
+    destroy heroes
+
+function performGlobalExperienceGain(unit lvl4Troll, int exp, unit killedUnit)
+    //print("performGlobalExp")
+    HashList<unit> heroes = new HashList<unit>()
+    for each in lvl4Troll.getOwner().getAllies()
+        let troll = each.getTroll()
+        if troll.isAlive() and
+            not (troll.getLevel() >=4 and troll.getTrollClassType() !=ClassType.BASE_CLASS)
+            heroes.add(troll)
+
+    let reduceExpGain = killedUnit.getOwner().getId() == PLAYER_NEUTRAL_AGGRESSIVE
+    for hero in heroes
+        //print("adding Exp to "+GetObjectName(hero.getTypeId()))
+        let multiplier = getMultiplier(hero)
+        var level = hero.getLevel()
+        var heroCurrentXp = hero.getXp()    
+        var experience = exp
         while experience > 0
             let expReduction = reduceExpGain
                 ? max(0.4, 0.9 - 0.1 * level)
@@ -107,13 +155,18 @@ function performExperienceGain()
                 heroCurrentXp += expThisLevel
                 experience -= (expThisLevel / expReduction).toInt()
                 level += 1
+                //print("lvlup")
+                ///print("exp left = "+experience.toString())                
+                if level>=4 and hero.getTrollClassType() != ClassType.BASE_CLASS
+                    hero.setXp(heroCurrentXp)
+                    performGlobalExperienceGain(hero, experience, killedUnit)
+                    //print("recursion")
+                    return
             else
+                //print("added xp = "+expGain.toString())
                 heroCurrentXp += expGain
                 experience = 0
-
-        hero.setXp(heroCurrentXp)
-
-    // Deallocate the structures used.
+        hero.setXp(heroCurrentXp)        
     destroy heroes
 
 // Unlock the research corresponding to the new level.
@@ -161,3 +214,5 @@ function testConstants()
 
     // Verify the maximum level.
     hero..setXp(INT_MAX).getLevel().assertEquals(MAX_LEVEL)
+
+

@@ -15,6 +15,7 @@ import InstantDummyCaster
 import SimError
 import BuffIds
 import PhilosophersStone
+import Orders
 
 //constant NAME =""
 //constant COOLDOWN = 0
@@ -48,6 +49,7 @@ constant HOTKEY = hotKeys.get(hotkeyIndex)
         ..setButtonPositionNormalY(POS.b)
         ..setFollowThroughTime(1, 0)
         ..setEditorSuffix("(Wurst)")
+        //..setBaseOrderID(1, "acidbomb")
         ..presetTargetTypes(Targettype.UNIT)
 
 

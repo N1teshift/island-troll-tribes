@@ -59,6 +59,7 @@ constant TARGETS_ALLOWED = commaList(TargetsAllowed.alive,
         ..setEditorSuffix("(Wurst)")
         ..presetCastRange(lvl->CAST_RANGE)
         ..presetTargetTypes(Targettype.UNIT)
+        //..setBaseOrderID(1, "acidbomb")
 
 
 function onCast()

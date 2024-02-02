@@ -357,6 +357,7 @@ function getQuickMakeSpells() returns LinkedList<QuickMakeSpell>
 
         // Buildings
         // First three aren't added to master crafter because it's useless, button position set to 0 since they're in a spellbook
+        new QuickMakeSpell("Camp Fire Kit"         , TRANSMUTE_CRAFT_BUILDING_TOOLTIP+CAMP_FIRE_KIT_RECIPE         , "Fire"                 , ABILITY_QM_CAMP_FIRE_KIT_FANG         , 0, 0, "Q", QM_BUILD_TOOLIP, "defend"),
         new QuickMakeSpell("Camp Fire Kit"         , TRANSMUTE_CRAFT_BUILDING_TOOLTIP+CAMP_FIRE_KIT_RECIPE         , "Fire"                 , ABILITY_QM_CAMP_FIRE_KIT         , 0, 0, "Q", QM_BUILD_TOOLIP, "resurrection"),
         new QuickMakeSpell("Tent Kit"              , TRANSMUTE_CRAFT_BUILDING_TOOLTIP+TENT_KIT_RECIPE              , "Tent"                 , ABILITY_QM_TENT_KIT              , 0, 0, "W", QM_BUILD_TOOLIP, "battleroar"),
         // new QuickMakeSpell("Troll Hut Kit"         , TRANSMUTE_CRAFT_BUILDING_TOOLTIP+TROLL_HUT_KIT_RECIPE         , "SpiritLodge"          , ABILITY_QM_TROLL_HUT_KIT         , 0, 0, "E", QM_BUILD_TOOLIP, "spiritwolf"),

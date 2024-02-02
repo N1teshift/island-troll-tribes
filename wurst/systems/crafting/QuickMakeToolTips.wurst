@@ -238,8 +238,8 @@ public let LIVING_CLAY_RECIPE           = "a Living Clay. A sentry ward that exp
 public let MANA_CRYSTAL_RECIPE = "A glowing crystal of mana. Used to make magical items :\n\n1x "    +WIND    +" + 1x "+WATER
 
 
-public let POISON_SPEAR_RECIPE  = "a Poison Spear. Hurls a poisoned spear at a targeted enemy unit, dealing 30 initial damage and 10 damage every 3 seconds."+
-                                          "Reduce attack speed by 30% and movement speed by 30%."+makeToolTipDuration(40, 80, 5)+"\n\n1x "+
+public let POISON_SPEAR_RECIPE  = "a Poison Spear. Hurls a poisoned spear at a targeted enemy unit, dealing 15 initial damage and 15 damage every 3 seconds."+
+                                          "Reduce attack speed by 30% and movement speed by 30%."+makeToolTipDuration(30, 40, 2)+"\n\n1x "+
                                           POISON+" + 1x "+SPEAR
 
 

@@ -19,6 +19,7 @@ import UnitExtensions
         ..setName("Quick Drop Items")
         ..presetTooltipNormal(lvl -> "[|c00FF7F00V|r] Quick Drop Items")
         ..presetTooltipNormalExtended(lvl -> "Drops all the items in this unit on the ground.")
+        ..setBaseOrderID(1, "eattree")
 
 function onCast(unit caster)
     caster.dropItems()

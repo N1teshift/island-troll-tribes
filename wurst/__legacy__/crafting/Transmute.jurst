@@ -28,6 +28,13 @@ library Transmute initializer onInit requires LocalObjectIDs, UnitExtensions, It
                 call UnitAddItem(GetTriggerUnit(), added)
                 call lowerItem(2)
             endif
+            if i[0] == ITEM_TINDER and i[1] == ITEM_PANTHER_FANG and i[2] == ITEM_STICK then
+                call RemoveItem(t[0])
+                call RemoveItem(t[2])
+                set added = CreateItem(ITEM_FIRE_KIT, GetUnitX(GetTriggerUnit()), GetUnitY(GetTriggerUnit()))
+                call UnitAddItem(GetTriggerUnit(), added)
+                call lowerItem(2)
+            endif            
             set bol1=t[1].isHide()
             if i[0] == ITEM_STICK and bol1 and i[2] == ITEM_STICK then
                 call RemoveItem(t[0])
@@ -758,7 +765,7 @@ library Transmute initializer onInit requires LocalObjectIDs, UnitExtensions, It
                 call RemoveItem(t[1])
                 call UnitAddItemByIdSwapped( ITEM_HUNTING_NET, GetTriggerUnit() )
             endif
-            if i[0] == ITEM_POISON and i[1] == ITEM_SPEAR then
+            if i[0] == ITEM_SPEAR and i[1] == ITEM_POISON then
                 if GetItemCharges(t[0]) > 1 then
                     call SetItemCharges(t[0], GetItemCharges(t[0]) - 1 )
                 else

@@ -53,6 +53,7 @@ constant HOTKEY = hotKeys.get(hotkeyIndex)
         ..setFollowThroughTime(1, 0)
         ..presetCastRange(lvl->500.)
         ..setEditorSuffix("(Wurst)")
+        //..setBaseOrderID(1, "acidbomb")
 
 
 function onCast()

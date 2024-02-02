@@ -25,6 +25,8 @@ import ColorUtils
 import Toolkit
 import HashList
 
+
+public IterableMap<IslandSpawner,HashList<item>> itemsSpawnedPerIsland = new IterableMap<IslandSpawner,HashList<item>>()
 let itemSpawnInfoMap = new IterableMap<int, SpawnInfo>()
 let animalSpawnInfoMap = new IterableMap<int, SpawnInfo>()
 let animalSpawnFunctions = new HashMap<int, VoidBiFunction<real, real>>()
@@ -74,10 +76,11 @@ let spawnPoolNE = new Pool<rect>()
 let spawnPoolSE = new Pool<rect>()
 let spawnPoolSW = new Pool<rect>()
 
-let spawnRectanglesList = asList(spawnRecanglesNW, 
-                                 spawnRecanglesNE, 
-                                 spawnRecanglesSE, 
-                                 spawnRecanglesSW)  
+HashMap<Pool<rect>, LinkedList<rect>> SpawnPools = new HashMap<Pool<rect>, LinkedList<rect>>()
+    ..put(spawnPoolNW, spawnRecanglesNW)
+    ..put(spawnPoolNE, spawnRecanglesNE)
+    ..put(spawnPoolSE, spawnRecanglesSE)
+    ..put(spawnPoolSW, spawnRecanglesSW)
 
 
 let restrainedSpawnRegion = CreateRegion()
@@ -119,6 +122,8 @@ class ItemSpawnInfo extends SpawnInfo
         super(id, initialSpawnWeight, finalSpawnWeight, weightChangeTime)
         itemSpawnInfoMap.put(id, this)
 
+
+
 class IslandSpawner
     private constant Pool<rect> spawnRegionsPool = null
     private Pool<VoidBiFunction<real, real>> animalPool = null
@@ -131,6 +136,7 @@ class IslandSpawner
     int itemsSpawnCount
     int animalCurrent
     int animalsSpawnCount
+    HashList<item> itemsSpawned = new HashList<item>()
     private int itemsSpawnedTotal = 0
     private Pool<int> itemPool = null
 
@@ -139,6 +145,7 @@ class IslandSpawner
         this.animalsSpawnCount = animalsSpawnCount
         this.spawnRegionsPool = spawnRegionsPool
         islandSpawnList.push(this)
+        itemsSpawnedPerIsland.put(this, itemsSpawned)
 
     function randomSpawnPoint() returns vec2
         let spawnRect = this.spawnRegionsPool.random()
@@ -157,7 +164,8 @@ class IslandSpawner
 
         let spawnPoint = randomSpawnPoint()
         let spawnItemId = itemPool.random()
-        createItem(spawnItemId, spawnPoint)
+        let itm = createItem(spawnItemId, spawnPoint)
+        itemsSpawned.add(itm)
 
         //Keep track of spawned total & spawned item type total to balance out spawning
         this.itemsSpawnedTotal += 1
@@ -350,24 +358,28 @@ LinkedList<Pool<rect>> spawnPools = new LinkedList<Pool<rect>>()
 
 
 function combineRectanglesIntoPool(Pool<rect> pool) returns Pool<rect>
-    for islandRectangles in spawnRectanglesList
-        for rectangle in islandRectangles
-            let rectWeight = rectangle.height()*rectangle.width() // use square area as weight of the region
-            pool.add(rectWeight.toInt(), rectangle)
+    for rectangle in SpawnPools.get(pool)
+        let rectWeight = rectangle.height()*rectangle.width() // use square area as weight of the region
+        pool.add(rectWeight.toInt(), rectangle)
     return pool
+
+public IslandSpawner nwIslandSpawner
+public IslandSpawner neIslandSpawner
+public IslandSpawner seIslandSpawner
+public IslandSpawner swIslandSpawner
 
 function initIslandSpawners()
     let nwSpawns = combineRectanglesIntoPool(spawnPoolNW)
-    new IslandSpawner(15, 4, nwSpawns)
+    nwIslandSpawner = new IslandSpawner(15, 4, nwSpawns)
 
     let neSpawns =combineRectanglesIntoPool(spawnPoolNE)
-    new IslandSpawner(16, 4, neSpawns)
+    neIslandSpawner = new IslandSpawner(16, 4, neSpawns)
 
     let seSpawns =combineRectanglesIntoPool(spawnPoolSE)    
-    new IslandSpawner(16, 4, seSpawns)
+    seIslandSpawner =new IslandSpawner(16, 4, seSpawns)
 
     let swSpawns =combineRectanglesIntoPool(spawnPoolSW)    
-    new IslandSpawner(23, 6, swSpawns)
+    swIslandSpawner =new IslandSpawner(23, 6, swSpawns)
 
 function startSpawnCycle()
     doPeriodically(120) spawnerCallback ->

@@ -24,8 +24,8 @@ init
     ..add(ITEM_SPIRIT_WATER)
 
     new QuickMake(ABILITY_QM_POISON_SPEAR)
-    ..add(ITEM_POISON)
     ..add(ITEM_SPEAR)
+    ..add(ITEM_POISON)
 
     new QuickMake(ABILITY_QM_REFINED_POISON_SPEAR)
     ..add(ITEM_POISON)

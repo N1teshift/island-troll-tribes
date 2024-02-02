@@ -42,6 +42,9 @@ let trollClassType = new HashMap<int, ClassType>()
     ..put(UNIT_HERB_MASTER         , ClassType.SUB_CLASS)
     ..put(UNIT_OMNIGATHERER        , ClassType.SUPER_CLASS)
     ..put(UNIT_ALCHEMIST           , ClassType.SUB_CLASS)
+    ..put(UNIT_DIRE_BEAR           , ClassType.SUB_CLASS)
+    ..put(UNIT_DIRE_WOLF           , ClassType.SUB_CLASS)
+    
 
 let trollBaseClass = new HashMap<int, int>()
     ..put(UNIT_HUNTER              , UNIT_HUNTER)
