@@ -41,11 +41,12 @@ let TICKS_PER_FX = (FX_INTERVAL / PERIOD_INTERVAL).ceil()
 let COOLDOWN = 72.
 let MANACOST = 0
 let DURATION = 7.
-let intMultiplier = 5.
+let intMultiplier = 3.
+let BASE_MANA_RECOVERY =40
 let ABILITY_ICON = "ReplaceableTextures\\CommandButtons\\BTNMedidate.blp"
 let TOOLTIP_NORM = "Meditate"
-let TOOLTIP_EXTENDED = "Channels to recover {0} mana over {1} seconds. Cancels on damage. Has {2} seconds cooldown."
-    .format(intMultiplier.toString().color(COLOR_TEAL)+"x "+"Intelligence".color(COLOR_TURQUOISE), DURATION.toToolTipLightBlue(), COOLDOWN.toToolTipLightBlue())
+let TOOLTIP_EXTENDED = "Channels to recover {0} + {1} mana over {2} seconds. Cancels on damage. Has {3} seconds cooldown."
+    .format(BASE_MANA_RECOVERY.toString().color(COLOR_MANA), intMultiplier.toString().color(COLOR_MANA)+"x "+"Intelligence".color(COLOR_TURQUOISE), DURATION.toToolTipLightBlue(), COOLDOWN.toToolTipLightBlue())
 
 @compiletime function createMeditate() returns AbilityDefinition
     return constructMeditate(ABILITY_MEDITATE, "D", new Pair(2, 1))

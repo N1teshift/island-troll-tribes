@@ -94,7 +94,6 @@ class PoisonedUnit
             
         
     function applyDamage()
-        //find the highest damaging poison instance
         highestDamage = 0
         for each in poisonInstances
             if each.damage > highestDamage
@@ -134,12 +133,9 @@ function onDamage()
 
     // Exit if the damage is used for internal systems.
     if DamageEvent.getElement().hasTag(FAKE_DAMAGE)
-        //print("fake dmg")
         return
 
     DamageEvent.setAmount(0.) 
-    //print("poison dmg = "+damage.toString()) 
-
     let instance = instances.get(target)
     if instance == null
         new PoisonedUnit(source, target, damage) 

@@ -581,7 +581,17 @@ library Transmute initializer onInit requires LocalObjectIDs, UnitExtensions, It
                 call RemoveItem(t[5])
                 call UnitAddItemByIdSwapped( ITEM_CONDUCTING_ROD, GetTriggerUnit() )
                 call lowerItem(1)                                                                  
-            endif  
+            endif
+            if i[0] == ITEM_IRON_STAFF and i[1] == ITEM_STEEL_INGOT and i[2] == ITEM_BONE and i[3] == ITEM_BONE and i[4] == ITEM_SPIRIT_WIND and i[5] == ITEM_SPIRIT_WATER then
+                call RemoveItem(t[0])
+                call RemoveItem(t[1])
+                call RemoveItem(t[2])
+                call RemoveItem(t[3])
+                call RemoveItem(t[4])
+                call RemoveItem(t[5])
+                call UnitAddItemByIdSwapped( ITEM_BATTLE_STAFF, GetTriggerUnit() )
+                call lowerItem(1)                                                                  
+            endif                
             if i[0] == ITEM_BONE_COAT and i[1] == ITEM_SPIRIT_WIND and i[2] == ITEM_SPIRIT_WATER and i[3] == ITEM_MAGIC then
                 call RemoveItem(t[0])
                 call RemoveItem(t[1])
@@ -589,7 +599,17 @@ library Transmute initializer onInit requires LocalObjectIDs, UnitExtensions, It
                 call RemoveItem(t[3])
                 call UnitAddItemByIdSwapped( ITEM_ROBE_OF_THE_MAGI, GetTriggerUnit() )
                 call lowerItem(1)
-            endif                                    
+            endif
+            if i[0] == ITEM_BONE_GLOVES and i[1] == ITEM_STEEL_INGOT and i[2] == ITEM_NETHER_POTION and i[3] == ITEM_SPIRIT_WIND and i[4] == ITEM_SPIRIT_WATER and i[5] == ITEM_MANA_CRYSTAL then
+                call RemoveItem(t[0])
+                call RemoveItem(t[1])
+                call RemoveItem(t[2])
+                call RemoveItem(t[3])
+                call RemoveItem(t[4])
+                call RemoveItem(t[5])
+                call UnitAddItemByIdSwapped( ITEM_MAGEFIST, GetTriggerUnit() )
+                call lowerItem(1)
+            endif                                                  
         endif
     //End of Armory Item Creation
     //Begging of Witch Doctors Hut Item Creation

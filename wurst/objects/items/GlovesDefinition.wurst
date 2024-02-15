@@ -52,6 +52,16 @@ let TT_UNFORMAT_HYDRA_CLAWS_STRING = "Increases wearer's attack speed by {0}, al
                                      + "\n\nTsunami\n".color(SPECIAL_COLOR)
                                      + TSUNAMI_TT
 
+let TT_MAGEFIST_DESCRIPTION        = "Crafted by the most skilled sorcerers of Azeroth, Magefist radiates with an ethereal glow, "+
+                                        "resonating with the potent energies of magic."+
+                                        "\nGrants {0}: ".format("Arcane Switftness".color(COLOR_TURQUOISE))
+let TT_MAGEFIST_STATS              = "\n+{0} Attack speed"+
+                                     "\n+{1} Armor"+
+                                     "\n+{2} Agility"+
+                                     "\n+{3} Intelligence"
+let TT_MAGEFIST_ABILITY            = "\n+{0} Attack speed per {1}".format("1%".color(COLOR_ORANGE), "2 Intelligence".color(COLOR_TURQUOISE))
+
+
 // We can retrieve the ability data field, returning an Int in those case
 // DataA1 being the bonus attack speed, damage or armor for each respective abilities
 public let TT_ELK_SKIN_GLOVES = TT_UNFORMAT_SKIN_GLOVE.format(
@@ -117,6 +127,13 @@ public let TT_BATTLE_GLOVES = TT_UNFORMAT_BATTLE_GLOVE_STRING.format(
     "1x6".color(COLOR_RED),
     BG_COOLDOWN.toToolTipLightBlue(),
     BG_COOLDOWN_SKIP_PER_ATTACK.toToolTipLightBlue()
+)
+
+public let TT_MAGEFIST = TT_MAGEFIST_DESCRIPTION + TT_MAGEFIST_ABILITY+ TT_MAGEFIST_STATS.format(
+    getAbilityDataFieldPercent(ABILITY_ATTACK_SPEED_30, "DataA1").color(COLOR_ORANGE),
+    getAbilityDataField(ABILITY_ARMOR_BONUS_4,   "DataA1").color(COLOR_GREEN),
+    getAbilityDataField(ABILITY_AGI_BONUS_6,     "DataA1").color(COLOR_GREEN),
+    getAbilityDataField(ABILITY_INT_BONUS_8,     "DataB1").color(COLOR_GREEN)
 )
 
 public let TT_HYDRA_CLAWS = TT_UNFORMAT_HYDRA_CLAWS_STRING.format(
@@ -417,3 +434,25 @@ public let TT_HYDRA_CLAWS = TT_UNFORMAT_HYDRA_CLAWS_STRING.format(
         ..setNameEnhance("Hydra Claws")
         ..setTooltipExtended(ARTIFACT_PREFIX + TT_HYDRA_CLAWS)
         ..setCooldownGroup(toRawCode(ABILITY_TSUNAMI))
+
+@compiletime function createMageFist() returns ItemDefinition
+    return createBasicItem(ITEM_MAGEFIST)
+        ..setAbilities(commaList(
+            ABILITY_ATTACK_SPEED_30,
+            ABILITY_ARMOR_BONUS_4,
+            ABILITY_AGI_BONUS_6,
+            ABILITY_INT_BONUS_8
+            )
+        )
+        ..setInterfaceIcon(Icons.bTNSpellSteal)
+        ..setDescription("Increases wearer's attack speed speed, attack damage and armor")
+        ..setTintingColor1Red(255)
+        ..setTintingColor2Green(0)
+        ..setTintingColor3Blue(0)
+        ..setModelUsed(LocalItems.ironGloves)
+        ..setHotkey("")
+        ..setLumberCost(79)
+        ..setScalingValue(0.8)
+        ..setNameEnhance("Magefist")
+        ..setTooltipExtended(TT_MAGEFIST)
+        ..setCooldownGroup(toRawCode(ABILITY_ATTACK_SPEED_35))

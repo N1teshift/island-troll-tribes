@@ -1,0 +1,118 @@
+package LightningShield
+
+import ChannelAbilityPreset
+import LocalObjectIDs
+import Lodash
+import Assets
+import ToolTipsUtils
+import ClosureEvents
+import BuffObjEditing
+import ClosureTimers
+import ColorUtils
+import Tribe
+import PlayerExtensions
+import DamageEvent
+
+let MANACOST = 20
+let DURATION = 20.
+let COOLDOWN = 20.
+let CAST_RANGE = 900.
+let BASE_DAMAGE = 3
+let INT_MULTIPLIER = 0.1
+
+let TOOLTIP_NORM = "Lightning Shield"
+let TOOLTIP_EXTENDED = "Cast Lightning Shield on target unit, deals \n{0} + {1}x{2} damage per second.".format(BASE_DAMAGE.toString().color(COLOR_RED), INT_MULTIPLIER.toString().color(COLOR_RED),"Intelligence".color(COLOR_TURQUOISE))+
+                        "\nLast {0} seconds, has {1} seconds cooldown.".format(DURATION.toToolTipLightBlue(), COOLDOWN.toToolTipLightBlue())
+
+let TARGET_ALLOWED = "friend,ground,self"
+let AREA_OF_EFFECT = 160.
+let BUFF_ID = compiletime(BUFF_ID_GEN.next())
+let IMMOLATION_BUFF_ID = compiletime(BUFF_ID_GEN.next())
+let INTERVAL = 0.25
+
+
+class LightningShield extends AbilityDefinitionLightningShieldcreep
+    construct(int newAbilityId, string hotkey, Pair<int, int> buttonPos)
+        super(newAbilityId)
+        this.setHotkeyNormal(hotkey)
+        this.setName(TOOLTIP_NORM)
+        this.presetTooltipNormal(lvl -> makeToolTipNorm(hotkey, TOOLTIP_NORM))
+        this.presetTooltipNormalExtended(lvl -> TOOLTIP_EXTENDED)
+        this.setButtonPositionNormalX(buttonPos.a)
+        this.setButtonPositionNormalY(buttonPos.b)
+        this.setIconNormal(Icons.bTNLightningShield)
+        this.setCastRange(1, CAST_RANGE)
+        this.setDurationHero(1, DURATION)
+        this.setDurationNormal(1, DURATION)
+        this.setManaCost(1, MANACOST)
+        this.setCooldown(1, COOLDOWN)
+        this.setDamageperSecond(1, 0.001)
+        this.setTargetsAllowed(1, TARGET_ALLOWED)
+
+@compiletime function createLightningShield()
+
+    new LightningShield(ABILITY_LIGHTNING_SHIELD_DUMMY, "Q", new Pair(0, 0))
+
+    new BuffDefinition(IMMOLATION_BUFF_ID, BuffIds.immolation)
+    ..setIcon(Icons.bTNLightningShield)
+    ..setArtSpecial(1, "")
+    ..setArtTarget(1, "")
+    ..setTooltipNormal(1, TOOLTIP_NORM)
+    ..setTooltipNormalExtended(TOOLTIP_EXTENDED)
+/*
+@compiletime function createCloakOfFlames() returns AbilityDefinitionImmolationcreep
+    return new AbilityDefinitionImmolationcreep(ABILITY_LIGHTNING_SHIELD)
+    ..setHeroAbility(true)
+    ..setLevels(80)
+    ..presetManaCost(lvl->0)
+    ..setArtTarget(Abilities.lightningShieldTarget)
+    ..setArtSpecial(Abilities.lightningShieldTarget)
+    ..setArtCaster(Abilities.lightningShieldTarget)
+    ..setArtEffect(Abilities.lightningShieldTarget)
+    ..presetAreaofEffect(lvl->AREA_OF_EFFECT)
+    ..presetBufferManaRequired(lvl-> 0)
+    ..presetManaDrainedperSecond(lvl-> 0)
+    ..presetTargetsAllowed(lvl->"enemies,ground,neutral")
+    ..presetDamageperInterval(lvl->INTERVAL*(lvl*INT_MULTIPLIER+BASE_DAMAGE))
+    ..setName("Lightning Shield")
+    ..presetDurationHero(lvl->INTERVAL)
+    ..presetDurationNormal(lvl->INTERVAL)        
+    ..setEditorSuffix("Wurst")
+    ..presetBuffs(lvl->toRawCode(IMMOLATION_BUFF_ID))
+*/                         
+
+@compiletime function createCloakOfFlames() returns AbilityDefinitionTornadoDamage
+    return new AbilityDefinitionTornadoDamage(ABILITY_LIGHTNING_SHIELD)
+        ..setHeroAbility(true)
+        ..setLevels(80)
+        ..presetManaCost(lvl->0)
+        ..setTargetsAllowed(1, commaList(
+            TargetsAllowed.nonsapper,
+            TargetsAllowed.notself,
+            TargetsAllowed.structure
+        ))
+        ..presetDamagePerSecond(lvl->(lvl*INT_MULTIPLIER+BASE_DAMAGE))
+        //..presetDamageperInterval(lvl->INTERVAL*(lvl*INT_MULTIPLIER+BASE_DAMAGE))
+        ..presetDurationHero(lvl->INTERVAL)
+        ..presetDurationNormal(lvl->INTERVAL)         
+        ..presetAreaofEffect(lvl->AREA_OF_EFFECT)
+        ..presetTargetsAllowed(lvl->"enemies,ground,neutral,organic")        
+        ..setArtTarget("")
+        ..setTargetAttachmentPoint("origin")
+        ..setEditorSuffix("(Wurst)")
+
+
+function onCast(unit caster, unit target)
+    target.addAbility(ABILITY_LIGHTNING_SHIELD, caster.getInt(true))
+    nullTimer() -> 
+        //target.issueImmediateOrder("immolation")
+        doPeriodicallyTimed(INTERVAL, DURATION) (CallbackCounted cb) ->
+            if not target.hasAbility(BuffIds.lightningShield)
+                target.removeAbility(ABILITY_LIGHTNING_SHIELD)
+                target.removeAbility(IMMOLATION_BUFF_ID)
+
+init
+    EventListener.onTargetCast(ABILITY_LIGHTNING_SHIELD_DUMMY) (unit caster, unit target) ->
+        onCast(caster, target)
+                
+            

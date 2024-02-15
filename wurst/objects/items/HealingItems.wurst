@@ -114,7 +114,7 @@ constant TT_COCONUT = "A refreshing coconut. Restores {0} health and {1} mana po
         ..setName("Coconut")
         ..setTooltipExtended(TT_COCONUT)
         ..setDescription(TT_COCONUT)
-        ..setLumberCost(3)
+        ..setLumberCost(2)
         ..setScalingValue(0.75)
         ..setAbilities(ABIL_COCONUT.toRawCode())
         ..setCooldownGroup(ABIL_COCONUT.toRawCode())
@@ -134,7 +134,6 @@ function initHealItemTable()
 
 function initHealAbilityTable()
     itemTargetedHealAmount = new HashMap<int,real>()
-    itemTargetedHealAmount.put(ABILITY_HEALING_POTION, POT_HEAL)
     itemTargetedHealAmount.put(ABIL_MEAT, MEAT_HEAL)
 
 
@@ -162,7 +161,12 @@ init
             )
                 ..setColor(colorA(0, 131, 191, 255))
                 ..setPos(caster.getPos().x, caster.getPos().y-70, 0.)
-                ..matchVisibility(caster) 
+                ..matchVisibility(caster)
+    EventListener.onTargetCast(ABILITY_HEALING_POTION) (unit caster, unit target) ->
+        new HealingInstance(target, caster, POT_HEAL, HealingType.ABILITY)
+        
+        
+                     
     initHealItemTable()
     initHealAbilityTable()
     EventListener.add(EVENT_PLAYER_UNIT_USE_ITEM) ->

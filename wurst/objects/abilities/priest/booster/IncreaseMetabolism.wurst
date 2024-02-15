@@ -9,21 +9,28 @@ import HealingSystem
 import ToolTipsUtils
 import Lodash
 import LocalObjectIDs
+import ClosureEvents
+import HashMap
+import ClosureTimers
+import ColorUtils
 
 let BUFF_ID = compiletime(BUFF_ID_GEN.next())
 let ICON = Icons.bTNAncestralSpirit
 let CAST_RANGE = 700.
-let COOLDOWN = 30.
-let MANACOST = 20
+let COOLDOWN = 60.
+let MANACOST = 40
 let MS_FACTOR = 0.2
 let AS_FACTOR = 0.
-let DURATION = 20.
+let DURATION = 30.
 let HEALING_MULTIPLIER = 0.50
 let CAST_TIME = 0.2
+let INT_MULTIPLIER = 10.
+let BASE_EXTRA_HEALING_CAP =100
 let TARGET_ALLOWED = "air,ground,friend,organic,self,neutral"
 let TOOLTIP_NORM = "Increase Metabolism"
-let TOOLTIP_EXTENDED = "Increases the health recovered by food and potions by {0} and boosts movement speed by {1}. Lasts {2} seconds, Has {3} seconds cooldown."
-                  .format(HEALING_MULTIPLIER.toToolTipGreen(), MS_FACTOR.toToolTipOrange(), DURATION.toToolTipLightBlue(), COOLDOWN.toToolTipLightBlue())
+let TOOLTIP_EXTENDED = "Increases the health recovered by food and potions by {0} and boosts movement speed by {1}.".format(HEALING_MULTIPLIER.toToolTipGreen(), MS_FACTOR.toToolTipOrange())+
+                        "\nExtra healing is limited to {0}+{1}x{2}".format(BASE_EXTRA_HEALING_CAP.toString().color(COLOR_GREEN), INT_MULTIPLIER.toString().color(COLOR_GREEN), "Intelligence".color(COLOR_TURQUOISE))+
+                        "\nLasts {0} seconds, Has {1} seconds cooldown.".format(DURATION.toToolTipLightBlue(), COOLDOWN.toToolTipLightBlue())
 
 function createBuff()
     new BuffDefinition(BUFF_ID, BuffIds.bloodlust) // Original ID is BloodLust
@@ -33,6 +40,8 @@ function createBuff()
     ..setIcon(ICON)
     ..setTooltipNormal(1, TOOLTIP_NORM)
     ..setTooltipNormalExtended(1, "This unit recover more health points when eating meat and run faster.")
+
+HashMap<unit, Metabolism> instances = new HashMap<unit, Metabolism>()
 
 class IncreaseMetabolism extends AbilityDefinitionSlowCreep
     construct(int newAbilityId, string hotkey, Pair<int, int> buttonPos)
@@ -60,8 +69,51 @@ class IncreaseMetabolism extends AbilityDefinitionSlowCreep
     new IncreaseMetabolism(ABILITY_SAGE_INCREASE_METABOLISM, "Q", new Pair(0, 0))
     createBuff()
 
+class Metabolism
+    real totalExtraHealingRemaining = 0
+    unit target = null
+    construct(unit caster, unit _target)
+        target = _target
+        totalExtraHealingRemaining = caster.getInt(true)*INT_MULTIPLIER+BASE_EXTRA_HEALING_CAP
+
+    function onUnitHealed(HealingInstance healingInstance)
+        if not target.hasAbility(BUFF_ID)
+            destroy this
+            return
+        let baseAmount = healingInstance.getAmount()
+        var extraHealing = min(healingInstance.target.getMissingHP(), baseAmount*(1+HEALING_MULTIPLIER)) - baseAmount
+        extraHealing = max(extraHealing, 0)
+        totalExtraHealingRemaining-=extraHealing
+        healingInstance.scaleMultiplier(HEALING_MULTIPLIER + 1)
+        if totalExtraHealingRemaining<=0
+            destroy this
+        
+    ondestroy
+        target.removeAbility(BUFF_ID)
+        instances.remove(target)
+
+
+
+function onCast(unit caster, unit target)
+    let instance = instances.get(target)
+    if instance == null
+        instances.put(target, new Metabolism(caster, target))
+        doAfter(DURATION) ->
+            if instance != null
+                destroy instance 
+        
+
+function onHeal(HealingInstance healingInstance)
+    if healingInstance.healingType != HealingType.ITEM
+        return
+    let instance = instances.get(healingInstance.getTarget())
+    if instance == null
+        return
+    instance.onUnitHealed(healingInstance)
+
 init
+    EventListener.onTargetCast(ABILITY_INCREASE_METABOLISM) (unit caster, unit target) ->
+        onCast(caster, target)
+        
     onUnitHealed() ->
-        let instance = getHealingInstance()
-        if instance.target.hasAbility(BUFF_ID) and instance.healingType == HealingType.ITEM
-            instance.scaleMultiplier(HEALING_MULTIPLIER + 1)
+        onHeal(getHealingInstance())

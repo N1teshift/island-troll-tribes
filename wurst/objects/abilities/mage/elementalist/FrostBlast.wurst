@@ -27,8 +27,10 @@ let IMPACT_EFFECT_AOE = 250.
 let OVERCHARGE_DAMAGE_MULTIPLIER = 0.3
 let OVERCHARGE_PROJECTILE_COUNT = 7
 let OVERCHARGE_PROJECTILE_INTERVAL = 0.35
-let IMPACT_DAMAGE_INT_MULTIPLIER_MIN = 0.625
-let IMPACT_DAMAGE_INT_MULTIPLIER_MAX = 1.625
+let IMPACT_DAMAGE_INT_MULTIPLIER_MIN = 0.45
+let IMPACT_DAMAGE_INT_MULTIPLIER_MAX = 1.15
+let IMPACT_DAMAGE_BASE_MIN = 6.
+let IMPACT_DAMAGE_BASE_MAX = 15.
 let IMPACT_EFFECT_MIN_SLOW_AMOUNT = 0.35
 let IMPACT_EFFECT_MAX_SLOW_AMOUNT = 0.75
 let IMPACT_EFFECT_MIN_DURATION = 2.
@@ -41,10 +43,11 @@ let PROJECTILE_EFFECT_PATH_OVERCHARGED = Abilities.zigguratFrostMissile
 
 let IMPACT_EFFECT_PATH = Abilities.frostNovaTarget
 let TOOLTIP_NORM = "Frost Blast"
-let TOOLTIP_EXTENDED = ("Shoots out a missile of frost that explodes on impact, dealing {0}x - {1}x {2} damage to units in a small area and slows "+
-                       "their movement and attack speeds by {3} - {4} for {5} - {6} seconds with effects increasing by distance travelled before impact. "+
-                       "Has {6} seconds cooldown.").format(IMPACT_DAMAGE_INT_MULTIPLIER_MIN.toString().color(COLOR_RED), IMPACT_DAMAGE_INT_MULTIPLIER_MAX.toString().color(COLOR_RED),
-                       "Intelligence".color(COLOR_TURQUOISE), IMPACT_EFFECT_MIN_SLOW_AMOUNT.toToolTipOrange(), IMPACT_EFFECT_MAX_SLOW_AMOUNT.toToolTipOrange(),
+let TOOLTIP_EXTENDED = "Shoots out a missile of frost that explodes on impact, dealing {0} to {1} + {2}x to {3}x {4} damage to units in a small area and slows ".format(
+                        IMPACT_DAMAGE_BASE_MIN.toString().color(COLOR_RED),IMPACT_DAMAGE_BASE_MAX.toString().color(COLOR_RED),
+                        IMPACT_DAMAGE_INT_MULTIPLIER_MIN.toString().color(COLOR_RED), IMPACT_DAMAGE_INT_MULTIPLIER_MAX.toString().color(COLOR_RED), "Intelligence".color(COLOR_TURQUOISE))+
+                       ("their movement and attack speeds by {0} - {1} for {2} - {3} seconds with effects increasing by distance travelled before impact. "+
+                       "Has {4} seconds cooldown.").format(IMPACT_EFFECT_MIN_SLOW_AMOUNT.toToolTipOrange(), IMPACT_EFFECT_MAX_SLOW_AMOUNT.toToolTipOrange(),
                        IMPACT_EFFECT_MIN_DURATION.toToolTipLightBlue(), IMPACT_EFFECT_MAX_DURATION.toToolTipLightBlue(), COOLDOWN.toToolTipLightBlue())
 
 function createBuff()
@@ -168,8 +171,9 @@ class FrostBlastProjectile
 
         let slowTier = 1 + (9*effectScalingValue).round()
         let heroInt = ownerUnit.getInt(true)
-        let totatMultiplier = IMPACT_DAMAGE_INT_MULTIPLIER_MIN + (IMPACT_DAMAGE_INT_MULTIPLIER_MAX-IMPACT_DAMAGE_INT_MULTIPLIER_MIN)*effectScalingValue
-        var damage = totatMultiplier*heroInt
+        let totatMultiplier = IMPACT_DAMAGE_INT_MULTIPLIER_MIN+ (IMPACT_DAMAGE_INT_MULTIPLIER_MAX-IMPACT_DAMAGE_INT_MULTIPLIER_MIN)*effectScalingValue
+        let totalBaseDmg = IMPACT_DAMAGE_BASE_MIN+ (IMPACT_DAMAGE_BASE_MAX-IMPACT_DAMAGE_BASE_MIN)*effectScalingValue
+        var damage = totatMultiplier*heroInt+totalBaseDmg
         if (isOvercharged)
             damage = damage * OVERCHARGE_DAMAGE_MULTIPLIER
 

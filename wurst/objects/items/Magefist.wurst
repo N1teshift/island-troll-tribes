@@ -1,0 +1,105 @@
+package Magefist
+
+// Standard library imports:
+import AbilityObjEditing
+import HashMap
+import ClosureEvents
+import ObjectIdGenerator
+
+// Local imports:
+import LocalObjectIDs
+import HealingItems
+import Panic
+import StringBuilder
+import ToolTipsUtils
+import LocalAssets
+import ObjEditingUtils
+import ObjectIds
+import ChannelAbilityPreset
+import ItemIds
+import HealingSystem
+import ClosureTimers
+import SimError
+import PlayerExtensions
+import Transformation
+import UnitExtensions
+
+
+
+
+
+@compiletime function createSpeedBonusAbility()
+    new AbilityDefinitionAttackSpeedIncrease(ABILITY_MAGEFIST_ATTACK_SPEED)
+        ..setLevels(80)
+        ..presetAttackSpeedIncrease(lvl->0.01*lvl/2)        
+        ..setName("Magefist Attack speed bonus")
+        ..setEditorSuffix("(Wurst)")
+
+IterableMap<unit, Magefist> instances = new IterableMap<unit, Magefist>()
+
+class Magefist
+    unit wearer
+    item itm = null
+    int abilId = ABILITY_MAGEFIST_ATTACK_SPEED
+    construct(unit _wearer, item _itm)
+        wearer = _wearer
+        itm = _itm
+        updateAttackSpeedBonus()
+
+
+    function updateAttackSpeedBonus()
+        let lvl = min(80, wearer.getInt(true))
+        if wearer.hasAbility(abilId)
+            wearer.setAbilityLevel(abilId, lvl)
+        nullTimer() -> 
+            wearer.addAbility(abilId, lvl)
+                
+ 
+    function onItemDrop()
+        wearer.removeAbility(abilId)
+        destroy this
+
+    ondestroy
+        instances.remove(wearer)
+
+
+function onItemPickup(unit u, item itm)
+    if not u.isTroll()
+        return
+    let instance = instances.get(u)
+    if instance == null and itm.getTypeId() == ITEM_MAGEFIST
+        instances.put(u, new Magefist(u, itm)) 
+        return
+    else if instance != null
+        instance.updateAttackSpeedBonus()
+
+function onItemDrop(unit u, item itm)
+    let instance = instances.get(u)
+    if instance == null
+        return
+    if itm == instance.itm
+        instance.onItemDrop()
+    else
+        instance.updateAttackSpeedBonus()
+
+function updateAttackSpeedBonus(unit u)
+    let instance = instances.get(u)
+    if instance == null
+        return
+    instance.updateAttackSpeedBonus()
+
+init
+    EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->
+        if GetManipulatedItem().getTypeId() == ITEM_MAGEFIST
+            onItemPickup(GetManipulatingUnit(), GetManipulatedItem())
+
+    EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
+        if GetManipulatedItem().getTypeId() == ITEM_MAGEFIST
+            onItemDrop(GetManipulatingUnit(), GetManipulatedItem())
+
+    registerAfterEffect() (unit target, int unitID) ->
+        doAfter(ANIMATION_PERIOD)->
+            updateAttackSpeedBonus(target)
+
+    EventListener.add(EVENT_PLAYER_HERO_LEVEL) -> 
+        updateAttackSpeedBonus(GetTriggerUnit()) 

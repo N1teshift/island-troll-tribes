@@ -26,6 +26,7 @@ import IdListConstant
 import InventoryEvent
 import UnitExtensions
 import Orders
+import QuickMake
 
 constant TT_ELK_TROPHY_HIDE ="\n\nElk hide: "+
                              "\n +1 ".color(ENERGY_COLOR)+"armor."+ 
@@ -83,8 +84,7 @@ let id3 = compiletime(attachments.get(ITEM_JUNGLE_BEAR_HIDE).getIDs())
     return createBasicItem(ITEM_HUNTER_TROPHY_HIDE_DUMMY)
             ..setName("Hunter's Trophy")
             ..setInterfaceIcon(LocalIcons.bTNTrophyHideDummy)
-            ..setDroppedWhenCarrierDies(false)
-            ..setCanBeDropped(false)
+            //..setCanBeDropped(false)
             ..setTooltipExtended(TT_DUMMY_ITEM_EXTENDED)
 
 @compiletime function createElkHideTrophy() returns ItemDefinition
@@ -115,32 +115,47 @@ class TrophyHide
     unit hero = null
     item hunterDummyItem = null
     item trophyHide = null
+    bool suspendTriggersFlag = false
     Attachment attachment
 
     construct(unit hero)
         this.hero = hero
-        hero.addItemToSlot(ITEM_HUNTER_TROPHY_HIDE_DUMMY, 3)
+        hunterDummyItem = createItem(ITEM_HUNTER_TROPHY_HIDE_DUMMY, hero.getPos())
+        hunterDummyItem.setVisible(false)
         nullTimer() ->            
-            hunterDummyItem = hero.getItemById(ITEM_HUNTER_TROPHY_HIDE_DUMMY)
+            hero.addItemHandleToSlot(hunterDummyItem, 3)
 
-    function onHideDrop(item itemHandle)
-        if not hero.isAlive()
+    function updateDummySlot()
+        if updateHides()
             return
-        if this.trophyHide == itemHandle
-            nullTimer() ->
-                let nextHide = findNextHide()
-                if  nextHide != null
-                    replaceHideWithTrophy(nextHide)
-                else
-                    //updateAttachment(-1)
-                    trophyHide = null
-                    let itm =hero.itemInSlot(3)
-                    if itm !=null and itm != hunterDummyItem and itm != trophyHide and not HIDE_LIST.has(itm.getTypeId())                   
-                        hero.removeItemFromSlot(3)                       
-                    hero.addItemHandleToSlot(hunterDummyItem, 3)
-                    if itm !=null
-                        hero.addItemHandle(itm)       
-                replaceTrophyWithHide(itemHandle)
+        if hero.hasItem(hunterDummyItem)
+            return
+        suspendTriggersFlag = true        
+        if hero.isInventoryFull()
+            hero.removeItemFromSlot(3)
+        nullTimer() ->
+            hero.addItemHandle(hunterDummyItem)
+            suspendTriggersFlag = false
+
+    function onHideDrop()
+        nullTimer() ->     
+            hunterDummyItem.setVisible(false)
+        suspendTriggersFlag = true
+        replaceTrophyWithHide()
+        nullTimer() ->
+            updateDummySlot()
+        suspendTriggersFlag = false            
+
+    function updateHides() returns bool
+        if trophyHide== null
+        if hero.hasItem(trophyHide)
+            return true
+        let nextHide =  findNextHide()
+        if nextHide != null
+            replaceHideWithTrophy(nextHide)
+            return true            
+        return false
+
 
     //find next hide of highest index of HIDE_LIST
     function findNextHide() returns item            
@@ -152,20 +167,17 @@ class TrophyHide
         return nextHide
 
     function replaceHideWithTrophy(item itemHandle)
+        suspendTriggersFlag = true
         let trophy= hideToTrophyMap.get(itemHandle.getTypeId())
-        //updateAttachment(itemHandle.getTypeId())         
-        itemHandle.remove()       
+        //updateAttachment(itemHandle.getTypeId())
+        let slot = hero.getItemSlot(itemHandle)         
+        itemHandle.remove()   
+        trophyHide =createItem(trophy, hero.getPos())
+        hero.removeItem(hunterDummyItem)    
         nullTimer() ->
-            trophyHide =createItem(trophy, hero.getPos())
-            let itm =hero.itemInSlot(3)
-            if itm != null and itm != hunterDummyItem and itm != trophyHide
-                hero.dropItemSlot(itm, 3)
-                nullTimer() ->                     
-                    hero.addItemHandleToSlot(trophyHide, 3)
-                hero.addItemHandle(itm)
-            else
-                if itm != hunterDummyItem and itm != trophyHide 
-                    hero.addItemHandleToSlot(trophyHide, 3)                                            
+            hunterDummyItem.setVisible(false)
+            hero.addItemHandleToSlot(trophyHide, slot)
+            suspendTriggersFlag = false
 
     function updateAttachment(int newAttachment)
         if trophyHide != null
@@ -177,32 +189,23 @@ class TrophyHide
                     if attachment!= null             
                         attachment.apply(hero)        
 
-    function replaceTrophyWithHide(item itemHandle)
+    function replaceTrophyWithHide()
         nullTimer() -> 
-            let pos =hero.getPos()
-            if not itemHandle.isOwned()
-                createItem(trophyToHideMap.get(itemHandle.getTypeId()), pos)
-                itemHandle.remove()
+            let pos =trophyHide.getPos()
+            if not trophyHide.isOwned()
+                createItem(trophyToHideMap.get(trophyHide.getTypeId()), pos)
+                trophyHide.remove()
+                trophyHide = null
             //updateAttachment(-1)
 
-    function onHidePickup(item itemHandle)
-        if trophyHide == null       
-            hero.removeItem(hunterDummyItem)
-            nullTimer() -> 
-                hunterDummyItem.setVisible(false)
-                replaceHideWithTrophy(itemHandle)
-
-    function onItemMoved()
-        let itm =hero.itemInSlot(3)
-        if trophyHide != null
-            replaceTrophyWithHide(trophyHide)       
-        if not HIDE_LIST.has(itm.getTypeId())
-            hero.removeItem(itm)
-            hero.addItemHandleToSlot(hunterDummyItem, 3)
-        else 
-            if itm != trophyHide
-                replaceHideWithTrophy(itm)
-
+    function onTargetOrder(item itemHandle)
+        suspendTriggersFlag = true    
+        hero.removeItem(hunterDummyItem)
+        suspendTriggersFlag = false 
+        nullTimer() -> 
+            hero.addItemHandle(itemHandle)
+            hunterDummyItem.setVisible(false)
+            //replaceHideWithTrophy(itemHandle)
 
 
 
@@ -222,13 +225,24 @@ function cacheAttachmentIds()
     attachments.get(ITEM_JUNGLE_BEAR_HIDE).setIDs(id3)
 
 function onHideDrop(unit hero, item itemHandle)
-    if instances.has(hero)
-        instances.get(hero).onHideDrop(itemHandle)
+    if (not trophyToHideMap.has(itemHandle.getTypeId())) and (itemHandle.getTypeId() != ITEM_HUNTER_TROPHY_HIDE_DUMMY)
+        return    
+    let instance = instances.get(hero)
+    if instance == null
+        return 
+    if instance.suspendTriggersFlag == true    
+        return
+    nullTimer() ->        
+        instance.onHideDrop()
 
 function onHidePickup(unit hero, item itemHandle)
-    nullTimer() ->
-        if hero.hasItem(itemHandle) and instances.has(hero)    
-            instances.get(hero).onHidePickup(itemHandle)
+    let instance = instances.get(hero)
+    if instance == null
+        return
+    if instance.suspendTriggersFlag == true
+        return
+    nullTimer() ->   
+        instance.updateDummySlot()
 
 
 function onTrophyPickup(unit hero, item itemHandle)
@@ -241,14 +255,21 @@ function onTrophyPickup(unit hero, item itemHandle)
             
 
 function onUnitEnter(unit troll)
-    if troll.getTrollBaseClass() == UNIT_HUNTER
-        if not instances.has(troll)
-            instances.put(troll, new TrophyHide(troll))
+    if not troll.getTrollBaseClass() == UNIT_HUNTER
+        return
+    let instance = instances.get(troll)
+    if instance == null
+        instances.put(troll, new TrophyHide(troll))
+    else
+        instance.updateDummySlot()
 
 // initialize all hunters after hero draft is over
 function onUnitLeave(unit u)
-    if instances.has(u)
-        destroy instances.getAndRemove(u)       
+    let instance = instances.get(u)
+    if instance == null
+        return
+    instance.onHideDrop()
+        //destroy instances.getAndRemove(u)       
 
 
 function initializeAttachmentsIds()
@@ -256,13 +277,6 @@ function initializeAttachmentsIds()
     attachments.get(ITEM_JUNGLE_WOLF_HIDE).setIDs(id2)
     attachments.get(ITEM_JUNGLE_BEAR_HIDE).setIDs(id3)               
 
-function onItemMoved()
-    let hero = getInventoryManipulatingUnit()
-    let itm = getInventoryManipulatedItem()
-    let itmSwapped = getInventorySwappedItem()
-    var instance = instances.get(hero)
-    if instance ==null
-        //instance.onItemMoved()
 
 function onTargetOrder()
     let order = GetIssuedOrderId()
@@ -270,7 +284,11 @@ function onTargetOrder()
     if order != Orders.smart or not u.isInventoryFull() or not instances.has(u)
         return
     let target = GetOrderTargetItem()
-
+    let instance = instances.get(u)
+    if instance == null
+        return
+    if not HIDE_LIST.has(target.getTypeId())
+        return
     // Smart pickup system -> simulate picking up meat like an item if full inventory, like in Bannars StackNSplit system
     // Used to pick up ammo even if inventory's full
     // TODO: Currently only work when troll is in pick up range, make it so the troll move toward ammo even if inventory is full
@@ -281,17 +299,34 @@ function onTargetOrder()
         let collisionSize = u.getCollisionSize()
         let rangeSq = (150.0 + collisionSize).pow(2)
         if u.getPos().distanceToSq(target.getPos()) <= rangeSq
-            and HIDE_LIST.has(target.getTypeId())
-            instances.get(u).onHidePickup(target)
+            instance.onTargetOrder(target)
 
 
-init        
+function onQuickMakePriorEffect(unit troll)            
+    let instance = instances.get(troll)
+    if instance == null
+        return
+    instance.suspendTriggersFlag = true
+
+function onQuickMakeAfterEffect(unit troll)  
+    let instance = instances.get(troll)
+    if instance == null
+        return
+    instance.suspendTriggersFlag = false 
+    doAfter(ANIMATION_PERIOD) ->
+        instance.updateDummySlot() 
+         
+
+init   
+    registerQuickMakePriorEffect() (unit target, int unitID) ->
+        onQuickMakePriorEffect(target)
+
+    registerQuickMakeAfterEffect() (unit target, int unitID) ->
+        onQuickMakeAfterEffect(target)    
+
     initializeAttachmentsIds()
 
     EventListener.add(EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER, () -> onTargetOrder())    
-
-    registerInventoryEvent(EVENT_ITEM_INVENTORY.MOVE)->
-        onItemMoved()
 
     EventListener.add(EVENT_PLAYER_UNIT_DEATH) -> 
         onUnitLeave(GetTriggerUnit()) 
@@ -306,7 +341,7 @@ init
             onHidePickup(GetTriggerUnit(), GetManipulatedItem())
   
     EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
-        if GetTriggerUnit().getTrollBaseClass() == UNIT_HUNTER and trophyToHideMap.has(GetManipulatedItem().getTypeId())
+        if GetTriggerUnit().getTrollBaseClass() == UNIT_HUNTER
             onHideDrop(GetTriggerUnit(), GetManipulatedItem())
     
     EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->

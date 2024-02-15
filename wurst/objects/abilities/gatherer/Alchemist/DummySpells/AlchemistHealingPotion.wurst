@@ -61,7 +61,7 @@ function onCast()
     if not caster.hasItemById(ITEM_PHILOSOPHERS_STONE)
         return
     if instance.spendCharges(POTION_COST)
-        new HealingInstance(target, caster, POT_HEAL, HealingType.ITEM)    
+        new HealingInstance(target, caster, POT_HEAL, HealingType.ABILITY)    
     else
         caster.issueImmediateOrder("stop")
         simError(caster.getOwner(), errorMsg)

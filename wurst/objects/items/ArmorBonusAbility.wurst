@@ -122,6 +122,13 @@ import LocalObjectIDs
         ..setAgilityBonus(1, 0)
         ..setName("Intelligence + 10")
         ..setEditorSuffix("(Wurst)")
+        
+    new AbilityDefinitionAllPlus1(ABILITY_INT_BONUS_12)
+        ..setIntelligenceBonus(1, 12)
+        ..setStrengthBonus(1, 0)
+        ..setAgilityBonus(1, 0)
+        ..setName("Intelligence + 10")
+        ..setEditorSuffix("(Wurst)")
 
     new AbilityDefinitionAllPlus1(ABILITY_INT_BONUS_20)
         ..setIntelligenceBonus(1, 20)

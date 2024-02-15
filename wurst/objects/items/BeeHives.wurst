@@ -18,8 +18,8 @@ import LocalItemObjEditing
 import LocalObjectIDs
 import LocalAssets
 
-let ABIL_BEE_FACTORY = compiletime(ABIL_ID_GEN.next())
-let ABIL_BEE_FACTORY_UBER = compiletime(ABIL_ID_GEN.next())
+public let ABIL_BEE_FACTORY = compiletime(ABIL_ID_GEN.next())
+public let ABIL_BEE_FACTORY_UBER = compiletime(ABIL_ID_GEN.next())
 
 let HIVE_SPAWN_INTERVAL = 10.0
 let LOCATION_ATTEMPTS = 20

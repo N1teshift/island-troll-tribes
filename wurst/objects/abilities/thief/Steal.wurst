@@ -59,7 +59,7 @@ let TT_TELE_STEAL ="\n\nTele-thief's mastery over dimentional magic greatly incr
         ..presetTooltipNormalExtended(lvl->TT_STEAL)
         ..presetCastingTime(lvl ->0.1)
         ..presetCastRange(lvl -> 200)
-        ..presetCooldown(lvl -> 60)
+        ..presetCooldown(lvl -> 1)
         ..presetHotkey("Q")
         ..setButtonPositionNormalX(0)
         ..setButtonPositionNormalY(0)
@@ -105,76 +105,67 @@ let TT_TELE_STEAL ="\n\nTele-thief's mastery over dimentional magic greatly incr
 public function stealFromThiefsBush(unit caster, unit target) returns item
     let itm = generateThiefsBushItem(caster)
     stolenItems.add(itm)
-    let slot =caster.itemInSlot(5)
-    if slot.getTypeId() == ITEM_THIEFS_POCKET_DUMMY
-        addItemToThiefsPocket(caster, itm)
-    else
-        caster.addItemHandle(itm)
     return itm
 
-function stealFromTroll(unit caster, unit target)
-    if not caster.getLevel()>=3 and not SUB_TROLL_UNIT_LIST.has(caster.getTypeId())
+function stealFromTroll(unit caster, unit target) returns item
+    if not caster.getLevel()>=3 and caster.getTrollBaseClass() == caster.getTypeId()
         simError(caster.getOwner(), "You need to be level 3 to be able to do that")
         doAfter(ANIMATION_PERIOD) ->   
             caster.endAbilityCooldown(ABILITY_STEAL)
-        return
+        return null
     for stealableItemId in stealFromPlayesList
         let itm = target.getItemById(stealableItemId)
         if itm != null
             target.removeItem(itm)
             stolenItems.add(itm)
-            let slot =caster.itemInSlot(5)
-            if slot.getTypeId() == ITEM_THIEFS_POCKET_DUMMY
-                addItemToThiefsPocket(caster, itm)
-            else
-                caster.addItemHandle(itm)
-            return
+            return itm
     doAfter(ANIMATION_PERIOD) ->   
         caster.endAbilityCooldown(ABILITY_STEAL)
+    return null
 
 
         
         
 
-function stealFromTradeShip(unit caster, unit target)
-    if not caster.getLevel()>=4 and not  SUB_TROLL_UNIT_LIST.has(caster.getTypeId())
+function stealFromTradeShip(unit caster, unit target) returns item
+    if not caster.getLevel()>=4 and  caster.getTrollBaseClass() == caster.getTypeId()
         simError(caster.getOwner(), "You need to be level 4 to be able to do that")
         doAfter(ANIMATION_PERIOD) ->   
             caster.endAbilityCooldown(ABILITY_STEAL)
-        return
+        return null
     let instance = instances.get(caster)
     if instance == null
-        return
+        return null
     if instance.robbedTradingShips.has(target)
         simError(caster.getOwner(), "You have already stolen from this ship")
         doAfter(ANIMATION_PERIOD) ->   
             caster.endAbilityCooldown(ABILITY_STEAL)
-        return
+        return null
     for tradeShip in tradeShips
         if tradeShip == target.getTypeId()
             let itemList = tradeShipItemsHashMap.get(tradeShip)
             let itemId = itemList.getRandomElement()
             let itm = createItem(itemId, caster.getPos())
             stolenItems.add(itm)
-            let slot =caster.itemInSlot(5)
-            if slot.getTypeId() == ITEM_THIEFS_POCKET_DUMMY
-                addItemToThiefsPocket(caster, itm)
-            else
-                caster.addItemHandle(itm)
             instance.addRobbedShip(target)
-            
+            return itm
+    return null     
 
 function onSteal(unit caster, unit target)
+    let instance = instances.get(caster)
+    item itm = null
     if target.getTypeId() == UNIT_THIEFS_BUSH
-        stealFromThiefsBush(caster, target)
+        itm = stealFromThiefsBush(caster, target)
     else if target.isTroll()
-        stealFromTroll(caster, target)  
+        itm = stealFromTroll(caster, target)  
     else if tradeShips.has(target.getTypeId())
-        stealFromTradeShip(caster, target)
+        itm = stealFromTradeShip(caster, target)
     else 
         doAfter(ANIMATION_PERIOD) ->  
             caster.endAbilityCooldown(ABILITY_STEAL)
-
+    if itm != null
+        nullTimer() -> 
+            instance.onTargetOrder(itm)
 
 
 init

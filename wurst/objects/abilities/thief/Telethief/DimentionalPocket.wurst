@@ -28,14 +28,16 @@ import ColorUtils
 import LinkedList
 import InventoryEvent
 import Classes
+import StackNSplit
 
 
-
+let DIMENTIONAL_POCKET_MANACOST = 40
+let DIMENTIONAL_POCKET_COOLDOWN = 60.
 
 LinkedList<item>conjuredItems = new LinkedList<item>()
 
-let TT_TELE_FEED ="Telethif uses his dimentional magic to reach into a random thief's bush on the map and steal a consumable item."+
-                    "\n Items stolen this can only be held in thief's pocket. Casting this ability will replace an item currently held in thief's pocket."+
+let TT_TELE_FEED ="Telethief uses his dimentional magic to reach into a random thief's bush on the map and steal a consumable item."+
+                    "\n Items stolen this way can only be held in thief's pocket. Casting this ability will replace an item currently held in thief's pocket."+
                     "\n     At lvl 4 Telethief acquires mastery of this ability, doubling the charges of the stolen item."+
                     "\n60 ".color(ENERGY_COLOR)+ "seconds cooldown."
 
@@ -44,8 +46,9 @@ let TT_TELE_FEED ="Telethif uses his dimentional magic to reach into a random th
         ..presetTooltipNormal(lvl -> "Dimentional pocket")
         ..presetTooltipNormalExtended(lvl-> TT_TELE_FEED)        
         ..presetCastingTime(lvl ->0.1)
-        ..presetCooldown(lvl -> 60)
-        ..presetHotkey("W")
+        ..presetCooldown(lvl -> DIMENTIONAL_POCKET_COOLDOWN)
+        ..presetManaCost(lvl->DIMENTIONAL_POCKET_MANACOST)
+        ..presetHotkey("S")
         ..setButtonPositionNormalX(1)
         ..setButtonPositionNormalY(0)
         ..setIconNormal(Icons.bTNFaerieFire)
@@ -65,12 +68,10 @@ function conjureItem(unit caster) returns item
 function onItemMoved(unit troll, item itm)
     if troll.getTrollBaseClass() == UNIT_THIEF
         doAfter(ANIMATION_PERIOD) -> 
-            //if not troll.itemInSlot(5) == itm
             for each in troll.getInventory()   
                 if conjuredItems.has(each)
                     each.remove()  
                     conjuredItems.remove(each)
-                    //itm.remove()
                     //print("conjured item removed - onItemMoved()")
                     flashEffect(Abilities.blinkCaster, troll.getPos())
 
@@ -88,40 +89,33 @@ function onCast(unit caster)
     let instance = instances.get(caster)
     if instance == null
         return
-
-    instance.onItemDroppedFlag = false
-    instance.onItemPickUpFlag = false
-    instance.onDummyItemDropFlag = false 
-    instance.onItemMoveFlag = false
-
-    //let itmInThiefsPocket =caster.itemInSlot(5)
-    caster.removeItemFromSlot(5)
     let itm = conjureItem(caster)
-    if itm == null
-        //print("failed item")
-    doAfter(ANIMATION_PERIOD) -> 
+    LinkedList<item> removedItems = new LinkedList<item>
+    if not caster.hasItem(instance.dummy)
+        instance.suspendTriggersFlag = true
+        for each in caster.inventory()
+            if stolenItems.has(each)
+                removedItems.add(each)
+                caster.removeItem(each)
+    flashEffect(Abilities.tomeOfRetrainingCaster, caster.getPos())
+    nullTimer() -> 
         itm.setPawnable(false)
-        itm.setDroppable(false)
         stolenItems.add(itm)
         conjuredItems.add(itm)
-        if itm.getTypeId() != ITEM_THIEF_MED and caster.getLevel() >=4
-            let charges = itm.getCharges()
-            itm.setCharges(charges*2)
-        if itm != null
-            doAfter(ANIMATION_PERIOD) ->       
-                caster.addItemHandleToSlot(itm, 5)
-                nullTimer() -> 
-                    instance.onItemDroppedFlag = true
-                    instance.onItemMoveFlag = true                
-                flashEffect(Abilities.tomeOfRetrainingCaster, caster.getPos())
-
-
-    
-
+        doAfter(ANIMATION_PERIOD) -> 
+            instance.onTargetOrder(itm)
+            if itm.getTypeId() != ITEM_THIEF_MED and caster.getLevel() >=4
+                let charges = itm.getCharges()
+                itm.setCharges(charges*2)
+            doAfter(ANIMATION_PERIOD) -> 
+                for each in removedItems
+                    caster.addItemHandle(each)
+                instance.suspendTriggersFlag = false        
+ 
 
 init
     registerInventoryEvent(EVENT_ITEM_INVENTORY.MOVE)->
-        onItemMoved(getInventoryManipulatingUnit(), getInventoryManipulatedItem())    
+        //onItemMoved(getInventoryManipulatingUnit(), getInventoryManipulatedItem())    
 
     registerPlayerUnitEvent(EVENT_PLAYER_UNIT_DROP_ITEM)->
         onItemDropped(GetTriggerUnit(), GetManipulatedItem())

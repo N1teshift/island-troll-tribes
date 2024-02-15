@@ -15,9 +15,9 @@ import Reference
 
 // Troll Names
 public constant  NAME_HUNTER          = "Wonton,Liche,Taz,Koonta"
-public constant  NAME_WARRIOR         = "TGP_Warsquirrel the Tank,WTFBBQ the Angry,AlphaMale"
+public constant  NAME_WARRIOR         = "TGP_Warsquirrel the Tank,WTFBBQ the Angry,AlphaMale, Zeb"
 public constant  NAME_TRACKER         = "Wonton,Liche,Taz,Koonta"
-public constant  NAME_JUGGERNAUT      = "Gigantalees,SigmaMale,Zeb"
+public constant  NAME_JUGGERNAUT      = "Gigantalees,SigmaMale,Zeb, SigmaMale"
 public constant  NAME_MAGE            = "Nomey,Hargut,Eskei,Kwee"
 public constant  NAME_ELEMENTALIST    = "Blunderblood,Arty,Bitter Tooth Joe,Andy"
 public constant  NAME_HYPNOTIST       = "Nomey,Hargut,Eskei,Kwee"
@@ -54,10 +54,24 @@ public constant trollInventoryAbilityMap = new IterableMap<int, LinkedList<int>>
 ..put(ABILITY_INVENTORY_5_SLOT, TROLL_INVENTORY_SLOT_5_LIST..add(UNIT_PRIEST))
 ..put(AbilityIds.inventory, TROLL_INVENTORY_SLOT_6_LIST..add(UNIT_DIRE_BEAR))
 
-public constant LinkedList<int> trollInventoryPseudoSlotList  = new LinkedList<int>()
-                                                            ..addAll(MAGE_CLASS_LIST)
-                                                            ..addAll(HUNTER_CLASS_LIST)
-                                                            ..addAll(THIEF_CLASS_LIST)
+public constant HashMap<int, int> trollInventoryPseudoSlotCountMap  = new HashMap<int, int>()
+    ..put(UNIT_HUNTER, 1)
+    ..put(UNIT_WARRIOR, 1)
+    ..put(UNIT_TRACKER, 1)
+    ..put(UNIT_JUGGERNAUT, 1)
+
+    ..put(UNIT_MAGE, 1)
+    ..put(UNIT_ELEMENTALIST, 1)
+    ..put(UNIT_HYPNOTIST, 1)
+    ..put(UNIT_DEMENTIA_MASTER, 1)
+
+    ..put(UNIT_THIEF, 1)
+    ..put(UNIT_ROGUE, 1)
+    ..put(UNIT_TELETHIEF, 1)
+    ..put(UNIT_ASSASSIN, 1)
+
+    ..put(UNIT_DIRE_BEAR, 2)
+    //..put(UNIT_DIRE_WOLF, 1)
 
 
 public class AttributeGrowth
@@ -210,7 +224,7 @@ public constant  NORMAL_SPELLS_JUGGERNAUT      = commaList(ABILITY_HUNTER_WEB,AB
 public constant  NORMAL_SPELLS_DEMENTIA_MASTER = commaList(ABILITY_DEMENTIA_MASTER_INHERITED_SPELLBOOK)
 public constant  NORMAL_SPELLS_SAGE            = commaList(ABILITY_SAGE_INHERITED_SPELLBOOK)
 public constant  NORMAL_SPELLS_JUNGLE_TYRANT   = commaList(ABILITY_JUNGLE_TYRANT_EVOLUTION, ABILITY_PET_SPELLS, ABILITY_RENDO_DEVOUR)
-public constant  NORMAL_SPELLS_ASSASSIN        = commaList(ABILITY_ASSASSIN_SPELLBOOK, ABILITY_TELEPORT)
+public constant  NORMAL_SPELLS_ASSASSIN        = commaList(ABILITY_ASSASSIN_SPELLBOOK)
 public constant  NORMAL_SPELLS_SPY             = commaList(ABILITY_SPY_INHERITED_SPELLBOOK)
 public constant  NORMAL_SPELLS_OMNIGATHERER    = commaList(ABILITY_OMNIGATHERER_INHERITED_SPELLBOOK)
 

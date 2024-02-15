@@ -23,6 +23,7 @@ import HealingSystem
 import Tribe
 import PlayerExtensions
 import UnitExtensions
+import DamageEvent
 
 let BUFF_SELF_ID = compiletime(BUFF_ID_GEN.next())
 let BUFF_ID = compiletime(BUFF_ID_GEN.next())
@@ -117,7 +118,6 @@ class ReplenishHealthDummy extends AbilityDefinitionImmolationcreep
         this.setAreaofEffect(1, 1)
         this.setHeroAbility(false)
         this.setLevels(1)
-        this.setAreaofEffect(1, 1)
         this.setManaCost(1, MANACOST)
         this.setTooltipNormal(1, makeToolTipNorm(hotkey, "Activate "+TOOLTIP_NORM))
         this.setTooltipNormalExtended(1, TOOLTIP_EXTENDED)
@@ -162,3 +162,5 @@ function onDeath()
 init
     registerPlayerUnitEvent(EVENT_PLAYER_UNIT_ISSUED_ORDER, function onCast)
     registerPlayerUnitEvent(EVENT_PLAYER_UNIT_DEATH, function onDeath)
+
+        

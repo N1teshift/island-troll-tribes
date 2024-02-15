@@ -21,9 +21,19 @@ import LocalItemObjEditing
 import LocalObjectIDs
 import ToolTipsUtils
 import PlayerExtensions
+import AxesDefinition
+
+public let IRON_STAFF_DMG_BONUS = ABIL_DMG_IRON
+public let IRON_STAFF_ARMOR_BONUS = ABILITY_ARMOR_BONUS_2
+public let IRON_STAFF_INT_BONUS = ABILITY_INT_BONUS_10
+
+public let BATTLE_STAFF_DMG_BONUS = ABIL_DMG_STEEL
+public let BATTLE_STAFF_ARMOR_BONUS = ABILITY_ARMOR_BONUS_4
+public let BATTLE_STAFF_INT_BONUS = ABILITY_INT_BONUS_12
 
 
-let ABILITY_IRON_STAFF = asList(ABILITY_ARMOR_BONUS_2, ABILITY_INT_BONUS_10)
+let ABILITY_IRON_STAFF = asList(IRON_STAFF_ARMOR_BONUS, IRON_STAFF_INT_BONUS, IRON_STAFF_DMG_BONUS)
+let ABILITY_BATTLE_STAFF = asList(BATTLE_STAFF_ARMOR_BONUS, BATTLE_STAFF_INT_BONUS, BATTLE_STAFF_DMG_BONUS)
 let ABILITY_CONDUCTING_ROD = asList(ABILITY_ARMOR_BONUS_3, ABILITY_INT_BONUS_10)
 let ABILITY_STAFF_OF_WISDOM = asList(ABILITY_INT_BONUS_20)
 //let ABILITY_STAFF_OF_KNOWLEDGE = asList(ABILITY_INT_BONUS_20)
@@ -37,14 +47,22 @@ let TT_COMMON = new StringBuilder()
     // TODO: Remove this call once the compiler is fixed.
     .format()
 
+
 public let TT_CONDUCTING_ROD ="Steel rod infused with magic for better mana conductivity."+
-                        "|nAllows wielder to ignore basic troll magic resistance and increases all spell damage done to animals by 33%."+
-                        "|nIntelligence +"+"10".color(COLOR_GREEN)+
-                        "|nArmor +"+"3".color(COLOR_GREEN)
+                        "\nAllows wielder to ignore basic troll magic resistance and increases all spell damage done to animals by 33%."+
+                        "\n+"+"10 ".color(COLOR_GREEN)+"Intelligence" +
+                        "\n+"+"3 ".color(COLOR_GREEN)+"Armor"
 
 public let TT_IRON_STAFF ="A magic staff reinforced with iron."+
-                    "|nIntelligence +"+"10".color(COLOR_GREEN)+
-                    "|nArmor +"+"2".color(COLOR_GREEN)
+                        "\n+{0} Attack damage".format("8".color(COLOR_GREEN))+
+                        "\n+{0} Armor".format("2".color(COLOR_GREEN))+
+                        "\n+{0} Intelligence".format("10".color(COLOR_GREEN))
+
+public let TT_BATTLE_STAFF = "Wood and steel unite in this fearsome weapon. Each end adorned with menacing skulls, "+
+                                "it provides both defensive and spellcasting benefits."+
+                            "\n+{0} Attack damage".format("12".color(COLOR_GREEN))+
+                            "\n+{0} Armor".format("4".color(COLOR_GREEN))+
+                            "\n+{0} Intelligence".format("12".color(COLOR_GREEN))
 
 // Only purpose of this function is distinction, not sure about cooldown group, should battle axe and masher share cooldown?
 function createAxe(int staffId) returns ItemDefinition
@@ -58,10 +76,27 @@ function createAxe(int staffId) returns ItemDefinition
         ..setModelUsed(LocalItems.ironAxe)
         ..setNameEnhance("Iron Staff")
         ..setHotkey("S")
-        ..setTooltipExtended(TT_IRON_STAFF)
+        ..setModelUsed(LocalItems.ironStaff)
+        ..setTooltipExtended(TT_IRON_STAFF)       
         ..setScalingValue(0.7)
-        ..setLumberCost(30)
+        ..setLumberCost(37)
         ..setAbilities(commaList(ABILITY_IRON_STAFF))
+
+@compiletime function createBattleStaff() returns ItemDefinition
+    return createAxe(ITEM_BATTLE_STAFF)
+        ..setInterfaceIcon(LocalIcons.bTNBattleStaff)
+/*        
+        ..setTintingColor1Red(100)
+        ..setTintingColor2Green(65)
+        ..setTintingColor3Blue(0)
+*/        
+        ..setModelUsed(LocalItems.battleStaff)        
+        ..setNameEnhance("Battle Staff")
+        ..setHotkey("S")
+        ..setTooltipExtended(TT_BATTLE_STAFF)
+        ..setScalingValue(0.7)
+        ..setLumberCost(78)
+        ..setAbilities(commaList(ABILITY_BATTLE_STAFF))
 
 @compiletime function createConductingRod() returns ItemDefinition
     return createAxe(ITEM_CONDUCTING_ROD)
@@ -69,12 +104,13 @@ function createAxe(int staffId) returns ItemDefinition
         ..setModelUsed(LocalItems.battleAxe)
         ..setNameEnhance("Conducting rod")
         ..setHotkey("W")
+        ..setModelUsed(LocalItems.battleStaff)        
         ..setTooltipExtended(TT_CONDUCTING_ROD)
         ..setScalingValue(0.7)
         ..setLumberCost(91)
         ..setAbilities(commaList(ABILITY_CONDUCTING_ROD))
-        ..setTintingColor1Red(120)
-        ..setTintingColor2Green(140)
+        ..setTintingColor1Red(255)
+        ..setTintingColor2Green(255)
         ..setTintingColor3Blue(255)
 
 @compiletime function createStaffOfKnowledge() returns ItemDefinition

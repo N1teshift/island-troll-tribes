@@ -6,11 +6,17 @@ import Lodash
 import Assets
 import ToolTipsUtils
 import BuffObjEditing
+import ColorUtils
+import ClosureEvents
+import Transformation
+import ClosureTimers
 
 let ARMOR_BONUS = 3.
-
+let ARMOR_BASE = 1.
+let BOOSTER_INT_MULTIPLIER = 0.1
 let TOOLTIP_NORM = "Fortitude"
 let TOOLTIP_EXTENDED = ("Gives {0} bonus armor to allied trolls around you.").format(ARMOR_BONUS.toToolTipGreen())
+let TOOLTIP_EXTENDED_BOOSTER = "Gives {0} + {1}x{2} bonus armor to allied trolls around you.".format(ARMOR_BASE.toToolTipGreen(), BOOSTER_INT_MULTIPLIER.toString().color(COLOR_GREEN), "Intelligence".color(COLOR_TURQUOISE))
 
 let TARGET_ALLOWED = "air,allies,friend,ground,hero,invulnerable,self,vulnerable"
 
@@ -40,4 +46,37 @@ public class Fortitude extends AbilityDefinitionPaladinDevotionAura
 
 @compiletime function createFortitude()
     new Fortitude(ABILITY_FORTITUDE, new Pair(1, 0))
+    new Fortitude(ABILITY_BOOSTER_FORTITUDE, new Pair(1, 0))
+        ..setLevels(80)
+        ..presetBuffs(lvl->toRawCode(BUFF_FORTITUDE))
+        ..presetIcon(Icons.pASBTNDevotion)
+        ..presetArmorBonus(lvl->lvl*.1+ARMOR_BASE)
+        ..presetTooltipNormalExtended(lvl->TOOLTIP_EXTENDED_BOOSTER)
+            
+            
     createBuff()
+
+function updateFortitudeLevel(unit troll)
+    if not troll.isAlive()
+        return
+    if not troll.hasAbility(ABILITY_BOOSTER_FORTITUDE)
+        return
+    doAfter(ANIMATION_PERIOD) -> 
+        troll.setAbilityLevel(ABILITY_BOOSTER_FORTITUDE, troll.getInt(true))  
+
+init
+    EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) -> 
+        updateFortitudeLevel(GetManipulatingUnit())
+
+    EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) -> 
+        updateFortitudeLevel(GetManipulatingUnit())        
+
+    EventListener.add(EVENT_PLAYER_HERO_LEVEL) -> 
+        updateFortitudeLevel(GetTriggerUnit()) 
+
+    EventListener.add(EVENT_PLAYER_HERO_REVIVE_FINISH) -> 
+        updateFortitudeLevel(GetTriggerUnit()) 
+
+    registerAfterEffect() (unit target, int unitID) ->
+        doAfter(ANIMATION_PERIOD)->
+            updateFortitudeLevel(target)

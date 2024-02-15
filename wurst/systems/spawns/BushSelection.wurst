@@ -34,8 +34,8 @@ function transferItems(unit u, player p)
         if match.getTrollBaseClass() == UNIT_THIEF
             for slot = 0 to 5
                 let itm = u.itemInSlot(slot)
-                if itm != null and match.itemInSlot(5).getTypeId() == ITEM_THIEFS_POCKET_DUMMY
-                    addItemToThiefsPocket(match, itm)
+                if itm != null 
+                    instances.get(match).onTargetOrder(itm)
                     break
 
         u.transferItems(match)

@@ -9,6 +9,7 @@ import Hostile
 import LocalObjectIDs
 import ItemPoolExtensions
 import LocalSoundUtils
+import GameConfig
 
 public class DiscoDuck extends Hostile
     private static let unitTypeId = UNIT_DISCO_DUCK
@@ -46,6 +47,8 @@ public class DiscoDuck extends Hostile
                 ..add(ITEM_STEEL_INGOT)
                 ..add(ITEM_STEEL_INGOT)
                 ..add(ITEM_MEDALLION_COURAGE)
+        if gameConfig.isNoSuperSubs()
+            drops.replace(ITEM_MEDALLION_COURAGE, ITEM_MEDALLION_COURAGE_NSS)
         return drops
 
     override function getNumCorpses() returns int

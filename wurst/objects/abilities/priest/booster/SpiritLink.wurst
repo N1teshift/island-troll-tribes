@@ -6,13 +6,18 @@ import ToolTipsUtils
 import Lodash
 import LocalObjectIDs
 import ObjectIdGenerator
+import ColorUtils
 
 let BUFF_ID = compiletime(BUFF_ID_GEN.next())
-let COOLDOWN = 30.
-let MANACOST = 20
+let COOLDOWN = 40.
+let MANACOST = 40
 let DURATION = 20.
-let AOE = 4000.
+let AOE = 2000.
+let UNIT_CAP = 2
 let TOOLTIP_NORM = "Spirit Link"
+
+let TT_EXTENDED = "Links spirits of {0} units, splitting any damage taken between them.".format(UNIT_CAP.toString().color(COLOR_ORANGE))+
+                  "\nLasts {0} seconds, Has {1} seconds cooldown.".format(DURATION.toToolTipLightBlue(), COOLDOWN.toToolTipLightBlue())
 
 class SpiritLink extends AbilityDefinitionSpiritLink
     construct(int newAbilityId, string hotkey, Pair<int, int> buttonPos)
@@ -23,8 +28,11 @@ class SpiritLink extends AbilityDefinitionSpiritLink
         this.setDurationNormal(1, DURATION)
         this.setManaCost(1, MANACOST)
         this.setAreaofEffect(1, AOE)
+        this.setMaximumNumberofTargets(1, UNIT_CAP)
+        this.setDistributedDamageFactor(1, 0.01)
         this.setName(TOOLTIP_NORM)
         this.setHotkeyNormal(hotkey)
+        this.setTooltipNormalExtended(1, TT_EXTENDED)
         this.presetTooltipNormal(lvl -> makeToolTipNorm(hotkey, TOOLTIP_NORM))
         this.setButtonPositionNormalX(buttonPos.a)
         this.setButtonPositionNormalY(buttonPos.b)

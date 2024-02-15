@@ -74,23 +74,12 @@ public class QuickMake
             range = 300
         else
             range = 700
+  
         // Drop each item to simplify the search for matches.
-        if caster.isTroll() and trollInventoryPseudoSlotList.has(caster.getTypeId())
-            inventory.pop()
-            caster.dropItems(inventory.size())
-            /*
-            int baseInventorySize = 3
-            for key in trollInventoryAbilityMap
-                if trollInventoryAbilityMap.get(key).has(caster.getTypeId())
-                    caster.dropItems(baseInventorySize)
-                    baseInventory =inventory.size()-baseInventorySize
-                else  
-                    baseInventorySize++
-            for i = 1 to baseInventory
-                inventory.pop()
-                */
-        else
-            caster.dropItems()
+        var pseudoSlotCount = 0 
+        if caster.isTroll()// and trollInventoryPseudoSlotList.has(caster.getTypeId())
+            pseudoSlotCount = trollInventoryPseudoSlotCountMap.get(caster.getTypeId()) 
+        caster.dropItems()
 
         // Fill in the recipe slots in order.
         for itemIds in itemLists
@@ -135,7 +124,7 @@ public class QuickMake
 
         // Add the matches to the inventory in case of success.
         // This will fire a separate trigger for the actual transmutation.
-        if items.size() == itemLists.size()
+        if items.size() == itemLists.size() and itemLists.size() <= caster.getInventory().size()-pseudoSlotCount
             for elem in items
                 // Remove each match from the inventory tracker, as matches will be consumed.
                 inventory.remove(elem)

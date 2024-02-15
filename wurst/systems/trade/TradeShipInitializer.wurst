@@ -8,7 +8,7 @@ import TradeShipCoordinator
 import TradeShipRoutePair
 import GameConfig
 
-let TRADE_SHIP_PAUSE_TIME = 9.5
+let TRADE_SHIP_PAUSE_TIME = 9.0
 TradeShipCoordinator coordinator
 
 public function getTradeShipCoordinator() returns TradeShipCoordinator
@@ -71,6 +71,7 @@ init
         .addStop(gg_rct_ship_BL_4)
         .addStop(gg_rct_ship_BL_5)
         .addStop(gg_rct_ship_BL_6)
+        .addStop(gg_rct_ship_BL_7)
     let blBranchSE = blBranchNW.clone().reverse()
 
     leftBranchE
@@ -126,7 +127,7 @@ init
     blBranchNW
         .tail()
         ..addStop(tlBranchNE)
-        .addFork(leftBranchW)   
+        .addFork(leftBranchW)
 
     blBranchSE
         .tail()

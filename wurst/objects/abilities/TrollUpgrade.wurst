@@ -86,6 +86,7 @@ let transformations = new LinkedList<Pair<int, int>>()
     ..add(new Pair(UNIT_RADAR_GATHERER, UNIT_OMNIGATHERER))
     ..add(new Pair(UNIT_HERB_MASTER, UNIT_OMNIGATHERER))
     ..add(new Pair(UNIT_GATHERER, UNIT_ALCHEMIST))
+    ..add(new Pair(UNIT_ALCHEMIST, UNIT_OMNIGATHERER))
     // Thief
     ..add(new Pair(UNIT_THIEF, UNIT_CONTORTIONIST))
     ..add(new Pair(UNIT_THIEF, UNIT_ESCAPE_ARTIST))
@@ -100,7 +101,7 @@ let transformations = new LinkedList<Pair<int, int>>()
 // Generate the transformations during compilation.
 let transformationIDs = compiletime(registerTransformations(transformations))
 
-function upgradeUnit(unit origin, int targetID)
+public function upgradeUnit(unit origin, int targetID)
     // Save the statistics for the unit for restoration after level reduction.
     // TODO: Avoid level resetting.
     let attributeGrowth = trollAttributeGrowth.get(targetID)

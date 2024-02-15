@@ -95,6 +95,7 @@ public class TradeShipSupervisor
         nullTimer() ->
             // Ensure that the ship does not deviate from its path.
             issueMoveOrder()
+                    
 
     function getState() returns TradeShipSupervisorState
         return state
@@ -103,7 +104,10 @@ public class TradeShipSupervisor
         listeners.add(listener)
 
     function triggerListeners()
-        listeners.forEach(listener -> listener.run(this))
+        for each in listeners
+            if this!= null
+                each.run(this)
+        //listeners.forEach(listener -> listener.run(this))
 
     function moveToNextStop()
         // Exit if the ship is already moving.
@@ -115,7 +119,13 @@ public class TradeShipSupervisor
 
         // Issue the required order.
         issueMoveOrder()
-
+        /*
+        if nextStop.isLastStop()
+            doAfter(20.) -> 
+                ship.setMoveSpeed(500)
+                doAfter(4.) -> 
+                    ship.setMoveSpeed(100)    
+        */
     function issueMoveOrder()
         // Prevent the next issued order from generating another order.
         this.orderListenerEnabled = false
@@ -161,6 +171,7 @@ public class TradeShipSupervisor
 
         if nextStop.isLastStop()
             removeShip()
+            ship.setMoveSpeed(522)
         else
             pause(nextStop.getPauseTime())
 

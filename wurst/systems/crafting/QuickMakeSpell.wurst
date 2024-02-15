@@ -75,8 +75,10 @@ constant ARMORY_SPELLBOOK = commaList(
 constant ARMORY_SECOND_SPELLBOOK = commaList(
     ABILITY_QM_ANABOLIC_BOOTS,
     ABILITY_QM_TROLL_PROTECTOR,
-    //ABILITY_QM_CONDUCTING_ROD,
-    ABILITY_QM_BATTLE_ARMOR  
+    ABILITY_SPELLBOOK_PLACEHOLDER,//ABILITY_QM_CONDUCTING_ROD,
+    ABILITY_QM_BATTLE_ARMOR,
+    ABILITY_QM_MAGEFIST,
+    ABILITY_QM_BATTLE_STAFF 
 )
 
 constant WDH_SPELLBOOK = commaList(
@@ -257,8 +259,10 @@ function getQuickMakeSpells() returns LinkedList<QuickMakeSpell>
         // Second Page
         new QuickMakeSpell("Troll Protector"            , TRANSMUTE_TOOLTIP+TROLL_PROTECTOR_RECIPE       , "TrollProtector"          , ABILITY_QM_TROLL_PROTECTOR      , 0, 0, "W", QM_TOOLIP, "frenzy"),
         new QuickMakeSpell("Anabolic Boots"              , TRANSMUTE_TOOLTIP+ANABOLIC_BOOTS_RECIPE       , "WirtsOtherLeg"          , ABILITY_QM_ANABOLIC_BOOTS       , 0, 1, "Q", QM_TOOLIP, "fanofknives"),
-        new QuickMakeSpell("Conducting Rod"              , TRANSMUTE_TOOLTIP+CONDUCTING_ROD_RECIPE       , "AdvancedStrengthOfTheMoon"          , ABILITY_QM_CONDUCTING_ROD       , 0, 2, "e", QM_TOOLIP, "locustswarm"),
+        new QuickMakeSpell("Conducting Rod"              , TRANSMUTE_TOOLTIP+CONDUCTING_ROD_RECIPE       , "AdvancedStrengthOfTheMoon"          , ABILITY_QM_CONDUCTING_ROD       , 0, 2, "E", QM_TOOLIP, "locustswarm"),
         new QuickMakeSpell("Battle Armor"            , TRANSMUTE_TOOLTIP+BATTLE_ARMOR_RECIPE         , "NagaArmorUp2"          , ABILITY_QM_BATTLE_ARMOR         , 0, 3, "R", QM_TOOLIP, "immolation"),                
+        new QuickMakeSpell("Magefist"            , TRANSMUTE_TOOLTIP+MAGEFIST_RECIPE         , "SpellSteal"          , ABILITY_QM_MAGEFIST         , 1, 0, "A", QM_TOOLIP, "manashieldon"),                
+        new QuickMakeSpell("Battle Staff"            , TRANSMUTE_TOOLTIP+BATTLE_STAFF_RECIPE         , "RodOfNecromancy"          , ABILITY_QM_BATTLE_STAFF         , 1, 1, "S", QM_TOOLIP, "manashieldoff"),                
 
         // Witch Doctors Hut
         new QuickMakeSpell("Scroll Of Entangling Root" , TRANSMUTE_TOOLTIP+SCROLL_ROOT_RECIPE        , "ScrollOfRegenerationGreen" , ABILITY_QM_SCROLL_ROOT        , 0, 0, "Q", QM_TOOLIP, "berserk"),
@@ -357,9 +361,9 @@ function getQuickMakeSpells() returns LinkedList<QuickMakeSpell>
 
         // Buildings
         // First three aren't added to master crafter because it's useless, button position set to 0 since they're in a spellbook
-        new QuickMakeSpell("Camp Fire Kit"         , TRANSMUTE_CRAFT_BUILDING_TOOLTIP+CAMP_FIRE_KIT_RECIPE         , "Fire"                 , ABILITY_QM_CAMP_FIRE_KIT_FANG         , 0, 0, "Q", QM_BUILD_TOOLIP, "defend"),
         new QuickMakeSpell("Camp Fire Kit"         , TRANSMUTE_CRAFT_BUILDING_TOOLTIP+CAMP_FIRE_KIT_RECIPE         , "Fire"                 , ABILITY_QM_CAMP_FIRE_KIT         , 0, 0, "Q", QM_BUILD_TOOLIP, "resurrection"),
         new QuickMakeSpell("Tent Kit"              , TRANSMUTE_CRAFT_BUILDING_TOOLTIP+TENT_KIT_RECIPE              , "Tent"                 , ABILITY_QM_TENT_KIT              , 0, 0, "W", QM_BUILD_TOOLIP, "battleroar"),
+        new QuickMakeSpell("Camp Fire Kit"         , TRANSMUTE_CRAFT_BUILDING_TOOLTIP+CAMP_FIRE_KIT_RECIPE         , "Fire"                 , ABILITY_QM_CAMP_FIRE_KIT_FANG         , 0, 0, "Q", QM_BUILD_TOOLIP, "spiritwolf"),
         // new QuickMakeSpell("Troll Hut Kit"         , TRANSMUTE_CRAFT_BUILDING_TOOLTIP+TROLL_HUT_KIT_RECIPE         , "SpiritLodge"          , ABILITY_QM_TROLL_HUT_KIT         , 0, 0, "E", QM_BUILD_TOOLIP, "spiritwolf"),
 
         // Following are also used in master crafter so they got proper button positioning
@@ -370,7 +374,7 @@ function getQuickMakeSpells() returns LinkedList<QuickMakeSpell>
         new QuickMakeSpell("Witch Doctors Hut Kit" , TRANSMUTE_CRAFT_BUILDING_TOOLTIP+WITCH_DOCTORS_HUT_KIT_RECIPE , "VoodooLounge"         , ABILITY_QM_WITCH_DOCTORS_HUT_KIT , 3, 1, "F", QM_BUILD_TOOLIP, "creepanimatedead"),
         new QuickMakeSpell("Tannery Kit"           , TRANSMUTE_CRAFT_BUILDING_TOOLTIP+TANNERY_KIT_RECIPE           , "PigFarm"              , ABILITY_QM_TANNERY_KIT           , 0, 2, "Z", QM_BUILD_TOOLIP, "thunderclap"),
         new QuickMakeSpell("Omnitower Kit"         , TRANSMUTE_CRAFT_BUILDING_TOOLTIP+OMNI_TOWER_KIT_RECIPE        , "OrcTower"             , ABILITY_QM_OMNI_TOWER_KIT        , 1, 2, "X", QM_BUILD_TOOLIP, "avatar"),
-        new QuickMakeSpell("Armory Kit"            , TRANSMUTE_CRAFT_BUILDING_TOOLTIP+ARMORY_KIT_RECIPE            , "Armory"               , ABILITY_QM_ARMORY_KIT            , 2, 2, "A", QM_BUILD_TOOLIP, "locustswarm"),
+        new QuickMakeSpell("Armory Kit"            , TRANSMUTE_CRAFT_BUILDING_TOOLTIP+ARMORY_KIT_RECIPE            , "Armory"               , ABILITY_QM_ARMORY_KIT            , 2, 2, "A", QM_BUILD_TOOLIP, "defend"),
         new QuickMakeSpell("Teleport Beacon Kit"   , TRANSMUTE_CRAFT_BUILDING_TOOLTIP+TELEPORT_BEACON_KIT_RECIPE   , "EnergyTower"          , ABILITY_QM_TELEPORT_BEACON_KIT   , 0, 0, "E", QM_BUILD_TOOLIP, "summonwareagle")
     )
 

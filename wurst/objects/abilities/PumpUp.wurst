@@ -13,12 +13,14 @@ import ToolTipsUtils
 
 let COOLDOWN = 30.
 let HERO_DURATION = 20.
+let DURATION_BOOSTER = 30.
 let NORMAL_DURATION = 20.
 let ATTACK_SPEED_INCREASE = 0.20
 let MOVEMENT_SPEED_INCREASE = 0.10
 let TOOLTIP_EXTENDED = ("Increase a friendly unit attack speed by {0} and movement speed by {1} for {2} seconds. Has {3} seconds cooldown.")
                         .format(ATTACK_SPEED_INCREASE.toToolTipOrange(), MOVEMENT_SPEED_INCREASE.toToolTipOrange(), NORMAL_DURATION.toToolTipLightBlue(), COOLDOWN.toToolTipLightBlue())
-
+let TOOLTIP_EXTENDED_BOOSTER  = ("Increase a friendly unit attack speed by {0} and movement speed by {1} for {2} seconds. Has {3} seconds cooldown.")
+                        .format(ATTACK_SPEED_INCREASE.toToolTipOrange(), MOVEMENT_SPEED_INCREASE.toToolTipOrange(), DURATION_BOOSTER.toToolTipLightBlue(), COOLDOWN.toToolTipLightBlue())
 
 class PumpUp extends AbilityDefinitionBloodlustCreep
     construct(int newAbilityId, string hotkey, Pair<int, int> buttonPos)
@@ -42,4 +44,8 @@ class PumpUp extends AbilityDefinitionBloodlustCreep
 
 @compiletime function createPumpUp()
     new PumpUp(ABILITY_PUMP_UP, "E", new Pair(2, 0))
+    new PumpUp(ABILITY_BOOSTER_PUMP_UP, "E", new Pair(2, 0))
+        ..setDurationHero(1, DURATION_BOOSTER)
+        ..setDurationNormal(1, DURATION_BOOSTER)
+        ..setTooltipNormalExtended(1, TOOLTIP_EXTENDED_BOOSTER)
     new PumpUp(ABILITY_LEGACY_PUMP_UP, "W", new Pair(2, 0))

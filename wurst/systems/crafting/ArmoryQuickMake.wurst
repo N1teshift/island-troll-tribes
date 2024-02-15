@@ -58,7 +58,6 @@ init
     ..add(ITEM_BEAR_SKIN_BOOTS)
     ..add(ITEM_IRON_INGOT)
     ..add(ITEM_ANTI_MAGIC_POTION)
-    //..add(ITEM_ANTI_MAGIC_POTION)   
     ..add(ITEM_SPIRIT_WIND)
     ..add(ITEM_SPIRIT_WATER)
     ..add(ITEM_MAGIC)
@@ -101,10 +100,23 @@ init
     ..add(ITEM_BONE_COAT)
     ..add(ITEM_SPIRIT_WIND)
     ..add(ITEM_SPIRIT_WATER)
-    ..add(ITEM_MAGIC)    
+    ..add(ITEM_MAGIC)
 
+    new QuickMake(ABILITY_QM_MAGEFIST)
+    ..add(ITEM_BONE_GLOVES)
+    ..add(ITEM_STEEL_INGOT)
+    ..add(ITEM_NETHER_POTION)    
+    ..add(ITEM_SPIRIT_WIND)
+    ..add(ITEM_SPIRIT_WATER)
+    ..add(ITEM_MANA_CRYSTAL)
 
-        
+    new QuickMake(ABILITY_QM_BATTLE_STAFF)
+    ..add(ITEM_IRON_STAFF)
+    ..add(ITEM_STEEL_INGOT)
+    ..add(ITEM_BONE)    
+    ..add(ITEM_BONE)
+    ..add(ITEM_SPIRIT_WIND)
+    ..add(ITEM_SPIRIT_WATER)        
         
 
 

@@ -347,7 +347,7 @@ init
         new State(caster)
 
     DamageEvent.addListener(DamageListenerPriorities.PANTHER_INSTINCT castTo int) ->
-        if DamageEvent.getSource().isTroll() and DamageEvent.getType() == DamageType.ATTACK and DamageEvent.getTarget().getTypeId() == UNIT_ESCAPE_ARTIST
+        if DamageEvent.getSource().isTroll() and DamageEvent.getType() == DamageType.ATTACK and DamageEvent.getTarget().hasAbility(ABILITY_BLUR)
             updateCooldown(DamageEvent.getTarget())
 
     onLeave() ->

@@ -20,6 +20,7 @@ import ColorUtils
 import ToolTipsUtils
 import MoveCorpses
 import LocalAssets
+import HealingItems
 
 let DEVOUR_SOUND = new SoundDefinition(Sounds.devour, false, true)
 
@@ -78,6 +79,17 @@ function onDevourCast(unit caster, unit target)
     
     flashEffect(Abilities.vampiricAuraTarget, caster, "origin")
     flashEffect(Objects.humanSmallDeathExplode, target.getPos())
+
+function onDireWolfDevour(unit caster)
+    let count = counts.get(caster)
+    if count+3>8
+        updateCount(caster, 8-count)
+        for i=1 to (count+3-8)
+            new HealingInstance(caster, caster, MEAT_HEAL, HealingType.ITEM)
+    else 
+        updateCount(caster, 3)
+
+
 
 
 init

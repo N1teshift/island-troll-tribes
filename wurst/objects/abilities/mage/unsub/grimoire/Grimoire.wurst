@@ -20,10 +20,13 @@ import SimError
 import Abilities
 import ClosureTimers
 import ColorUtils
+import QuickMake
+import InventoryEvent
+import GameTimer
 
 let INT_BONUS_PER_SCROLL = 3
 let GRIMOIRE_INT_BONUS_TT = "Pages collected in your Grimoire increase your {0} by ".format("Intelligence".color(COLOR_TURQUOISE))
-let GRIMOIRE_TT ="Mage can add a scroll to its Grimoire permanently gaining it's powers. `\n\nMage gains {0} {1} per page added to the Grimoire.".format(
+let GRIMOIRE_TT ="Mage can add a scroll to its Grimoire permanently gaining it's powers. \n\nMage gains {0} {1} per page added to the Grimoire.".format(
     INT_BONUS_PER_SCROLL.toString().color(COLOR_GREEN), "Intelligence".color(COLOR_TURQUOISE))
 
 @compiletime function createAbilityIntBonus()
@@ -64,11 +67,10 @@ let GRIMOIRE_TT ="Mage can add a scroll to its Grimoire permanently gaining it's
         ..setLumberCost(100)
         ..setName("Mage's Grimoire")
         ..setCanBeSoldToMerchants(false)
-        ..setCanBeSoldByMerchants(false)
         ..setTooltipBasic("Mage's Grimmoire")
         ..setTooltipExtended(GRIMOIRE_TT)
         ..setCooldownGroup(ABILITY_GRIMOIRE_SPELLBOOK.toRawCode())
-        ..setCanBeDropped(false)
+        //..setCanBeDropped(false)
 
 
 @compiletime function createAddScrollAbility()
@@ -121,14 +123,13 @@ class Grimoire
     unit hero = null
     item grimoire
     int currentIntBonusLvl = 0
-    IterableMap<int, int> lockedScrolls    
+    bool suspendTriggersFlag = false
+    IterableMap<int, int> lockedScrolls
+    IterableMap<int, real> spellCastTimeStamps = new IterableMap<int, real>()    
 
     construct(unit hero)
         this.hero = hero
         this.lockedScrolls = scrolls.copy()
-        //hero.removeAbility(ABILITY_INVENTORY_3_SLOT)
-        //hero.addAbility(ABILITY_INVENTORY_4_SLOT)
-        //hero.makeAbilityPermanent(ABILITY_INVENTORY_4_SLOT, true)
         grimoire = createItem(ITEM_MAGE_GRIMOIRE, hero.getPos())
         hero.addItemHandleToSlot(grimoire, 3)
         instances.put(hero, this)
@@ -154,37 +155,107 @@ class Grimoire
                     flashEffect(Abilities.tomeOfRetrainingCaster, hero.getPos())
                     itm.remove()
 
+    function recordCastTimeStamp(int abilId)
+        let abilCd = hero.getAbilityCooldownRemaining(abilId)
+        spellCastTimeStamps.put(abilId, getElapsedGameTime())
+        doAfter(abilCd) ->
+            spellCastTimeStamps.remove(abilId) 
+            
+    function updatedCooldownds()
+        for abilId in GRIMOIRE_SPELL_LIST
+            if spellCastTimeStamps.has(abilId)
+                let defaultCd = hero.getAbilityCooldown(abilId, 0)
+                let remainingCd = defaultCd-(getElapsedGameTime()-spellCastTimeStamps.get(abilId))
+                hero.setAbilityCooldown(abilId, 0, remainingCd)
+                nullTimer() -> 
+                    hero.startAbilityCooldown(abilId)
+                    nullTimer() -> 
+                        hero.setAbilityCooldown(abilId, 1, defaultCd)       
+
+
     function updateIntBonus()  
         hero.setAbilityLevel(ABILITY_GRIMOIRE_INT_BONUS, currentIntBonusLvl+1)
     
+    function addGrimoire()
+        suspendTriggersFlag = true        
+        if hero.hasItem(grimoire)
+            resetGrimoire()
+            suspendTriggersFlag = false
+            return
+
+        nullTimer() ->
+            if hero.isInventoryFull()
+                let itm = hero.itemInSlot(3)
+                hero.dropItemSlot(itm, 3)
+                nullTimer() ->   
+                    hero.addItemHandle(grimoire)
+            else
+                nullTimer() ->   
+                    hero.addItemHandle(grimoire)     
+            suspendTriggersFlag = false
+            nullTimer() -> 
+                lockSpells()
+                updateIntBonus()
+                nullTimer() -> 
+                    updatedCooldownds()
+
+
     function onGrimoireDrop()
-        nullTimer()->
+        nullTimer() -> 
             grimoire.setVisible(false)
-            
+        addGrimoire()
+
+    function resetGrimoire()
+        suspendTriggersFlag = true
+        let slot = hero.getItemSlot(grimoire)  
+        hero.removeItem(grimoire)
+        let itm = hero.itemInSlot(slot) 
+        if itm != null
+            hero.removeItem(itm)     
+        grimoire.setVisible(false)
+        nullTimer() -> 
+            hero.addItemHandleToSlot(grimoire, slot)
+            nullTimer() -> 
+                lockSpells()
+                updateIntBonus()
+                doAfter(ANIMATION_PERIOD) -> 
+                    updatedCooldownds()
+        suspendTriggersFlag = false        
+                     
+
+
+
 
     ondestroy
         instances.remove(hero)
 
 
 function onUnitEnter(unit troll)
-    if troll.getTrollBaseClass() == UNIT_MAGE
-        if not instances.has(troll)
-            instances.put(troll, new Grimoire(troll))
-        else
-            if not troll.isAlive()
-                return
-            troll.addItemHandleToSlot(instances.get(troll).grimoire, 3)
-            instances.get(troll).lockSpells()
-            instances.get(troll).updateIntBonus()
+    if not troll.getTrollBaseClass() == UNIT_MAGE
+        return
+    let instance = instances.get(troll)
+    if instance == null
+        instances.put(troll, new Grimoire(troll))
+        return           
+    else
+        if not troll.isAlive()
+            return
+        instance.addGrimoire()
 
 
 function onAddScroll(unit caster)
-    let grimoire = instances.get(caster)
-    grimoire.onCast()
+    let instance = instances.get(caster)
+    if instance == null
+        return
+    instance.onCast()
 
-function onGrimoireDrop(unit hero)
+function onGrimoireDrop(unit hero)   
     let instance = instances.get(hero)
-    if instance != null
+    if instance == null
+        return
+    if instance.suspendTriggersFlag == true
+        return         
+    doAfter(ANIMATION_PERIOD) -> 
         instance.onGrimoireDrop()
 
 function onScrollPickup(unit troll, item itm)
@@ -203,10 +274,53 @@ function onScrollDrop(unit troll, item itm)
         if scroll == itm.getTypeId()
             let abilId = scrollSpells.get(scroll)
             itm.addAbility(abilId)
-            
 
+function onQuickMakePriorEffect(unit troll)            
+    let instance = instances.get(troll)
+    if instance == null
+        return
+    instance.suspendTriggersFlag = true
+
+function onQuickMakeAfterEffect(unit troll)  
+    let instance = instances.get(troll)
+    if instance == null
+        return
+    instance.suspendTriggersFlag = false  
+    instance.addGrimoire()  
+
+function onScrollCast(unit troll, int abilId)
+    let instance = instances.get(troll)
+    if instances == null
+        return
+    if GRIMOIRE_SPELL_LIST.has(abilId)
+        nullTimer() -> 
+            //print("onScrollCast")
+            instance.recordCastTimeStamp(abilId)
+
+function onMoved()
+    let slotFrom = getInventorySlotFrom()
+    let slotTo = getInventorySlotTo()
+    let troll = getInventoryManipulatingUnit()
+    let instance = instances.get(troll)
+    if instance == null
+        return
+    // Moving an item in place does not lock spellbooks.
+    if slotFrom == slotTo
+        return
+
+    // Reset each item, as necessary.
+    nullTimer() -> 
+        instance.resetGrimoire()
 
 init
+    registerInventoryEvent(EVENT_ITEM_INVENTORY.MOVE, () -> onMoved())
+
+    registerQuickMakePriorEffect() (unit target, int unitID) ->
+        onQuickMakePriorEffect(target)
+
+    registerQuickMakeAfterEffect() (unit target, int unitID) ->
+        onQuickMakeAfterEffect(target)
+
     onEnter(()->onUnitEnter(getEnterLeaveUnit()))
 
     EventListener.onCast(ABILITY_GRIMOIRE_ADD_SCROLL) (unit caster) ->
@@ -225,5 +339,9 @@ init
 
     EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->
         onScrollPickup(GetManipulatingUnit(), GetManipulatedItem())
+
+    EventListener.add(EVENT_PLAYER_UNIT_SPELL_EFFECT) ->
+        onScrollCast(GetTriggerUnit(), GetSpellAbilityId()) 
+            
 
 

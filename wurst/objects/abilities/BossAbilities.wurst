@@ -197,6 +197,7 @@ init
     DamageEvent.addListener(DamageListenerPriorities.PANTHER_INSTINCT castTo int) ->     
         if DamageEvent.getTarget().getTypeId() == UNIT_MAKRURA and DamageEvent.getType() == DamageType.ATTACK
             onMakruraAttacked(DamageEvent.getSource(), DamageEvent.getTarget(), DamageEvent.getUnreducedOriginalAmount())
+            
     //flasheffect for Pin
     EventListener.onTargetCast(ABILITY_MAKRURA_BOSS_PIN) (unit caster, unit target) ->
         flashEffect(Abilities.stampedeMissileDeath, target.getPos())        

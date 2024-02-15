@@ -19,25 +19,9 @@ import Sounds
 import Orders
 import ClosureTimers
 import Transformation
+import MoveCorpses
 public constant ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME = compiletime(ABIL_ID_GEN.next())
 
-let TT = new StringBuilder()
-    ..add(
-        "Causes your troll to go into a panic, making him move {0} faster, " +
-        "but take {2} extra damage.|n"
-    )
-    ..add(makeToolTipDuration(DURATION, COOLDOWN))
-    ..add(
-        "Tip: Use this as often as possible to maximize efficiency.",
-        colorA(255, 255, 201, 255)
-    )
-
-    .build()
-    .format(
-        MS_FACTOR.toToolTipOrange(),
-        AS_FACTOR.toToolTipOrange(),
-        DAMAGE_FACTOR.toToolTipRed()
-    )
 
 @compiletime function consumeCorpse()
     new AbilityDefinitionCannibalize(ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME)
@@ -57,7 +41,6 @@ let TT = new StringBuilder()
 public class WolfCoatInstance
     private unit wearer
     private real baseClock
-    private EventListener eventListener
 
     construct(unit wearer)
         this.wearer = wearer
@@ -65,27 +48,12 @@ public class WolfCoatInstance
         //PlaySound(Sounds.duskWolf)       
         wearer.removeAbility(LocalAbilityIds.corpseConsume)
         wearer.addAbility(ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME)
-        wearer.makeAbilityPermanent(ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME, true)
-        wearer.disableAbility(ABIL_MEAT, true, true) 
-        wearer.disableAbility(ABIL_HONEY, true, true)
-        wearer.disableAbility(ABIL_BANANA, true, true)                
-        //EventListener.onCast(wearer, LocalAbilityIds.corpseConsume) (unit caster) ->
-        this.eventListener = EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->
-            if (GetManipulatedItem().getTypeId() == ITEM_COOKED_MEAT) or (GetManipulatedItem().getTypeId() == ITEM_HONEYCOMB) or (GetManipulatedItem().getTypeId() == ITEM_BANANA)
-                wearer.disableAbility(ABIL_MEAT, true, true) 
-                wearer.disableAbility(ABIL_HONEY, true, true)
-                wearer.disableAbility(ABIL_BANANA, true, true)
-        
+        wearer.makeAbilityPermanent(ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME, true)           
+        //EventListener.onCast(wearer, LocalAbilityIds.corpseConsume) (unit caster) ->      
                                  
     ondestroy
-        destroy this.eventListener
         wearer.removeAbility(ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME)
-        wearer.addAbility(LocalAbilityIds.corpseConsume)
-        wearer.disableAbility(ABIL_MEAT, false, true) 
-        wearer.disableAbility(ABIL_HONEY, false, true)
-        wearer.disableAbility(ABIL_BANANA, false, true)         
-       // if wearer.hasAbility(ABIL_MEAT)
-          //  wearer.removeAbility(ABIL_MEAT) 
+        wearer.addAbility(LocalAbilityIds.corpseConsume)     
 
 IterableMap<unit, WolfCoatInstance> instances = new IterableMap<unit, WolfCoatInstance>()
 
@@ -93,9 +61,10 @@ function consumeCorpseHeal(unit u)
     new HealingInstance(u, u, MEAT_HEAL, HealingType.ITEM)  
 
 function onPickupCoat(unit u)
-    if u.isTroll()
-        if not instances.has(u)
-            instances.put(u, new WolfCoatInstance(u))
+    if not  u.isTroll()
+        return
+    if not instances.has(u)
+        instances.put(u, new WolfCoatInstance(u))
 
 function onTransformation(unit caster)
     let itm = caster.getItemById(ITEM_WOLF_VORACITY_COAT) // temp fix for voracity coat
@@ -106,12 +75,40 @@ function onTransformation(unit caster)
 
 
 function onDropCoat(unit u, item itm)
-
     if instances.has(u)
         destroy instances.getAndRemove(u)
 
 
+public function onWolfVoracityCoat(unit caster)
+    // Create the corpse that is dropped.
+    //createCorpse(caster.getPos())
+    // Decrement the count.
+    if (counts.get(caster)>0)
+        new HealingInstance(caster, caster, MEAT_HEAL, HealingType.ITEM)
+    updateCount(caster, -1)
+
+
+function onWolfVoracityCoatDrop(unit caster, item itm)
+    
+    // Create the corpse that is dropped.
+    //createCorpse(caster.getPos())
+    // Decrement the count.
+    let temp =counts.get(caster)    
+    updateCount(caster, -temp)
+        //caster.addItemById(itemId)
+        
+       // caster.addItemById(ITEM_WOLF_VORACITY_COAT)
+       // print("item added")
+        //caster.addItemByHandleId(itm.getHandleId())
+
+
+
+
 init
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_USE_ITEM) ->
+        if GetManipulatedItem().getTypeId() == ITEM_WOLF_VORACITY_COAT
+            onWolfVoracityCoat(GetManipulatingUnit())
+
     EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->
         if GetManipulatedItem().getTypeId() == ITEM_WOLF_VORACITY_COAT
             onPickupCoat(GetManipulatingUnit())
@@ -126,5 +123,9 @@ init
 
     registerAfterEffect() (unit target, int unitID) ->
         onTransformation(target)        
-
-//@compiletime createconsume
+/*
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_DROP_ITEM) ->
+        if GetManipulatingUnit().isTroll()
+            if GetManipulatedItem().getTypeId() == ITEM_WOLF_VORACITY_COAT
+                onWolfVoracityCoatDrop(GetManipulatingUnit(),GetManipulatedItem()) 
+*/

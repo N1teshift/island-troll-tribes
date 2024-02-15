@@ -1,0 +1,84 @@
+package MedallionOfCourageNSS
+
+// Stanard library imports:
+import Assets
+import ChannelAbilityPreset
+import ItemObjEditing
+import RegisterEvents
+import UpgradeObjEditing
+
+// Third Party imports:
+import SimError
+
+// Local imports:
+import Classes
+import ColorUtils
+import Items
+import LocalObjectIDs
+import PlayerExtensions
+import LinkedList
+import TrollUpgrade
+import HashMap
+
+// The description for the item.
+let DESCRIPTION = "" +
+    "Unique|n".color(COLOR_PURPLE) +
+    "A strange medallion that installs courage in its bearer.|n" +
+    "Hunter, Gatherer, Scout, and Thief subclasses can use this to upgrade directly into the final form.|n".color(COLOR_GOLD) +
+    "Other subclasses can use this to upgrade to level 8.".color(COLOR_GOLD)
+
+let CLASSES_ALLOWED = asList(UNIT_HUNTER, UNIT_GATHERER, UNIT_THIEF, UNIT_SCOUT)
+
+IterableMap<int, int> trollUpgradeMap = new IterableMap<int, int>
+    ..put(UNIT_HUNTER, UNIT_JUGGERNAUT)
+    ..put(UNIT_GATHERER, UNIT_OMNIGATHERER)
+    ..put(UNIT_SCOUT, UNIT_SPY)
+    ..put(UNIT_THIEF, UNIT_ASSASSIN)
+
+@compiletime function createMedallionAbility()
+    createItemBerserkCast(ABILITY_SUPERSUB_COURAGE_NSS)
+
+@compiletime function createMedallionOfCourage()
+    createUsableItem(ITEM_MEDALLION_COURAGE_NSS)
+        ..setAbilities(commaList(ABILITY_SUPERSUB_COURAGE))
+        ..setName("Medallion of Courage")
+        ..setDescription(DESCRIPTION)
+        ..setTooltipExtended(DESCRIPTION)
+        ..setInterfaceIcon(Icons.bTNMedalionOfCourage)
+        ..setModelUsed(Objects.potofGold)
+        ..setCanBeSoldToMerchants(false)
+
+
+// Validates and unlocks the research corresponding to the Medallion of Courage.
+function onUse(unit caster, item target)
+    // Exit if the item used is not relevant.
+    if target.getTypeId() != ITEM_MEDALLION_COURAGE_NSS
+        return
+    // Cache the state of the the operation.
+    let owner = caster.getOwner()
+    let unitId = caster.getTypeId()
+
+    if unitId.getTrollClassType() == ClassType.SUPER_CLASS
+        simError(owner, "You have already reached your final form.")
+        return 
+        
+    if unitId.getTrollClassType() == ClassType.BASE_CLASS
+        simError(owner, "You need to have chosen a subclass to use this item.")
+        return    
+
+    // Block certain classes from using the medallion.
+    if not CLASSES_ALLOWED.has(unitId.getTrollBaseClass())
+        caster.setLevel(8, true)
+        target.remove()
+        return
+
+
+    // Consume the item manually, having verified it can be used.
+    target.remove()
+
+    upgradeUnit(caster, trollUpgradeMap.get(caster.getTrollBaseClass()))
+
+
+init
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_USE_ITEM) ->
+        onUse(EventData.getManipulatingUnit(), EventData.getManipulatedItem())

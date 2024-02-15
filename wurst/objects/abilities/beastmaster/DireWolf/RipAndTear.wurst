@@ -115,6 +115,13 @@ function onUnitEnter(unit u)
         if not instances.has(u)
             instances.put(u, new RipAndTear(u))
 
+function onRipAndTear(unit caster, unit target)
+    let count = counts.get(caster)
+    if count==8
+        new HealingInstance(caster, caster, MEAT_HEAL, HealingType.ITEM)
+    else 
+        updateCount(caster, 1) 
+
 
 init    
     DamageEvent.addListener() () ->

@@ -90,6 +90,8 @@ class AntiMagicAoEDummy extends ChannelAbilityPreset
 
 @compiletime function createAntiMagic()
     new AntiMagic(ABILITY_ANTI_MAGIC, "Q", new Pair(0, 0))
+    new AntiMagic(ABILITY_BATTLE_ARMOR_ANTI_MAGIC, "Q", new Pair(0, 0))
+        ..presetShieldLife(lvl->100)
     new AntiMagicAoEDummy(ABILITY_ANTI_MAGIC_AOE, "Q", new Pair(0, 0))
 
 

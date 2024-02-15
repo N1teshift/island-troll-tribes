@@ -141,7 +141,7 @@ let TT_THIEF_SPELLBOOK        = "Thief's skills"
         ..setNameEnhance("R", "Defensive Spells")
 
 @compiletime function createHeroSpellBookBoosterSpells()
-    createHeroSpellBook(ABILITY_BOOSTER_SPELLBOOK, 3)
+    createHeroSpellBook(ABILITY_BOOSTER_SPELLBOOK, 4)
         ..setTooltipNormalExtended(1, TT_BOOSTER_SPELLBOOK)
         ..setAbilitiesPerLevel(BOOSTER_ABILITY_HASH)
         ..presetButtonPosNormal(1, 1)

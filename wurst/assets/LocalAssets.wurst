@@ -4,6 +4,7 @@ package LocalAssets
 import ObjectIdGenerator
 
 public class LocalIcons
+    static constant bTNBattleStaff          ="ReplaceableTextures\\CommandButtons\\BTNBattleStaff.blp"
     static constant bTNHungryBear           ="ReplaceableTextures\\CommandButtons\\BTNHungryBear.blp"
     static constant bTNBearFoodSlot      = "ReplaceableTextures\\CommandButtons\\BTNBearFoodSlot.blp"
     static constant bTNMistPeltBear01       = "ReplaceableTextures\\CommandButtons\\BTN_Misc_Pelt_Bear_01.blp"
@@ -199,6 +200,7 @@ public class LocalBuildings
     static constant workshop   = "Models\\Buildings\\OrcLumbermill(noground)V2.01.mdx"
 
 public class LocalAbilities
+    static constant bladeStorm                     = "Models\\Abilities\\BladeStorm.mdx"
     static constant bearTrap                       = "Models\\Abilities\\BearTrap.mdx"
     static constant bearTrapBuff                   = "Models\\Abilities\\BearTrapBuff.mdx"
     static constant breatOfAcidMissile             = "Models\\Abilities\\BreathOfAcidMissile.mdx"
@@ -218,6 +220,9 @@ public class LocalAbilities
     static constant test                           = "Models\\Abilities\\Test.mdx"
 
 public class LocalItems
+    static constant ironStaff                      = "Models\\Items\\ironStaff.mdx" 
+    static constant battleStaff                    = "Models\\Items\\BattleStaff.mdx"
+    static constant cloakOfNecromancy              = "Models\\Items\\cloakOfNecromancy.mdx"
     static constant poisonFang                    = "Models\\Items\\poisonFang.mdx"
     static constant pantherFang                    = "Models\\Items\\pantherfang.mdx"
     static constant trollProtector          = "Models\\Items\\TrollProtector.mdx"

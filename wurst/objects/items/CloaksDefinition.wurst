@@ -85,7 +85,8 @@ public let CLOAK_NECROMANCER_TT = COMMON_TT +"grants the power to command living
                                 "Cloak can be used to recall your minions. "+
                                 "\n\nSkeletal bodyguards can be empowered by collecting 10 bones.".color(COLOR_YELLOW)
 
-public let CLOAK_NECROMANCER_EMPOWERED_TT = COMMON_TT+"grants the power to command living dead, permanently raising two greater skeletal warriors. "+
+public let CLOAK_NECROMANCER_EMPOWERED_TT = "Provides +{0} armor, +{1} all stats and ".format(getAbilityDataField(ABILITY_ARMOR_BONUS_5, "DataA1").color(COLOR_GREEN),"3".color(COLOR_GREEN))+
+                                "grants the power to command living dead, permanently raising two greater skeletal warriors. "+
                                 "Cloak can be used to recall your minions. "+
                                 "\n\nSkeletal minions have been empowered with bones collected, greatly increasing their damage and reducing attack speed.".color(COLOR_TEAL)
 
@@ -151,10 +152,8 @@ function createCloak(int newId) returns ItemDefinition
         ..setInterfaceIcon(LocalIcons.bTNSkullShroudGlowIncreased)
         ..setNameEnhance("Necromancer's Cloak")
         ..setTooltipExtended(CLOAK_NECROMANCER_TT)
+        ..setModelUsed(LocalItems.cloakOfNecromancy)
         ..setLumberCost(74)
-        ..setTintingColor1Red(50)
-        ..setTintingColor2Green(89)
-        ..setTintingColor3Blue(89)
         ..setAbilities(commaList(ABILITY_NECROMANCERS_CLOAK_SKELETONS, ABILITY_ARMOR_BONUS_3, AbilityIds.allPlus3)) //+ 3 Armor, +3 all stats
 
 @compiletime function createEmpoweredNecromancersCloak() returns ItemDefinition
@@ -162,11 +161,9 @@ function createCloak(int newId) returns ItemDefinition
         ..setInterfaceIcon(LocalIcons.bTNSavageGladiatorChain)
         ..setNameEnhance("Empowered Necromancer's Cloak")
         ..setTooltipExtended(CLOAK_NECROMANCER_EMPOWERED_TT)
+        ..setModelUsed(LocalItems.cloakOfNecromancy)
         ..setLumberCost(90)
-        ..setTintingColor1Red(0)
-        ..setTintingColor2Green(26)
-        ..setTintingColor3Blue(26)
-        ..setAbilities(commaList(ABILITY_NECROMANCERS_CLOAK_GREATER_SKELETONS, ABILITY_ARMOR_BONUS_3, AbilityIds.allPlus3)) //+ 3 Armor, +3 all stats
+        ..setAbilities(commaList(ABILITY_NECROMANCERS_CLOAK_GREATER_SKELETONS, ABILITY_ARMOR_BONUS_5, AbilityIds.allPlus3)) //+ 3 Armor, +3 all stats
 
 
 // Cloaks Item Cast

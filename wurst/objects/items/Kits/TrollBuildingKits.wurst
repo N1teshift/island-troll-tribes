@@ -447,11 +447,10 @@ function createKit(int itemId) returns ItemDefinition
     ..setNameEnhance("Magic Palm Tree Seed")
     ..setDescription("Build a Magic Palm tree")
     ..setTooltipExtended(TT_MAGIC_TREE_SEED)
-    ..setLumberCost(10)
-    ..setStockReplenishInterval(9999)
+    ..setLumberCost(8)
+    ..setStockReplenishInterval(999)
     ..setAbilities(commaList(ABIL_MAGIC_TREE_SEED))
     ..setScalingValue(0.65)
-    ..setStockReplenishInterval(30)
 
 @compiletime function createForgeKit() returns ItemDefinition
     return createKit(ITEM_FORGE_KIT)

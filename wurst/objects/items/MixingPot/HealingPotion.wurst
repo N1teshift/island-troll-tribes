@@ -3,6 +3,7 @@ package HealingPotion
 // Standard lib Imports:
 import Assets
 import ChannelAbilityPreset
+import OnUnitEnterLeave
 
 // Local lib Imports:
 import Items
@@ -10,9 +11,10 @@ import LocalAssets
 import LocalItemObjEditing
 import LocalObjectIDs
 import ToolTipsUtils
+import ClosureTimers
 
-public constant POT_HEAL = 80.
-public constant CAST_RANGE = 400.
+public constant POT_HEAL = 100.
+public constant CAST_RANGE = 600.
 public constant NAME = "Healing Potion"
 public constant ICON =Icons.bTNLesserRejuvPotion
 public constant COOLDOWN = 10.
@@ -55,3 +57,6 @@ public constant TT_HEALING_POTION = "" +
         ..setCooldownGroup(commaList(ABILITY_HEALING_POTION))
         ..setStockReplenishInterval(120)
         ..setNumberofCharges(2)
+        ..setStockMaximum(3)
+
+    

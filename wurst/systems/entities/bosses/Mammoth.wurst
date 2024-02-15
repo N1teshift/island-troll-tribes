@@ -9,6 +9,7 @@ import MapBounds
 import Hostile
 import LocalObjectIDs
 import LocalAssets
+import GameConfig
 
 // TODO: Allow the respawn mode to register events.
 public destructable MAMMOTH_GATE
@@ -43,6 +44,8 @@ public class Mammoth extends Hostile
             ..add(ITEM_BONE)
             ..add(ITEM_BONE)
             ..add(ITEM_BONE)
+        if gameConfig.isNoSuperSubs()
+            drops.replace(ITEM_MEDALLION_COURAGE, ITEM_MEDALLION_COURAGE_NSS)
         return drops
 
     override function getNumCorpses() returns int

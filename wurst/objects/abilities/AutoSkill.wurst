@@ -57,7 +57,7 @@ let skillMap = new HashMap<int, int>()
     ..put(UNIT_TELETHIEF,            ABILITY_TELETHIEF_SPELLBOOK)
     ..put(UNIT_ESCAPE_ARTIST,        ABILITY_ESCAPE_ARTIST_SPELLBOOK)
     ..put(UNIT_CONTORTIONIST,        ABILITY_CONTORTIONIST_SPELLBOOK)
-    ..put(UNIT_ASSASSIN,             ABILITY_ASSASSINATE)
+    ..put(UNIT_ASSASSIN,             ABILITY_ASSASSIN_SPELLBOOK)
 
     // Scout
     ..put(UNIT_SCOUT,                ABILITY_REVEAL_ID)

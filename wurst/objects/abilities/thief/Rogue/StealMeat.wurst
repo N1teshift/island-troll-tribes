@@ -26,10 +26,18 @@ import HealingSystem
 import ThiefsPocket
 import ColorUtils
 import LocalAssets
+import SimError
 
-let TT_STEAL_MEAT ="Steal a piece of meat from an enemy. If your inventory is full, it is gonna be automatically consumed."+
-                    "\n30 ".color(ENERGY_COLOR)+ "seconds cooldown."
+let COOLDOWN = 30.
+let TELE_STEAL_CAST_RANGE = 500.
+let TELE_STEAL_MANA_COST = 20
+
+let TT_STEAL_MEAT ="Steal a piece of meat from a closest enemy in {0} range.".format(TELE_STEAL_CAST_RANGE.toString().color(ENERGY_COLOR))+ 
+                    " If your inventory is full, it is gonna be automatically consumed."+
+                    "\n{0} seconds cooldown.".format(COOLDOWN.toString().color(ENERGY_COLOR))
 let TT_TELE_STEAL_MEAT ="\n\nTele-thief's mastery over dimentional magic greatly increases range of this ability".color(ENERGY_COLOR)
+
+
 
 @compiletime function createStealMeatAbility()
     new ChannelAbilityPreset(ABILITY_STEAL_MEAT, 1, true)
@@ -57,32 +65,25 @@ let TT_TELE_STEAL_MEAT ="\n\nTele-thief's mastery over dimentional magic greatly
 @compiletime function createTeleStealMeatAbility()
     new ChannelAbilityPreset(ABILITY_TELE_STEAL_MEAT, 1, true)
         ..presetTooltipNormal(lvl -> "Tele-Steal Meat")
+        ..presetManaCost(lvl->TELE_STEAL_MANA_COST)
         ..presetTooltipNormalExtended(lvl-> TT_STEAL_MEAT+TT_TELE_STEAL_MEAT)   
-        ..presetCastingTime(lvl ->0.1)
-        ..presetCastRange(lvl -> 400)
-        ..presetCooldown(lvl -> 30)
+        ..presetCooldown(lvl -> COOLDOWN)
         ..presetHotkey("R")
         ..setButtonPositionNormalX(3)
         ..setButtonPositionNormalY(0)
-        ..presetTargetTypes(Targettype.UNIT)
         ..setIconNormal(LocalIcons.bTNTeleStealMeat)
-        ..presetTargetsAllowed(lvl ->commaList(
-            TargetsAllowed.ground,
-            TargetsAllowed.enemies,
-            TargetsAllowed.vulnerable,
-            TargetsAllowed.alive,
-            TargetsAllowed.organic,
-            TargetsAllowed.hero
-        ))
+        ..setTooltipNormal(1, makeToolTipNorm("R", "Tele-Steal Meat"))
+        ..setCastingTime(1, 0.)
 
 
-
-function onCast(unit caster, unit target)
+function onStealCast(unit caster, unit target)
     let itm = target.getItemById(ITEM_COOKED_MEAT)
     if itm == null
-        nullTimer() -> 
+        doAfter(ANIMATION_PERIOD) -> 
             caster.endAbilityCooldown(ABILITY_STEAL_MEAT)
             caster.endAbilityCooldown(ABILITY_TELE_STEAL_MEAT)
+            if caster.hasAbility(ABILITY_TELE_STEAL_MEAT)
+                caster.setMana(caster.getMana()+TELE_STEAL_MANA_COST)
         return
     let charges = itm.getCharges()
     if charges > 1
@@ -100,12 +101,42 @@ function onCast(unit caster, unit target)
     stolenItems.add(itm3)
     caster.addItemHandle(itm3)
 
+function onTeleStealCast(unit caster)
+    ENUM_GROUP.enumUnitsInRange(
+        caster.getPos(),
+        TELE_STEAL_CAST_RANGE,
+        Filter(-> GetFilterUnit().hasItemById(ITEM_COOKED_MEAT))
+    )
+    ENUM_GROUP.remove(caster)
+    if ENUM_GROUP.isEmpty()
+        doAfter(ANIMATION_PERIOD*2)-> 
+            caster.endAbilityCooldown(ABILITY_TELE_STEAL_MEAT)
+            caster.setMana(caster.getMana()+TELE_STEAL_MANA_COST)
+            simError(caster.getOwner(), "There is no valid target in radius.")
+        return
+    var distance = TELE_STEAL_CAST_RANGE
+    unit target = null
+    for each in ENUM_GROUP
+        let minimumDistance = each.getPos().distanceTo(caster.getPos())
+        if minimumDistance < distance and each.isEnemyOf(caster.getOwner())
+            distance = minimumDistance
+            target = each
+    if target == null
+        doAfter(ANIMATION_PERIOD*2)-> 
+            caster.endAbilityCooldown(ABILITY_TELE_STEAL_MEAT)
+            caster.setMana(caster.getMana()+TELE_STEAL_MANA_COST)        
+        simError(caster.getOwner(), "There is no valid target in radius.")
+        return        
+    flashEffect(Abilities.blinkCaster, target.getPos())
+    doAfter(ANIMATION_PERIOD) -> 
+        flashEffect(Abilities.blinkTarget, caster.getPos())    
+    onStealCast(caster, target)
+
 
 init 
     EventListener.onTargetCast(ABILITY_STEAL_MEAT) (unit caster, unit target) ->
-        onCast(caster, target)
+        onStealCast(caster, target)
     EventListener.onTargetCast(ABILITY_TELE_STEAL_MEAT) (unit caster, unit target) ->
-        flashEffect(Abilities.blinkCaster, target.getPos())
-        onCast(caster, target)        
+        onTeleStealCast(caster)        
         
     

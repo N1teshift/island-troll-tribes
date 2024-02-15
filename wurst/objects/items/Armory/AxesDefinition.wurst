@@ -22,11 +22,11 @@ import LocalObjectIDs
 import ToolTipsUtils
 
 let ABIL_ABILITY_ATTACK_SPEED_20 = compiletime(ABIL_ID_GEN.next())
-let ABIL_DMG_STONE  = compiletime(ABIL_ID_GEN.next())
-let ABIL_DMG_IRON   = compiletime(ABIL_ID_GEN.next())
-let ABIL_DMG_STEEL  = compiletime(ABIL_ID_GEN.next())
-let ABIL_DMG_MASHER = compiletime(ABIL_ID_GEN.next())
-let ABIL_DMG_BATTLE = compiletime(ABIL_ID_GEN.next())
+public let ABIL_DMG_STONE  = compiletime(ABIL_ID_GEN.next())
+public let ABIL_DMG_IRON   = compiletime(ABIL_ID_GEN.next())
+public let ABIL_DMG_STEEL  = compiletime(ABIL_ID_GEN.next())
+public let ABIL_DMG_MASHER = compiletime(ABIL_ID_GEN.next())
+public let ABIL_DMG_BATTLE = compiletime(ABIL_ID_GEN.next())
 
 let ABIL_SILENCE = compiletime(ABIL_ID_GEN.next())
 let ABIL_PURGE   = compiletime(ABIL_ID_GEN.next())
@@ -261,7 +261,7 @@ function onMageMasherDamage()
         return
 
     // Restrict the effect to spellcasters.
-    if not DRAIN_TARGET_CLASSES.has(target.getTypeId()) and target.getTrollBaseClass()!= UNIT_PRIEST
+    if not DRAIN_TARGET_CLASSES.has(target.getTypeId())
         return
     
     // Apply the validated effect.

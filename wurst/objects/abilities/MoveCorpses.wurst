@@ -240,45 +240,6 @@ function onDrop(unit caster)
     // Decrement the count.
     updateCount(caster, -1)
 
-public function onWolfVoracityCoat(unit caster)
-    // Create the corpse that is dropped.
-    //createCorpse(caster.getPos())
-    // Decrement the count.
-    if (counts.get(caster)>0)
-        new HealingInstance(caster, caster, MEAT_HEAL, HealingType.ITEM)
-    updateCount(caster, -1)
-
-public function onDireWolfDevour(unit caster)
-    let count = counts.get(caster)
-    if count+3>8
-        updateCount(caster, 8-count)
-        for i=1 to (count+3-8)
-            new HealingInstance(caster, caster, MEAT_HEAL, HealingType.ITEM)
-    else 
-        updateCount(caster, 3)
-
-public function onRipAndTear(unit caster, unit target)
-    let count = counts.get(caster)
-    if count==8
-        new HealingInstance(caster, caster, MEAT_HEAL, HealingType.ITEM)
-    else 
-        updateCount(caster, 1) 
-
-
-function onWolfVoracityCoatDrop(unit caster, item itm)
-    
-    // Create the corpse that is dropped.
-    //createCorpse(caster.getPos())
-    // Decrement the count.
-    let temp =counts.get(caster)    
-    updateCount(caster, -temp)
-        //caster.addItemById(itemId)
-        
-       // caster.addItemById(ITEM_WOLF_VORACITY_COAT)
-       // print("item added")
-        //caster.addItemByHandleId(itm.getHandleId())
-
-
 
 function onGrab(unit caster, unit target)
     // Exit if the unit is not the dummy for gathering meat.
@@ -301,12 +262,6 @@ public function updateCount(unit target, int differential)
 
     // Compute the count for unit after the update, based on the boundaries.
     let after = (prior + differential).clamp(0, MAX_COUNT)
-
-    //Coat of wolf's voractiy
-    if (after == 8) and (target.hasItemById(ITEM_WOLF_VORACITY_COAT))
-        target.getItemById(ITEM_WOLF_VORACITY_COAT).setDroppable(true)
-    else
-        target.getItemById(ITEM_WOLF_VORACITY_COAT).setDroppable(false)
 
     // Update the state.
     counts.put(target, after)
@@ -430,16 +385,6 @@ init
     onKeyPress(OSKEY_Z, OSKEY_META.CTRL) ->
         onKey(GetTriggerPlayer())
 
-
-    //wolfskincoat
-    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_USE_ITEM) ->
-        if GetManipulatedItem().getTypeId() == ITEM_WOLF_VORACITY_COAT
-            onWolfVoracityCoat(GetManipulatingUnit())                       
-
-    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_DROP_ITEM) ->
-        if GetManipulatingUnit().isTroll()
-            if GetManipulatedItem().getTypeId() == ITEM_WOLF_VORACITY_COAT
-                onWolfVoracityCoatDrop(GetManipulatingUnit(),GetManipulatedItem())  
           
                     
 

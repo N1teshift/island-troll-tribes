@@ -36,7 +36,6 @@ globals
     rect                    gg_rct_out_2_1             = null
     rect                    gg_rct_out_2_2             = null
     rect                    gg_rct_out_3_1             = null
-    rect                    gg_rct_out_3_2             = null
     rect                    gg_rct_out_4_1             = null
     rect                    gg_rct_out_4_2             = null
     rect                    gg_rct_out_5_2             = null
@@ -75,7 +74,6 @@ globals
     rect                    gg_rct_ship_TL_1           = null
     rect                    gg_rct_ship_TL_2           = null
     rect                    gg_rct_ship_TL_3           = null
-    rect                    gg_rct_ship_TL_5           = null
     rect                    gg_rct_ship_TO             = null
     rect                    gg_rct_ship_TR_1           = null
     rect                    gg_rct_ship_TR_2           = null
@@ -128,6 +126,9 @@ globals
     rect                    gg_rct_ship_TR_4           = null
     rect                    gg_rct_ship_TR_5           = null
     rect                    gg_rct_ship_TL_4           = null
+    rect                    gg_rct_out_3_2             = null
+    rect                    gg_rct_ship_TL_5           = null
+    rect                    gg_rct_ship_BL_7           = null
 endglobals
 
 function InitGlobals takes nothing returns nothing
@@ -156,7 +157,7 @@ function CreateNeutralHostile takes nothing returns nothing
     local real life
 
     set u = BlzCreateUnitWithSkin( p, 'd115', -11338.7, -9959.1, 313.436, 'd115' )
-    set u = BlzCreateUnitWithSkin( p, 'd115', -9681.1, -11555.2, 356.968, 'd115' )
+    set u = BlzCreateUnitWithSkin( p, 'd115', -9543.0, -10428.1, 27.493, 'd115' )
     set u = BlzCreateUnitWithSkin( p, 'd116', 436.9, -170.2, 231.125, 'd116' )
     call SetUnitAcquireRange( u, 200.0 )
     set u = BlzCreateUnitWithSkin( p, 'nlsn', -3721.0, 10844.0, 264.350, 'nlsn' )
@@ -210,7 +211,6 @@ function CreateNeutralPassiveBuildings takes nothing returns nothing
     set u = BlzCreateUnitWithSkin( p, 'd001', 8128.0, 5312.0, 270.000, 'd001' )
     set u = BlzCreateUnitWithSkin( p, 'd107', 832.0, -8896.0, 270.000, 'd107' )
     set u = BlzCreateUnitWithSkin( p, 'd105', 6464.0, 1920.0, 270.000, 'd105' )
-    set u = BlzCreateUnitWithSkin( p, 'd105', -6784.0, -7232.0, 270.000, 'd105' )
     set u = BlzCreateUnitWithSkin( p, 'd001', -3008.0, -6592.0, 270.000, 'd001' )
     set u = BlzCreateUnitWithSkin( p, 'd107', 7744.0, 7872.0, 270.000, 'd107' )
     set u = BlzCreateUnitWithSkin( p, 'd107', 5696.0, 320.0, 270.000, 'd107' )
@@ -262,12 +262,11 @@ function CreateNeutralPassiveBuildings takes nothing returns nothing
     set u = BlzCreateUnitWithSkin( p, 'd100', 2368.0, 4224.0, 270.000, 'd100' )
     set u = BlzCreateUnitWithSkin( p, 'd100', 5568.0, -3136.0, 270.000, 'd100' )
     set u = BlzCreateUnitWithSkin( p, 'd100', 3712.0, -4928.0, 270.000, 'd100' )
-    set u = BlzCreateUnitWithSkin( p, 'd100', -6912.0, -6720.0, 270.000, 'd100' )
     set u = BlzCreateUnitWithSkin( p, 'd100', -8896.0, -4480.0, 270.000, 'd100' )
     set u = BlzCreateUnitWithSkin( p, 'd104', -8896.0, -6848.0, 270.000, 'd104' )
     set u = BlzCreateUnitWithSkin( p, 'd104', -2688.0, -2560.0, 270.000, 'd104' )
     set u = BlzCreateUnitWithSkin( p, 'd001', -4800.0, 1216.0, 270.000, 'd001' )
-    set u = BlzCreateUnitWithSkin( p, 'd100', -3456.0, -4096.0, 270.000, 'd100' )
+    set u = BlzCreateUnitWithSkin( p, 'd100', -3456.0, -3968.0, 270.000, 'd100' )
     set u = BlzCreateUnitWithSkin( p, 'd001', -2112.0, -4544.0, 270.000, 'd001' )
     set u = BlzCreateUnitWithSkin( p, 'd102', -2880.0, 832.0, 270.000, 'd102' )
     set u = BlzCreateUnitWithSkin( p, 'd100', 1472.0, -2240.0, 270.000, 'd100' )
@@ -285,7 +284,7 @@ function CreateNeutralPassiveBuildings takes nothing returns nothing
     set u = BlzCreateUnitWithSkin( p, 'd108', -3840.0, -9472.0, 270.000, 'd108' )
     set u = BlzCreateUnitWithSkin( p, 'd108', -3328.0, -9536.0, 270.000, 'd108' )
     set u = BlzCreateUnitWithSkin( p, 'd108', 7488.0, -640.0, 270.000, 'd108' )
-    set u = BlzCreateUnitWithSkin( p, 'd108', -5888.0, -9024.0, 270.000, 'd108' )
+    set u = BlzCreateUnitWithSkin( p, 'd108', -6336.0, -8896.0, 270.000, 'd108' )
     set u = BlzCreateUnitWithSkin( p, 'd108', -1152.0, 1664.0, 270.000, 'd108' )
     set u = BlzCreateUnitWithSkin( p, 'd108', 7296.0, -4480.0, 270.000, 'd108' )
     set u = BlzCreateUnitWithSkin( p, 'd105', 2304.0, -6656.0, 270.000, 'd105' )
@@ -354,7 +353,6 @@ function CreateRegions takes nothing returns nothing
     set gg_rct_out_2_1 = Rect( -3648.0, 1024.0, -3040.0, 1856.0 )
     set gg_rct_out_2_2 = Rect( -1600.0, 2016.0, -224.0, 2944.0 )
     set gg_rct_out_3_1 = Rect( -1216.0, 5216.0, -96.0, 6752.0 )
-    set gg_rct_out_3_2 = Rect( -416.0, 3008.0, 704.0, 4352.0 )
     set gg_rct_out_4_1 = Rect( 3552.0, 704.0, 4384.0, 1984.0 )
     set gg_rct_out_4_2 = Rect( 3296.0, -2336.0, 3936.0, 96.0 )
     set gg_rct_out_5_2 = Rect( -256.0, -5664.0, 704.0, -4512.0 )
@@ -380,23 +378,22 @@ function CreateRegions takes nothing returns nothing
     set gg_rct_ship_BL_4 = Rect( -2112.0, -2272.0, -2016.0, -2176.0 )
     set gg_rct_ship_BL_5 = Rect( -3104.0, -1664.0, -3008.0, -1568.0 )
     set gg_rct_ship_BL_6 = Rect( -3808.0, -704.0, -3680.0, -576.0 )
-    set gg_rct_ship_BO = Rect( -448.0, -12320.0, 224.0, -11776.0 )
+    set gg_rct_ship_BO = Rect( -448.0, -11712.0, 224.0, -11168.0 )
     set gg_rct_ship_BR_1 = Rect( 3840.0, -1056.0, 3968.0, -928.0 )
     set gg_rct_ship_BR_2 = Rect( 3392.0, -2176.0, 3520.0, -2048.0 )
     set gg_rct_ship_BR_3 = Rect( 1152.0, -3200.0, 1280.0, -3072.0 )
     set gg_rct_ship_L_1 = Rect( -8128.0, 800.0, -8032.0, 896.0 )
     set gg_rct_ship_L_2 = Rect( -6176.0, 480.0, -6048.0, 608.0 )
-    set gg_rct_ship_L_3 = Rect( -4800.0, 416.0, -4672.0, 512.0 )
-    set gg_rct_ship_LO = Rect( -12672.0, 736.0, -12256.0, 1088.0 )
+    set gg_rct_ship_L_3 = Rect( -4384.0, 416.0, -4320.0, 480.0 )
+    set gg_rct_ship_LO = Rect( -11904.0, 736.0, -11488.0, 1088.0 )
     set gg_rct_ship_RO = Rect( 10976.0, -992.0, 11488.0, -416.0 )
     set gg_rct_ship_T_1 = Rect( -608.0, 6304.0, -480.0, 6432.0 )
     set gg_rct_ship_T_2 = Rect( -320.0, 4672.0, -224.0, 4768.0 )
-    set gg_rct_ship_T_3 = Rect( 32.0, 3552.0, 128.0, 3680.0 )
-    set gg_rct_ship_TL_1 = Rect( -4256.0, 160.0, -4096.0, 288.0 )
+    set gg_rct_ship_T_3 = Rect( -64.0, 3168.0, 0.0, 3232.0 )
+    set gg_rct_ship_TL_1 = Rect( -4096.0, 128.0, -4032.0, 192.0 )
     set gg_rct_ship_TL_2 = Rect( -2752.0, 2016.0, -2624.0, 2144.0 )
     set gg_rct_ship_TL_3 = Rect( -1088.0, 2240.0, -992.0, 2336.0 )
-    set gg_rct_ship_TL_5 = Rect( -384.0, 3008.0, -256.0, 3136.0 )
-    set gg_rct_ship_TO = Rect( -1376.0, 10208.0, -352.0, 11104.0 )
+    set gg_rct_ship_TO = Rect( -1376.0, 9824.0, -352.0, 10720.0 )
     set gg_rct_ship_TR_1 = Rect( 704.0, 3008.0, 800.0, 3104.0 )
     set gg_rct_ship_TR_2 = Rect( 2624.0, 2528.0, 2720.0, 2624.0 )
     set gg_rct_ship_TR_3 = Rect( 3488.0, 1664.0, 3616.0, 1792.0 )
@@ -447,7 +444,10 @@ function CreateRegions takes nothing returns nothing
     set gg_rct_ship_BR_4 = Rect( 1248.0, -4384.0, 1376.0, -4256.0 )
     set gg_rct_ship_TR_4 = Rect( 3840.0, 1216.0, 3968.0, 1344.0 )
     set gg_rct_ship_TR_5 = Rect( 3808.0, 64.0, 3936.0, 192.0 )
-    set gg_rct_ship_TL_4 = Rect( -768.0, 2880.0, -672.0, 2976.0 )
+    set gg_rct_ship_TL_4 = Rect( -736.0, 2848.0, -672.0, 2912.0 )
+    set gg_rct_out_3_2 = Rect( -416.0, 3008.0, 704.0, 4352.0 )
+    set gg_rct_ship_TL_5 = Rect( -320.0, 3072.0, -256.0, 3136.0 )
+    set gg_rct_ship_BL_7 = Rect( -3968.0, -32.0, -3904.0, 32.0 )
 endfunction
 
 //***************************************************************************

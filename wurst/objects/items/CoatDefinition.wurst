@@ -20,6 +20,7 @@ import LocalObjectIDs
 import ToolTipsUtils
 import UnitExtensions
 import MakruraCuirass
+import HealingItems
 
 constant ABIL_STATS_BATTLE            = compiletime(ABIL_ID_GEN.next())
 constant ABIL_SPELL_RESISTANCE_BATTLE = compiletime(ABIL_ID_GEN.next())
@@ -68,19 +69,18 @@ public constant TT_WOLF_SKIN_COAT = TT_SKIN.format(
 ) + TT_BASIC
 
 public constant TT_WOLF_VORACITY_COAT = "" +
-    ("A coat imbued with voracity of a Dire Wolf. "+
+    "A coat imbued with voracity of a Dire Wolf. "+
     "Allows wearer to consume raw meat, and to consume corpses instantly.  " +
-    "|nCannot eat cooked meat. " +
-    "Use item to consume raw meat instantly restoring 50 health.|n" +
-    "Item is only droppable if you have 8 raw meat which will be consumed in the process.|n"+
-    "Strength +{0}.|n" +
-    "Agility+{1}.|n" +
-    "Armor+{2}."
+    "\nUse this item to consume raw meat instantly restoring".color(COLOR_GOLD_STR) + MEAT_HEAL.toString().color(COLOR_GREEN)+" health.".color(COLOR_GOLD_STR) +
+    ("\n+{0} Armor"+
+    "\n+{1} Strength" +
+    "\n+{2} Agility"
     )
     .format(
+    getAbilityDataField(ABILITY_ARMOR_BONUS_4 , "DataA1").color(COLOR_GREEN),    
     getAbilityDataField(ABILITY_STR_BONUS_6   , "DataC1").color(COLOR_GREEN),
-    getAbilityDataField(ABILITY_AGI_BONUS_6   , "DataA1").color(COLOR_GREEN),
-    getAbilityDataField(ABILITY_ARMOR_BONUS_4 , "DataA1").color(COLOR_GREEN)
+    getAbilityDataField(ABILITY_AGI_BONUS_6   , "DataA1").color(COLOR_GREEN)
+    
 ) 
 
 public constant TT_BEAR_SKIN_COAT = TT_SKIN.format(
@@ -93,8 +93,8 @@ public constant TT_BEAR_PRESENCE_COAT = "" +
     ("A coat made out of a hide of ancient bear.|n"+
     "Animals will freeze in your terrifying presence.|n" +
     "Enemies shaken with fear suffer 20% damage penalty.|n" +
-    "Strength +{0}.|n" +
-    "Armor +{1}."
+    "+{0} Strength.|n" +
+    "+{1} Armor."
     )
     .format(
     getAbilityDataField(ABILITY_STR_BONUS_12  , "DataC1").color(COLOR_GREEN),
@@ -370,7 +370,7 @@ init
 
         forUnitsInRange(caster.getPos(), ABILITY_RADIUS) u ->
             if u.isTroll() and u.getOwner().isAllyOf(caster.getOwner())
-                InstantDummyCaster.castTarget(caster.getOwner(), ABILITY_ANTI_MAGIC, 1, Orders.antimagicshell, u)
+                InstantDummyCaster.castTarget(caster.getOwner(), ABILITY_BATTLE_ARMOR_ANTI_MAGIC, 1, Orders.antimagicshell, u)
 
     EventListener.onCast(ABIL_CAST_STEEL) (unit caster) ->
         InstantDummyCaster

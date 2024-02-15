@@ -15,11 +15,13 @@ let DUMMY_STUN_ABILITY_ID = 'XEMD'
 let BUFF_STUN = "BSTN" // Stunned
 let MANACOST = 24
 let COOLDOWN = 28.
-let IMPACT_DAMAGE_INT_MULTIPLIER = 1.25
+let IMPACT_DAMAGE_BASE = 10.
+let IMPACT_DAMAGE_INT_MULTIPLIER = 0.875
 let CAST_RANGE = 800.
 let OVERCHARGE_GROUND_BURN_DPS = 15.
 let OVERCHARGE_GROUND_BURN_DURATION = 7.
-let IMPACT_BURN_DPS_INT_MULTIPLIER = 0.3
+let IMPACT_BURN_DPS_INT_MULTIPLIER = 0.2
+let IMPACT_BURN_DPS_BASE = 3.
 let IMPACT_BURN_DURATION = 5.
 let IMPACT_BURN_INTERVAL = 0.2
 let IMPACT_STUN_DURATION_HERO = 0.5
@@ -37,10 +39,10 @@ let BURN_EFFECT_PATH = Abilities.flameStrikeEmbers
 let GROUND_BURN_EFFECT_PATH = Abilities.breathOfFireDamage
 let ICON_PATH = Icons.bTNFireRocks
 let TOOLTIP_NORMAL = "Meteor"
-let TOOLTIP_NORMAL_EXT = ("Calls down a meteor to impact on target point after 1 second. On impact, deals {0} damage and applies a burning effect "+
-                         "on targets hit for another {1} damage over time. Has {2} seconds cooldown.").format(
-                            IMPACT_DAMAGE_INT_MULTIPLIER.toString().color(COLOR_RED)+"x "+"Intelligence".color(COLOR_TURQUOISE),
-                          (IMPACT_BURN_DPS_INT_MULTIPLIER*IMPACT_BURN_DURATION).toString().color(COLOR_RED)+"x "+"Intelligence".color(COLOR_TURQUOISE),
+let TOOLTIP_NORMAL_EXT = ("Calls down a meteor to impact on target point after 1 second. On impact, deals {0} + {1} damage and applies a burning effect "+
+                         "on targets hit for another {2} + {3} damage over time. Has {4} seconds cooldown.").format(
+                            IMPACT_DAMAGE_BASE.toString().color(COLOR_RED), IMPACT_DAMAGE_INT_MULTIPLIER.toString().color(COLOR_RED)+"x "+"Intelligence".color(COLOR_TURQUOISE),
+                          (IMPACT_BURN_DPS_BASE*IMPACT_BURN_DURATION).toString().color(COLOR_RED), (IMPACT_BURN_DPS_INT_MULTIPLIER*IMPACT_BURN_DURATION).toString().color(COLOR_RED)+"x "+"Intelligence".color(COLOR_TURQUOISE),
                            COOLDOWN.toToolTipLightBlue())
 
 
@@ -185,9 +187,9 @@ function handleImpactUnitEffect(vec2 hitPosition, unit target, unit caster)
     let distance = hitPosition.distanceTo(target.getPos())
     let heroInt = caster.getInt(true)
     if (distance <= IMPACT_RADIUS_DAMAGEFALLOFF)
-        UnitDamageTarget(caster, target, IMPACT_DAMAGE_INT_MULTIPLIER*heroInt, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_MAGIC, null)
+        UnitDamageTarget(caster, target, IMPACT_DAMAGE_INT_MULTIPLIER*heroInt+IMPACT_DAMAGE_BASE, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_MAGIC, null)
     else
-        let reducedDamage = IMPACT_DAMAGE_INT_MULTIPLIER*heroInt * (1 - ((distance - IMPACT_RADIUS_DAMAGEFALLOFF) / (IMPACT_RADIUS_MAX - IMPACT_RADIUS_DAMAGEFALLOFF)))
+        let reducedDamage = (IMPACT_DAMAGE_INT_MULTIPLIER*heroInt+IMPACT_DAMAGE_BASE) * (1 - ((distance - IMPACT_RADIUS_DAMAGEFALLOFF) / (IMPACT_RADIUS_MAX - IMPACT_RADIUS_DAMAGEFALLOFF)))
         UnitDamageTarget(caster, target, reducedDamage, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_MAGIC, null)
 
     //Apply burn on units
@@ -197,7 +199,7 @@ function handleImpactUnitEffect(vec2 hitPosition, unit target, unit caster)
     //Burn damage loop
     doPeriodicallyTimed(IMPACT_BURN_INTERVAL, IMPACT_BURN_DURATION) burn ->
         if (not target.isInvulnerable() and target.isAlive())
-            UnitDamageTarget(caster, target, IMPACT_BURN_DPS_INT_MULTIPLIER*heroInt * IMPACT_BURN_INTERVAL, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_MAGIC, null)
+            UnitDamageTarget(caster, target, (IMPACT_BURN_DPS_INT_MULTIPLIER*heroInt+IMPACT_BURN_DPS_BASE) * IMPACT_BURN_INTERVAL, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_MAGIC, null)
         if (burn.isLast() or not target.isAlive())
             burnfx.destr()
 

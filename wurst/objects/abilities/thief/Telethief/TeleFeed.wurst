@@ -34,37 +34,83 @@ HashMap<int, real>foodItems = new HashMap<int,real>()
     ..put(ITEM_BANANA, 38.)
     ..put(ITEM_HONEYCOMB, 90.)
 
-
+let TELE_FEED_CAST_RANGE = 600.
+let TELE_FEED_COOLDOWN = 5.
+let TELE_FEED_MANACOST = 5
 let TT_TELE_FEED ="Feed a piece of food directly to your ally using dimentional magic."+
-                    "\n5 ".color(ENERGY_COLOR)+ "seconds cooldown."
+                    "\nSelects a target with lowest hp in {0} range.".format(TELE_FEED_CAST_RANGE.toString().color(ENERGY_COLOR))+
+                    "\n{0} seconds cooldown.".format(TELE_FEED_COOLDOWN.toString().color(ENERGY_COLOR))
 
-@compiletime function createTeleFeedAbility()
-    new ChannelAbilityPreset(ABILITY_TELE_FEED, 1, true)
+
+@compiletime function createTeleFeedAbility() returns AbilityDefinitionBerserk
+    return new AbilityDefinitionBerserk(ABILITY_TELE_FEED)
         ..presetTooltipNormal(lvl -> "Telefeed")
         ..presetTooltipNormalExtended(lvl-> TT_TELE_FEED)        
-        ..presetCastingTime(lvl ->0.1)
-        ..presetCastRange(lvl -> 600)
-        ..presetCooldown(lvl -> 5)
+        ..presetCastRange(lvl -> TELE_FEED_CAST_RANGE)
+        ..presetCooldown(lvl -> TELE_FEED_COOLDOWN)
         ..presetHotkey("F")
+        ..presetManaCost(lvl->TELE_FEED_MANACOST)
+        ..setBuffs(1, toRawCode(BUFF_ABILITY_TELE_FEED))
         ..setButtonPositionNormalX(3)
         ..setButtonPositionNormalY(1)
-        ..presetTargetTypes(Targettype.UNIT)
+        ..setMovementSpeedIncrease(1, 0)
+        ..setAttackSpeedIncrease(1, 0)
+        ..setDamageTakenIncrease(1, 0)
+        ..setDurationNormal(1, ANIMATION_PERIOD)
+        ..setDurationHero(1, ANIMATION_PERIOD)
         ..setIconNormal(LocalIcons.bTNTeleFeedMeat)
-        ..presetTargetsAllowed(lvl ->commaList(
-            TargetsAllowed.ground,
-            TargetsAllowed.friend,
-            TargetsAllowed.vulnerable,
-            TargetsAllowed.invulnerable,
-            TargetsAllowed.alive,
-            TargetsAllowed.organic,
-            TargetsAllowed.hero,
-            TargetsAllowed.nonhero
-        )) 
+    
+@compiletime function createTeleFeedDummyBuff() returns BuffDefinition
+    return new BuffDefinition(BUFF_ABILITY_TELE_FEED, BuffIds.berserk)
+        ..setIconNormal(1, LocalIcons.bTNTeleFeedMeat)
+
+
+/*
+@compiletime function createTeleStealMeatAbility() returns AbilityDefinitionBerserk
+    return new AbilityDefinitionBerserk(ABILITY_TELE_STEAL_MEAT)
+        ..presetTooltipNormal(lvl -> "Tele-Steal Meat")
+        ..presetTooltipNormalExtended(lvl-> TT_STEAL_MEAT+TT_TELE_STEAL_MEAT)   
+        ..presetHotkey("R")
+        ..setCooldown(1, COOLDOWN)
+        ..setIconNormal(LocalIcons.bTNTeleStealMeat)
+        ..setButtonPositionNormalX(3)
+        ..setButtonPositionNormalY(0)
+        ..setMovementSpeedIncrease(1, 0)
+        ..setAttackSpeedIncrease(1, 0)
+        ..setDamageTakenIncrease(1, 0)
+        ..setDurationNormal(1, 0)
+        ..setDurationHero(1, 0)
+        ..setName("Tele-Steal Meat")
+        ..setTooltipNormal(1, makeToolTipNorm("R", "Tele-Steal Meat"))
+*/
 
 
 
 
-function onCast(unit caster, unit target)
+
+function onCast(unit caster)
+    ENUM_GROUP.enumUnitsInRange(
+        caster.getPos(),
+        TELE_FEED_CAST_RANGE,
+        Filter(-> GetFilterUnit().getMissingHP()>=30. and GetFilterUnit().isTroll())
+    )
+    doAfter(ANIMATION_PERIOD) -> 
+        caster.removeAbility(BUFF_ABILITY_TELE_FEED)
+    ENUM_GROUP.remove(caster)
+    if ENUM_GROUP.isEmpty()
+        doAfter(ANIMATION_PERIOD*2)-> 
+            caster.endAbilityCooldown(ABILITY_TELE_FEED)
+            caster.setMana(caster.getMana()+TELE_FEED_MANACOST)
+        simError(caster.getOwner(), "There are no valid targets in range.")
+        return
+    unit target = ENUM_GROUP.getRandom()
+    var currentHp = target.getHP()
+    for each in ENUM_GROUP
+        let minimumHp = each.getHP()
+        if minimumHp < currentHp and each.isAllyOf(caster.getOwner())
+            currentHp = minimumHp
+            target = each    
+    
     let inventory = caster.getInventory()
     for itm in inventory
         if foodItems.has(itm.getTypeId())
@@ -73,17 +119,21 @@ function onCast(unit caster, unit target)
             let charges = itm.getCharges()
             if charges == 1
                 itm.remove()
-                return
-            itm.setCharges(charges-1)
-    simError(caster.getOwner(), "You have no food to cast this ability")
-    caster.issueImmediateOrder("stop")        
-
+            else
+                itm.setCharges(charges-1)
+            flashEffect(Abilities.blinkTarget, target.getPos())
+            doAfter(ANIMATION_PERIOD) -> 
+                flashEffect(Abilities.blinkCaster, caster.getPos())
+            return             
+    simError(caster.getOwner(), "You have no food to cast this ability.")      
+    doAfter(ANIMATION_PERIOD*2)-> 
+        caster.endAbilityCooldown(ABILITY_TELE_FEED)
+        caster.setMana(caster.getMana()+TELE_FEED_MANACOST)
     
 
 
 init 
     EventListener.onTargetCast(ABILITY_TELE_FEED) (unit caster, unit target) ->
-        flashEffect(Abilities.blinkTarget, target.getPos())
-        onCast(caster, target)        
+        onCast(caster)        
         
     

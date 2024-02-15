@@ -26,6 +26,7 @@ import HashList
 import LinkedList
 import SimError
 import PlayerExtensions
+import LastOrder
 
 let SLOW_ABILITY_ID   = compiletime(ABIL_ID_GEN.next())
 let BUFF_ZAP_SLOW     = compiletime(ABIL_ID_GEN.next())
@@ -194,9 +195,6 @@ function onAttack(unit attacker, unit target)
         return
     zapAutoCastInstances.put(attacker, new ZapAutoCast(attacker, target))    
       
-
-    if not GetObjectName(attacker.getTypeId()) == "Elementalist"
-        return
     new DummyCaster()
         ..owner(attacker.getOwner())
         ..delay(1)
@@ -319,13 +317,28 @@ function enforceMelee(unit target)
     let targetPos = target.getPos()  
     if not attacker.hasAbility(ABILITY_ZAP)
         return
-    let distance = target.getCollisionSize()>128 ? target.getCollisionSize(): 128.
+    let attackRange = max(target.getCollisionSize(), 175.)
     if ((target.isAllyOf(attacker.getOwner()) and not target.getTypeId()==UNIT_FAWN and not target.getTypeId()==UNIT_WOLF_PUP)  
         or treeIdList.has(target.getTypeId()) or target.isStructure()) 
-        and attackerPos.distanceTo(targetPos) >distance
-        simError(attacker.getOwner(), "You should be in melee range to attack this target.")
+        and attackerPos.distanceTo(targetPos) >attackRange
         attacker.issueImmediateOrder("stop")
+        doAfter(ANIMATION_PERIOD) -> 
+            moveIntoMeleeAndAttack(attacker, target, attackRange)
 
+
+function moveIntoMeleeAndAttack(unit attacker, widget target, real attackRange)
+    Order currentOrderId = null
+    doAfter(ANIMATION_PERIOD) -> 
+        attacker.issueTargetOrder("move", target)
+        nullTimer() -> 
+            currentOrderId = attacker.getLastOrder()
+            nullTimer() -> 
+                doPeriodically(0.125) (CallbackPeriodic cb) ->
+                    if currentOrderId != attacker.getLastOrder()
+                        destroy cb
+                    if attacker.getPos().distanceTo(target.getPos())<=175.
+                        attacker.issueTargetOrder("attack", target)
+                        
 
 function enforceMelee(destructable dest)
     if GetIssuedOrderId() !=OrderIds.attack
@@ -338,9 +351,8 @@ function enforceMelee(destructable dest)
     if not attacker.hasAbility(ABILITY_ZAP)
         return
     if attackerPos.distanceTo(destPos) >150.
-        doAfter(ANIMATION_PERIOD) ->  
-            simError(attacker.getOwner(), "You should be in melee range to cut trees.")         
-            attacker.issueImmediateOrder("stop")
+        doAfter(ANIMATION_PERIOD) -> 
+            moveIntoMeleeAndAttack(attacker, dest, 150.)
 
 function enforceMelee(item itm)
     if GetIssuedOrderId() !=OrderIds.attack
@@ -352,10 +364,9 @@ function enforceMelee(item itm)
     let itmPos = itm.getPos()   
     if not attacker.hasAbility(ABILITY_ZAP)
         return
-    if attackerPos.distanceTo(itmPos) >150.
+    if attackerPos.distanceTo(itmPos) >128.
         doAfter(ANIMATION_PERIOD) -> 
-            simError(attacker.getOwner(), "You should be in melee range to destroy items.")      
-            attacker.issueImmediateOrder("stop")
+            moveIntoMeleeAndAttack(attacker, itm, 128.)
 
 function onDamage()
 

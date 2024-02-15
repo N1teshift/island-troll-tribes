@@ -45,12 +45,12 @@ public LinkedList<int>tradeShip2Items = asList(
             )
 
 public LinkedList<int>tradeShip3Items = asList(
-                ITEM_SCROLL_FIREBALL,
+                ITEM_SCROLL_TSUNAMI,
                 ITEM_SCROLL_STONE_ARMOR,
-                ITEM_MUD_HUT_KIT,
+                ITEM_IRON_INGOT,
                 ITEM_JUNGLE_WOLF_HIDE,
                 ITEM_JUNGLE_BEAR_HIDE,
-                ITEM_TANNERY_KIT,
+                ITEM_HEALING_POTION,
                 ITEM_ARMORY_KIT,
                 ITEM_STEEL_INGOT,
                 ITEM_SPIRIT_WIND,
@@ -133,7 +133,7 @@ function createMerchantShip(int newId) returns UnitDefinition
         )
         ..setTurnRate(0.4)
         ..setSpeedBase(120)
-        ..setCollisionSize(0)
+        ..setCollisionSize(50)
         ..setAcquisitionRange(0)
 
 @compiletime function createDummyGoldMineShip()
