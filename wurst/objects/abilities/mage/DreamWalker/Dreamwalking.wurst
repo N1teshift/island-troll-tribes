@@ -1,0 +1,143 @@
+package Dreamwalking
+
+import ClosureEvents
+import LocalObjectIDs
+import Icons
+import Lodash
+import ToolTipsUtils
+import ChannelAbilityPreset
+import Abilities
+import SimError
+import HashMap
+import LinkedList
+import ClosureTimers
+import HealingSystem
+import ColorUtils
+import LocalAssets
+import Sleep
+import InstantDummyCaster
+import BuffObjEditing
+import DreamEater2
+import UnitExtensions
+
+let DURATION_INT_MULTIPLIER = 0.1
+let DURATION_BASE = 2
+let MANA_RESTORED = 80
+let DREAMWALKING_COOLDOWN = 20.
+let CAST_RANGE = 300.
+let TT_NORM = "Dreamwalking"
+let TT_EXT = "Dreamwalker enters a sleep-like state while retaining ability to move as if he was awake. "+
+            "\nRestores {0} mana. ".format(MANA_RESTORED.toString().color(COLOR_LIGHT_BLUE))+
+            "Lasts for {0}+{1}x{2} seconds.".format(DURATION_BASE.toString().color(COLOR_LIGHT_BLUE), DURATION_INT_MULTIPLIER.toString().color(COLOR_LIGHT_BLUE), 
+                                            "Intelligence".color(COLOR_TURQUOISE))+
+            "\n{0} seconds cooldown.".format(DREAMWALKING_COOLDOWN.toString().color(COLOR_LIGHT_BLUE))+                                
+            "\n\nConsuming a dream extends current or next dreamwalking by {0} ".color(colorA(255, 255, 201, 255)).format(DREAMWALKING_DURATION_PER_DREAM.toString().color(COLOR_LIGHT_BLUE))+
+            "seconds.".color(colorA(255, 255, 201, 255))
+            
+
+
+public IterableMap<unit, Dreamwalking> dreamwalkingInstances = new IterableMap<unit, Dreamwalking>()
+
+public let ABILITY_DREAMWALKING_BUFF = compiletime(
+    createDummyBuffObject(
+        TT_NORM.color(COLOR_GREEN),
+        "You are dreamwalking.",
+        Icons.bTNEtherealFormOn
+    ).abilId
+)
+
+
+
+public class Dreamwalking
+    unit troll
+    real remainingDuration = 0
+    CallbackPeriodic cb
+    construct(unit _troll)
+        troll = _troll
+        doAfter(ANIMATION_PERIOD)->
+            troll.removeAbility(ABILITY_SLEEP_OUTSIDE)
+            troll.addAbility(ABILITY_DREAMWALKING_DUMMY)
+            troll.makeAbilityPermanent(ABILITY_DREAMWALKING_DUMMY, true)
+
+
+    function startDreamWalking()
+        troll.setMana(troll.getMana()+MANA_RESTORED)
+        let intelligence = troll.getInt(true)
+        remainingDuration+=(DURATION_BASE+DURATION_INT_MULTIPLIER*intelligence)
+        troll.addAbility(ABILITY_DREAMWALKING_BUFF)
+        troll.setVertexColor(255, 200, 0, 170)
+        cb = doPeriodically(0.125) (CallbackPeriodic cb) ->
+            remainingDuration-=0.125
+            if remainingDuration<=0
+                remainingDuration = 0
+                troll.removeAbility(ABILITY_DREAMWALKING_BUFF)
+                troll.setVertexColor(255, 255, 255, 255)
+                if cb != null
+                    destroy cb
+
+    function onDreamEaten(unit target)
+        //only allow 1 stack of extra dreamwalking duration from dreams stolen from animals
+        if target.isTroll() or remainingDuration<troll.getInt(true)*DURATION_INT_MULTIPLIER 
+            remainingDuration+=DREAMWALKING_DURATION_PER_DREAM
+        if not target.isTroll()
+            troll.damageTarget(target, SLEEP_OUTSIDE_HP_PENALTY, ATTACK_TYPE_NORMAL)
+
+
+    function isDreamwalking() returns bool
+        if remainingDuration>=0 and troll.hasAbility(ABILITY_DREAMWALKING_BUFF)
+            return true
+        return false
+
+            
+
+
+@compiletime function createHypnosisDummy() returns ChannelAbilityPreset
+    return new ChannelAbilityPreset(ABILITY_DREAMWALKING_DUMMY, 1, true)
+        ..presetTargetTypes(Targettype.UNIT)
+        ..setName(TT_NORM)
+        ..setHotkeyNormal("F")
+        ..setTooltipNormal(1, TT_NORM)
+        ..setTooltipNormalExtended(1, TT_EXT)
+        ..presetCooldown(lvl -> DREAMWALKING_COOLDOWN)           
+        ..presetManaCost(lvl -> 0)
+        ..presetCastRange(lvl -> CAST_RANGE)
+        ..presetButtonPosNormal(3, 2)
+        ..setFollowThroughTime(1, 0)
+        ..setIconNormal(Icons.bTNEtherealFormOn)
+        ..setTargetsAllowed(1, TARGET_ALLOWED)
+        ..setBaseOrderID(1, "curse")
+        ..setTooltipNormal(1, makeToolTipNorm("F", TT_NORM))  
+
+
+
+
+function onCast(unit caster, unit target)
+    if target.getTypeId() != UNIT_DREAMWALKER
+        InstantDummyCaster.castTarget(caster.getOwner(), ABILITY_SLEEP_OUTSIDE, 1, "Sleep", target)
+        doAfter(ANIMATION_PERIOD) ->
+            caster.endAbilityCooldown(ABILITY_DREAMWALKING_DUMMY)
+            caster.setAbilityCooldown(ABILITY_DREAMWALKING_DUMMY, 0, COOLDOWN)
+            doAfter(ANIMATION_PERIOD) ->
+                caster.startAbilityCooldown(ABILITY_DREAMWALKING_DUMMY) 
+                caster.setAbilityCooldown(ABILITY_DREAMWALKING_DUMMY, 0, DREAMWALKING_COOLDOWN)                   
+        return
+
+    if target.getTypeId() == UNIT_DREAMWALKER
+        let instance = dreamwalkingInstances.get(target)
+        if instance == null
+            return
+        instance.startDreamWalking()
+            
+        
+
+function onSub(unit caster)
+    let instance = dreamwalkingInstances.get(caster)
+    if instance != null
+        return
+    dreamwalkingInstances.put(caster, new Dreamwalking(caster))
+
+init
+    EventListener.onTargetCast(ABILITY_DREAMWALKING_DUMMY    , (unit caster, unit target) -> onCast(caster, target))
+
+    EventListener.onCast(ABILITY_DREAMWALKER) (unit caster) ->
+        onSub(caster)        

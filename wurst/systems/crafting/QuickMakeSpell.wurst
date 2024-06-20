@@ -262,7 +262,7 @@ function getQuickMakeSpells() returns LinkedList<QuickMakeSpell>
         new QuickMakeSpell("Conducting Rod"              , TRANSMUTE_TOOLTIP+CONDUCTING_ROD_RECIPE       , "AdvancedStrengthOfTheMoon"          , ABILITY_QM_CONDUCTING_ROD       , 0, 2, "E", QM_TOOLIP, "locustswarm"),
         new QuickMakeSpell("Battle Armor"            , TRANSMUTE_TOOLTIP+BATTLE_ARMOR_RECIPE         , "NagaArmorUp2"          , ABILITY_QM_BATTLE_ARMOR         , 0, 3, "R", QM_TOOLIP, "immolation"),                
         new QuickMakeSpell("Magefist"            , TRANSMUTE_TOOLTIP+MAGEFIST_RECIPE         , "SpellSteal"          , ABILITY_QM_MAGEFIST         , 1, 0, "A", QM_TOOLIP, "manashieldon"),                
-        new QuickMakeSpell("Battle Staff"            , TRANSMUTE_TOOLTIP+BATTLE_STAFF_RECIPE         , "RodOfNecromancy"          , ABILITY_QM_BATTLE_STAFF         , 1, 1, "S", QM_TOOLIP, "manashieldoff"),                
+        new QuickMakeSpell("Battle Staff"            , TRANSMUTE_TOOLTIP+BATTLE_STAFF_RECIPE         , "BattleStaff"          , ABILITY_QM_BATTLE_STAFF         , 1, 1, "S", QM_TOOLIP, "manashieldoff"),                
 
         // Witch Doctors Hut
         new QuickMakeSpell("Scroll Of Entangling Root" , TRANSMUTE_TOOLTIP+SCROLL_ROOT_RECIPE        , "ScrollOfRegenerationGreen" , ABILITY_QM_SCROLL_ROOT        , 0, 0, "Q", QM_TOOLIP, "berserk"),

@@ -54,7 +54,7 @@ public class TradeShipSupervisor
             shipId,
             firstStop.getPos(),
             firstStop.getPos().angleTo(nextStop.getPos())
-        )
+        )..setMoveSpeed(125.)
 
         // Create the dummy unit used to display the gold mine minimap icon.
         dummy = createUnit(
@@ -119,13 +119,9 @@ public class TradeShipSupervisor
 
         // Issue the required order.
         issueMoveOrder()
-        /*
         if nextStop.isLastStop()
-            doAfter(20.) -> 
-                ship.setMoveSpeed(500)
-                doAfter(4.) -> 
-                    ship.setMoveSpeed(100)    
-        */
+            ship.setMoveSpeed(522.)  
+
     function issueMoveOrder()
         // Prevent the next issued order from generating another order.
         this.orderListenerEnabled = false
@@ -171,7 +167,6 @@ public class TradeShipSupervisor
 
         if nextStop.isLastStop()
             removeShip()
-            ship.setMoveSpeed(522)
         else
             pause(nextStop.getPauseTime())
 

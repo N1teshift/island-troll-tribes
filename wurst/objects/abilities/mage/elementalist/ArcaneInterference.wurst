@@ -1,0 +1,90 @@
+package ArcaneInterference
+
+import RegisterEvents
+import ClosureTimers
+import Orders
+import AbilityObjEditing
+import BuffObjEditing
+import ClosureForGroups
+import TimerUtils
+import HashMap
+import Lodash
+import OverCharge
+import ToolTipsUtils
+import InstantDummyCaster
+import Assets
+import ObjectIdGenerator
+import ObjectIds
+import LocalObjectIDs
+import ColorUtils
+import DummyCaster
+import UnitExtensions
+import DamageEvent
+import DamageListeners
+import IdListConstant
+import HashList
+import LinkedList
+import SimError
+import PlayerExtensions
+import LastOrder
+import ClosureEvents
+import SpellBookHashMap
+import LocalAssets
+
+let manaCostIncreasePerInt = 2.5
+
+let TT_ARCANE_INTERFERENCE_NORM = "Arcane Interference"
+let TT_ARCANE_INTERFERENCE_EXT  = "The more powerful the spell, the harder it is to control mana, increasing mana cost of "+
+                                    "\nyour Elementalist spells by {0}% per {1} beyond 40.".format(
+                                        manaCostIncreasePerInt.toString().color(COLOR_RED),"1 Intelligence".color(COLOR_TURQUOISE))
+@compiletime function createArcaneInterferenceDummy()
+    new AbilityDefinitionEvasion(ABILITY_ARCANE_INTERFERENCE)
+        ..setChancetoEvade(1, 0.)
+		..setLevels(1)
+        ..setIconNormal(LocalIcons.bTNArcaneInterference)
+        ..setTooltipNormal(1, TT_ARCANE_INTERFERENCE_NORM)
+        ..setTooltipLearn(TT_ARCANE_INTERFERENCE_NORM)
+        ..setTooltipLearnExtended(TT_ARCANE_INTERFERENCE_EXT)
+        ..setTooltipNormalExtended(1, TT_ARCANE_INTERFERENCE_EXT)
+
+
+IterableMap<unit, ArcaneInterference> instances = new IterableMap<unit, ArcaneInterference>()
+public IterableMap<int, int > ELEMENTALIST_SPELL_MANACOSTS = new IterableMap<int, int>()
+    ..put(ABILITY_ZAP, 15)
+    ..put(ABILITY_EARTH_GUARDIAN, 20)
+    ..put(ABILITY_FROST_BLAST, 12)
+    ..put(ABILITY_METEOR, 24)
+    ..put(ABILITY_OVERCHARGE, 12)
+
+public constant ELEMENTALIST_SPELL_LIST = asList(ABILITY_ZAP, ABILITY_EARTH_GUARDIAN, ABILITY_FROST_BLAST, ABILITY_METEOR, ABILITY_OVERCHARGE)
+class ArcaneInterference
+    unit troll
+
+
+    construct(unit _troll)
+        troll = _troll
+        doPeriodically(1) (CallbackPeriodic cb) ->
+            adjustManaCost()
+
+
+    function adjustManaCost()
+        if not troll.isAlive()
+            return
+        for abilId in ELEMENTALIST_SPELL_MANACOSTS
+            let baseManaCost = ELEMENTALIST_SPELL_MANACOSTS.get(abilId)
+            let manaCostMultiplier = troll.getInt(true)>40? 1+manaCostIncreasePerInt/100*(troll.getInt(true)-40) : 1
+            let newAbilityManaCost = (manaCostMultiplier*baseManaCost).round()
+            let abilityLvl = troll.getAbilityLevel(abilId)
+            if troll.hasAbility(abilId) and troll.getAbilityManaCost(abilId, abilityLvl-1) != newAbilityManaCost
+                troll.setAbilityManaCost(abilId, abilityLvl-1, newAbilityManaCost)
+
+function onSub(unit u)
+    if not instances.has(u)
+        instances.put(u, new ArcaneInterference(u))
+
+
+
+init
+    EventListener.add(EVENT_PLAYER_UNIT_SPELL_ENDCAST)->
+        if EventData.getSpellAbilityId() == ABILITY_ELEMENTALIST
+            onSub(EventData.getSpellAbilityUnit())

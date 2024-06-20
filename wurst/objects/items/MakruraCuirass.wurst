@@ -36,7 +36,7 @@ import BuffObjEditing
 import ColorUtils
 
 let MAKRURA_CUIRASS_COOLDOWN = 35.
-public let MAKRURA_CUIRASS_DURATION = 7.
+public let MAKRURA_CUIRASS_DURATION = 10.
 let MAKRURA_CUIRASS_ARMOR_VALUE = 2
 let MAKRURA_CUIRASS_REGEN_VALUE = 3
 public let MAKRURA_BUFF_TT ="This unit gains {0} armor and {1} health regeneration while in water. ".format(MAKRURA_CUIRASS_ARMOR_VALUE.toString().color(COLOR_GREEN), MAKRURA_CUIRASS_REGEN_VALUE.toString().color(COLOR_GREEN))+

@@ -13,6 +13,8 @@ import ChannelAbilityPreset
 import ToolTipsUtils
 import LocalObjectIDs
 import ColorUtils
+import UnitExtensions
+import Pets
 
 let DUMMY_ABILITY_ID = compiletime(ABIL_ID_GEN.next())
 let DUMMY_ABILITY_BUFF_ID = compiletime(BUFF_ID_GEN.next())
@@ -32,9 +34,9 @@ let IMPACT_DAMAGE_INT_MULTIPLIER_MAX = 1.15
 let IMPACT_DAMAGE_BASE_MIN = 6.
 let IMPACT_DAMAGE_BASE_MAX = 15.
 let IMPACT_EFFECT_MIN_SLOW_AMOUNT = 0.35
-let IMPACT_EFFECT_MAX_SLOW_AMOUNT = 0.75
+let IMPACT_EFFECT_MAX_SLOW_AMOUNT = 0.60
 let IMPACT_EFFECT_MIN_DURATION = 2.
-let IMPACT_EFFECT_MAX_DURATION = 5.
+let IMPACT_EFFECT_MAX_DURATION = 4.
 let SPAWN_OFFSET_DISTANCE = 50.
 let LOOP_INTERVAL = 0.03125
 let ABILITY_ICON = Icons.bTNFrostBolt
@@ -115,6 +117,7 @@ class FrostBlastProjectile
     bool foundTarget
     bool exploded
     bool isOvercharged
+    int totalUnitsHit = 0
 
     construct(unit owner, vec3 pos, angle ang, bool isOvercharged)
         this.ownerUnit = owner
@@ -176,7 +179,10 @@ class FrostBlastProjectile
         var damage = totatMultiplier*heroInt+totalBaseDmg
         if (isOvercharged)
             damage = damage * OVERCHARGE_DAMAGE_MULTIPLIER
-
+        forUnitsInRange(this.pos.toVec2(), IMPACT_EFFECT_AOE) u ->
+            if isValidTarget(this.ownerUnit, u) and (u.isTroll() or u.isPet())
+                this.totalUnitsHit+=1
+        damage = totalUnitsHit>3 ? damage*(3/totalUnitsHit) : damage
         forUnitsInRange(this.pos.toVec2(), IMPACT_EFFECT_AOE) u ->
             if isValidTarget(this.ownerUnit, u)
                 if effectScalingValue >= 0.7

@@ -54,7 +54,7 @@ constant ABIL_STEEL  = commaList(ABIL_CAST_STEEL, ABILITY_STR_BONUS_8, ABILITY_I
 constant ABIL_BATTLE = commaList(ABIL_CAST_BATTLE, ABIL_STATS_BATTLE , ABILITY_ARMOR_BONUS_7, ABIL_SPELL_RESISTANCE_BATTLE)
 constant ABIL_ROBE_OF_THE_MAGI =commaList(ABILITY_INT_BONUS_10, ABILITY_ARMOR_BONUS_3)
 constant ABIL_SCALE  = commaList(ABIL_STATS_BATTLE , ABILITY_ARMOR_BONUS_10, ABIL_HARDENED_SCALE)
-constant ABIL_MAKRURA_CUIRASS = commaList(ABILITY_MAKRURA_CUIRASS_ACTIVE, ABILITY_STR_BONUS_6 , ABILITY_ARMOR_BONUS_3, ABILITY_MAKRURA_CUIRASS_ARMOR_PASSIVE)
+constant ABIL_MAKRURA_CUIRASS = commaList(ABILITY_MAKRURA_CUIRASS_ACTIVE, ABILITY_STR_BONUS_8 , ABILITY_ARMOR_BONUS_3, ABILITY_MAKRURA_CUIRASS_ARMOR_PASSIVE)
 
 public constant TT_ELK_SKIN_COAT = TT_SKIN.format(
     getAbilityDataField(ABILITY_STR_BONUS_2   , "DataC1").color(COLOR_GREEN),
@@ -122,7 +122,7 @@ public constant TT_STEEL_COAT = TT_SKIN.format(
 public constant TT_MAKRURA_CUIRASS =""+
     "A large Makruru carapace, which can be used as a cuirass. "+
     "\n+{0} Armor ".format(getAbilityDataField(ABILITY_ARMOR_BONUS_3 , "DataA1").color(COLOR_GREEN)) +
-    "\n+{0} Strength ".format(getAbilityDataField(ABILITY_STR_BONUS_6   , "DataC1").color(COLOR_GREEN)) +
+    "\n+{0} Strength ".format(getAbilityDataField(ABILITY_STR_BONUS_8   , "DataC1").color(COLOR_GREEN)) +
     "\n"+MAKRURA_BUFF_TT
 
 public constant TT_BATTLE_ARMOR = "" +

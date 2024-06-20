@@ -198,6 +198,30 @@ function createHypnotist(int unitId) returns HeroDefinition
 @compiletime function createHypnotist()
     createHypnotist(UNIT_HYPNOTIST)
 
+function createDreamWalker(int unitId) returns HeroDefinition
+    return createSubTroll(unitId)
+        ..setNameEnhance("Dreamwalker")
+        ..setAttackDamage(11)
+        ..setAttackSpeed(1.8)
+        ..setModelFile(LocalUnits.trollSlasher)
+        ..setIcons(LocalIcons.bTNHypnotist)
+        ..setUnitSoundSet(Soundsets.heroLich)
+        ..setSpeedBase(280)
+        ..setButtonPositionX(2)
+        ..setButtonPositionY(0)
+        ..setScalingValue(1)
+        ..setSightRadiusDay(1250)
+        ..setSightRadiusNight(800)
+        ..setTooltipExtended(TOOLTIP_DREAMWALKER)
+        ..setProperNames(NAME_HYPNOTIST)
+        ..setProperNamesUsed(4)
+        ..setHotkey("W")
+        ..setAbilitiesEnhance(NORMAL_SPELLS_HYPNOTIST, HERO_SPELLS_DREAMWALKER)
+
+@compiletime function createDreamWalker()
+    createDreamWalker(UNIT_DREAMWALKER)
+
+
 
 function createDementiaMaster(int unitId) returns HeroDefinition
     return createSuperSubTroll(unitId)
@@ -899,7 +923,7 @@ function createOmniGatherer(int unitId) returns HeroDefinition
         ..setProperNames(NAME_OMNIGATHERER)
         ..setProperNamesUsed(3)
         ..setHotkey("R")
-        ..setAbilitiesEnhance(NORMAL_SPELLS_OMNIGATHERER, HERO_SPELLS_OMNIGATHERER)
+        ..setAbilitiesEnhance(NORMAL_SPELLS_OMNIGATHERER , HERO_SPELLS_OMNIGATHERER)
 
 @compiletime function createOmniGatherer()
     createOmniGatherer(UNIT_OMNIGATHERER)

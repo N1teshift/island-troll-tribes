@@ -104,7 +104,7 @@ function onCast(unit caster)
         conjuredItems.add(itm)
         doAfter(ANIMATION_PERIOD) -> 
             instance.onTargetOrder(itm)
-            if itm.getTypeId() != ITEM_THIEF_MED and caster.getLevel() >=4
+            if itm.getTypeId() != ITEM_THIEF_MED and (caster.getLevel() >=4 or caster.getTrollClassType() == ClassType.SUPER_CLASS)
                 let charges = itm.getCharges()
                 itm.setCharges(charges*2)
             doAfter(ANIMATION_PERIOD) -> 

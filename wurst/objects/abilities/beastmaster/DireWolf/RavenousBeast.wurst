@@ -54,6 +54,7 @@ let TT_ABILITY_EXT = "Dire Wolf hungers for the blood of others."+
         ..setTooltipLearnExtended(TT_ABILITY_EXT)
         ..setTooltipNormalExtended(1, TT_ABILITY_EXT)
 
+
 @compiletime function createDireBeastDummyItem() returns ItemDefinition
     return createUsableItem(ITEM_DIRE_WOLF_DUMMY_SLOT)
         ..setInterfaceIcon(Icons.bTNCannibalize)
@@ -82,18 +83,20 @@ class RavenousBeast
         nullTimer() -> 
             itemHandle.setVisible(false)
             doAfter(ANIMATION_PERIOD) ->     
-            addItem()      
+                addItem()      
         troll.removeAbility(LocalAbilityIds.corpseConsume)
         troll.addAbility(ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME)
         troll.makeAbilityPermanent(ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME, true)
         troll.disableAbility(ABIL_MEAT, true, true) 
         troll.disableAbility(ABIL_HONEY, true, true)
-        troll.disableAbility(ABIL_BANANA, true, true)                
+        troll.disableAbility(ABIL_BANANA, true, true)
+        troll.disableAbility(ABIL_COCONUT, true, true)                 
         this.eventListener = EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->
             if (GetManipulatedItem().getTypeId() == ITEM_COOKED_MEAT) or (GetManipulatedItem().getTypeId() == ITEM_HONEYCOMB) or (GetManipulatedItem().getTypeId() == ITEM_BANANA)
                 troll.disableAbility(ABIL_MEAT, true, true) 
                 troll.disableAbility(ABIL_HONEY, true, true)
                 troll.disableAbility(ABIL_BANANA, true, true)
+                troll.disableAbility(ABIL_COCONUT, true, true) 
 
     function addItem()
         if troll.hasItem(itemHandle)
@@ -115,7 +118,8 @@ class RavenousBeast
         troll.addAbility(LocalAbilityIds.corpseConsume)
         troll.disableAbility(ABIL_MEAT, false, true) 
         troll.disableAbility(ABIL_HONEY, false, true)
-        troll.disableAbility(ABIL_BANANA, false, true)         
+        troll.disableAbility(ABIL_BANANA, false, true)
+        troll.disableAbility(ABIL_COCONUT, false, true)          
 
 function onSub(unit troll)
     if not instances.has(troll)

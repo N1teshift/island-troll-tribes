@@ -190,7 +190,9 @@ function onAttack(unit attacker, unit target)
         return
     if zapAutoCastInstances.has(attacker)
         return
-    if attacker.getMana()<20.
+    let zapLvlv = attacker.getAbilityLevel(ABILITY_ZAP)
+    let zapManaCost = attacker.getAbilityManaCost(ABILITY_ZAP, zapLvlv-1)    
+    if attacker.getMana()<zapManaCost+5.
         simError(attacker.getOwner(), "Not enough mana.")
         return
     zapAutoCastInstances.put(attacker, new ZapAutoCast(attacker, target))    
@@ -201,7 +203,7 @@ function onAttack(unit attacker, unit target)
         ..origin(attacker.getPos())
         ..castTarget(ABILITY_ZAP, 1, OrderIds.chainlightning, target)
     onCastEffects(attacker, target, consumeOvercharge(attacker))
-    attacker.setMana(attacker.getMana()-MANACOST)
+    attacker.setMana(attacker.getMana()-zapManaCost)
 
 
 function handleOverchargeFork(unit caster, unit target)
@@ -369,10 +371,9 @@ function enforceMelee(item itm)
             moveIntoMeleeAndAttack(attacker, itm, 128.)
 
 function onDamage()
-
+    
     let attacker = DamageEvent.getSource()
     let target = DamageEvent.getTarget()
-    
     // Filter for units that have Zap.
     if not attacker.hasAbility(ABILITY_ZAP)
         return

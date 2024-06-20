@@ -16,6 +16,7 @@ let TT_JUGGERNAUT_SPELLBOOK      = "The Juggernaut Skill set, can use spells fro
 let TT_MAGE_SPELLBOOK            = "The Mage Spells, contains various offensive spells."
 let TT_ELEMENTALIST_SPELLBOOK    = "The Elementalist Masteries, contains various damage dealing spells."
 let TT_HYPNOTIST_SPELLBOOK       = "The Hypnotist Voodoo magic, contains various crowd control and energy zapping spells."
+let TT_DREAMWALKER_SPELLBOOK       = "Dreamwalker Abilities."
 let TT_DEMENTIA_MASTER_SPELLBOOK = "The Dementia Master Black Magic, contains odd damage dealing spells."
 let TT_PRIEST_SPELLBOOK          = "The Priest Spells, contains various defensive spells."
 let TT_BOOSTER_SPELLBOOK         = "The Booster Spells, contains various buffing spells."
@@ -119,6 +120,16 @@ let TT_THIEF_SPELLBOOK        = "Thief's skills"
         ..setRequiredLevel(0)
         ..setLevelSkipRequirement(0)
         ..setNameEnhance("Z", "Hypnotist Spells")
+
+@compiletime function createHeroSpellBookDreamwalkerSpells()
+    createHeroSpellBook(ABILITY_DREAMWALKER_SPELLBOOK, 3)
+        ..setTooltipNormalExtended(1, TT_DREAMWALKER_SPELLBOOK)
+        ..setAbilitiesPerLevel(DREAMWALKER_ABILITY_HASH)
+        ..presetButtonPosNormal(1, 1)
+        ..setIconNormal(Icons.bTNBookOfTheDead)
+        ..setRequiredLevel(0)
+        ..setLevelSkipRequirement(0)
+        ..setNameEnhance("E", "Dreamwalker Abilities")
 
 @compiletime function createHeroSpellBookDementiaSpells()
     createHeroSpellBook(ABILITY_DEMENTIA_MASTER_SPELLBOOK, 3)
@@ -402,11 +413,19 @@ let TT_THIEF_SPELLBOOK        = "Thief's skills"
 
 @compiletime function createSpellBookOmnigathererInheritedSpells()
     createSpellBook(ABILITY_OMNIGATHERER_INHERITED_SPELLBOOK)
-        ..setNameEnhance("R", "Omnigatherer Inherited Spells")
+        ..setNameEnhance("T", "Omnigatherer Inherited Spells")
         ..setTooltipNormalExtended(1, TT_OMNIGATHERER_INHERITED)
         ..setSpellList(1, SS_GATHERER_INHERITED_SPELL)
-        ..presetButtonPosNormal(2, 1)
+        ..presetButtonPosNormal(3, 1)
         ..setIconNormal(Icons.bTNTome)
+
+@compiletime function createSpellBookOmnigathererAchemistSpells()
+    createSpellBook(ABILITY_OMNIGATHERER_ALCHEMIST_SPELLBOOK)
+        ..setNameEnhance("T", "Omnigatherer Inherited Spells")
+        ..setTooltipNormalExtended(1, TT_ALCHEMIST)
+        ..setSpellList(1, ALCHEMIST_ABILITY_LVL_4)
+        ..presetButtonPosNormal(3, 1)
+        ..setIconNormal(Icons.bTNHeartOfSearinox)
 
 
 init

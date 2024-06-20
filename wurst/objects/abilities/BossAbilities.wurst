@@ -21,6 +21,7 @@ import ClosureEvents
 import OnUnitEnterLeave
 import MakruraCuirass
 import HashList
+import InstantDummyCaster
 
 
 let ACID_BREATH_DMG_SEC = 20.
@@ -117,7 +118,7 @@ public let ABILITY_SPELL_DMG_REDUCTION_DUMMY_BUFF = compiletime(
     ).abilId
 )
 
-let MAKRURA_CARAPACE_BOSS_CD = 7.
+let MAKRURA_CARAPACE_BOSS_CD = 10.
 public let ABILITY_MAKRURA_CARAPACE_BOSS_BUFF = compiletime(
     createDummyBuffObject(
         "Makrura Carapace".color(COLOR_GREEN),
@@ -140,8 +141,6 @@ function onMakruraAttacked(unit source, unit target, real originalAmount)
                     ..setScale(2.0)
         doAfter(MAKRURA_CUIRASS_DURATION) -> 
             efx.destr()
-    if target.getAbilityCooldownRemaining(ABILITY_MAKRURA_BOSS_PIN)==0.
-        target.issueTargetOrderById(OrderIds.entanglingroots, source)
     if makruraCarapaceCooldown.has(source)
         return
     makruraCarapaceCooldown.add(source)
@@ -153,14 +152,20 @@ function onMakruraAttacked(unit source, unit target, real originalAmount)
     doAfter(MAKRURA_CARAPACE_BOSS_CD)->
         makruraCarapaceCooldown.remove(source) 
 
+function onMakruraAttack(unit source, unit target)
+    if source.getAbilityCooldownRemaining(ABILITY_MAKRURA_BOSS_PIN)==0.
+        InstantDummyCaster.castTarget(source.getOwner(), ABILITY_MAKRURA_BOSS_PIN, 1, OrderIds.entanglingroots, target)
+        source.startAbilityCooldown(ABILITY_MAKRURA_BOSS_PIN)
+        //target.issueTargetOrderById(OrderIds.entanglingroots, source)
+        
 function onMakruraEnter(unit u)
     if u.getTypeId() == UNIT_MAKRURA
         u.removeAbility(ABILITY_HARDENED_SKIN)
         u.removeAbility(ABILITY_HARDENED_SKIN_DUMMY_BUFF)
         new MakruraCuirass(u)      
 
-let MAKRURA_BOSS_PIN_DURATION = 4.
-let MAKRURA_BOSS_PIN_DPS      =15.
+let MAKRURA_BOSS_PIN_DURATION = 2.5
+let MAKRURA_BOSS_PIN_DPS      =20.
 @compiletime function createMakruraBossPinAbility()
     new AbilityDefinitionEntanglingRootscreep(ABILITY_MAKRURA_BOSS_PIN)
         ..setDummyAbility()
@@ -197,11 +202,15 @@ init
     DamageEvent.addListener(DamageListenerPriorities.PANTHER_INSTINCT castTo int) ->     
         if DamageEvent.getTarget().getTypeId() == UNIT_MAKRURA and DamageEvent.getType() == DamageType.ATTACK
             onMakruraAttacked(DamageEvent.getSource(), DamageEvent.getTarget(), DamageEvent.getUnreducedOriginalAmount())
-            
+
+    DamageEvent.addListener(DamageListenerPriorities.PANTHER_INSTINCT castTo int) ->     
+        if DamageEvent.getSource().getTypeId() == UNIT_MAKRURA and DamageEvent.getType() == DamageType.ATTACK
+            onMakruraAttack(DamageEvent.getSource(), DamageEvent.getTarget())
+
     //flasheffect for Pin
     EventListener.onTargetCast(ABILITY_MAKRURA_BOSS_PIN) (unit caster, unit target) ->
         flashEffect(Abilities.stampedeMissileDeath, target.getPos())        
-        doPeriodicallyCounted(1., 4) (CallbackCounted cb) ->
+        doPeriodicallyCounted(0.5, 5) (CallbackCounted cb) ->
             flashEffect(Abilities.stampedeMissileDeath, target.getPos())
 
     onEnter()->

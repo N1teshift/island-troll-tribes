@@ -35,7 +35,7 @@ let DAMAGE_MITIGATION = 0.5
 let TT_NORM = "Hibernate"
 let TT_EXT = "The Dire Bear can hibernate, restoring {0} mana and {1}x{2} life.".format(MANA_RESTORED.toString().color(COLOR_LIGHT_BLUE),
                                                                                                          STRENGTH_MULTIPLIER.toString().color(COLOR_GREEN),
-                                                                                                         "Strength".color(COLOR_GREEN))+
+                                                                                                         "Strength".color(COLOR_ORANGE))+
              "\nDuring hibernation Dire Bear has {0}% damage reduction.".format((DAMAGE_MITIGATION*100).toString().color(COLOR_ORANGE))+
              "\nHibernation can only be interrupted if bear's life drops below what it was at the beginning of Hibernation."
 

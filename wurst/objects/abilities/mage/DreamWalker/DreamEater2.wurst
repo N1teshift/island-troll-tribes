@@ -1,0 +1,63 @@
+package DreamEater2
+
+import ClosureEvents
+import LocalObjectIDs
+import Icons
+import Lodash
+import ToolTipsUtils
+import ChannelAbilityPreset
+import Abilities
+import SimError
+import ColorUtils
+
+public let DREAM_EATER_MANACOST = 10
+public let DREAM_EATER_COOLDOWN = 5.
+public let DREAMWALKING_DURATION_PER_DREAM = 5.
+
+public let INVUL_DURATION = 1.0
+public let DREAM_DURATION = 10.
+public let DAMAGE_INT_MULTIPLIER = 0.75
+public let DAMAGE_BASE = 15.
+public let MANA_STEAL_INT_MULTIPLTIER = DAMAGE_INT_MULTIPLIER
+public let MANA_STEAL_BASE = DAMAGE_BASE
+public let HEAL_INT_MULTIPLIER = 0.5*DAMAGE_INT_MULTIPLIER
+public let HEAL_BASE  = 0.5*DAMAGE_BASE
+public let DAMAGE_DOT_INTERVAL = 0.125
+public let DREAM_STEALER_AOE = 1300.
+
+
+public let ANIMATION_NAME = "channel"
+public let TOOLTIP_NORM = "Dream Eater"
+public let TOOLTIP_EXTENDED = "Consume all the dreams you hold as well as dreams of all enemies within {0} radius that are currently sleeping.".format(DREAM_STEALER_AOE.toToolTipLightBlue())+
+                            "\nConsuming a dream steals {0}+{1}x{2} mana from the target, ".format(MANA_STEAL_BASE.toToolTipLightBlue(),
+                            MANA_STEAL_INT_MULTIPLTIER.toString().color(COLOR_LIGHT_BLUE), "Intelligence".color(COLOR_TURQUOISE))+
+                            "deals {0}+{1}x{2} damage and recovers half of damage dealt as life.".format(DAMAGE_BASE.toToolTipRed(),
+                            DAMAGE_INT_MULTIPLIER.toString().color(COLOR_RED), "Intelligence".color(COLOR_TURQUOISE))
+
+//public let TARGET_ALLOWED = "enemies,ground,hero"
+
+function constructDreamEater(
+    int newAbility,
+    string hotkey,
+    Pair<int , int> buttonPos
+) returns AbilityDefinition
+    return new ChannelAbilityPreset(newAbility, 1, true)
+        ..setName(TOOLTIP_NORM)
+        ..setHotkeyNormal(hotkey)
+        ..setCooldown(1, DREAM_EATER_COOLDOWN)
+        ..setManaCost(1, DREAM_EATER_MANACOST)
+        ..setIconNormal(Icons.bTNDevourMagic)
+        ..setButtonPositionNormalX(buttonPos.a)
+        ..setButtonPositionNormalY(buttonPos.b)
+        ..setTooltipNormalExtended(1, TOOLTIP_EXTENDED)
+        ..setTooltipNormal(1, makeToolTipNorm(hotkey, TOOLTIP_NORM))
+        ..setArtDuration(1, 0)
+        ..setAnimationNames(ANIMATION_NAME)
+
+
+
+@compiletime function createDreamEater()
+    constructDreamEater(ABILITY_DREAMWALKER_DREAM_EATER, "W", new Pair(1, 0))
+
+
+

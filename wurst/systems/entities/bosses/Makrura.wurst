@@ -18,9 +18,9 @@ import ClosureTimers
 
 constant LinkedList<int>makruraItemsList = asList(ITEM_MAKRURA_CARAPACE, ITEM_MAKRURA_CLAWS, ITEM_MAKRURA_CUIRASS)
 Pool<int> itemPool = new Pool<int>()
-    ..add(1, ITEM_MAKRURA_CARAPACE)
-    ..add(1, ITEM_MAKRURA_CLAWS)
-    ..add(1, ITEM_MAKRURA_CUIRASS)
+    ..add(10, ITEM_MAKRURA_CARAPACE)
+    ..add(10, ITEM_MAKRURA_CLAWS)
+    ..add(10, ITEM_MAKRURA_CUIRASS)
 
 public class Makrura extends Hostile
     private static let unitTypeId = UNIT_MAKRURA

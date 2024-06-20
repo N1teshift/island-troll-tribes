@@ -125,9 +125,12 @@ function onDropPhilosophersStone(unit u, item itm)
     if instance == null 
         return
     if instance.isTriggerPaused
-        return    
-    doAfter(ANIMATION_PERIOD) ->
-        u.addItemHandle(itm) 
+        return 
+    nullTimer()->
+        if u.isAlive()
+            u.addItemHandle(itm)
+        else
+            itm.setVisible(false) 
 
 function onRevive(unit u)
     let instance = instances.get(u)

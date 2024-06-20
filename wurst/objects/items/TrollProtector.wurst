@@ -7,13 +7,82 @@ import Assets
 import ToolTipsUtils
 import BuffObjEditing
 import LocalAssets
+import LinkedList
+import ClosureEvents
+import DamageEvent
+import DamageListeners
+import UnitExtensions
+import ClosureTimers
+import Orders
+import HashMap
+import PlayerExtensions
+import Pets
 
 let ARMOR_BONUS = 2.5
+let MAGIC_RESISTANCE = 0.15
 
 public constant TROLL_PROTECTOR_TT = "Troll Protector Aura"
-public constant TROLL_PROTECTOR_TT_EXT = ("Gives {0} bonus armor to allied trolls around you.").format(ARMOR_BONUS.toToolTipGreen())
+public constant TROLL_PROTECTOR_TT_EXT = ("Provides {0} bonus armor and {1} magic resistance to allied trolls around you.").format(
+                                            ARMOR_BONUS.toToolTipGreen(), MAGIC_RESISTANCE.toToolTipGreen())
 
 let TARGET_ALLOWED = "air,allies,friend,ground,hero,invulnerable,self,vulnerable"
+
+IterableMap<item, TrollProtectorResistAura> instances = new IterableMap<item, TrollProtectorResistAura>()
+
+
+class TrollProtectorResistAura
+    unit currentOwner
+    CallbackPeriodic cb
+
+    construct(unit _currentOwner)
+        onPickUp(_currentOwner)
+
+
+    function updateAffectedUnits()
+        let tribePlayers = currentOwner.getOwner().getTribe().getMembers()
+        for each in tribePlayers
+            let troll = each.getTroll()
+            updateBuffEffect(troll)
+            let pet = each.getPet()
+            if pet != null
+                updateBuffEffect(pet)
+        
+    function updateBuffEffect(unit u)
+        if u.hasAbility(ABILITY_TROLL_PROTECTOR_AURA)
+            if not u.hasAbility(ABILITY_TROLL_PROTECTOR_RESIST_AURA)
+                u.addAbility(ABILITY_TROLL_PROTECTOR_RESIST_AURA)
+                doAfter(3.) -> 
+                    u.removeAbility(ABILITY_TROLL_PROTECTOR_RESIST_AURA)
+/*
+    function onDamage(unit u)
+        if not affectedUnits.has(u)
+            affectedUnits.add(u)
+        if not u.hasAbility(ABILITY_TROLL_PROTECTOR_RESIST_AURA)
+            u.addAbility(ABILITY_TROLL_PROTECTOR_RESIST_AURA)
+        doAfter(3.)->
+            removeAbility(u)
+
+    function createDummy()
+        dummy = createUnit(currentOwner.getOwner(), UNIT_TROLL_PROTECTOR_DUMMY, currentOwner.getPos())
+        nullTimer() -> 
+            dummy.issueImmediateOrder("immolation")
+            dummy.getOwner().getPlayerAlliance(otherPlayer, whichAllianceSetting)
+            */
+    function onDrop()
+        currentOwner = null
+        if cb!= null
+            destroy cb
+
+    function onPickUp(unit _currentOwner)
+        currentOwner = _currentOwner
+        cb = doPeriodically(0.25) (CallbackPeriodic cb) ->
+            updateAffectedUnits()
+
+@compiletime function createResistAbility()
+    new AbilityDefinitionRunedBracers(ABILITY_TROLL_PROTECTOR_RESIST_AURA)
+    ..setDamageReduction(1, MAGIC_RESISTANCE)
+
+
 
 @compiletime function createBuff()
     new BuffDefinition(BUFF_TROLL_PROTECTOR_AURA, BuffIds.devotionAura)
@@ -25,6 +94,56 @@ let TARGET_ALLOWED = "air,allies,friend,ground,hero,invulnerable,self,vulnerable
     ..setName(TROLL_PROTECTOR_TT)
     ..setTooltipNormalExtended(1, "This unit is under effect of Troll Protector. It has increased armor.")
 
+/*
+@compiletime function createResistAura() returns AbilityDefinitionImmolationcreep
+    return new AbilityDefinitionImmolationcreep(ABILITY_CLOAK_OF_FLAMES_DUMMY)
+    ..setHeroAbility(true)
+    ..setLevels(1)
+    ..presetManaCost(lvl->0)
+    ..presetAreaofEffect(lvl->1200)
+    ..presetBufferManaRequired(lvl-> 0)
+    ..presetManaDrainedperSecond(lvl-> 0)
+    ..presetTargetsAllowed(lvl->"allies,ground,neutral,self")
+    ..presetDamageperInterval(lvl->0.001)
+    ..setName("Lightning Shield")
+    ..presetDurationHero(lvl->0.25)
+    ..presetDurationNormal(lvl->0.25)        
+    ..setEditorSuffix("Wurst")
+    ..setArtCaster("")
+    ..setArtSpecial("")
+    ..setArtTarget("")
+@compiletime function generateObject()
+	new UnitDefinition(UNIT_TROLL_PROTECTOR_DUMMY, 'ewsp')
+	..setName("UNIT_CLOAK_OF_FLAMES_DUMMY")
+	..setManaMaximum(1000000)
+	..setMovementType(MovementType.Fly)
+	..setUpgradesUsed("")
+	..setCollisionSize(0.0)
+	..setStructuresBuilt("")
+	..setRace(Race.Commoner)
+	..setFoodCost(0)
+	..setArmorType(ArmorType.Divine)
+	..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNtemp.blp")
+	..setSpeedBase(522)
+	..setModelFile("dummy.mdl")
+	..setAnimationBlendTimeseconds(0.0)
+	..setAnimationCastBackswing(0.0)
+	..setMaximumPitchAngledegrees(0.0)
+	..setMaximumRollAngledegrees(0.0)
+	..setTurnRate(3)
+	..setArtSpecial("")
+	..setProjectileImpactZ(0.0)
+	..setProjectileLaunchZ(0.0)
+	..setNameEditorSuffix("(Basics)")
+	..setSightRadiusDay(1)
+	..setSightRadiusNight(1)
+	..setUnitClassification("_")
+	..setPropulsionWindowdegrees(1.0)
+	..setTooltipBasic("")
+	..setNormalAbilities(commaList(LOCUST_ID, ABILITY_CLOAK_OF_FLAMES_DUMMY)) //(commaList(LOCUST_ID, GHOST_INVIS_ID, ABILITY_CLOAK_FLAMES))
+	..setCollisionSize(0)    
+      
+*/
 class TrollProtectorAura extends AbilityDefinitionPaladinDevotionAura
     construct(int newAbilityId)
         super(newAbilityId)
@@ -38,5 +157,30 @@ class TrollProtectorAura extends AbilityDefinitionPaladinDevotionAura
         this.setTargetsAllowed(1, TARGET_ALLOWED)
         this.setBuffs(1, toRawCode(BUFF_TROLL_PROTECTOR_AURA))
 
+
+
+
 @compiletime function createFortitude()
     new TrollProtectorAura(ABILITY_TROLL_PROTECTOR_AURA)
+
+function onPickUp(unit troll, item itm)
+    let instance = instances.get(itm)
+    if instance == null
+        instances.put(itm, new TrollProtectorResistAura(troll))
+    else
+        instance.onPickUp(troll)
+
+function onDrop(unit troll, item itm)
+    let instance = instances.get(itm)
+    if instance == null
+        return
+    instance.onDrop()
+
+init
+    EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->
+        if EventData.getManipulatedItem().getTypeId() == ITEM_TROLL_PROTECTOR
+            onPickUp(EventData.getManipulatingUnit(), EventData.getManipulatedItem()) 
+
+    EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
+        if EventData.getManipulatedItem().getTypeId() == ITEM_TROLL_PROTECTOR
+            onDrop(EventData.getManipulatingUnit(), EventData.getManipulatedItem())         

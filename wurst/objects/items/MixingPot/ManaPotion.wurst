@@ -21,7 +21,7 @@ public constant TT_MANA_POTION  = "A dilute potion made from Athelas Seed. "+
     "Instantly restores {0} Mana point to a target ally."
     .format(MANA_RESTORED.toToolTipLightBlue())
 
-public constant TARGETS_ALLOWED = "friend,ground,hero,invulnerable,organic,self,vulnerable"
+public constant TARGETS_ALLOWED = "friend,ground,hero,invulnerable,organic,self,vulnerable,item"
 
 @compiletime function createAbil() returns ChannelAbilityPreset
     return createItemChannelCast(ABILITY_MANA_POTION)
@@ -46,7 +46,21 @@ public constant TARGETS_ALLOWED = "friend,ground,hero,invulnerable,organic,self,
         ..setStockReplenishInterval(120)
         ..setNumberofCharges(2)
 
+
+
+function doubleClickSelfCast(unit caster, item targetItem)
+    if not caster.hasItem(targetItem) or targetItem.getTypeId()!=ITEM_MANA_POTION
+        let usedItem = caster.getItemById(ITEM_MANA_POTION)
+        usedItem.setCharges(usedItem.getCharges()+1)
+        return
+    caster.addMana(MANA_RESTORED)
+    flashEffect(Abilities.aImaTarget, caster, "origin")
+
 init
     EventListener.onTargetCast(ABILITY_MANA_POTION) (unit caster, unit target) ->
         target.addMana(MANA_RESTORED)
         flashEffect(Abilities.aImaTarget, target, "origin")
+
+    EventListener.add(EVENT_PLAYER_UNIT_SPELL_CAST)->
+        if EventData.getSpellAbilityId() == ABILITY_MANA_POTION and EventData.getSpellTargetItem() !=null
+            doubleClickSelfCast(EventData.getSpellAbilityUnit() , EventData.getSpellTargetItem())

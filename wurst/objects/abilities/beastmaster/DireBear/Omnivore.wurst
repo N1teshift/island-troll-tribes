@@ -39,7 +39,7 @@ let TT_EXT = "Dire Bear is an omnivore and is capable of eating almost anything,
 
 let TT_NORM_VORACIOUS_BEAR = "Voracious Bear"
 let TT_EXT_VORACIOUS_BEAR = "Dire Bear is a huge animal with even bigger appetite that cannot be satisfied with regular amount of food."+
-                            "\nHealing from food has only {0}% effect on you.".format((HEALING_PENALTY*100).toString().color(COLOR_RED))
+                            "\nHealing from food has only {0}% effect on you.".format((HEALING_PENALTY*100).toInt().toString().color(COLOR_RED))
 
 @compiletime function createOmnivoreDummyAbility()
     new AbilityDefinitionEvasion(ABILITY_OMNIVORE)

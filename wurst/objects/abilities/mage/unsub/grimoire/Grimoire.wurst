@@ -80,6 +80,7 @@ let GRIMOIRE_TT ="Mage can add a scroll to its Grimoire permanently gaining it's
         ..presetCooldown(lvl -> 1.0)
         ..setHeroAbility(true)
         ..setHotkeyNormal("Z")
+        ..presetBaseOrderID(lvl->"healingspray")
         ..setName("Add a scroll to your Grimoire")
         ..presetTooltipNormal(lvl -> makeToolTipNorm("Z", "Permanently add a scroll to your Grimoire"))
         ..presetTooltipNormalExtended(lvl -> "Add a scroll to your Grimoire")
@@ -255,7 +256,7 @@ function onGrimoireDrop(unit hero)
         return
     if instance.suspendTriggersFlag == true
         return         
-    doAfter(ANIMATION_PERIOD) -> 
+    nullTimer() ->  
         instance.onGrimoireDrop()
 
 function onScrollPickup(unit troll, item itm)

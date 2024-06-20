@@ -44,7 +44,7 @@ let FROST_MS_DEBUFF = 0.35
 let FROST_AS_DEBUFF = 0.35
 let FROST_INTERVAL_PROC = 1.
 
-let FLAMES_DMG = 7.
+public let FLAMES_DMG = 7.
 
 let RESTORE_COOLDOWN = 60.
 let FROST_COOLDOWN   = 35.
@@ -112,7 +112,7 @@ function createCloak(int newId) returns ItemDefinition
         ..setTintingColor1Red(255)
         ..setTintingColor2Green(0)
         ..setTintingColor3Blue(0)
-        ..setAbilities(commaList(ABILITY_CLOAK_FLAMES, ABILITY_ARMOR_BONUS_3, AbilityIds.allPlus3)) // Immolation,+ 3 Armor, +3 all stats
+        ..setAbilities(commaList(ABILITY_ARMOR_BONUS_3, AbilityIds.allPlus3)) // Immolation,+ 3 Armor, +3 all stats
 
 @compiletime function createCloakOfHealing() returns ItemDefinition
     return createCloak(ITEM_CLOAK_OF_HEALING)
@@ -381,13 +381,17 @@ function castRejuv(unit caster, int rejuvAbility)
 function castAoESlowDebuff(unit caster)
     forUnitsInRange(caster.getPos(), FROST_RADIUS) (unit u) ->
         if isValidTarget(caster, u)
-            InstantDummyCaster.castTarget(caster.getOwner(), ABILITY_ICE_VEIL_DEBUFF, 1, Orders.acidbomb, u)
+            //InstantDummyCaster.castTarget(caster.getOwner(), ABILITY_ICE_VEIL_DEBUFF, 1, Orders.acidbomb, u)
+            let dummy = createUnit(caster.getOwner(), UNIT_CLOAK_OF_FROST_DUMMY, caster.getPos())
+            dummy.issueTargetOrderById(Orders.acidbomb, u)
             u.setVertexColor(96, 170, 255, 255)
             doAfter(FROST_TARGET_DURATION + 0.1) () ->
+                dummy.remove() 
                 if not u.hasAbility(BUFF_FROST_TARGET.buffId)
-                    u.setVertexColor(255, 255, 255, 255)
+                    u.setVertexColor(255, 255, 255, 255)          
 
 function castIceVeil(unit caster)
+    let dummy = createUnit(UNIT_CLOAK_OF_FROST_DUMMY)  
     caster.addAbility(BUFF_FROST_CASTER.abilId)
     doAfter(FROST_CASTER_DURATION) () ->
         caster.removeAbility(BUFF_FROST_CASTER.abilId)
@@ -402,8 +406,11 @@ function castIceVeil(unit caster)
     // FROST_CASTER_DURATION - 1 count so we ended up with 1 + ( 5 - 1) ice veil cast
     doPeriodicallyTimed(FROST_INTERVAL_PROC, FROST_CASTER_DURATION - 1) (CallbackCounted cb) ->
         if not (caster.hasAbility(BUFF_FROST_CASTER.buffId))
+            dummy.remove()
             destroy cb
         castAoESlowDebuff(caster)
+        if cb.isLast()
+            dummy.remove()
 
 function isValidTarget(unit caster, unit target) returns bool
     return target.getOwner().isEnemyOf(caster.getOwner())

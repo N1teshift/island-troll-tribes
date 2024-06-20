@@ -31,10 +31,10 @@ import AxesDefinition
 import ColorUtils
 
 let ABIL_MAKRURA_CLAWS_DMG   = compiletime(ABIL_ID_GEN.next())
-let DURATION_HERO = 4.
+let DURATION_HERO = 2.5
 let CAST_RANGE = 200.
 let MAKRURA_CLAWS_DMG_BONUS = 8
-let MAKRURA_PIN_COOLDOWN = 45.
+let MAKRURA_PIN_COOLDOWN = 25.
 public let MAKRURA_CLAWS_TT = "A pair of Makrura claws, that can be worn as gloves, takes up both gloves and a one-handed weapon slots."+
                               "\n+{0} damage.".format(MAKRURA_CLAWS_DMG_BONUS.toString().color(COLOR_GREEN))+
                               "\n+{0} armor.".format("3".color(COLOR_GREEN))+

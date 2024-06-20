@@ -182,6 +182,7 @@ function onCast(unit troll, unit target)
         target.issueImmediateOrder("stop")
         //print(GetObjectName(target.getTypeId()))
         simError(troll.getOwner(),"This place has been scavenged recently.")
+        troll.setMana(troll.getMana()+MANACOST)
         return
     else
         stashInstances.put(target, new ScavengedStash(target, troll))

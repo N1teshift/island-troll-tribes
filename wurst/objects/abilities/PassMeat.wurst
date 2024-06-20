@@ -1,0 +1,230 @@
+package PassMeat
+
+// Standard library imports:
+import HashMap
+import AbilityObjEditing
+import ClosureEvents
+import DamageEvent
+import InstantDummyCaster
+import StandardTextTags
+
+// Local imports:
+import ColorUtils
+import ChatCommands
+import ChatUtils
+import LocalObjectIDs
+import UnitExtensions
+import ToolTipsUtils
+import ObjectIds
+import Sleep
+import ChannelAbilityPreset
+import ClosureTimers
+import Orders
+import HealingSystem
+import BuffObjEditing
+import BuffIds
+import Abilities
+import StupefyField
+import DamageListeners
+import LocalAssets
+import SimError
+import FoodSlots
+import ItemPoolExtensions
+import LinkedList
+import OnUnitEnterLeave
+import GameStates
+import Tribe
+import PlayerExtensions
+import GameConfig
+import Transformation
+
+constant CAST_RANGE = 150.
+constant CHARGE_CD = 10.
+constant TT_NAME = "Pass Meat"
+constant MAX_CHARGES = 4
+constant TT_EXT = "Use this ability to pass meat to an ally."+
+                    "\n{0} seconds charge recovery.".format(CHARGE_CD.toInt().toString().color(COLOR_LIGHT_BLUE))
+                    
+
+
+constant ICONS = asList(LocalIcons.bTNPassMeat0, LocalIcons.bTNPassMeat1, LocalIcons.bTNPassMeat2, LocalIcons.bTNPassMeat3, 
+                        LocalIcons.bTNPassMeat4, LocalIcons.bTNPassMeat5, LocalIcons.bTNPassMeat6, LocalIcons.bTNPassMeat7, 
+                        LocalIcons.bTNPassMeat8, LocalIcons.bTNPassMeat9, LocalIcons.bTNPassMeat10)
+
+public IterableMap<unit, PassMeat> instances = new IterableMap<unit, PassMeat>()
+
+
+class PassMeat
+    int passMeatCharges = MAX_CHARGES
+    //int receiveMeatCharges = MAX_CHARGES 
+    unit troll
+    construct(unit _troll)
+        troll = _troll
+        //print("created instance for unit "+GetObjectName(troll.getTypeId()))
+        updatePassMeatAbility()
+        updateTooltip()
+
+    function spendCharges(int amount, unit target)
+        passMeatCharges-=amount
+        //let targetInstance = instances.get(target)
+        //targetInstance.receiveMeatCharges-=amount
+
+                 
+
+    function chargeRecovery()
+        updateTooltip()
+        doPeriodically(CHARGE_CD) (CallbackPeriodic cb) ->
+            if passMeatCharges == MAX_CHARGES
+                destroy cb
+            else
+                passMeatCharges+=1
+                updateTooltip()
+
+    function updateTooltip()
+        let TT_CHARGES = "\nCurrent charges: {0} / {1}.".format(passMeatCharges.toString(),MAX_CHARGES.toString()).color(COLOR_GOLD_STR)
+        doAfter(ANIMATION_PERIOD) ->  
+            troll.getOwner().setAbilityExtendedTooltip(ABILITY_PASS_MEAT, TT_EXT+TT_CHARGES, 0)
+            troll.getOwner().setAbilityIcon(ABILITY_PASS_MEAT, ICONS.get(passMeatCharges))
+
+    function calculatePassedAmount(unit target) returns int
+        let targetInstance = instances.get(target)
+        var maxChargesReceived = 0
+        var maxChargesGiven = 0
+        for each in target.getInventory()
+            if each == null
+                maxChargesReceived+=10
+            if each.getTypeId() == ITEM_COOKED_MEAT
+                maxChargesReceived+=(10-each.getCharges())    
+            if maxChargesReceived>=10
+                break
+        //print("target has room for "+maxChargesReceived.toString()+" meat")
+        //print("target can receive "+targetInstance.receiveMeatCharges.toString()+" meat")
+        //maxChargesReceived = min(maxChargesReceived, targetInstance.receiveMeatCharges)
+
+        for each in troll.getInventory()
+            if each.getTypeId() == ITEM_COOKED_MEAT
+                maxChargesGiven += each.getCharges()
+            if maxChargesGiven>=10
+                break
+        //print("caster has "+maxChargesGiven.toString()+" meat")
+        //print("caster can pass "+passMeatCharges.toString()+" meat")            
+        maxChargesGiven = min(maxChargesGiven, passMeatCharges)  
+
+        //let meatAmountPassed = maxChargesGiven>= maxChargesReceived ? maxChargesReceived : maxChargesGiven
+        //print(maxChargesGiven.toString()+" meat will be passed")    
+        return maxChargesGiven
+
+    function onCast(unit target)
+        let targetInstance = instances.get(target)
+        let meatAmountPassed = calculatePassedAmount(target)
+        //if targetInstance.receiveMeatCharges == 0
+            //simError(troll.getOwner(), "Target has been passed maximum amount of meat recently")
+        if this.passMeatCharges == 0
+            simError(troll.getOwner(), "You have passed maximum amount of meat recently")
+        if meatAmountPassed <=0
+            return
+        reduceCasterMeat(meatAmountPassed)
+        increaseTargetMeat(meatAmountPassed, target)
+        passMeatCharges-=meatAmountPassed
+        //spendCharges(meatAmountPassed, target)
+        chargeRecovery()
+
+    function reduceCasterMeat(int amount)
+        var amountLeft = amount
+        for each in troll.getInventory()
+            if each.getTypeId() == ITEM_COOKED_MEAT
+                let charges = each.getCharges()
+                if charges == amountLeft
+                    RemoveItem(each)
+                    break
+                if charges >amountLeft
+                    each.setCharges(charges-amountLeft)
+                    break
+                amountLeft-=charges
+                if amountLeft <= 0 
+                    break
+
+        
+    function increaseTargetMeat(int amount, unit target)
+        var amountLeft = amount     
+        doPeriodicallyCounted(0, 10) (CallbackCounted cb) ->
+            if amountLeft == 0
+                destroy cb
+            for each in target.getInventory()
+                if each.getTypeId() == ITEM_COOKED_MEAT and each.getCharges() < 10
+                    if 10-each.getCharges() >= amountLeft
+                        each.setCharges(each.getCharges()+amountLeft)
+                        amountLeft = 0 // return
+                    if 10-each.getCharges() <= amountLeft
+                        amountLeft-=(10-each.getCharges())
+                        each.setCharges(10)
+                if each == null and amountLeft>0
+                    //print("empty slot")
+                    target.addItemById(ITEM_COOKED_MEAT)
+                    amountLeft-=1  
+
+    function updatePassMeatAbility()
+        //print("updated ability")
+        doAfter(ANIMATION_PERIOD) ->     
+            if troll.hasAbility(LocalAbilityIds.corpseConsume)
+                troll.removeAbility(LocalAbilityIds.corpseConsume)
+            if not troll.hasAbility(ABILITY_PASS_MEAT)
+                doAfter(ANIMATION_PERIOD)->
+                    troll.addAbility(ABILITY_PASS_MEAT)
+                    doAfter(ANIMATION_PERIOD) ->
+                        troll.makeAbilityPermanent(ABILITY_PASS_MEAT, true)
+                        
+
+@compiletime function createPassMeatAbility()
+    new ChannelAbilityPreset(ABILITY_PASS_MEAT, 1, true)
+        ..presetCastRange(lvl -> CAST_RANGE)
+        ..presetIcon(ICONS.get(MAX_CHARGES))
+        ..presetTargetTypes(Targettype.UNIT)
+        ..presetHotkey("D")
+        ..presetButtonPosNormal(1, 2)
+        ..presetTooltipNormal(lvl->TT_NAME)
+        ..setName(TT_NAME)
+        ..presetTooltipNormalExtended(lvl->TT_EXT)    
+        ..presetTargetsAllowed(lvl ->commaList(
+            TargetsAllowed.allies,
+            TargetsAllowed.hero,
+            TargetsAllowed.friend
+        )) 
+
+
+
+
+
+function onCast(unit caster, unit target)
+    let instance = instances.get(caster)
+    if instance == null
+        return
+    instance.onCast(target)
+    
+function onUnitEnter(unit u)
+    if not gameConfig.isPassMeatAbility() == true
+        return
+    if not u.isTroll()
+        return
+    let instance = instances.get(u)
+    if instance != null
+        instance.updatePassMeatAbility()
+        return
+    instances.put(u, new PassMeat(u))
+
+
+init
+    EventListener.add(EVENT_PLAYER_UNIT_SPELL_CAST) -> 
+        if GetSpellAbilityId() == ABILITY_PASS_MEAT
+            onCast(GetTriggerUnit(), GetSpellTargetUnit())
+
+    onEnter(()->onUnitEnter(getEnterLeaveUnit()))  
+
+    registerAfterEffect() (unit target, int unitID) ->
+        onUnitEnter(target)
+
+    GameStates.gameplay.onEnter() state ->
+        for i=0 to GetBJMaxPlayerSlots()-1
+            let troll = players[i].getTroll()
+            //instances.put(troll, new PassMeat(troll))
+    

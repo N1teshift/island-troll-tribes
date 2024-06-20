@@ -48,10 +48,17 @@ public constant  NAME_DIRE_WOLF       = "Danny The Dog,Sobaka"
 // Pretty Map to assign inventory abilities to trolls in constructor
 public constant trollInventoryAbilityMap = new IterableMap<int, LinkedList<int>>()
 ..put(ABILITY_INVENTORY_3_SLOT, TROLL_INVENTORY_SLOT_3_LIST)
-..put(ABILITY_INVENTORY_4_SLOT, TROLL_INVENTORY_SLOT_4_LIST
-        ..remove(UNIT_PRIEST)
-        ..remove(UNIT_DIRE_BEAR))
-..put(ABILITY_INVENTORY_5_SLOT, TROLL_INVENTORY_SLOT_5_LIST..add(UNIT_PRIEST))
+..put(ABILITY_INVENTORY_4_SLOT, 
+        TROLL_INVENTORY_SLOT_4_LIST
+            ..remove(UNIT_PRIEST)
+            ..remove(UNIT_DIRE_BEAR)
+            ..remove(UNIT_DIRE_WOLF)
+        )
+..put(ABILITY_INVENTORY_5_SLOT, 
+        TROLL_INVENTORY_SLOT_5_LIST
+            ..add(UNIT_PRIEST)
+            ..add(UNIT_DIRE_WOLF)
+        )
 ..put(AbilityIds.inventory, TROLL_INVENTORY_SLOT_6_LIST..add(UNIT_DIRE_BEAR))
 
 public constant HashMap<int, int> trollInventoryPseudoSlotCountMap  = new HashMap<int, int>()
@@ -63,6 +70,7 @@ public constant HashMap<int, int> trollInventoryPseudoSlotCountMap  = new HashMa
     ..put(UNIT_MAGE, 1)
     ..put(UNIT_ELEMENTALIST, 1)
     ..put(UNIT_HYPNOTIST, 1)
+    ..put(UNIT_DREAMWALKER, 1)
     ..put(UNIT_DEMENTIA_MASTER, 1)
 
     ..put(UNIT_THIEF, 1)
@@ -71,7 +79,7 @@ public constant HashMap<int, int> trollInventoryPseudoSlotCountMap  = new HashMa
     ..put(UNIT_ASSASSIN, 1)
 
     ..put(UNIT_DIRE_BEAR, 2)
-    //..put(UNIT_DIRE_WOLF, 1)
+    ..put(UNIT_DIRE_WOLF, 1)
 
 
 public class AttributeGrowth
@@ -95,7 +103,8 @@ public constant IterableMap<int, AttributeGrowth> trollAttributeGrowth =  new It
     ..put(UNIT_MAGE_1, new AttributeGrowth(0.5, 0.5, 2.))
     ..put(UNIT_ELEMENTALIST, new AttributeGrowth(0.5, 0.5, 2.25))
     ..put(UNIT_ELEMENTALIST_1, new AttributeGrowth(0.5, 0.5, 2.25))
-    ..put(UNIT_HYPNOTIST, new AttributeGrowth(1., 0.5, 2.5))
+    ..put(UNIT_HYPNOTIST, new AttributeGrowth(1., 0.5, 2.25))
+    ..put(UNIT_DREAMWALKER, new AttributeGrowth(1., 0.8, 2.25))
     ..put(UNIT_DEMENTIA_MASTER, new AttributeGrowth(1., 1., 3.))
     //priest classes attributesGworth
     ..put(UNIT_PRIEST, new AttributeGrowth(0.6, 0.4, 1.35))
@@ -136,11 +145,11 @@ public constant IterableMap<int, AttributeGrowth> trollAttributeGrowth =  new It
 
 
 // Basic Troll Spells
-public constant BASIC_TROLL_SPELLS = commaList(ABILITY_PANIC,ABILITY_SLEEP_OUTSIDE,ABILITY_BUILDING_CRAFT_SPELLBOOK_ID,LocalAbilityIds.corpseGrab0,LocalAbilityIds.corpseConsume,ABILITY_HERO_GLOW, ABILITY_TROLL_MS_PER_LVL)
+public constant BASIC_TROLL_SPELLS = commaList(ABILITY_PANIC,ABILITY_SLEEP_OUTSIDE,ABILITY_BUILDING_CRAFT_SPELLBOOK_ID,LocalAbilityIds.corpseGrab0, LocalAbilityIds.corpseConsume ,ABILITY_HERO_GLOW, ABILITY_TROLL_MS_PER_LVL)
 
 // Unsub Hero Spells
 public constant HERO_SPELLS_HUNTER       = commaList(ABILITY_TRACK,            ABILITY_WARRIOR,        ABILITY_TRACKER)
-public constant HERO_SPELLS_MAGE         = commaList(ABILITY_MAGE_SPELLBOOK,   ABILITY_ELEMENTALIST,   ABILITY_HYPNOTIST,    ABILITY_DEMENTIA_MASTER)
+public constant HERO_SPELLS_MAGE         = commaList(ABILITY_MAGE_SPELLBOOK,   ABILITY_ELEMENTALIST,    ABILITY_DREAMWALKER, ABILITY_DEMENTIA_MASTER)
 public constant HERO_SPELLS_PRIEST       = commaList(ABILITY_PRIEST_SPELLBOOK, ABILITY_BOOSTER,        ABILITY_MASTER_HEALER,ABILITY_SAGE)
 // The first ability is just a placeholder that is stripped during creation of the class menu.
 // TODO: Fix this hack by properly listing out abilities and class selection separately.
@@ -162,6 +171,7 @@ public constant HERO_SPELLS_WARRIOR        = commaList(ABILITY_UNDYING, ABILITY_
 public constant HERO_SPELLS_TRACKER        = commaList(ABILITY_TRACKER_SPELLBOOK,          ABILITY_JUGGERNAUT)
 public constant HERO_SPELLS_ELEMENTALIST   = commaList(ABILITY_ELEMENTALIST_NEW_SPELLBOOK, ABILITY_DEMENTIA_MASTER)
 public constant HERO_SPELLS_HYPNOTIST      = commaList(ABILITY_HYPNOTIST_SPELLBOOK,        ABILITY_DEMENTIA_MASTER)
+public constant HERO_SPELLS_DREAMWALKER    = commaList(ABILITY_DREAMWALKER_SPELLBOOK,        ABILITY_DEMENTIA_MASTER)
 public constant HERO_SPELLS_BOOSTER        = commaList(ABILITY_BOOSTER_SPELLBOOK,          ABILITY_SAGE)
 public constant HERO_SPELLS_MASTER_HEALER  = commaList(ABILITY_MASTER_HEALER_SPELLBOOK,    ABILITY_SAGE)
 public constant HERO_SPELLS_ESCAPE_ARTIST  = commaList(ABILITY_ESCAPE_ARTIST_SPELLBOOK,    ABILITY_ASSASSIN)
@@ -217,7 +227,7 @@ public constant  HERO_SPELLS_SAGE            = commaList(ABILITY_SAGE_SPELLBOOK)
 public constant  HERO_SPELLS_JUNGLE_TYRANT   = commaList("")
 public constant  HERO_SPELLS_ASSASSIN        = commaList(ABILITY_ASSASSINATE)
 public constant  HERO_SPELLS_SPY             = commaList(ABILITY_CHAIN_REVEAL)
-public constant  HERO_SPELLS_OMNIGATHERER    = commaList(ABILITY_ITEM_WARP)
+public constant  HERO_SPELLS_OMNIGATHERER    = commaList(ABILITY_OMNIGATHERER_ALCHEMIST_SPELLBOOK)
 
 // SuperSub Normal Spells
 public constant  NORMAL_SPELLS_JUGGERNAUT      = commaList(ABILITY_HUNTER_WEB,ABILITY_JUGGERNAUT_SPELLBOOK)
@@ -226,7 +236,7 @@ public constant  NORMAL_SPELLS_SAGE            = commaList(ABILITY_SAGE_INHERITE
 public constant  NORMAL_SPELLS_JUNGLE_TYRANT   = commaList(ABILITY_JUNGLE_TYRANT_EVOLUTION, ABILITY_PET_SPELLS, ABILITY_RENDO_DEVOUR)
 public constant  NORMAL_SPELLS_ASSASSIN        = commaList(ABILITY_ASSASSIN_SPELLBOOK)
 public constant  NORMAL_SPELLS_SPY             = commaList(ABILITY_SPY_INHERITED_SPELLBOOK)
-public constant  NORMAL_SPELLS_OMNIGATHERER    = commaList(ABILITY_OMNIGATHERER_INHERITED_SPELLBOOK)
+public constant  NORMAL_SPELLS_OMNIGATHERER    = commaList(ABILITY_CREATE_PHILOSOPHERS_STONE, ABILITY_OMNIGATHERER_INHERITED_SPELLBOOK)
 
 // Few constant to save space
 constant  DIFFICULTY_EASY   = "\n\nDifficulty: ".color(COLOR_LIGHT_BLUE) + "Easy"  .color(COLOR_GREEN )
@@ -292,6 +302,12 @@ public constant  TOOLTIP_TRACKER         = "" +
 public constant  TOOLTIP_ELEMENTALIST    = "" +
     "The Elementalist is adept at controlling the elements,allowing him to cast powerful damage dealing spells. "+
     SUBCLASS_WARNING+DIFFICULTY_MEDIUM
+
+public constant TOOLTIP_DREAMWALKER     = "" +
+    "Dreamwalker has control over dreams, both his and his enemies. He can consume dreams of his enemies"+
+    "stealing their health and energy."+
+    SUBCLASS_WARNING+DIFFICULTY_HARD
+
 
 public constant  TOOLTIP_HYPNOTIST       = "" +
     "The Hypnotist is adept at controlling enemies thoughts and emotions. He can easily zap enemies "+
@@ -423,6 +439,7 @@ public constant trollIcons = new HashMap<int,string>()
     ..put(UNIT_ELEMENTALIST,     Icons.bTNIceTrollShaman)
     ..put(UNIT_ELEMENTALIST_1,       Icons.bTNIceTrollShaman)
     ..put(UNIT_HYPNOTIST,            LocalIcons.bTNHypnotist)
+    ..put(UNIT_DREAMWALKER,            LocalIcons.bTNHypnotist)
     ..put(UNIT_DEMENTIA_MASTER,      Icons.bTNDarkTrollShadowPriest)
     ..put(UNIT_PRIEST,               Icons.bTNShadowHunter)
     ..put(UNIT_BOOSTER,              Icons.bTNForestTrollShadowPriest)

@@ -144,7 +144,7 @@ function performGlobalExperienceGain(unit lvl4Troll, int exp, unit killedUnit)
         let multiplier = getMultiplier(hero)
         var level = hero.getLevel()
         var heroCurrentXp = hero.getXp()    
-        var experience = exp
+        var experience = (exp/heroes.size()).ceil()
         while experience > 0
             let expReduction = reduceExpGain
                 ? max(0.4, 0.9 - 0.1 * level)

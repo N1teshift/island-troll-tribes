@@ -122,6 +122,11 @@ init
         mode.message("Subbed trolls cannot level up beyond level {0}. Global experience at lvl {1}.".format("4".color(COLOR_GOLD_STR),"4".color(COLOR_GOLD_STR)))
         gameConfig.setNoSuperSubs(true)
 
+    new GameMode("pass-meat-ability", "pma", "General", "Eat raw meat is replaced with a pass meat ability") (mode, args) ->
+        mode.deregister()
+        mode.message("Eat raw meat is replaced with a pass meat ability")
+        gameConfig.setPassMeatAbility(true)
+
     new GameMode("start-with-one-fire", "so", "General", "Each tribe starts with a fire kit") (mode, args) ->
         mode.deregister()
         mode.message("Each tribe will start with a " + "fire kit".color(ENERGY_COLOR))
@@ -180,7 +185,7 @@ init
         mode.message("Respawn system".color(ENERGY_COLOR) + " enabled")
 
     new GameMode("forced-duel", "fd", "Pro", "Set a forced duel after a time limit, defaults to 1 h, eg: \"-fd 60\"") (mode, args) ->
-        var amount = 3600
+        var amount = 1800
         if (args.size() > 1)
             amount = args.get(1).toInt()
         if (not gameConfig.setForcedDuel(amount))

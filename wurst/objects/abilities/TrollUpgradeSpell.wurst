@@ -104,6 +104,15 @@ function AbilityDefinition.setRequiredTrollLevel(int level, boolean requiresSub)
         ..presetHotkey("W")
         ..setBaseOrderID(1, "manaflareoff")
 
+@compiletime function createUpgradeAbilityDreamwalker() returns ChannelAbilityPreset
+    return createUpgradeAbility(ABILITY_DREAMWALKER)
+        ..setUpgradeTarget("Dreamwalker")
+        ..presetTooltipNormalExtended(lvl -> TOOLTIP_DREAMWALKER)
+        ..setIconNormal(LocalIcons.bTNHypnotist)
+        ..setRequiredTrollLevel(6, false)
+        ..presetHotkey("W")
+        ..setBaseOrderID(1, "manashieldon")
+
 @compiletime function createUpgradeAbilityDementiaMaster() returns ChannelAbilityPreset
     return createUpgradeAbility(ABILITY_DEMENTIA_MASTER)
         ..setUpgradeTarget("Dementia Master")

@@ -10,6 +10,8 @@ import Lodash
 import ToolTipsUtils
 import LocalObjectIDs
 import ColorUtils
+import UnitExtensions
+import Pets
 
 let DUMMY_STUN_ABILITY_ID = 'XEMD'
 let BUFF_STUN = "BSTN" // Stunned
@@ -164,6 +166,7 @@ function isValidTarget(unit caster, unit target) returns boolean
         and not target.isType(UNIT_TYPE_FLYING)
         and not target.isInvulnerable()
 
+int totalUnitsHit = 0
 function handleImpactEffects(vec3 target3D, unit caster, boolean isOvercharged)
     let targetpos = target3D.toVec2()
 
@@ -177,20 +180,28 @@ function handleImpactEffects(vec3 target3D, unit caster, boolean isOvercharged)
     if isOvercharged
         handleGroundBurning(caster, targetpos)
 
+
     //Impact unit effects
+    totalUnitsHit = 0
+    forUnitsInRange(targetpos, IMPACT_RADIUS_MAX) u ->
+        if isValidTarget(caster, u) and (u.isTroll() or u.isPet())
+            totalUnitsHit+=1    
     forUnitsInRange(targetpos, IMPACT_RADIUS_MAX) u ->
         if isValidTarget(caster, u)
-            handleImpactUnitEffect(targetpos, u, caster)
+            handleImpactUnitEffect(targetpos, u, caster, totalUnitsHit)
 
-function handleImpactUnitEffect(vec2 hitPosition, unit target, unit caster)
+function handleImpactUnitEffect(vec2 hitPosition, unit target, unit caster, int totalUnitsHit)
     //Calculate reduced damage for units away from center
     let distance = hitPosition.distanceTo(target.getPos())
     let heroInt = caster.getInt(true)
+    let dmgCapDmgReduction = totalUnitsHit>3? (3/totalUnitsHit):1
     if (distance <= IMPACT_RADIUS_DAMAGEFALLOFF)
-        UnitDamageTarget(caster, target, IMPACT_DAMAGE_INT_MULTIPLIER*heroInt+IMPACT_DAMAGE_BASE, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_MAGIC, null)
+        let totalDamage = dmgCapDmgReduction*(IMPACT_DAMAGE_INT_MULTIPLIER*heroInt+IMPACT_DAMAGE_BASE)
+        UnitDamageTarget(caster, target, totalDamage, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_MAGIC, null)
     else
         let reducedDamage = (IMPACT_DAMAGE_INT_MULTIPLIER*heroInt+IMPACT_DAMAGE_BASE) * (1 - ((distance - IMPACT_RADIUS_DAMAGEFALLOFF) / (IMPACT_RADIUS_MAX - IMPACT_RADIUS_DAMAGEFALLOFF)))
-        UnitDamageTarget(caster, target, reducedDamage, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_MAGIC, null)
+        let totalReducedDamage = dmgCapDmgReduction*reducedDamage
+        UnitDamageTarget(caster, target, totalReducedDamage, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_MAGIC, null)
 
     //Apply burn on units
     let burnfx = addEffect(BURN_EFFECT_PATH, target, "chest")
@@ -199,7 +210,8 @@ function handleImpactUnitEffect(vec2 hitPosition, unit target, unit caster)
     //Burn damage loop
     doPeriodicallyTimed(IMPACT_BURN_INTERVAL, IMPACT_BURN_DURATION) burn ->
         if (not target.isInvulnerable() and target.isAlive())
-            UnitDamageTarget(caster, target, (IMPACT_BURN_DPS_INT_MULTIPLIER*heroInt+IMPACT_BURN_DPS_BASE) * IMPACT_BURN_INTERVAL, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_MAGIC, null)
+            let totalDmgPerTick = dmgCapDmgReduction * (IMPACT_BURN_DPS_INT_MULTIPLIER*heroInt+IMPACT_BURN_DPS_BASE) * IMPACT_BURN_INTERVAL
+            UnitDamageTarget(caster, target, totalDmgPerTick , false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_MAGIC, null)
         if (burn.isLast() or not target.isAlive())
             burnfx.destr()
 

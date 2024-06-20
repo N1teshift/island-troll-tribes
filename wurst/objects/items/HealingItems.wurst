@@ -152,6 +152,13 @@ function onSpellEffect()
     if itemTargetedHealAmount.has(spellId)
         new HealingInstance(target, caster, itemTargetedHealAmount.get(spellId), HealingType.ITEM)
 
+function doubleClickSelfCast(unit caster, item targetItem)
+    if not caster.hasItem(targetItem) or targetItem.getTypeId()!=ITEM_HEALING_POTION
+        let usedItem = caster.getItemById(ITEM_HEALING_POTION)
+        usedItem.setCharges(usedItem.getCharges()+1)
+        return
+    new HealingInstance(EventData.getSpellAbilityUnit(), EventData.getSpellAbilityUnit(), POT_HEAL, HealingType.ABILITY)
+
 init
     EventListener.onCast(ABIL_COCONUT) (unit caster) ->
         caster.addMana(COCONUT_MANA)
@@ -164,7 +171,10 @@ init
                 ..matchVisibility(caster)
     EventListener.onTargetCast(ABILITY_HEALING_POTION) (unit caster, unit target) ->
         new HealingInstance(target, caster, POT_HEAL, HealingType.ABILITY)
-        
+
+    EventListener.add(EVENT_PLAYER_UNIT_SPELL_CAST)->
+        if EventData.getSpellAbilityId() == ABILITY_HEALING_POTION and EventData.getSpellTargetItem() !=null
+            doubleClickSelfCast(EventData.getSpellAbilityUnit() , EventData.getSpellTargetItem())
         
                      
     initHealItemTable()

@@ -14,16 +14,17 @@ import LocalObjectIDs
 import UnitExtensions
 import ToolTipsUtils
 import ObjectIds
+//import DreamStealer
 
 // TODO: Migrate to settings library.
 let protectionEnabled = new HashMap<player, boolean>()
 
-let MANA_RESTORED_BY_TROLL = 80.
+public let MANA_RESTORED_BY_TROLL = 80.
 let MANA_RESTORED_BY_TENT = 80.
 let MANA_RESTORED_BY_HUTS = 200.
 
-let SLEEP_OUTSIDE_HP_PENALTY = 20.
-let SLEEP_OUTSIDE_HEAT_PENALTY = 15
+public let SLEEP_OUTSIDE_HP_PENALTY = 20.
+public let SLEEP_OUTSIDE_HEAT_PENALTY = 15
 
 public let INVUL_DURATION = 1.0
 public let COOLDOWN = 10.

@@ -1,0 +1,145 @@
+package CloakOfFlamesDamageCounter
+
+import ChannelAbilityPreset
+import LocalObjectIDs
+import Lodash
+import Assets
+import ToolTipsUtils
+import ClosureEvents
+import BuffObjEditing
+import ClosureTimers
+import ColorUtils
+import Tribe
+import PlayerExtensions
+import DamageEvent
+import LinkedList
+import HashMap
+import UnitExtensions
+import InstantDummyCaster
+import DamageListeners
+import Pets
+import CloaksDefinition
+import LocalAssets
+
+
+IterableMap<item, CloakOfFlamesDamageCounter> instances = new IterableMap<item, CloakOfFlamesDamageCounter>()
+
+class CloakOfFlamesDamageCounter
+    string default_TT
+    unit currentOwner = null
+    real totalDamageDealt = 0
+    unit dummyUnit = null
+    item itm = null
+    effect efx = null
+    CallbackPeriodic cb = null
+    construct(item _itm , unit owner)
+        itm = _itm
+        default_TT=itm.getExtendedTooltip()
+        updateOwner(owner)
+    
+    function updateOwner(unit owner)
+        if efx!= null
+            efx.destr()
+        currentOwner = owner
+        if owner.isTroll()
+            efx = addEffect(Abilities.immolationREDTarget, currentOwner, AttachmentPoints.chest)
+        updateDummyUnit()
+        updateTooltip()
+
+    function updateDummyUnit()
+        dummyUnit.remove()
+        if cb != null
+            destroy cb
+            cb = null
+        if currentOwner.isTroll()
+            dummyUnit = createUnit(UNIT_CLOAK_OF_FLAMES_DUMMY)
+            dummyUnit.setInvulnerable(true)
+            dummyUnit.setOwner(currentOwner.getOwner(), true)
+            nullTimer() -> 
+                cb = doPeriodically(ANIMATION_PERIOD) (CallbackPeriodic cb) ->
+                    //print("setpos")   
+                    dummyUnit.setXY(currentOwner.getPos())
+            
+
+    function updateTooltip()
+        let NEW_TT = default_TT+("\nPost mitigation damage dealt: "+totalDamageDealt.toInt().toString()).color(COLOR_GOLD)
+        itm.setExtendedTooltip(NEW_TT)
+
+    function onDamage(unit source, unit target, real amount)
+        totalDamageDealt+=amount
+        updateTooltip()
+
+    
+    function onDrop()
+        currentOwner = null
+        updateDummyUnit()
+
+
+function onPickup(unit u, item itm)
+    let instance = instances.get(itm)
+    if instance == null
+        instances.put(itm, new CloakOfFlamesDamageCounter(itm, u))
+    else 
+        instance.updateOwner(u)
+
+
+@compiletime function generateObject()
+	new UnitDefinition(UNIT_CLOAK_OF_FLAMES_DUMMY, 'ewsp')
+	..setName("UNIT_CLOAK_OF_FLAMES_DUMMY")
+	..setManaMaximum(1000000)
+	..setMovementType(MovementType.Fly)
+	..setUpgradesUsed("")
+	..setCollisionSize(0.0)
+	..setStructuresBuilt("")
+	..setRace(Race.Commoner)
+	..setFoodCost(0)
+	..setArmorType(ArmorType.Divine)
+	..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNtemp.blp")
+	..setSpeedBase(522)
+	..setModelFile("dummy.mdl")
+	..setAnimationBlendTimeseconds(0.0)
+	..setAnimationCastBackswing(0.0)
+	..setMaximumPitchAngledegrees(0.0)
+	..setMaximumRollAngledegrees(0.0)
+	..setTurnRate(3)
+	..setArtSpecial("")
+	..setProjectileImpactZ(0.0)
+	..setProjectileLaunchZ(0.0)
+	..setNameEditorSuffix("(Basics)")
+	..setSightRadiusDay(1)
+	..setSightRadiusNight(1)
+	..setUnitClassification("_")
+	..setPropulsionWindowdegrees(1.0)
+	..setTooltipBasic("")
+	..setNormalAbilities(commaList(LOCUST_ID, ABILITY_CLOAK_FLAMES)) //(commaList(LOCUST_ID, GHOST_INVIS_ID, ABILITY_CLOAK_FLAMES))
+	..setCollisionSize(0)
+
+
+function onDrop(unit u, item itm)
+    let instance = instances.get(itm)
+    if instance == null
+        return
+    instance.onDrop()
+
+
+function onDamage(unit source, unit target, real amount)
+    let owner = source.getOwner().getTroll()
+    let instance = instances.get(owner.getItemById(ITEM_CLOAK_OF_FLAMES))
+    if instance == null
+        return
+    instance.onDamage(owner,  target,  amount)
+
+
+init
+    EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM)->
+        if EventData.getManipulatedItem().getTypeId() == ITEM_CLOAK_OF_FLAMES and EventData.getManipulatingUnit().isTroll()
+            onPickup(GetManipulatingUnit(), GetManipulatedItem())
+
+    EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM)->
+        if EventData.getManipulatedItem().getTypeId() == ITEM_CLOAK_OF_FLAMES and EventData.getManipulatingUnit().isTroll()
+            onDrop(GetManipulatingUnit(), GetManipulatedItem()) 
+
+    DamageEvent.addListener(DamageListenerPriorities.PANTHER_INSTINCT castTo int) ->
+        if DamageEvent.getSource().getTypeId() == UNIT_CLOAK_OF_FLAMES_DUMMY
+            and (DamageEvent.getTarget().isTroll() or (DamageEvent.getTarget().isPet()and DamageEvent.getTarget().isEnemyOf(DamageEvent.getTarget().getOwner())))
+            onDamage(DamageEvent.getSource(), DamageEvent.getTarget(), DamageEvent.getAmount())         

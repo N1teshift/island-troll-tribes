@@ -8,7 +8,7 @@ public function transferItems(unit source, unit dest)
         if dest.freeSlots() == 0
             break
         let grabbed = source.itemInSlot(i)
-        if grabbed != null and grabbed.getTypeId()!= ITEM_HIDDEN_RAW_MEAT
+        if grabbed != null and grabbed.getTypeId()!= ITEM_STASHED_RAW_MEAT
             dest.addItemHandle(grabbed)
 
 public function unit.transferItems(unit dest)

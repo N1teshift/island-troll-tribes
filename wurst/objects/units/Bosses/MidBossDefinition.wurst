@@ -68,7 +68,7 @@ function createMidBoss(int unitId) returns UnitDefinition
         ..setAttack1CooldownTime(3.5)
         ..setAttack1DamageNumberofDice(2)
         ..setAttack1DamageBase(30)
-        ..setHitPointsMaximumBase(1475)
+        ..setHitPointsMaximumBase(1175)
         ..setModelFile(Units.lobstrokkred)
         ..setScalingValue(1.5)
         ..setName("Makrura")

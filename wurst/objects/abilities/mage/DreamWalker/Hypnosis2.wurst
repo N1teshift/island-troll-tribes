@@ -1,0 +1,120 @@
+package Hypnosis2
+
+import ClosureEvents
+
+import AbilityObjEditing
+import BuffObjEditing
+import ObjectIds
+import LocalObjectIDs
+import Lodash
+import ToolTipsUtils
+import Assets
+import LocalAssets
+import Sleep
+import ColorUtils
+import ChannelAbilityPreset
+import InstantDummyCaster
+import ClosureTimers
+import HashMap
+import SimError
+import UnitExtensions
+
+constant MANACOST = 20
+constant HYPNOSIS_DUMMY_COOLDOWN = 10.
+constant HYPNOSIS_COOLDOWN = 20.
+constant CAST_RANGE = 300.
+constant DURATION = 5.
+
+constant TT_NORM = "Hypnosis"
+constant TOOLTIP_EXTENDED = "" +
+    ("Puts an enemy in a dream for {0} seconds. Deals {1} damage, "+
+    "and makes target lose {2} heat but also restores enemy energy by {3}."+
+    "\nHas {4} seconds cooldown.")
+    .format(
+        DURATION.toToolTipLightBlue(),
+        SLEEP_OUTSIDE_HP_PENALTY.toToolTipRed(),
+        SLEEP_OUTSIDE_HEAT_PENALTY.toString().color(COLOR_ORANGE),
+        MANA_RESTORED_BY_TROLL.toToolTipTeal(),
+        HYPNOSIS_DUMMY_COOLDOWN.toToolTipLightBlue()
+    )+
+    "\nCan only be used once every {0} ".color(COLOR_GOLD).format(HYPNOSIS_COOLDOWN.toToolTipLightBlue())+
+    "seconds on the same target.".color(COLOR_GOLD)
+
+IterableMap<unit, HypnosisCooldown> instances = new IterableMap<unit, HypnosisCooldown>() 
+
+constant TARGET_ALLOWED = "enemies,ground,organic"
+
+@compiletime function createSleepAnimal() returns AbilityDefinitionSleepcreep
+    return createSleepAbility(ABILITY_SLEEP_ANIMAL)
+        ..presetTargetsAllowed(lvl->commaList(
+                                                TargetsAllowed.friend,
+                                                TargetsAllowed.ground,
+                                                TargetsAllowed.nonhero,
+                                                TargetsAllowed.self
+                                            ))
+        ..setNameEnhance("F", "Sleep Inside Tent")
+        ..presetTooltipNormalExtended(lvl -> "The Troll can sleep inside the tent to restore {0} mana."
+        + formatCooldown(ABILITY_SLEEP_INSIDE_TENT))
+
+
+@compiletime function createHypnosisDummy() returns ChannelAbilityPreset
+    return new ChannelAbilityPreset(ABILITY_HYPNOSIS_DUMMY, 1, true)
+        ..presetTargetTypes(Targettype.UNIT)
+        ..setName(TT_NORM)
+        ..setHotkeyNormal("Q")
+        ..setTooltipNormal(1, TT_NORM)
+        ..setTooltipNormalExtended(1, TOOLTIP_EXTENDED)
+        ..presetCooldown(lvl -> HYPNOSIS_DUMMY_COOLDOWN)           
+        ..presetManaCost(lvl -> MANACOST)
+        ..presetCastRange(lvl -> CAST_RANGE)
+        ..presetButtonPosNormal(0, 0)
+        ..setFollowThroughTime(1, 0)
+        ..setIconNormal(Icons.bTNCharm)
+        ..setTargetsAllowed(1, TARGET_ALLOWED)
+        ..setAnimationNames("stand")
+        ..setBaseOrderID(1, "curse")
+        ..setTooltipNormal(1, makeToolTipNorm("Q", TT_NORM))  
+
+class HypnosisCooldown
+    real remainingCooldown
+    unit target
+    unit caster
+    construct(unit _caster, unit _target)
+        caster = _caster
+        target = _target
+        castSleep(caster, target)        
+        remainingCooldown=HYPNOSIS_COOLDOWN
+        doPeriodically(ANIMATION_PERIOD) (CallbackPeriodic cb) ->
+            remainingCooldown-=ANIMATION_PERIOD
+            if remainingCooldown<=0
+                destroy cb
+                destroy this
+
+    function castSleep(unit caster, unit target)
+        let abilId = target.isTroll() ? ABILITY_SLEEP_OUTSIDE : ABILITY_SLEEP_ANIMAL
+        caster.damageTarget(target, SLEEP_OUTSIDE_HP_PENALTY, ATTACK_TYPE_NORMAL)
+        nullTimer()->
+            target.setHP(target.getHP()+SLEEP_OUTSIDE_HP_PENALTY)
+            nullTimer() -> 
+                InstantDummyCaster.castTarget(target.getOwner(), abilId, 1, "Sleep", target, target.getPos())
+
+    ondestroy
+        instances.remove(target)
+
+function onCast()
+    let target = GetSpellTargetUnit()
+    let caster = GetSpellAbilityUnit()    
+    let instance = instances.get(target)
+    if instance != null
+        let cd = instance.remainingCooldown
+        simError(caster.getOwner(), "You cannot cast hypnosis on this target for {0} seconds".format(cd.toInt().toString()))
+        doAfter(ANIMATION_PERIOD) -> 
+            caster.endAbilityCooldown(ABILITY_HYPNOSIS_DUMMY)
+        return
+    instances.put(target, new HypnosisCooldown(caster, target))
+
+init
+ 
+
+    EventListener.onTargetCast(ABILITY_HYPNOSIS_DUMMY) (unit caster, unit target) ->
+        onCast()

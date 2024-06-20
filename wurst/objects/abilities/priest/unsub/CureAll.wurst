@@ -17,7 +17,7 @@ import ToolTipsUtils
 
 let ABIL_BANISH_ID = compiletime(ABIL_ID_GEN.next())
 
-let COOLDOWN = 15.
+let COOLDOWN = 45.
 let MANACOST = 10
 let CAST_RANGE = 400.
 

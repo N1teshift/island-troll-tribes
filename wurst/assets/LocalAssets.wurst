@@ -4,6 +4,24 @@ package LocalAssets
 import ObjectIdGenerator
 
 public class LocalIcons
+    static constant bTNPassMeat0             ="ReplaceableTextures\\CommandButtons\\BTNPassMeat0.blp"
+    static constant bTNPassMeat1             ="ReplaceableTextures\\CommandButtons\\BTNPassMeat1.blp"
+    static constant bTNPassMeat2             ="ReplaceableTextures\\CommandButtons\\BTNPassMeat2.blp"
+    static constant bTNPassMeat3             ="ReplaceableTextures\\CommandButtons\\BTNPassMeat3.blp"
+    static constant bTNPassMeat4             ="ReplaceableTextures\\CommandButtons\\BTNPassMeat4.blp"
+    static constant bTNPassMeat5             ="ReplaceableTextures\\CommandButtons\\BTNPassMeat5.blp"
+    static constant bTNPassMeat6             ="ReplaceableTextures\\CommandButtons\\BTNPassMeat6.blp"
+    static constant bTNPassMeat7             ="ReplaceableTextures\\CommandButtons\\BTNPassMeat7.blp"
+    static constant bTNPassMeat8             ="ReplaceableTextures\\CommandButtons\\BTNPassMeat8.blp"
+    static constant bTNPassMeat9             ="ReplaceableTextures\\CommandButtons\\BTNPassMeat9.blp"
+    static constant bTNPassMeat10             ="ReplaceableTextures\\CommandButtons\\BTNPassMeat10.blp"
+    static constant bTNSenseDreams          ="ReplaceableTextures\\CommandButtons\\bTNSenseDreams.blp"
+    static constant bTNDeactivateSoulRend   ="ReplaceableTextures\\CommandButtons\\bTNDeactivateSoulRend.blp"
+    static constant bTNFriendOfTheHive      ="ReplaceableTextures\\CommandButtons\\bTNFriendOfTheHive.blp"
+    static constant bTNPASDoom              ="ReplaceableTextures\\CommandButtons\\bTNPASDoom.blp"
+    static constant bTNPASDevourMagic       ="ReplaceableTextures\\CommandButtons\\bTNPASDevourMagic.blp"
+    static constant bTNArcaneInterference   ="ReplaceableTextures\\CommandButtons\\bTNArcaneInterference.blp"
+    static constant bTNPantherFangTrophy    ="ReplaceableTextures\\CommandButtons\\BTNPantherFangTrophy.blp"
     static constant bTNBattleStaff          ="ReplaceableTextures\\CommandButtons\\BTNBattleStaff.blp"
     static constant bTNHungryBear           ="ReplaceableTextures\\CommandButtons\\BTNHungryBear.blp"
     static constant bTNBearFoodSlot      = "ReplaceableTextures\\CommandButtons\\BTNBearFoodSlot.blp"
@@ -11,6 +29,7 @@ public class LocalIcons
     static constant bTNOmnivore             = "ReplaceableTextures\\CommandButtons\\BTNOmnivore.blp"
     static constant bTNAbilityHibernation   = "ReplaceableTextures\\CommandButtons\\BTNAbility_Hibernation.blp"
     static constant bTNFeedPet              = "ReplaceableTextures\\CommandButtons\\BTNFeedPet.blp"
+    static constant dISBTNFeedPet              = "ReplaceableTextures\\CommandButtons\\DISBTNFeedPet.blp"
     static constant pASBTNUnitWolf          = "ReplaceableTextures\\CommandButtons\\PASUNITWolf.blp"
     static constant btnDireWolfDevour       = "ReplaceableTextures\\CommandButtons\\BTNLycanWolfBite.blp"
     static constant btnLoneWolf             = "ReplaceableTextures\\CommandButtons\\BTNLoneWolf.blp"
@@ -200,6 +219,7 @@ public class LocalBuildings
     static constant workshop   = "Models\\Buildings\\OrcLumbermill(noground)V2.01.mdx"
 
 public class LocalAbilities
+    static constant undeadDissipate                = "Models\\Abilities\\pizdec.mdx"
     static constant bladeStorm                     = "Models\\Abilities\\BladeStorm.mdx"
     static constant bearTrap                       = "Models\\Abilities\\BearTrap.mdx"
     static constant bearTrapBuff                   = "Models\\Abilities\\BearTrapBuff.mdx"

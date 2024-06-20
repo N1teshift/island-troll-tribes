@@ -1,0 +1,95 @@
+package SenseDreams
+
+import ClosureEvents
+import LocalObjectIDs
+import Icons
+import Lodash
+import ToolTipsUtils
+import ChannelAbilityPreset
+import Abilities
+import SimError
+import HashMap
+import LinkedList
+import ClosureTimers
+import HealingSystem
+import Dreamwalking
+import LocalAssets
+import AttachmentPoints
+import DreamEater2
+import ColorUtils
+import ClosureForGroups
+import HashList
+
+
+
+
+public IterableMap<unit, SenseDreams> instances = new IterableMap<unit, SenseDreams>() 
+let TT_ABILITY_NORM = "Sense Dreams"
+let TT_ABILITY_EXT = "Dreamwalker can sense dreams of enemies sleeping within {0} radius, locating their position.".format(DREAM_STEALER_AOE.toToolTipLightBlue())+
+                    "\nOnly works during dreamwalking.".color(COLOR_GOLD)
+
+
+
+class SenseDreams
+    unit troll 
+    CallbackPeriodic cb
+    HashList<unit> pingCooldowns = new HashList<unit>()
+
+    construct(unit _troll)
+        troll = _troll
+
+
+    function checkForSleepingTargets()
+        forUnitsInRange(troll.getPos(), DREAM_STEALER_AOE) u ->
+            if (UnitIsSleeping(u) or u.hasAbility('BUsl'))// sleep buffId
+                and u.isEnemyOf(troll.getOwner())
+                pingTargets(u)
+
+    function onDreamWalking()
+        cb = doPeriodically(0.333) (CallbackPeriodic cb) ->
+            checkForSleepingTargets()
+            if not troll.hasAbility(ABILITY_DREAMWALKING_BUFF)
+                if cb != null
+                    pingCooldowns.clear()
+                    destroy cb
+            
+
+    function updateVision()
+
+    function pingTargets(unit u)
+        if not pingCooldowns.has(u)
+            PingMinimapForForceEx(GetPlayersAllies(troll.getOwner()), u.getPos().x, u.getPos().y, 5, bj_MINIMAPPINGSTYLE_SIMPLE, 255, 0, 0)
+            pingCooldowns.add(u)
+            doAfter(10.) -> 
+                pingCooldowns.remove(u)
+                        
+
+@compiletime function createRavenousBeastDummy()
+    new AbilityDefinitionEvasion(ABILITY_SENSE_DREAMS_DUMMY)
+        ..setChancetoEvade(1, 0.)
+		..setLevels(1)
+        ..setIconNormal(LocalIcons.bTNSenseDreams)
+        ..setTooltipNormal(1, TT_ABILITY_NORM)
+        ..setTooltipLearn(TT_ABILITY_NORM)
+        ..setTooltipLearnExtended(TT_ABILITY_EXT)
+        ..setTooltipNormalExtended(1, TT_ABILITY_EXT)
+
+
+function onSub(unit caster)
+    let instance = instances.get(caster)
+    if instance != null
+        return
+    instances.put(caster, new SenseDreams(caster))
+
+function onCast(unit caster)
+    let instance = instances.get(caster)
+    if instance == null
+        return
+    instance.onDreamWalking()
+
+init
+    EventListener.onCast(ABILITY_DREAMWALKER) (unit caster) ->
+        onSub(caster)  
+
+    EventListener.onCast(ABILITY_DREAMWALKING_DUMMY) (unit caster) ->
+        onCast(caster)         

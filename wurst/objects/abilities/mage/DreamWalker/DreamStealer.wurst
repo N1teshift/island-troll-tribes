@@ -1,0 +1,138 @@
+package DreamStealer
+
+import ClosureEvents
+import LocalObjectIDs
+import Icons
+import Lodash
+import ToolTipsUtils
+import ChannelAbilityPreset
+import Abilities
+import SimError
+import HashMap
+import LinkedList
+import ClosureTimers
+import HealingSystem
+import Dreamwalking
+import LocalAssets
+import AttachmentPoints
+import DreamEater2
+import ColorUtils
+
+
+
+
+public IterableMap<unit, DreamEater> instances = new IterableMap<unit, DreamEater>() 
+let TT_ABILITY_NORM = "Dream Stealer"
+let TT_ABILITY_EXT = "Dreamwalker will steal dreams of any enemies in {0} range.".format(DREAM_STEALER_AOE.toInt().toString())+
+                    "\nDreams last for {0} seconds, after which they are automatically consumed.".format(DREAM_DURATION.toString().color(COLOR_LIGHT_BLUE))
+
+
+@compiletime function createRavenousBeastDummy()
+    new AbilityDefinitionEvasion(ABILITY_DREAM_STEALER_DUMMY)
+        ..setChancetoEvade(1, 0.)
+		..setLevels(1)
+        ..setIconNormal(LocalIcons.bTNPASDoom)
+        ..setTooltipNormal(1, TT_ABILITY_NORM)
+        ..setTooltipLearn(TT_ABILITY_NORM)
+        ..setTooltipLearnExtended(TT_ABILITY_EXT)
+        ..setTooltipNormalExtended(1, TT_ABILITY_EXT)
+
+
+class Dream
+    unit target
+    DreamEater instance
+    real remainingDuration = DREAM_DURATION
+    CallbackCounted cb
+
+    construct(unit _target, DreamEater _instance)
+        target = _target
+        instance = _instance
+        cb = doPeriodicallyTimed(0.125, DREAM_DURATION) (CallbackCounted cb) ->
+            if cb.isLast()
+                destroy this
+
+    ondestroy
+        if cb != null
+            destroy cb
+        if target.isAlive()
+            instance.eatDream(target)
+
+
+public class DreamEater
+    unit troll
+    //IterableMap<DreamEater, Dream> dreams = new IterableMap<DreamEater, Dream>()
+    LinkedList<Dream> dreams = new LinkedList<Dream>()
+    Dreamwalking instance
+    construct(unit _troll)
+        troll = _troll
+        nullTimer() -> 
+            instance = dreamwalkingInstances.get(troll)
+
+    function addDream(unit target)
+        dreams.add(new Dream(target, this))
+    
+    function eatDream(unit target)
+        instance.onDreamEaten(target)
+        flashEffect(Abilities.darkRitualTarget, target, AttachmentPoints.origin)
+        let intelligence = troll.getInt(true)
+        let totalDamage = DAMAGE_BASE+DAMAGE_INT_MULTIPLIER*intelligence
+        let manaStealAmount = MANA_STEAL_BASE+MANA_STEAL_INT_MULTIPLTIER*intelligence
+        let healAmount = HEAL_BASE+HEAL_INT_MULTIPLIER*intelligence
+        let damagePerInterval = 0.5*totalDamage*DAMAGE_DOT_INTERVAL/DREAM_DURATION
+        troll.damageTarget(target, totalDamage, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_MAGIC, null) //deal half the damge instantly
+        /*
+        doAfter(INVUL_DURATION+ANIMATION_PERIOD) ->          
+            doPeriodicallyTimed(DAMAGE_DOT_INTERVAL, DREAM_DURATION) (CallbackCounted cb) ->
+                troll.damageTarget(target, damagePerInterval, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_MAGIC, null) // deal the other half as a dot
+        */
+        new HealingInstance(troll, troll, healAmount, HealingType.ABILITY)
+        target.setMana(target.getMana()-manaStealAmount)
+        troll.setMana(troll.getMana()+manaStealAmount)
+                
+    function consumeDreams()
+        if dreams.isEmpty()
+            simError(troll.getOwner(), "You have no dreams to consume.")
+            troll.setMana(troll.getMana()+DREAM_EATER_MANACOST)
+        for dream in dreams
+            dreams.remove(dream)
+            destroy dream
+
+
+
+function onSub(unit troll)
+    let instance = instances.get(troll)
+    if instance != null
+        return
+    instances.put(troll, new DreamEater(troll))
+
+public function onSleepCast(unit caster, unit target, int abilId)
+    if instances.size() == 0
+        return
+    for each in instances
+        let instance = instances.get(each)
+        if instance.troll.isEnemyOf(target.getOwner()) and instance.troll.getPos().distanceTo(target.getPos())<=DREAM_STEALER_AOE
+            instance.addDream(target)
+
+
+function onDreamEaterCast(unit caster)
+    let instance = instances.get(caster)
+    if instance == null
+        return
+    instance.consumeDreams()
+
+init
+    EventListener.onTargetCast(ABILITY_SLEEP_OUTSIDE    , (unit caster, unit target) -> onSleepCast(caster, target, ABILITY_SLEEP_OUTSIDE))
+    EventListener.onTargetCast(ABILITY_SLEEP_INSIDE_TENT, (unit caster, unit target) -> onSleepCast(caster, target, ABILITY_SLEEP_INSIDE_TENT))
+    EventListener.onTargetCast(ABILITY_SLEEP_INSIDE_HUT , (unit caster, unit target) -> onSleepCast(caster, target, ABILITY_SLEEP_INSIDE_HUT))
+    EventListener.onTargetCast(ABILITY_HIBERNATE , (unit caster, unit target) -> onSleepCast(caster, target, ABILITY_HIBERNATE))
+    EventListener.onTargetCast(ABILITY_SLEEP_ANIMAL , (unit caster, unit target) -> onSleepCast(caster, target, ABILITY_SLEEP_ANIMAL))
+
+    EventListener.add(EVENT_PLAYER_UNIT_SPELL_FINISH) ->
+        if EventData.getSpellAbilityId() == ABILITY_DREAMWALKER
+            onSub(EventData.getSpellAbilityUnit()) 
+
+
+init
+    EventListener.add(EVENT_PLAYER_UNIT_SPELL_FINISH)->
+        if EventData.getSpellAbilityId() == ABILITY_DREAMWALKER_DREAM_EATER
+            onDreamEaterCast(EventData.getSpellAbilityUnit())            

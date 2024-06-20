@@ -31,6 +31,7 @@ let skillMap = new HashMap<int, int>()
     ..put(UNIT_MAGE_1,               ABILITY_MAGE_SPELLBOOK)
     ..put(UNIT_ELEMENTALIST,         ABILITY_ELEMENTALIST_NEW_SPELLBOOK)
     ..put(UNIT_HYPNOTIST,            ABILITY_HYPNOTIST_SPELLBOOK)
+    ..put(UNIT_DREAMWALKER,          ABILITY_DREAMWALKER_SPELLBOOK)
     ..put(UNIT_DEMENTIA_MASTER,      ABILITY_DEMENTIA_MASTER_SPELLBOOK)
 
     // Priest
@@ -70,7 +71,7 @@ let skillMap = new HashMap<int, int>()
     ..put(UNIT_GATHERER,             ABILITY_ITEM_RADAR)
     ..put(UNIT_HERB_MASTER,          ABILITY_TELE_HERB_GATHER)
     ..put(UNIT_RADAR_GATHERER,       ABILITY_TELE_RADAR_GATHER)
-    ..put(UNIT_OMNIGATHERER,         ABILITY_ITEM_WARP)
+    ..put(UNIT_OMNIGATHERER,         ABILITY_ALCHEMIST_SPELLBOOK)
     ..put(UNIT_ALCHEMIST,            ABILITY_ALCHEMIST_SPELLBOOK)
 
 // TODO: Remove public once TrollUpgrade is fixed.
@@ -94,8 +95,8 @@ public function autoSkill(unit target)
     target.addAbility(abilityID)
 
     let attributeGrowth = trollAttributeGrowth.get(target.getTypeId())
-    let subTrollLvls = SUB_TROLL_UNIT_LIST.has(target.getTypeId()) ? 5:0
-    let superSubTrollLvls = SUPERSUB_TROLL_UNIT_LIST.has(target.getTypeId()) ? 8:0
+    let subTrollLvls = target.getTrollClassType() == ClassType.SUB_CLASS ? 5:0
+    let superSubTrollLvls =  target.getTrollClassType() == ClassType.SUPER_CLASS ? 8:0
     let lvl = target.getLevel()
     let strength = (attributeGrowth.strength*(lvl+2+subTrollLvls+superSubTrollLvls)).ceil()
     let agility = (attributeGrowth.agility*(lvl+2+subTrollLvls+superSubTrollLvls)).ceil()

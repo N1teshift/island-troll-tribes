@@ -59,7 +59,7 @@ let TT_TELE_STEAL ="\n\nTele-thief's mastery over dimentional magic greatly incr
         ..presetTooltipNormalExtended(lvl->TT_STEAL)
         ..presetCastingTime(lvl ->0.1)
         ..presetCastRange(lvl -> 200)
-        ..presetCooldown(lvl -> 1)
+        ..presetCooldown(lvl -> 60)
         ..presetHotkey("Q")
         ..setButtonPositionNormalX(0)
         ..setButtonPositionNormalY(0)
@@ -103,6 +103,11 @@ let TT_TELE_STEAL ="\n\nTele-thief's mastery over dimentional magic greatly incr
         ))         
 
 public function stealFromThiefsBush(unit caster, unit target) returns item
+    if caster.getTrollClassType() == ClassType.BASE_CLASS and  caster.getLevel()<2 
+        simError(caster.getOwner(), "You need to be level 2 to be able to do that")
+        doAfter(ANIMATION_PERIOD) ->   
+            caster.endAbilityCooldown(ABILITY_STEAL)
+        return null
     let itm = generateThiefsBushItem(caster)
     stolenItems.add(itm)
     return itm

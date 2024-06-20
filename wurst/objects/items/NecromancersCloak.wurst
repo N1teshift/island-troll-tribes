@@ -27,6 +27,7 @@ import UnitExtensions
 import HashList
 import UnitIds
 import Abilities
+import NecromancersCloakDamageCounter
 
 
 //IterableMap<unit, NecromancersCloak> instances = new IterableMap<unit, NecromancersCloak>()
@@ -155,9 +156,15 @@ function onPickUp(unit troll, item itm)
     else if itm.getTypeId() == ITEM_SCROLL_LIVING_DEAD and  (troll.hasItemById(ITEM_NECROMANCERS_CLOAK) or troll.hasItemById(ITEM_EMPOWERED_NECROMANCERS_CLOAK))
         troll.disableAbility(ABILITY_SKELETAL_MINION, true, true)
     if troll.hasItemById(ITEM_NECROMANCERS_CLOAK) and troll.getItemById(ITEM_NECROMANCERS_CLOAK).getCharges()>=10
+        let totalDamageDealt = instances.get(troll.getItemById(ITEM_NECROMANCERS_CLOAK)).getTotalDamageDealt()
         troll.getItemById(ITEM_NECROMANCERS_CLOAK).remove()
-        nullTimer() -> 
-            troll.addItemById(ITEM_EMPOWERED_NECROMANCERS_CLOAK)
+        let empoweredCloak = createItem(ITEM_EMPOWERED_NECROMANCERS_CLOAK, troll.getPos())
+        nullTimer() ->
+            empoweredCloak.setVisible(false) 
+            troll.addItemHandle(empoweredCloak)
+            nullTimer() -> 
+                instances.get(empoweredCloak).setTotalDamageDealt(totalDamageDealt)
+                instances.get(empoweredCloak).updateTooltip()
 
       
 

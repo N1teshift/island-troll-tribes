@@ -43,6 +43,8 @@ let banned = new HashSet<string>()..add(
     // Does not appear to actually be used, but we err on the safe side.
     // "raisedead",       // Misc - Grab Corpse (Ability)
     "instant"          // Misc - Grab Corpse (Ability)
+)..add(
+    "healingspray"    // Mage - Grimoire add spell
 )
 
 

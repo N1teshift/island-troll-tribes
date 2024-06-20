@@ -16,6 +16,7 @@ class GameConfig
     var randomizeSpawns = 0
     var startWithFire = false
     var noSuperSubs = false
+    var passMeatAbility = false
     var startWithOneFire = false
     var startWithSpiritWard = false
     var oldRandomEnabled = false
@@ -198,8 +199,14 @@ class GameConfig
     function setNoSuperSubs(boolean value)
         noSuperSubs = value
 
+    function setPassMeatAbility(boolean value)
+        passMeatAbility = value    
+
     function isNoSuperSubs() returns boolean
         return noSuperSubs
+
+    function isPassMeatAbility() returns boolean
+        return passMeatAbility
 
     function setStartWithOneFire(boolean value)
         startWithOneFire = value

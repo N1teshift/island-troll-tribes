@@ -27,6 +27,7 @@ import InventoryEvent
 import UnitExtensions
 import Orders
 import QuickMake
+import AxesDefinition
 
 constant TT_ELK_TROPHY_HIDE ="\n\nElk hide: "+
                              "\n +1 ".color(ENERGY_COLOR)+"armor."+ 
@@ -35,12 +36,19 @@ constant TT_WOLF_TROPHY_HIDE="\n\nWolf hide: "+
                              "\n +2 ".color(ENERGY_COLOR)+"armor."+ 
                              "\n +10% ".color(ENERGY_COLOR)+"attack speed."
 constant TT_BEAR_TROPHY_HIDE="\n\nBear hide: "+
-                             "\n +4 ".color(ENERGY_COLOR)+"armor."                    
+                             "\n +4 ".color(ENERGY_COLOR)+"armor."
+constant TT_PANTHER_FANG    ="\n\nA Fang of the Elder Panther. "+
+                 "\n+{0} Damage. ".format("6".color(COLOR_GREEN))+
+                 "\nCan be used to quickmake a "+"Fire Kit".color(COLOR_LIGHT_BLUE)+" using the fang instead of flint."
+                            
+
 constant TT_TROPHY ="A hunter's trophy, worn on the back to display his combat prowess."
+constant TT_TROPHIES="\nYou can put a hide, Panther Fang or Mammoth Horn in this slot"
 constant TT_DUMMY_ITEM_EXTENDED = "Hunter can wear an animal hide as a trophy cloak, gaining bonuses depending on the type of the hide:"+
                                     TT_ELK_TROPHY_HIDE+
                                     TT_WOLF_TROPHY_HIDE+
-                                    TT_BEAR_TROPHY_HIDE 
+                                    TT_BEAR_TROPHY_HIDE+
+                                    TT_TROPHIES.color(COLOR_GOLD) 
 constant TT_LIST = asList(TT_ELK_TROPHY_HIDE,
                           TT_WOLF_TROPHY_HIDE,
                           TT_BEAR_TROPHY_HIDE)
@@ -51,8 +59,11 @@ constant ABILITY_BEAR_TROPHY_HIDE = asList(ABILITY_ARMOR_BONUS_4)
 constant TROPHY_HIDE_ABILITY_LIST = asList(ABILITY_ELK_TROPHY_HIDE,
                                            ABILITY_WOLF_TROPHY_HIDE,
                                            ABILITY_BEAR_TROPHY_HIDE)
-
-constant TROPHY_LIST = asList(ITEM_HUNTER_TROPHY_ELK_HIDE, ITEM_HUNTER_TROPHY_WOLF_HIDE, ITEM_HUNTER_TROPHY_BEAR_HIDE)                                   
+constant ABILITY_PANTHER_FANG_TROPHY = asList(ABIL_DMG_STONE)
+constant TROPHY_LIST = asList(ITEM_HUNTER_TROPHY_ELK_HIDE, ITEM_HUNTER_TROPHY_WOLF_HIDE, ITEM_HUNTER_TROPHY_BEAR_HIDE, ITEM_HUNTER_TROPHY_FANG)                                   
+constant TROPHY_BASE_LIST=HIDE_LIST.copy()
+    ..add(ITEM_PANTHER_FANG)
+    ..add(ITEM_HORN_MAMMOTH)
 
 IterableMap<unit, TrophyHide> instances = new IterableMap<unit, TrophyHide>()
 IterableMap<int, Attachment> attachments = new IterableMap<int, Attachment>()
@@ -64,11 +75,13 @@ HashMap<int, int>hideToTrophyMap = new HashMap<int,int>()
     ..put(ITEM_ELK_HIDE, ITEM_HUNTER_TROPHY_ELK_HIDE)
     ..put(ITEM_JUNGLE_WOLF_HIDE, ITEM_HUNTER_TROPHY_WOLF_HIDE)
     ..put(ITEM_JUNGLE_BEAR_HIDE, ITEM_HUNTER_TROPHY_BEAR_HIDE)
+    ..put(ITEM_PANTHER_FANG, ITEM_HUNTER_TROPHY_FANG)
 
 HashMap<int, int>trophyToHideMap = new HashMap<int,int>()
     ..put(ITEM_HUNTER_TROPHY_ELK_HIDE, ITEM_ELK_HIDE)
     ..put(ITEM_HUNTER_TROPHY_WOLF_HIDE, ITEM_JUNGLE_WOLF_HIDE)
     ..put(ITEM_HUNTER_TROPHY_BEAR_HIDE, ITEM_JUNGLE_BEAR_HIDE)
+    ..put(ITEM_HUNTER_TROPHY_FANG, ITEM_PANTHER_FANG)
 
 let id1 = compiletime(attachments.get(ITEM_ELK_HIDE).getIDs())
 let id2 = compiletime(attachments.get(ITEM_JUNGLE_WOLF_HIDE).getIDs())
@@ -110,6 +123,14 @@ let id3 = compiletime(attachments.get(ITEM_JUNGLE_BEAR_HIDE).getIDs())
             ..setAbilities(commaList(ABILITY_BEAR_TROPHY_HIDE))
             ..setInterfaceIcon(LocalIcons.bTNBearTrophyHide)
             ..setTooltipExtended(TT_TROPHY+TT_BEAR_TROPHY_HIDE)
+
+@compiletime function createPantherFangTrophy() returns ItemDefinition
+    return createBasicItem(ITEM_HUNTER_TROPHY_FANG)
+            ..setName("Hunter's Trophy")
+            ..setLumberCost(12)
+            ..setAbilities(commaList(ABILITY_PANTHER_FANG_TROPHY))
+            ..setInterfaceIcon(LocalIcons.bTNPantherFangTrophy)
+            ..setTooltipExtended("A hunter's trophy weapon."+TT_PANTHER_FANG)
 
 class TrophyHide
     unit hero = null
@@ -160,7 +181,7 @@ class TrophyHide
     //find next hide of highest index of HIDE_LIST
     function findNextHide() returns item            
         item nextHide = null
-        for hide in HIDE_LIST
+        for hide in TROPHY_BASE_LIST
             let foundHide = hero.getItemById(hide)
             if foundHide != null
                 nextHide = foundHide
@@ -168,6 +189,13 @@ class TrophyHide
 
     function replaceHideWithTrophy(item itemHandle)
         suspendTriggersFlag = true
+        if itemHandle.getTypeId() == ITEM_HORN_MAMMOTH
+            trophyHide = itemHandle
+            hero.removeItem(hunterDummyItem) 
+            nullTimer() ->
+                hunterDummyItem.setVisible(false)
+                suspendTriggersFlag = false
+            return
         let trophy= hideToTrophyMap.get(itemHandle.getTypeId())
         //updateAttachment(itemHandle.getTypeId())
         let slot = hero.getItemSlot(itemHandle)         
@@ -190,6 +218,9 @@ class TrophyHide
                         attachment.apply(hero)        
 
     function replaceTrophyWithHide()
+        if trophyHide.getTypeId() == ITEM_HORN_MAMMOTH
+            trophyHide = null
+            return
         nullTimer() -> 
             let pos =trophyHide.getPos()
             if not trophyHide.isOwned()
@@ -225,7 +256,7 @@ function cacheAttachmentIds()
     attachments.get(ITEM_JUNGLE_BEAR_HIDE).setIDs(id3)
 
 function onHideDrop(unit hero, item itemHandle)
-    if (not trophyToHideMap.has(itemHandle.getTypeId())) and (itemHandle.getTypeId() != ITEM_HUNTER_TROPHY_HIDE_DUMMY)
+    if (not trophyToHideMap.has(itemHandle.getTypeId())) and (itemHandle.getTypeId() != ITEM_HUNTER_TROPHY_HIDE_DUMMY) and (itemHandle.getTypeId() != ITEM_HORN_MAMMOTH)
         return    
     let instance = instances.get(hero)
     if instance == null
@@ -287,7 +318,7 @@ function onTargetOrder()
     let instance = instances.get(u)
     if instance == null
         return
-    if not HIDE_LIST.has(target.getTypeId())
+    if not TROPHY_BASE_LIST.has(target.getTypeId())
         return
     // Smart pickup system -> simulate picking up meat like an item if full inventory, like in Bannars StackNSplit system
     // Used to pick up ammo even if inventory's full
@@ -337,7 +368,7 @@ init
     onEnter(()->onUnitEnter(getEnterLeaveUnit())) 
 
     EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->
-        if GetTriggerUnit().getTrollBaseClass() == UNIT_HUNTER and HIDE_LIST.has(GetManipulatedItem().getTypeId())
+        if GetTriggerUnit().getTrollBaseClass() == UNIT_HUNTER and TROPHY_BASE_LIST.has(GetManipulatedItem().getTypeId())
             onHidePickup(GetTriggerUnit(), GetManipulatedItem())
   
     EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->

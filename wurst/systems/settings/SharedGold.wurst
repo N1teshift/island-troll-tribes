@@ -163,7 +163,7 @@ function initialize()
         pools.put(tribe, 0)
 
     // Prevent sharing initially.
-    sharing.make("false", input -> input.isBool())
+    sharing.make("true", input -> input.isBool())
 
     // Delay the actual action to ensure gold is synced first.
     sharing.action() (target, value) ->

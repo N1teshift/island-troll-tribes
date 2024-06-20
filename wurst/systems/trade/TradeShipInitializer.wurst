@@ -8,7 +8,7 @@ import TradeShipCoordinator
 import TradeShipRoutePair
 import GameConfig
 
-let TRADE_SHIP_PAUSE_TIME = 9.0
+let TRADE_SHIP_PAUSE_TIME = 11.0
 TradeShipCoordinator coordinator
 
 public function getTradeShipCoordinator() returns TradeShipCoordinator

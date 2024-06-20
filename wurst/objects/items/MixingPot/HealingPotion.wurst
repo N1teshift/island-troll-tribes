@@ -12,6 +12,8 @@ import LocalItemObjEditing
 import LocalObjectIDs
 import ToolTipsUtils
 import ClosureTimers
+import ClosureEvents
+import InstantDummyCaster
 
 public constant POT_HEAL = 100.
 public constant CAST_RANGE = 600.
@@ -26,7 +28,8 @@ public constant TARGETS_ALLOWED = commaList(
                             TargetsAllowed.invulnerable,
                             TargetsAllowed.organic,
                             TargetsAllowed.self,
-                            TargetsAllowed.vulnerable
+                            TargetsAllowed.vulnerable,
+                            TargetsAllowed.item_t
                             )
 
 public constant TT_HEALING_POTION = "" +
@@ -59,4 +62,4 @@ public constant TT_HEALING_POTION = "" +
         ..setNumberofCharges(2)
         ..setStockMaximum(3)
 
-    
+           
