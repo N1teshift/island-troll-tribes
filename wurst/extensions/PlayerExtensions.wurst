@@ -18,10 +18,17 @@ import GameMode
 
 let newObs = new HashSet<player>()
 
-let trolls = new HashMap<player, unit>()
+public let trolls = new HashMap<player, unit>()
+public let backpacks = new HashMap<player, unit>()
 
 public function player.getTribe() returns Tribe
     return Tribe.ofPlayer(this)
+
+public function player.setBackpack(unit backpack)
+    backpacks.put(this, backpack)
+
+public function player.getBackpack() returns unit
+    return backpacks.get(this) 
 
 public function player.getTribePlayer() returns player
     let tribe = this.getTribe()

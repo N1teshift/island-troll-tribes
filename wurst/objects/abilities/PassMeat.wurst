@@ -73,12 +73,11 @@ class PassMeat
 
     function chargeRecovery()
         updateTooltip()
-        doPeriodically(CHARGE_CD) (CallbackPeriodic cb) ->
-            if passMeatCharges == MAX_CHARGES
-                destroy cb
-            else
-                passMeatCharges+=1
-                updateTooltip()
+        if passMeatCharges == MAX_CHARGES
+            return
+        doAfter(CHARGE_CD) -> 
+            passMeatCharges+=1
+            chargeRecovery()
 
     function updateTooltip()
         let TT_CHARGES = "\nCurrent charges: {0} / {1}.".format(passMeatCharges.toString(),MAX_CHARGES.toString()).color(COLOR_GOLD_STR)

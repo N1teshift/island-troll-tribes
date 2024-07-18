@@ -194,6 +194,9 @@ public class ClassSelector
         setClassUnavailable(trollId)
         owner.setTroll(troll)
 
+        let backpack = createUnit(troll.getOwner(), UNIT_BACKPACK, troll.getPos())
+        owner.setBackpack(backpack)
+
         troll
             ..pause()
             ..setHeat(gameConfig.getMaxHeat())
@@ -203,6 +206,7 @@ public class ClassSelector
             troll.addItemById(ITEM_FIRE_KIT)
         if gameConfig.isStartWithSpiritWard()
             troll.addItemById(ITEM_SPIRIT_WARD_KIT)
+        
 
     function handleTrollRemoval(player p)
         let troll = p.getTroll()

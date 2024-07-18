@@ -1,0 +1,75 @@
+package BackpackDefinition
+
+// Standard library imports:
+import HashMap
+import AbilityObjEditing
+import ClosureEvents
+import DamageEvent
+import InstantDummyCaster
+import StandardTextTags
+
+// Local imports:
+import ColorUtils
+import ChatCommands
+import ChatUtils
+import LocalObjectIDs
+import UnitExtensions
+import ToolTipsUtils
+import ObjectIds
+import Sleep
+import ChannelAbilityPreset
+import ClosureTimers
+import Orders
+import HealingSystem
+import BuffObjEditing
+import BuffIds
+import Abilities
+import StupefyField
+import DamageListeners
+import LocalAssets
+import SimError
+import FoodSlots
+import ItemPoolExtensions
+import LinkedList
+import OnUnitEnterLeave
+import GameStates
+import Tribe
+import PlayerExtensions
+import GameConfig
+import Transformation
+import UnitIds
+
+
+constant TT_NAME ="Backpack"
+
+
+@compiletime function createBackpackUnitDefinition() returns UnitDefinition
+    return new UnitDefinition(UNIT_BACKPACK, 'ewsp') //UnitIds.sentryward
+	..setName(TT_NAME)
+	..setManaMaximum(1000000)
+	..setMovementType(MovementType.Fly)
+	..setUpgradesUsed("")
+	..setCollisionSize(0.0)
+	..setStructuresBuilt("")
+	..setRace(Race.Commoner)
+	..setFoodCost(0)
+	..setArmorType(ArmorType.Divine)
+	..setIconGameInterface(LocalIcons.bTNThiefPouch)
+	..setSpeedBase(0)
+	..setModelFile("dummy.mdl")
+	..setAnimationBlendTimeseconds(0.0)
+	..setAnimationCastBackswing(0.0)
+	..setMaximumPitchAngledegrees(0.0)
+	..setMaximumRollAngledegrees(0.0)
+	..setTurnRate(3)
+	..setArtSpecial("")
+	..setProjectileImpactZ(0.0)
+	..setProjectileLaunchZ(0.0)
+	..setNameEditorSuffix("(Basics)")
+	..setSightRadiusDay(1)
+	..setSightRadiusNight(1)
+	..setUnitClassification("_")
+	..setPropulsionWindowdegrees(1.0)
+	..setTooltipBasic("")
+	..setNormalAbilities(commaList(ABILITY_INVENTORY_BUILDING_2_SLOT)) //(commaList(LOCUST_ID, GHOST_INVIS_ID, ABILITY_CLOAK_FLAMES))
+	..setCollisionSize(0)
