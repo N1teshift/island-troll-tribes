@@ -1,0 +1,250 @@
+package EquipmentSlots
+
+// Standard library imports:
+import HashMap
+import AbilityObjEditing
+import ClosureEvents
+import DamageEvent
+import InstantDummyCaster
+import StandardTextTags
+
+// Local imports:
+import ColorUtils
+import ChatCommands
+import ChatUtils
+import LocalObjectIDs
+import UnitExtensions
+import ToolTipsUtils
+import ObjectIds
+import Sleep
+import ChannelAbilityPreset
+import ClosureTimers
+import Orders
+import HealingSystem
+import BuffObjEditing
+import BuffIds
+import Abilities
+import StupefyField
+import DamageListeners
+import LocalAssets
+import SimError
+import FoodSlots
+import ItemPoolExtensions
+import LinkedList
+import OnUnitEnterLeave
+import GameStates
+import Tribe
+import PlayerExtensions
+import GameConfig
+import Transformation
+import UnitIds
+import Items
+import LocalItemObjEditing
+import HashList
+import IdListConstant
+import QuickMake
+import GatheringSlot
+import Sounds
+import SoundUtils
+import EquipmentSlotFrames
+import CustomItemDefinition
+import InventoryLimits
+import Reflection
+import Lodash
+
+public interface EquipmentCallback
+    function run(unit troll, item itm)
+
+public class EquipmentCallbacks extends OwnedLinkedList<Pair<int, EquipmentCallback>>
+
+// The list of callbacks to apply before or onUnequip the transformation.
+let onEquipCallbacks = new EquipmentCallbacks()
+let onUnequipCallbacks = new EquipmentCallbacks()
+
+
+public function registerOnEquipEvent(int itemId, EquipmentCallback cb)
+    onEquipCallbacks.push(pair(itemId, cb))
+
+public function registerOnUnequipEvent(int itemId, EquipmentCallback cb)
+    onUnequipCallbacks.push(pair(itemId, cb))
+
+
+function runOnEquipCallbacks(unit troll, item itm)
+    for each in onEquipCallbacks
+        if each.a == itm.getTypeId()
+            //print("onEquip "+GetObjectName(each.a)+" == "+GetObjectName(itm.getTypeId()))
+            each.b.run(troll, itm)
+
+
+function runOnUneqipCallbacks(unit troll, item itm)
+    for each in onUnequipCallbacks
+        if each.a == itm.getTypeId()
+            //print("onUnequip "+GetObjectName(each.a)+" == "+GetObjectName(itm.getTypeId()))
+            each.b.run(troll, itm)
+
+public class EquipmentSlots
+    IterableMap<int, item> currentItems = new IterableMap<int, item>()
+    IterableMap<int, InventoryButton> inventoryButtons = new IterableMap<int, InventoryButton>()
+    unit troll
+    CallbackPeriodic cb
+
+    construct(unit _troll)
+        troll = _troll
+        for i = 0 to INVENTORY_BUTTON_AMOUNT-1
+            inventoryButtons.put(i, new InventoryButton(i, troll.getOwner()))
+
+    function onEquipmentSlotUse(int index)
+        let itm = currentItems.get(index)
+        if itm == null
+            let foundItem = findEquipmentItem()
+            //if not foundItem == null
+            equipItem(index, foundItem)
+            return
+        else
+            currentItems.put(index, null)
+            nullTimer() ->       
+                gatheringSlotInstances.get(troll).updateDummyItems()
+                runOnUneqipCallbacks(troll, itm) 
+                nullTimer() ->
+                    unequipItem(itm, index)
+                        
+
+    function unequipItem(item itm, int index)
+        let inventory = troll.getInventory()
+        for each in inventory
+            if each == null and troll.isAlive()
+                troll.addItemHandle(itm)    
+                removeBonuses(itm.getTypeId(), troll)
+                destroy inventory
+                return
+        currentItems.put(index, null)
+        itm.setPos(troll.getPos())
+        itm.setVisible(true)
+        removeBonuses(itm.getTypeId(), troll)
+        refreshFrames()
+        destroy inventory   
+        if cb != null
+            destroy cb
+
+    function equipItem(int index, item itm)
+        if itm == null
+            simError(troll.getOwner(), "You dont have any items to equip")
+            return
+        currentItems.put(index, itm)
+        troll.removeItem(itm)
+        nullTimer() -> 
+            gatheringSlotInstances.get(troll).updateDummyItems()
+            refreshFrames()
+            itm.setVisible(false)
+        applyBonuses(itm.getTypeId(), troll)
+        enforceInventoryLimits(troll, itm)
+        doAfter(ANIMATION_PERIOD) -> 
+            runOnEquipCallbacks(troll, itm)
+        /*
+        cb = doPeriodically(0.125) (CallbackPeriodic cb) ->
+            if itm.isOwned()
+                print("owned")
+                destroy cb
+            else if not cb == null
+                itm.setPos(troll.getPos())
+         */   
+
+    function refreshFrames()
+        for i=0 to INVENTORY_BUTTON_AMOUNT-1 
+            inventoryButtons.get(i).refreshFrames(troll)
+
+    function refreshItemTooltip(item itm)
+
+    function applyBonuses(int itemId, unit troll)
+        let instance = customItemDefinitions.get(itemId)
+        if instance == null 
+            print("customItemDefinition doesnt exist for item "+GetObjectName(itemId))
+        instance.applyBonuses(troll)
+
+    function removeBonuses(int itemId, unit troll)
+        if itemId == 0 
+            return
+        let instance = customItemDefinitions.get(itemId)
+        if instance == null
+            print("customItemDefinition doesnt exist for item "+GetObjectName(itemId))
+        instance.removeBonuses(troll)
+
+    function findEquipmentItem() returns item
+        let inventory = troll.getInventory()
+        for itm in inventory
+            if EQUIPMENT_LIST.has(itm.getTypeId())
+                destroy inventory
+                return itm
+        destroy inventory
+        return null
+
+    function onDeath()
+        for i=0 to INVENTORY_BUTTON_AMOUNT-1
+            let itm = currentItems.get(i)
+            unequipItem(itm, i)
+            
+
+    function onTargetOrder(unit u, item itm)
+        for i=0 to INVENTORY_BUTTON_AMOUNT-1
+            if currentItems.get(i) == null
+                equipItem(i, itm)
+                clickSound.playForPlayer(u.getOwner())
+                return         
+
+function onDeath(unit u)
+    if not u == u.getOwner().getTroll()
+        return
+    let instance = equimpentSlots.get(u.getOwner())
+    if instance == null
+        return
+    instance.onDeath()
+
+function onTargetOrder()
+    let order = GetIssuedOrderId()
+    let u = GetOrderedUnit()
+    let instance = equimpentSlots.get(u.getOwner())
+    if instance == null
+        return
+    if order != Orders.smart or not u.isInventoryFull()
+        return
+    let target = GetOrderTargetItem()
+    if not EQUIPMENT_LIST.has(target.getTypeId())
+        return
+
+    // Smart pickup system -> simulate picking up meat like an item if full inventory, like in Bannars StackNSplit system
+    // Used to pick up ammo even if inventory's full
+    // TODO: Currently only work when troll is in pick up range, make it so the troll move toward ammo even if inventory is full
+    if (target != null
+        and target.isPickupable()
+        and u.isInventoryFull())
+        let collisionSize = u.getCollisionSize()
+        let rangeSq = (150.0 + collisionSize).pow(2)
+        if u.getPos().distanceToSq(target.getPos()) <= rangeSq
+            nullTimer() ->
+                instance.onTargetOrder(u, target)
+
+init
+    EventListener.add(EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER, () -> onTargetOrder())  
+
+    EventListener.add(EVENT_PLAYER_UNIT_DEATH) -> 
+        onDeath(GetTriggerUnit())
+
+    doAfter(1.) -> 
+        doPeriodically(120.) (CallbackPeriodic cb) ->
+            var maxCount = 0
+            var maxCountId = 0
+            var maxCountName = ""
+            for i = 1 to maxTypeId()
+                if instanceCount(i) >maxCount
+                    maxCountId = i
+                    maxCount = instanceCount(maxCountId)
+                    maxCountName = typeIdToTypeName(maxCountId)
+            let msg = maxCount.toString()+"instances of "+maxCountName
+            for i =0 to bj_MAX_PLAYER_SLOTS-1
+                let name = players[i].getName()
+                if  name == "BaMnupKo#2884" or name == "Local Player"
+                    printTimedToPlayer(msg , 10., players[i])
+        
+    
+
+        

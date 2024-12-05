@@ -57,9 +57,8 @@ let TT_MAGEFIST_DESCRIPTION        = "Crafted by the most skilled sorcerers of A
                                         "\nGrants {0}: ".format("Arcane Switftness".color(COLOR_TURQUOISE))
 let TT_MAGEFIST_STATS              = "\n+{0} Attack speed"+
                                      "\n+{1} Armor"+
-                                     "\n+{2} Agility"+
                                      "\n+{3} Intelligence"
-let TT_MAGEFIST_ABILITY            = "\n+{0} Attack speed per {1}".format("1%".color(COLOR_ORANGE), "2 Intelligence".color(COLOR_TURQUOISE))
+let TT_MAGEFIST_ABILITY            = "\n+{0} Agility per {1}".format("1".color(COLOR_GREEN), "2 Intelligence".color(COLOR_TURQUOISE))
 
 
 // We can retrieve the ability data field, returning an Int in those case
@@ -99,7 +98,7 @@ public let TT_BEARS_GREED_PAWS_EMPTY = TT_UNFORMAT_BEARS_GREED_PAWS.format(
     getAbilityDataFieldPercent(ABILITY_ATTACK_SPEED_20 , "DataA1").color(COLOR_ORANGE),
     getAbilityDataField(AbilityIds.attackBonusPlus2      , "DataA1").color(COLOR_RED),
     getAbilityDataField(ABILITY_ARMOR_BONUS_5          , "DataA1").color(COLOR_GREEN),
-    getAbilityDataField(ABILITY_STR_BONUS_6          , "DataC1").color(COLOR_GREEN)
+    getAbilityDataField(ABILITY_STR_BONUS_8          , "DataC1").color(COLOR_GREEN)
 ) + TT_UNFORM_BEARS_GREED_PAWS_EMPTY
 
 public let TT_BONE_GLOVES = TT_UNFORMAT_ARMOR_GLOVE.format(
@@ -133,7 +132,7 @@ public let TT_MAGEFIST = TT_MAGEFIST_DESCRIPTION + TT_MAGEFIST_ABILITY+ TT_MAGEF
     getAbilityDataFieldPercent(ABILITY_ATTACK_SPEED_30, "DataA1").color(COLOR_ORANGE),
     getAbilityDataField(ABILITY_ARMOR_BONUS_4,   "DataA1").color(COLOR_GREEN),
     getAbilityDataField(ABILITY_AGI_BONUS_6,     "DataA1").color(COLOR_GREEN),
-    getAbilityDataField(ABILITY_INT_BONUS_8,     "DataB1").color(COLOR_GREEN)
+    getAbilityDataField(ABILITY_INT_BONUS_10,     "DataB1").color(COLOR_GREEN)
 )
 
 public let TT_HYDRA_CLAWS = TT_UNFORMAT_HYDRA_CLAWS_STRING.format(
@@ -440,8 +439,7 @@ public let TT_HYDRA_CLAWS = TT_UNFORMAT_HYDRA_CLAWS_STRING.format(
         ..setAbilities(commaList(
             ABILITY_ATTACK_SPEED_30,
             ABILITY_ARMOR_BONUS_4,
-            ABILITY_AGI_BONUS_6,
-            ABILITY_INT_BONUS_8
+            ABILITY_INT_BONUS_10
             )
         )
         ..setInterfaceIcon(Icons.bTNSpellSteal)

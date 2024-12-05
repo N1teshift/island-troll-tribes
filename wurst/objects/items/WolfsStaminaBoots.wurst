@@ -19,8 +19,10 @@ import StringBuilder
 import ToolTipsUtils
 import UnitExtensions
 import BuffIds
+import EquipmentSlots
 
 constant ABILITY_WOLFS_STAMINA_BOOTS_PANIC = compiletime(ABIL_ID_GEN.next())
+IterableMap<unit, WolfsStaminaBootsInstance> instances = new IterableMap<unit, WolfsStaminaBootsInstance>()
 //constant SPELLBOOK_ABILITY_ID = compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_WOLFS_STAMINA_BOOTS_PANIC)))
 
 let TT = new StringBuilder()
@@ -68,13 +70,12 @@ class WolfsStaminaBootsInstance
         this.wearer = wearer
         this.baseClock = 0
         wearer.removeAbility(ABILITY_PANIC)
-        wearer.addAbility(ABILITY_WOLFS_STAMINA_BOOTS_PANIC)
+        wearer.addPermanentAbility(ABILITY_WOLFS_STAMINA_BOOTS_PANIC)
 
     ondestroy
         wearer.removeAbility(ABILITY_WOLFS_STAMINA_BOOTS_PANIC)
-        wearer.addAbility(ABILITY_PANIC)
+        wearer.addPermanentAbility(ABILITY_PANIC)
 
-IterableMap<unit, WolfsStaminaBootsInstance> instances = new IterableMap<unit, WolfsStaminaBootsInstance>()
 
 function onPickupBoots(unit u)
     if u.isTroll()
@@ -91,7 +92,12 @@ init
         if GetManipulatedItem().getTypeId() == ITEM_WOLFS_STAMINA_BOOTS
             onPickupBoots(GetManipulatingUnit())
 
+    registerOnEquipEvent(ITEM_WOLFS_STAMINA_BOOTS)(unit troll, item itm) ->
+        onPickupBoots(troll)
 
     EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
         if GetManipulatedItem().getTypeId() == ITEM_WOLFS_STAMINA_BOOTS
             onDropBoots(GetManipulatingUnit())
+
+    registerOnUnequipEvent(ITEM_WOLFS_STAMINA_BOOTS)(unit troll, item itm) ->
+        onDropBoots(troll)

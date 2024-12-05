@@ -27,7 +27,7 @@ import FoodBuffs
 let COOLDOWN = 7.
 let MANACOST = 40
 let TT_NORM = "Fell Tree"
-let TT_EXT = "\nMight of Dire Bear allows him to fell a tree instanteniously."+
+let TT_EXT = "Might of Dire Bear allows him to fell a tree instanteniously."+
              "\nAlso gives you an ability to fell trees with your attacks."+
              "\nHas {0} seconds cooldown.".format(COOLDOWN.toString().color(COLOR_LIGHT_BLUE))
 

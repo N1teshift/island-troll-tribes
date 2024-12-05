@@ -3,7 +3,6 @@ package OminousAltar
 // Local imports:
 import Building
 import LocalObjectIDs
-import UnitExtensions
 
 public class OminousAltar extends Building
     private static let unitTypeId = UNIT_OMINOUS_ALTAR

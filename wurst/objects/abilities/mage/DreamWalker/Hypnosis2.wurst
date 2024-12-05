@@ -18,12 +18,14 @@ import ClosureTimers
 import HashMap
 import SimError
 import UnitExtensions
+import DamageEvent
 
 constant MANACOST = 20
 constant HYPNOSIS_DUMMY_COOLDOWN = 10.
-constant HYPNOSIS_COOLDOWN = 20.
+constant HYPNOSIS_COOLDOWN = 10.
 constant CAST_RANGE = 300.
 constant DURATION = 5.
+constant SLEEP_OUTSIDE_HEAT_PENALTY = 10
 
 constant TT_NORM = "Hypnosis"
 constant TOOLTIP_EXTENDED = "" +
@@ -36,9 +38,7 @@ constant TOOLTIP_EXTENDED = "" +
         SLEEP_OUTSIDE_HEAT_PENALTY.toString().color(COLOR_ORANGE),
         MANA_RESTORED_BY_TROLL.toToolTipTeal(),
         HYPNOSIS_DUMMY_COOLDOWN.toToolTipLightBlue()
-    )+
-    "\nCan only be used once every {0} ".color(COLOR_GOLD).format(HYPNOSIS_COOLDOWN.toToolTipLightBlue())+
-    "seconds on the same target.".color(COLOR_GOLD)
+    )
 
 IterableMap<unit, HypnosisCooldown> instances = new IterableMap<unit, HypnosisCooldown>() 
 
@@ -55,6 +55,15 @@ constant TARGET_ALLOWED = "enemies,ground,organic"
         ..setNameEnhance("F", "Sleep Inside Tent")
         ..presetTooltipNormalExtended(lvl -> "The Troll can sleep inside the tent to restore {0} mana."
         + formatCooldown(ABILITY_SLEEP_INSIDE_TENT))
+
+@compiletime function createSleepOutside() returns AbilityDefinitionSleepcreep
+    return createSleepAbility(ABILITY_SLEEP_HYPNOSIS)
+        ..setNameEnhance("F", "Sleep Outside")
+        ..setStunDuration(1, 2)
+        ..setDurationHero(1, DURATION)
+        ..setTooltipNormalExtended(1, "The Troll can sleep outside to restore {0} mana but lose {1} health point and {2} heat. This can kill you if any of your stats reach 0."
+        .format(MANA_RESTORED_BY_TROLL.toToolTipBlue(), SLEEP_OUTSIDE_HP_PENALTY.toToolTipRed(), SLEEP_OUTSIDE_HEAT_PENALTY.toString().color(COLOR_ORANGE))
+        + formatCooldown(ABILITY_SLEEP_OUTSIDE))
 
 
 @compiletime function createHypnosisDummy() returns ChannelAbilityPreset
@@ -91,12 +100,12 @@ class HypnosisCooldown
                 destroy this
 
     function castSleep(unit caster, unit target)
-        let abilId = target.isTroll() ? ABILITY_SLEEP_OUTSIDE : ABILITY_SLEEP_ANIMAL
+        let abilId = target.isTroll() ? ABILITY_SLEEP_HYPNOSIS : ABILITY_SLEEP_ANIMAL
+        DamageEvent.setNextDamageFromCode()
         caster.damageTarget(target, SLEEP_OUTSIDE_HP_PENALTY, ATTACK_TYPE_NORMAL)
-        nullTimer()->
-            target.setHP(target.getHP()+SLEEP_OUTSIDE_HP_PENALTY)
-            nullTimer() -> 
-                InstantDummyCaster.castTarget(target.getOwner(), abilId, 1, "Sleep", target, target.getPos())
+        target.subHeat(SLEEP_OUTSIDE_HEAT_PENALTY)
+        nullTimer() -> 
+            InstantDummyCaster.castTarget(target.getOwner(), abilId, 1, "Sleep", target, target.getPos())
 
     ondestroy
         instances.remove(target)

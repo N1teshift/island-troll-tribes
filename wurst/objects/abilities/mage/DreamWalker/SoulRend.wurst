@@ -24,6 +24,7 @@ import Orders
 import DamageEvent
 import DamageListeners
 import Dreamwalking
+import Transformation
 
 IterableMap<unit, SoulRend> soulRendInstances = new IterableMap<unit, SoulRend>()
 
@@ -50,8 +51,6 @@ class SoulRend
 
     function onAttack(unit target)  
         if not toggledOn
-            return
-        if not instance.isDreamwalking()
             return
         let lvlMultiplier = troll.getLevel()>=4 ? 2 : 1
         let intelligence = troll.getInt(true)
@@ -107,7 +106,7 @@ class SoulRendAbility extends AbilityDefinitionImmolationcreep
 
 
 @compiletime function createReplenishHealth()
-    new SoulRendAbility(ABILITY_SOULREND, "R", new Pair(3, 0))
+    new SoulRendAbility(ABILITY_SOULREND, "D", new Pair(2, 1))
     createBuff()
 
 function onSub(unit caster)
@@ -128,6 +127,9 @@ function onAttack(unit source, unit target)
         return
     instance.onAttack(target)
 
+function turnOnRend(unit troll)
+    if not troll.hasAbility(BUFF_SOULREND_SELF)
+        troll.issueImmediateOrderById(OrderIds.immolation)
 
 init
     EventListener.onCast(ABILITY_DREAMWALKER) (unit caster) ->
@@ -140,6 +142,11 @@ init
     DamageEvent.addListener(DamageListenerPriorities.PANTHER_INSTINCT castTo int) ->
         if DamageEvent.getType() == DamageType.ATTACK
             onAttack(DamageEvent.getSource(), DamageEvent.getTarget())
+
+    EventListener.add(EVENT_PLAYER_HERO_LEVEL) ->
+        if GetTriggerUnit().getTypeId() == UNIT_DREAMWALKER
+            turnOnRend(GetTriggerUnit())
+        
     
               
 

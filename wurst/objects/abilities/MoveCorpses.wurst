@@ -209,7 +209,7 @@ function switchAbilities(unit target) returns int
     let newID = isGrab ? dropID : grabID
 
     // Ignore orders to switch to an unsuable ability.
-    if (isGrab and count == 0) or (not isGrab and count == MAX_COUNT)
+    if  (not isGrab and count == MAX_COUNT) or (isGrab and count == 0)
         // Issue the owner the appropriate error.
         let message = oldID == grabID
             ? "This unit is not carrying any corpses."
@@ -362,6 +362,47 @@ function onKey(player triggerer)
         if triggerer.canControl(target) and target.canMoveCorpses()
             switchAbilities(target)
 
+function onShiftKey(player triggerPlayer)
+    // Attempt to switch the ability for each unit selected.
+    forUnitsSelected(triggerPlayer) (unit target) ->
+        fixCorpseSystem(target)
+        // Check that the action is both legal and valid.
+        //updateCount(target, 1)
+        //nullTimer() -> 
+            //updateCount(target, -1)  
+
+function fixCorpseSystem(unit target)
+    // Create the corpse to be used.
+    let corpse = CreateCorpse(
+        players[PLAYER_NEUTRAL_AGGRESSIVE],
+        UnitIds.footman,
+        target.getX(),
+        target.getY(),
+        0
+    )
+
+   // Add in the ability prior to the order, as necessary.
+    if not target.hasAbility(LocalAbilityIds.corpseConsume)
+        target.addAbility(LocalAbilityIds.corpseConsume)
+        doAfter(0.4) -> 
+            target.removeAbility(LocalAbilityIds.corpseConsume)
+    // Save the unit original hit points in order to reset them later.
+    let health = target.getHP()
+
+    // Ensure that the unit can attempt to consume the corpse.
+    target.setHP(1)              
+        // Issue the order, allowing the target to default to the new corpse.
+    if not target.issueImmediateOrderById(Orders.cannibalize)
+        target.getOwner().print(
+            "Failed to fix corpse targeting for {0}".format(
+                target.getName()
+            )
+        )
+    target.setHP(health) 
+    doAfter(0.4) -> 
+        corpse.remove()
+                   
+
 init
     registerPlayerUnitEvent(EVENT_PLAYER_UNIT_SUMMON) ->
         onGrab(EventData.getSummoningUnit(), EventData.getSummonedUnit())
@@ -384,6 +425,9 @@ init
     // Create the trigger to allow for psuedo-hotkey functionality.
     onKeyPress(OSKEY_Z, OSKEY_META.CTRL) ->
         onKey(GetTriggerPlayer())
+    // Create the trigger to allow for psuedo-hotkey functionality.
+    onKeyPress(OSKEY_Z, OSKEY_META.SHIFT) ->
+        onShiftKey(GetTriggerPlayer())
 
           
                     

@@ -24,8 +24,8 @@ let owners = new HashMap<unit, player>
 
 // Handles initialization.
 function initialize()
-    // Prevent sharing initially.
-    sharing.make("true", input -> input.isBool())
+    // Allow sharing initially.
+    sharing.make("true", input -> true)
 
     // Transition all buildings for the player upon toggling.
     sharing.action() (target, value) ->

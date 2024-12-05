@@ -25,19 +25,19 @@ public constant MAKRURA_CARAPACE_COOLDOWN = 7.
 constant ABILITY_SHIELD_AMUL = 'A09N'
 
 constant SHIELD_DAMAGE_BLOCK0 = 0.
-constant SHIELD_DAMAGE_BLOCK1 = 3.
-constant SHIELD_DAMAGE_BLOCK2 = 5.
-constant SHIELD_DAMAGE_BLOCK3 = 7.
-constant SHIELD_DAMAGE_BLOCK4 = 10.
+constant SHIELD_DAMAGE_BLOCK3 = 3.
+constant SHIELD_DAMAGE_BLOCK5 = 5.
+constant SHIELD_DAMAGE_BLOCK7 = 7.
+constant SHIELD_DAMAGE_BLOCK10 = 10.
 
-public constant BASIC_SHIELD_TOOLTIP = "A Basic Shield, reduce damage taken by {0}, gives {1} magic resistance.".format(SHIELD_DAMAGE_BLOCK1.toToolTipOrange(), 0.10.toToolTipLightBlue())
-public constant BONE_SHIELD_TOOLTIP  = "A Bone Shield, reduce damage taken by {0}, gives {1} armor and {2} magic resistance.".format(SHIELD_DAMAGE_BLOCK2.toToolTipOrange(), 1..toToolTipGreen(), 0.10.toToolTipLightBlue())
-public constant IRON_SHIELD_TOOLTIP  = "An Iron Shield, reduce damage taken by {0}, gives {1} armor and {2} magic resistance.".format(SHIELD_DAMAGE_BLOCK3.toToolTipOrange(), 2..toToolTipGreen(), 0.10.toToolTipLightBlue())
-public constant STEEL_SHIELD_TOOLTIP = "A Steel Shield, reduce damage taken by {0}, gives {1} armor and {2} magic resistance.".format(SHIELD_DAMAGE_BLOCK4.toToolTipOrange(), 4..toToolTipGreen(), 0.10.toToolTipLightBlue())
+public constant BASIC_SHIELD_TOOLTIP = "A Basic Shield, reduce damage taken by {0}, gives {1} magic resistance.".format(SHIELD_DAMAGE_BLOCK3.toToolTipOrange(), 0.10.toToolTipLightBlue())
+public constant BONE_SHIELD_TOOLTIP  = "A Bone Shield, reduce damage taken by {0}, gives {1} armor and {2} magic resistance.".format(SHIELD_DAMAGE_BLOCK5.toToolTipOrange(), 1..toToolTipGreen(), 0.10.toToolTipLightBlue())
+public constant IRON_SHIELD_TOOLTIP  = "An Iron Shield, reduce damage taken by {0}, gives {1} armor and {2} magic resistance.".format(SHIELD_DAMAGE_BLOCK7.toToolTipOrange(), 2..toToolTipGreen(), 0.10.toToolTipLightBlue())
+public constant STEEL_SHIELD_TOOLTIP = "A Steel Shield, reduce damage taken by {0}, gives {1} armor and {2} magic resistance.".format(SHIELD_DAMAGE_BLOCK10.toToolTipOrange(), 4..toToolTipGreen(), 0.10.toToolTipLightBlue())
                                     +" Has a bash ability, silences and disarms the target."+makeToolTipDuration(DURATION, COOLDOWN)
-public constant BATTLE_SHIELD_TOOLTIP = "A Battle Shield, reduce damage taken by {0}, gives {1} armor.".format(SHIELD_DAMAGE_BLOCK4.toToolTipOrange(), 7..toToolTipGreen())
+public constant BATTLE_SHIELD_TOOLTIP = "A Battle Shield, reduce damage taken by {0}, gives {1} armor.".format(SHIELD_DAMAGE_BLOCK10.toToolTipOrange(), 7..toToolTipGreen())
                                     +" Has a bash ability, silences and disarms the target."+makeToolTipDuration(DURATION, COOLDOWN)
-public constant TROLL_PROTECTOR_TOOLTIP = "An Iron shield enhanced with magic, reduce damage taken by {0}. ".format(SHIELD_DAMAGE_BLOCK3.toToolTipOrange())+
+public constant TROLL_PROTECTOR_TOOLTIP = "An Iron shield enhanced with magic, reduce damage taken by {0}. ".format(SHIELD_DAMAGE_BLOCK7.toToolTipOrange())+
                                     "\nTroll Protector Aura".color(COLOR_GREEN)+":"+
                                     "\n"+TROLL_PROTECTOR_TT_EXT
 
@@ -48,13 +48,13 @@ public constant MAKRURA_CARAPACE_TOOLTIP = "A Makrura's carapace of a medium siz
                                             "seconds returning premitigation damage to the attacker."
 constant ABILITY_DUMMY2_SHIELD_BLOCK_ID = compiletime(ABIL_ID_GEN.next())
 constant ABILITY_DUMMY_SHIELD_BLOCK_ID = compiletime(ABIL_ID_GEN.next())
-constant ABILITY_BASIC_SHIELD_BLOCK_ID = compiletime(ABIL_ID_GEN.next())
-constant ABILITY_BONE_SHIELD_BLOCK_ID  = compiletime(ABIL_ID_GEN.next())
-constant ABILITY_IRON_SHIELD_BLOCK_ID  = compiletime(ABIL_ID_GEN.next())
-constant ABILITY_STEEL_SHIELD_BLOCK_ID = compiletime(ABIL_ID_GEN.next())
-constant ABILITY_BATTLE_SHIELD_BLOCK_ID = compiletime(ABIL_ID_GEN.next()) //lazy design with battle shield
-constant ABILITY_STEEL_SHIELD_BASH_ID  = compiletime(ABIL_ID_GEN.next())
-constant ABILITY_TROLL_PROTECTOR_ID  = compiletime(ABIL_ID_GEN.next())
+public constant ABILITY_BASIC_SHIELD_BLOCK_ID = compiletime(ABIL_ID_GEN.next())
+public constant ABILITY_BONE_SHIELD_BLOCK_ID  = compiletime(ABIL_ID_GEN.next())
+public constant ABILITY_IRON_SHIELD_BLOCK_ID  = compiletime(ABIL_ID_GEN.next())
+public constant ABILITY_STEEL_SHIELD_BLOCK_ID = compiletime(ABIL_ID_GEN.next())
+public constant ABILITY_BATTLE_SHIELD_BLOCK_ID = compiletime(ABIL_ID_GEN.next()) //lazy design with battle shield
+public constant ABILITY_STEEL_SHIELD_BASH_ID  = compiletime(ABIL_ID_GEN.next())
+public constant ABILITY_TROLL_PROTECTOR_ID  = compiletime(ABIL_ID_GEN.next())
 
 constant BASIC_SHIELD_ABILITIES  = commaList(ABILITY_BASIC_SHIELD_BLOCK_ID)
 constant BONE_SHIELD_ABILITIES   = commaList(ABILITY_BONE_SHIELD_BLOCK_ID, ABILITY_ARMOR_BONUS_1)
@@ -146,14 +146,14 @@ public class Shield
 
 function getShield() returns LinkedList<Shield>
     return asList(
-        new Shield(ITEM_SHIELD        , "Basic Shield"  , ABILITY_BASIC_SHIELD_BLOCK_ID  , SHIELD_DAMAGE_BLOCK1 , BASIC_SHIELD_TOOLTIP  , "SteelArmor"         , LocalItems.shield      , BASIC_SHIELD_ABILITIES , 13),
-        new Shield(ITEM_BONE_SHIELD   , "Bone Shield"   , ABILITY_BONE_SHIELD_BLOCK_ID   , SHIELD_DAMAGE_BLOCK2 , BONE_SHIELD_TOOLTIP   , "ImprovedUnholyArmor", LocalItems.boneShield  , BONE_SHIELD_ABILITIES  , 20),
-        new Shield(ITEM_IRON_SHIELD   , "Iron Shield"   , ABILITY_IRON_SHIELD_BLOCK_ID   , SHIELD_DAMAGE_BLOCK3 , IRON_SHIELD_TOOLTIP   , "HumanArmorUpOne"    , LocalItems.ironShield  , IRON_SHIELD_ABILITIES  , 46),
-        new Shield(ITEM_STEEL_SHIELD  , "Steel Shield"  , ABILITY_STEEL_SHIELD_BLOCK_ID  , SHIELD_DAMAGE_BLOCK4 , STEEL_SHIELD_TOOLTIP  , "ThoriumArmor"       , LocalItems.steelShield , STEEL_SHIELD_ABILITIES , 66),
-        new Shield(ITEM_BATTLE_SHIELD , "Battle Shield" , ABILITY_BATTLE_SHIELD_BLOCK_ID , SHIELD_DAMAGE_BLOCK4 , BATTLE_SHIELD_TOOLTIP , "ArcaniteArmor"      , LocalItems.battleShield, BATTLE_SHIELD_ABILITIES , 82),
+        new Shield(ITEM_SHIELD        , "Basic Shield"  , ABILITY_BASIC_SHIELD_BLOCK_ID  , SHIELD_DAMAGE_BLOCK3 , BASIC_SHIELD_TOOLTIP  , "SteelArmor"         , LocalItems.shield      , BASIC_SHIELD_ABILITIES , 13),
+        new Shield(ITEM_BONE_SHIELD   , "Bone Shield"   , ABILITY_BONE_SHIELD_BLOCK_ID   , SHIELD_DAMAGE_BLOCK5 , BONE_SHIELD_TOOLTIP   , "ImprovedUnholyArmor", LocalItems.boneShield  , BONE_SHIELD_ABILITIES  , 20),
+        new Shield(ITEM_IRON_SHIELD   , "Iron Shield"   , ABILITY_IRON_SHIELD_BLOCK_ID   , SHIELD_DAMAGE_BLOCK7 , IRON_SHIELD_TOOLTIP   , "HumanArmorUpOne"    , LocalItems.ironShield  , IRON_SHIELD_ABILITIES  , 46),
+        new Shield(ITEM_STEEL_SHIELD  , "Steel Shield"  , ABILITY_STEEL_SHIELD_BLOCK_ID  , SHIELD_DAMAGE_BLOCK10 , STEEL_SHIELD_TOOLTIP  , "ThoriumArmor"       , LocalItems.steelShield , STEEL_SHIELD_ABILITIES , 66),
+        new Shield(ITEM_BATTLE_SHIELD , "Battle Shield" , ABILITY_BATTLE_SHIELD_BLOCK_ID , SHIELD_DAMAGE_BLOCK10 , BATTLE_SHIELD_TOOLTIP , "ArcaniteArmor"      , LocalItems.battleShield, BATTLE_SHIELD_ABILITIES , 82),
         new Shield(ITEM_MAKRURA_CARAPACE , "Makrura Carapace" , ABILITY_DUMMY_SHIELD_BLOCK_ID  , SHIELD_DAMAGE_BLOCK0 , MAKRURA_CARAPACE_TOOLTIP , "MakruraCarapace"      , LocalItems.makruraCarapace, MAKRURA_CARAPACE_ABILITIES , 41, 1.0),
         new Shield(ITEM_MAKRURA_CARAPACE_DUMMY , "Makrura Carapace" , ABILITY_DUMMY2_SHIELD_BLOCK_ID  , SHIELD_DAMAGE_BLOCK0 , MAKRURA_CARAPACE_TOOLTIP , "MakruraCarapace", LocalItems.makruraCarapace, MAKRURA_CARAPACE_DUMMY_ABILITIES , 41, 1.0),
-        new Shield(ITEM_TROLL_PROTECTOR , "Troll Protector" , ABILITY_TROLL_PROTECTOR_ID  , SHIELD_DAMAGE_BLOCK3 , TROLL_PROTECTOR_TOOLTIP , "TrollProtector", LocalItems.trollProtector, TROLL_PROTECTOR_ABILITIES , 41)
+        new Shield(ITEM_TROLL_PROTECTOR , "Troll Protector" , ABILITY_TROLL_PROTECTOR_ID  , SHIELD_DAMAGE_BLOCK7 , TROLL_PROTECTOR_TOOLTIP , "TrollProtector", LocalItems.trollProtector, TROLL_PROTECTOR_ABILITIES , 41)
     )
 
 

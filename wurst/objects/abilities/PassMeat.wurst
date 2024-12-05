@@ -89,7 +89,8 @@ class PassMeat
         let targetInstance = instances.get(target)
         var maxChargesReceived = 0
         var maxChargesGiven = 0
-        for each in target.getInventory()
+        let targetInventory = target.getInventory()
+        for each in targetInventory
             if each == null
                 maxChargesReceived+=10
             if each.getTypeId() == ITEM_COOKED_MEAT
@@ -99,8 +100,8 @@ class PassMeat
         //print("target has room for "+maxChargesReceived.toString()+" meat")
         //print("target can receive "+targetInstance.receiveMeatCharges.toString()+" meat")
         //maxChargesReceived = min(maxChargesReceived, targetInstance.receiveMeatCharges)
-
-        for each in troll.getInventory()
+        let trollInventory = troll.getInventory()
+        for each in trollInventory
             if each.getTypeId() == ITEM_COOKED_MEAT
                 maxChargesGiven += each.getCharges()
             if maxChargesGiven>=10
@@ -110,7 +111,9 @@ class PassMeat
         maxChargesGiven = min(maxChargesGiven, passMeatCharges)  
 
         //let meatAmountPassed = maxChargesGiven>= maxChargesReceived ? maxChargesReceived : maxChargesGiven
-        //print(maxChargesGiven.toString()+" meat will be passed")    
+        //print(maxChargesGiven.toString()+" meat will be passed") 
+        destroy trollInventory
+        destroy targetInventory   
         return maxChargesGiven
 
     function onCast(unit target)
@@ -130,7 +133,8 @@ class PassMeat
 
     function reduceCasterMeat(int amount)
         var amountLeft = amount
-        for each in troll.getInventory()
+        let inventory = troll.getInventory()
+        for each in inventory
             if each.getTypeId() == ITEM_COOKED_MEAT
                 let charges = each.getCharges()
                 if charges == amountLeft
@@ -142,6 +146,7 @@ class PassMeat
                 amountLeft-=charges
                 if amountLeft <= 0 
                     break
+        destroy inventory
 
         
     function increaseTargetMeat(int amount, unit target)
@@ -149,7 +154,8 @@ class PassMeat
         doPeriodicallyCounted(0, 10) (CallbackCounted cb) ->
             if amountLeft == 0
                 destroy cb
-            for each in target.getInventory()
+            let inventory = target.getInventory()
+            for each in inventory
                 if each.getTypeId() == ITEM_COOKED_MEAT and each.getCharges() < 10
                     if 10-each.getCharges() >= amountLeft
                         each.setCharges(each.getCharges()+amountLeft)
@@ -161,6 +167,7 @@ class PassMeat
                     //print("empty slot")
                     target.addItemById(ITEM_COOKED_MEAT)
                     amountLeft-=1  
+            destroy inventory
 
     function updatePassMeatAbility()
         //print("updated ability")

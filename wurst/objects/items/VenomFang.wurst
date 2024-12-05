@@ -23,6 +23,7 @@ import HashMap
 import HashList
 import DamageListeners
 import UnitExtensions
+import PlayerExtensions
 
 let ABIL_DMG_VENOM_FANG  = compiletime(ABIL_ID_GEN.next())
 let ATK_DMG_BONUS = 4
@@ -55,6 +56,7 @@ IterableMap<unit, PoisonedUnit> instances = new IterableMap<unit, PoisonedUnit>(
 
 @compiletime function createVenomFangAbility()
     new AbilityDefinitionVenomSpearsCreep(ABILITY_VENOM_FANG)
+        ..setDurationHero(1, POISON_DURATION)
         ..setDurationNormal(1, POISON_DURATION)
         ..setTargetsAllowed(1, commaList(
             TargetsAllowed.enemies,
@@ -67,8 +69,6 @@ IterableMap<unit, PoisonedUnit> instances = new IterableMap<unit, PoisonedUnit>(
         ..setAttackSpeedFactor(1, 0.)
         ..setMovementSpeedFactor(1, 0.)
         ..setDamageperSecond(1, 0.)
-        ..setDurationHero(1, POISON_DURATION)
-        ..setDurationNormal(1, POISON_DURATION)
         ..setName("Venom Fang")
         ..setEditorSuffix("(Wurst)")
 
@@ -127,8 +127,14 @@ function onDamage()
     let target = DamageEvent.getTarget()
     let source = DamageEvent.getSource()
     let damage = DamageEvent.getUnreducedOriginalAmount()
-    // Filter for units that have Undying.
-    if not source.hasItemById(ITEM_VENOM_FANG)
+    bool hasVenomFang = false
+    let equippedItems = source.getOwner().getEquipmentSlots().currentItems
+    if equippedItems == null
+        return
+    for i = 0 to equippedItems.size()
+        if equippedItems.get(i).getTypeId() == ITEM_VENOM_FANG
+            hasVenomFang = true
+    if not source.hasItemById(ITEM_VENOM_FANG) and not hasVenomFang
         return
 
     // Exit if the damage is used for internal systems.

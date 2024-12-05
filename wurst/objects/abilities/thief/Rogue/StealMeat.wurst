@@ -29,13 +29,15 @@ import LocalAssets
 import SimError
 
 let COOLDOWN = 30.
+let TELE_STEAL_COOLDOWN = 25.
 let TELE_STEAL_CAST_RANGE = 500.
 let TELE_STEAL_MANA_COST = 20
 
 let TT_STEAL_MEAT ="Steal a piece of meat from a closest enemy in {0} range.".format(TELE_STEAL_CAST_RANGE.toString().color(ENERGY_COLOR))+ 
                     " If your inventory is full, it is gonna be automatically consumed."+
                     "\n{0} seconds cooldown.".format(COOLDOWN.toString().color(ENERGY_COLOR))
-let TT_TELE_STEAL_MEAT ="\n\nTele-thief's mastery over dimentional magic greatly increases range of this ability".color(ENERGY_COLOR)
+let TT_TELE_STEAL_MEAT = TT_STEAL_MEAT.replace(COOLDOWN.toString(), TELE_STEAL_COOLDOWN.toString().color(ENERGY_COLOR))+
+                    "\n\nTele-thief's mastery over dimentional magic greatly increases range of this ability".color(ENERGY_COLOR)
 
 
 
@@ -67,7 +69,7 @@ let TT_TELE_STEAL_MEAT ="\n\nTele-thief's mastery over dimentional magic greatly
         ..presetTooltipNormal(lvl -> "Tele-Steal Meat")
         ..presetManaCost(lvl->TELE_STEAL_MANA_COST)
         ..presetTooltipNormalExtended(lvl-> TT_STEAL_MEAT+TT_TELE_STEAL_MEAT)   
-        ..presetCooldown(lvl -> COOLDOWN)
+        ..presetCooldown(lvl -> TELE_STEAL_COOLDOWN)
         ..presetHotkey("R")
         ..setButtonPositionNormalX(3)
         ..setButtonPositionNormalY(0)
@@ -90,16 +92,20 @@ function onStealCast(unit caster, unit target)
         itm.setCharges(charges-1)
     else 
         itm.remove()
-    for itm2 in caster.getInventory()
+    let casterInventory = caster.getInventory()
+    for itm2 in casterInventory
         if itm2.getTypeId() == ITEM_COOKED_MEAT and itm2.getCharges()<10
             itm2.setCharges(itm2.getCharges()+1)
+            destroy casterInventory
             return
     if caster.isInventoryFull()
         new HealingInstance(caster, 50, HealingType.ITEM)
+        destroy casterInventory
         return
     let itm3 = createItem(ITEM_COOKED_MEAT, caster.getPos())
     stolenItems.add(itm3)
     caster.addItemHandle(itm3)
+    destroy casterInventory
 
 function onTeleStealCast(unit caster)
     ENUM_GROUP.enumUnitsInRange(

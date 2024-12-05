@@ -71,7 +71,8 @@ function performExperienceGain()
                 target.isType(UNIT_TYPE_HERO) and
                 target.isAllyOf(killer) and
                 target.isAlive() and
-                target != killer
+                target != killer and
+                target.isTroll()
             )
         )
 

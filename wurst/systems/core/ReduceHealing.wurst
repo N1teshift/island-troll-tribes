@@ -64,7 +64,7 @@ real array FACTORS
 bool array hinted
 
 // The state of healing per unit.
-State array states
+public State array states
 
 // Displays a hint to a player the first their unit is affected.
 // TODO: Use a centralized system for displaying contextual hints.
@@ -108,6 +108,7 @@ class State
 
         // Adjust the running sum.
         this.sum += amount
+        this.sum = max(0, this.sum)
 
         // Display the total healing as the food used.
         this.target.getOwner().setState(
@@ -176,7 +177,7 @@ function onUnitHealed(HealingInstance instance)
     var output = 0.
 
     // Copy the the initial amount before adjusting it.
-    var amount = instance.amount
+    var amount = instance.trueAmount
 
     // The index of the current bracket being considered.
     var index = 0
@@ -202,7 +203,7 @@ function onUnitHealed(HealingInstance instance)
         instance.target.getOwner().displayHint()
 
         // Adjust the healing factor accordingly.
-        instance.scaleMultiplier(output / instance.amount)
+        instance.scaleMultiplier(output / instance.trueAmount)
 
     // Adjust the moving sum.
     state.adjustAmountHealed(instance.trueAmount)
@@ -245,7 +246,9 @@ function initializeArrays()
 
 init
     onUnitHealed() ->
-        onUnitHealed(getHealingInstance())
+        let healingInstance = getHealingInstance()
+        nullTimer() ->
+            onUnitHealed(healingInstance)
 
     registerPlayerUnitEvent(EVENT_PLAYER_UNIT_DEATH) ->
         onUnitDeath(EventData.getDyingUnit())

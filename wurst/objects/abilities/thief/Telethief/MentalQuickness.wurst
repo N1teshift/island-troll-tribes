@@ -29,7 +29,7 @@ import LinkedList
 import LocalAssets
 import BeeHives
 
-let cooldownRecoveryBonus = 0.02
+let cooldownRecoveryBonus = 0.03
 let TT_NAME = "Mental quickness."
 let TT_TOOLTIP = "Telethief's mental prowess allows him to use his abilities and items from dimentional pocket more often."+
                 "\n\nGain {0}% Cooldown Recovery speed per {1} beyond 14.".format(
@@ -59,7 +59,7 @@ function onCast(unit caster, int abilId)
         let cooldown= caster.getAbilityCooldown(abilId, 0)
         doAfter(ANIMATION_PERIOD) -> 
             caster.endAbilityCooldown(abilId)
-            let cooldownRecovery = (caster.getInt(true)-14)*cooldownRecoveryBonus+1
+            let cooldownRecovery = max((caster.getInt(true)-14), 0)*cooldownRecoveryBonus+1
             nullTimer() ->
                 caster.startAbilityCooldown(abilId, cooldown/cooldownRecovery)
             

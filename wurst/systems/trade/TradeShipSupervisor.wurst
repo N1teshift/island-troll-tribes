@@ -105,7 +105,7 @@ public class TradeShipSupervisor
 
     function triggerListeners()
         for each in listeners
-            if this!= null
+            if each!= null
                 each.run(this)
         //listeners.forEach(listener -> listener.run(this))
 
@@ -174,7 +174,8 @@ public class TradeShipSupervisor
 
     ondestroy
         for listener in listeners
-            destroy listener
+            if listener != null
+                destroy listener
         destroy listeners
 
         if ship != null

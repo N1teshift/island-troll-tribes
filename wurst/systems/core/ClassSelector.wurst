@@ -19,6 +19,7 @@ import RandomPerk
 import TimerUtils
 import Tribe
 import UnitExtensions
+import EquipmentSlots
 
 let spawnList = asList(
     gg_rct_revive_1,
@@ -193,9 +194,10 @@ public class ClassSelector
 
         setClassUnavailable(trollId)
         owner.setTroll(troll)
-
-        let backpack = createUnit(troll.getOwner(), UNIT_BACKPACK, troll.getPos())
-        owner.setBackpack(backpack)
+        
+        let equipmentSlots = owner.getEquipmentSlots()
+        if equipmentSlots == null
+            owner.setEquipmentSlots(new EquipmentSlots(troll))
 
         troll
             ..pause()
@@ -210,6 +212,7 @@ public class ClassSelector
 
     function handleTrollRemoval(player p)
         let troll = p.getTroll()
+        let equipmentSlots = p.getEquipmentSlots()
         if troll != null
             let trollId = troll.getTypeId()
 
@@ -217,6 +220,8 @@ public class ClassSelector
             totem.addUnitToStock(trollId, 1, 1)
             p.removeTroll()
             troll.remove()
+            p.removeEquipmentSlots()
+   
 
     function handleRandom(player p)
         let trollId = getRandomTrollId()

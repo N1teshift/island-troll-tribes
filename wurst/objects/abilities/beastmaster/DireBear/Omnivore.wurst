@@ -26,17 +26,19 @@ import FoodBuffs
 import PetReleasing
 import HealingItems
 
-let HEALING_PENALTY = 0.6
+let HEALING_PENALTY = 0.8
 let BUFF_DURATION = 15.
+public let ON_FOOD_COOLDOWN_REFUND = 1.
 let foodList = asList(ABIL_BANANA, ABIL_HONEY, ABIL_COCONUT, ABIL_MEAT, ABILITY_SCAVENGED_MUSHROOM)
 public IterableMap<unit, Omnivore> instances = new IterableMap<unit, Omnivore>
 
 let TT_NORM = "Omnivore"
-let TT_EXT = "Dire Bear is an omnivore and is capable of eating almost anything, even the mushrooms other would find poisonous."+
-             "\nGain +{0} Strength".format(STRENGHT_BONUS.toString().color(COLOR_GREEN))+
+let TT_EXT = "Dire Bear is an omnivore and is capable of eating almost anything, even the mushrooms other would find poisonous."
+/*
+             "\nGain +{0} Strength".format(STRENGTH_BONUS.toString().color(COLOR_GREEN))+
              " and +{0}% increased healing received from food for every different kind of food you have eaten recently.".format((HEALING_BONUS*100).toString().color(COLOR_GREEN))+
              "\nA food buff lasts {0} seconds.".format(BUFF_DURATION.toString().color(COLOR_LIGHT_BLUE))
-
+*/
 let TT_NORM_VORACIOUS_BEAR = "Voracious Bear"
 let TT_EXT_VORACIOUS_BEAR = "Dire Bear is a huge animal with even bigger appetite that cannot be satisfied with regular amount of food."+
                             "\nHealing from food has only {0}% effect on you.".format((HEALING_PENALTY*100).toInt().toString().color(COLOR_RED))
@@ -93,6 +95,7 @@ class Food
 class Omnivore
     unit troll
     real dietaryHealingBonus = 0.
+    /*
     Food meat = new Food(ABILITY_DIRE_BEAR_MEAT_BONUS, BUFF_DIRE_BEAR_MEAT_BONUS)
     Food banana = new Food(ABILITY_DIRE_BEAR_BANANA_BONUS, BUFF_DIRE_BEAR_BANANA_BONUS)
     Food coconut = new Food(ABILITY_DIRE_BEAR_COCONUT_BONUS, BUFF_DIRE_BEAR_COCONUT_BONUS)
@@ -104,17 +107,30 @@ class Omnivore
         ..put(ABIL_COCONUT, coconut)
         ..put(ABILITY_SCAVENGED_MUSHROOM, mushroom)
         ..put(ABIL_HONEY, honeycomb)
-        
+    */        
 
     construct(unit _troll)
         troll = _troll
+    
 
+    function onFoodUsed(int foodUsed)
+        let remainingCooldown = troll.getAbilityCooldownRemaining(ABILITY_HIBERNATE_DUMMY)
+        if remainingCooldown == 0
+            return
+        let baseCooldown = troll.getAbilityCooldown(ABILITY_HIBERNATE_DUMMY, 0)
+        let newCooldown = remainingCooldown-ON_FOOD_COOLDOWN_REFUND
 
-    function onFoodUsed(int foodUsed)  
+        troll.endAbilityCooldown(ABILITY_HIBERNATE_DUMMY)
+        nullTimer() -> 
+            troll.startAbilityCooldown(ABILITY_HIBERNATE_DUMMY, remainingCooldown-ON_FOOD_COOLDOWN_REFUND)
+        troll.setAbilityCooldown(ABILITY_HIBERNATE_DUMMY, 0, baseCooldown)
+
+        /*
         activeFoodBonuses.get(foodUsed).isActive=true
         activeFoodBonuses.get(foodUsed).duration=BUFF_DURATION
-        updateFoodBonuses() 
-
+        updateFoodBonuses()
+        */
+    /*
     function updateFoodBonuses()
         var healingBonus = 0.
         for each in activeFoodBonuses
@@ -124,7 +140,7 @@ class Omnivore
             else
                 activeFoodBonuses.get(each).removeAbility(troll)   
         dietaryHealingBonus = healingBonus
-
+    */
     function onUnitHealed(HealingInstance healingInstance)
         healingInstance.scaleMultiplier(HEALING_PENALTY + dietaryHealingBonus)
 

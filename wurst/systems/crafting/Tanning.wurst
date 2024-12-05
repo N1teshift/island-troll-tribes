@@ -32,3 +32,4 @@ public function tan(unit tannery, int quickMakeSpellId)
     if inventory.map(elem -> elem.getTypeId()).equals(recipe)
         inventory.forEach(elem -> elem.remove())
         tannery.addItemById(itemToAdd)
+    destroy inventory

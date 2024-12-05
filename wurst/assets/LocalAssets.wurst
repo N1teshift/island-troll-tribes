@@ -4,6 +4,11 @@ package LocalAssets
 import ObjectIdGenerator
 
 public class LocalIcons
+    static constant bTNWindSerpentPassive             ="ReplaceableTextures\\CommandButtons\\bTNWindSerpentPassive.blp"
+    static constant bTNTimberWolfPassive             ="ReplaceableTextures\\CommandButtons\\BTNTimberWolfPassive.blp"
+    static constant bTNPantherPassive             ="ReplaceableTextures\\CommandButtons\\BTNPantherPassive.blp"
+    static constant bTNFrostBearPassive             ="ReplaceableTextures\\CommandButtons\\BTNFrostBearPassive.blp"
+    static constant bTNResourcesPack          ="ReplaceableTextures\\CommandButtons\\bTNResourcesPack.blp"
     static constant bTNPassMeat0             ="ReplaceableTextures\\CommandButtons\\BTNPassMeat0.blp"
     static constant bTNPassMeat1             ="ReplaceableTextures\\CommandButtons\\BTNPassMeat1.blp"
     static constant bTNPassMeat2             ="ReplaceableTextures\\CommandButtons\\BTNPassMeat2.blp"

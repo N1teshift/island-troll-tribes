@@ -23,12 +23,12 @@ import MakruraCuirass
 import HealingItems
 
 constant ABIL_STATS_BATTLE            = compiletime(ABIL_ID_GEN.next())
-constant ABIL_SPELL_RESISTANCE_BATTLE = compiletime(ABIL_ID_GEN.next())
+public constant ABIL_SPELL_RESISTANCE_BATTLE = compiletime(ABIL_ID_GEN.next())
 constant ABIL_CAST_BATTLE             = compiletime(ABIL_ID_GEN.next())
 constant ABIL_CAST_STEEL              = compiletime(ABIL_ID_GEN.next())
 constant ABIL_HARDENED_SCALE          = compiletime(ABIL_ID_GEN.next())
 public constant ABILITY_WOLFS_VORACITY_COAT_ACTIVE = compiletime(ABIL_ID_GEN.next())
-constant ABILITY_BEARSKIN_COAT_HERO = compiletime(ABIL_ID_GEN.next())
+public constant ABILITY_BEARS_PRESENCE_AURA = compiletime(ABIL_ID_GEN.next())
 constant ABILITY_BEARSKIN_COAT_NORMAL = compiletime(ABIL_ID_GEN.next())
 
 constant BATTLE_COOLDOWN = 75.
@@ -47,7 +47,7 @@ constant ABIL_ELK    = commaList(ABILITY_STR_BONUS_2, ABILITY_INT_BONUS_2, ABILI
 constant ABIL_WOLF   = commaList(ABILITY_STR_BONUS_3, ABILITY_INT_BONUS_2, ABILITY_ARMOR_BONUS_2)
 constant ABIL_WOLF_VORACITY   = commaList(ABILITY_WOLFS_VORACITY_COAT_ACTIVE, ABILITY_STR_BONUS_6, ABILITY_AGI_BONUS_6, ABILITY_ARMOR_BONUS_4)
 constant ABIL_BEAR   = commaList(ABILITY_STR_BONUS_6, ABILITY_INT_BONUS_4, ABILITY_ARMOR_BONUS_3)
-constant ABIL_BEAR_PRESENCE   = commaList(ABILITY_STR_BONUS_12, ABILITY_ARMOR_BONUS_6, ABILITY_BEARSKIN_COAT_HERO, ABILITY_SPIRIT_BEAST)
+constant ABIL_BEAR_PRESENCE   = commaList(ABILITY_STR_BONUS_12, ABILITY_ARMOR_BONUS_6, ABILITY_BEARS_PRESENCE_AURA, ABILITY_SPIRIT_BEAST)
 constant ABIL_BONE   = commaList(ABILITY_STR_BONUS_3, ABILITY_INT_BONUS_4, ABILITY_ARMOR_BONUS_2)
 constant ABIL_IRON   = commaList(ABILITY_STR_BONUS_4, ABILITY_INT_BONUS_6, ABILITY_ARMOR_BONUS_3)
 constant ABIL_STEEL  = commaList(ABIL_CAST_STEEL, ABILITY_STR_BONUS_8, ABILITY_INT_BONUS_8, ABILITY_ARMOR_BONUS_5)
@@ -84,8 +84,8 @@ public constant TT_WOLF_VORACITY_COAT = "" +
 ) 
 
 public constant TT_BEAR_SKIN_COAT = TT_SKIN.format(
-    getAbilityDataField(ABILITY_STR_BONUS_4   , "DataC1").color(COLOR_GREEN),
-    getAbilityDataField(ABILITY_INT_BONUS_3   , "DataB1").color(COLOR_GREEN),
+    getAbilityDataField(ABILITY_STR_BONUS_6   , "DataC1").color(COLOR_GREEN),
+    getAbilityDataField(ABILITY_INT_BONUS_4   , "DataB1").color(COLOR_GREEN),
     getAbilityDataField(ABILITY_ARMOR_BONUS_3 , "DataA1").color(COLOR_GREEN)
 ) + TT_BASIC
 
@@ -103,19 +103,19 @@ public constant TT_BEAR_PRESENCE_COAT = "" +
 
 public constant TT_BONE_COAT = TT_SKIN.format(
     getAbilityDataField(ABILITY_STR_BONUS_3   , "DataC1").color(COLOR_GREEN),
-    getAbilityDataField(ABILITY_INT_BONUS_2   , "DataB1").color(COLOR_GREEN),
+    getAbilityDataField(ABILITY_INT_BONUS_4   , "DataB1").color(COLOR_GREEN),
     getAbilityDataField(ABILITY_ARMOR_BONUS_2 , "DataA1").color(COLOR_GREEN)
 )
 
 public constant TT_IRON_COAT = TT_SKIN.format(
     getAbilityDataField(ABILITY_STR_BONUS_4   , "DataC1").color(COLOR_GREEN),
-    getAbilityDataField(ABILITY_INT_BONUS_3   , "DataB1").color(COLOR_GREEN),
+    getAbilityDataField(ABILITY_INT_BONUS_6   , "DataB1").color(COLOR_GREEN),
     getAbilityDataField(ABILITY_ARMOR_BONUS_3 , "DataA1").color(COLOR_GREEN)
 )
 
 public constant TT_STEEL_COAT = TT_SKIN.format(
     getAbilityDataField(ABILITY_STR_BONUS_8   , "DataC1").color(COLOR_GREEN),
-    getAbilityDataField(ABILITY_INT_BONUS_6   , "DataB1").color(COLOR_GREEN),
+    getAbilityDataField(ABILITY_INT_BONUS_8   , "DataB1").color(COLOR_GREEN),
     getAbilityDataField(ABILITY_ARMOR_BONUS_5 , "DataA1").color(COLOR_GREEN)
 ) + " Can cast " + "Cure All".color(COLOR_GREEN) + " on wearer." + makeToolTipCooldown(90)
 
@@ -179,7 +179,7 @@ public constant TT_SCALE_COAT = "" +
 
     new StatBonusAbility(ABIL_STATS_BATTLE , "Battle Armor" , 4, 4, 4)
 
-    new AbilityDefinitionItemAuraCommand(ABILITY_BEARSKIN_COAT_HERO)       
+    new AbilityDefinitionItemAuraCommand(ABILITY_BEARS_PRESENCE_AURA)       
         ..setAreaofEffect(1, 300)
         ..setLevels(1)
         ..setAttackDamageIncrease(1, -.2)

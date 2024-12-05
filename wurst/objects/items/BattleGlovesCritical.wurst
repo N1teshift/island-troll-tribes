@@ -12,6 +12,7 @@ import ObjectIds
 // Local imports:
 import AbilityObjectCreationUtils
 import LocalObjectIDs
+import EquipmentSlots
 
 constant CRITICAL_ABILITY_ID = compiletime(ABIL_ID_GEN.next())
 constant SPELLBOOK_ABILITY_ID = compiletime(createHiddenSpellbookWithAbilities(toRawCode(CRITICAL_ABILITY_ID)))
@@ -82,6 +83,12 @@ init
         if GetManipulatedItem().getTypeId() == ITEM_BATTLE_GLOVES
             onPickupGloves(GetManipulatingUnit())
 
+    registerOnEquipEvent(ITEM_BATTLE_GLOVES) (unit troll, item itm) ->
+        onPickupGloves(troll)
+
     EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
         if GetManipulatedItem().getTypeId() == ITEM_BATTLE_GLOVES
             onDropGloves(GetManipulatingUnit())
+
+    registerOnUnequipEvent(ITEM_BATTLE_GLOVES) (unit troll, item itm) ->
+        onDropGloves(troll)

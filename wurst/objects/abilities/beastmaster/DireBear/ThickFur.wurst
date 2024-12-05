@@ -31,7 +31,7 @@ import GameConfig
 
 let ARMOR_BONUS =4
 let TT_NORM = "Thick Fur"
-let TT_EXT = "\nDire Bear's thick fur provides protection from cold, removing heat and health cost for sleeping outside."+
+let TT_EXT = "Dire Bear's thick fur provides protection from cold, removing heat and health cost for sleeping outside."+
              "\nAt lvl {0} provides +{1} armor".format("4".color(COLOR_GOLD_STR), ARMOR_BONUS.toString().color(COLOR_GREEN))
 
 HashList<unit> instances = new HashList<unit>()

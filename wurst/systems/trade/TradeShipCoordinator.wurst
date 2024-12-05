@@ -19,7 +19,8 @@ public class TradeShipCoordinator
 
     function spawn()
         for ship in ships
-            destroy ship
+            if not ship == null
+                destroy ship
         destroy ships
 
         ships = routes

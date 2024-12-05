@@ -158,6 +158,7 @@ public function transformUnit(unit origin, int targetID)
         if not origin.hasItem(each)
             origin.addItemHandle(each)
     // Destroy local resources.
+    destroy inventory
     destroy key
 
 // Mapping of transformation operations that need to be fixed to whether a new ability is needed.
@@ -165,7 +166,7 @@ let fixes = new HashingMap<Pair<int, int>, bool>(
     key -> StringHash(key.a.toString() + key.b.toString())
 )
 
-let DUMMY_CANNIBALIZE_ID = compiletime(ABIL_ID_GEN.next())
+public let DUMMY_CANNIBALIZE_ID = compiletime(ABIL_ID_GEN.next())
 
 @compiletime function consumeCorpse()
     new AbilityDefinitionCannibalize(DUMMY_CANNIBALIZE_ID)

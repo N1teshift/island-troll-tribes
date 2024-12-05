@@ -24,6 +24,10 @@ import LocalAssets
 import ColorUtils
 import Toolkit
 import HashList
+import UnitEntity
+import initlater Hostile
+import AbilityIds
+import IdListConstant
 
 
 public IterableMap<IslandSpawner,HashList<item>> itemsSpawnedPerIsland = new IterableMap<IslandSpawner,HashList<item>>()
@@ -32,6 +36,7 @@ let animalSpawnInfoMap = new IterableMap<int, SpawnInfo>()
 let animalSpawnFunctions = new HashMap<int, VoidBiFunction<real, real>>()
 let islandSpawnList = new LinkedList<IslandSpawner>()
 let FISH_PER_AREA = 1
+let animalsUpgradeTimer = 300.
 var gameStartTime = 0.
 
 var itemCurrent = 0
@@ -173,7 +178,21 @@ class IslandSpawner
             this.spawnsPerType.put(spawnItemId, 1)
         else
             this.spawnsPerType.put(spawnItemId, this.spawnsPerType.get(spawnItemId) + 1)
+/*
+    function upgradeAnimals()
+        for each in animalList
+            upgradeAnimal(each)
 
+
+    function upgradeAnimal(unit animal)
+        animal.setMaxHP((animal.getMaxHP()*1.3).toInt())
+        animal.setArmor(animal.getArmor()+2)
+        animal.setHP(animal.getMaxHP())
+        let entity = UnitEntity.findForUnit(animal)
+        if entity instanceof Hostile and not animal.getTypeId() == UNIT_ELK
+            and not animal.hasAbility(AbilityIds.resistantSkin)
+            animal.addPermanentAbility(AbilityIds.resistantSkin)
+*/
     function spawnAnimalFromPool()
         if this.animalPool == null
             error("ERROR: spawnAnimalFromPool tried to spawn without having a generated pool!")
@@ -308,6 +327,39 @@ public function handleAnimalSpawning()
             else
                 destroy animalLoop 
 
+function upgradeAnimal(unit animal)
+    let upgradeCount = ((getElapsedGameTime() - gameStartTime)/animalsUpgradeTimer).floor()
+    if upgradeCount == 0
+        return
+    nullTimer() -> 
+        for i = 1 to min(upgradeCount, 2)
+            let currentMaxHP = animal.getMaxHP()
+            let hpRatio = animal.getHPRatio()
+            let heal = currentMaxHP*.2*hpRatio
+            animal.setMaxHP((currentMaxHP*1.2).toInt())
+            animal.setArmor(animal.getArmor()+2)
+            animal.setHP(animal.getHP()+heal)
+            if HOSTILE_ANIMALS_LIST.has(animal.getTypeId()) and not animal.getTypeId() == UNIT_ELK
+                animal.setBaseDamage(animal.getBaseDamage(1)*1.2.round(), 1)
+                if not animal.hasAbility(AbilityIds.resistantSkin)
+                    animal.addPermanentAbility(AbilityIds.resistantSkin)
+
+function upgradeAnimals()
+    print("Animals grow stronger...".color(COLOR_LIGHT_BLUE))
+    for island in islandSpawnList
+        for animal in island.animalList
+            let currentMaxHP = animal.getMaxHP()
+            let hpRatio = animal.getHPRatio()
+            let heal = currentMaxHP*.2*hpRatio
+            animal.setMaxHP((currentMaxHP*1.2).toInt())
+            animal.setArmor(animal.getArmor()+2)
+            animal.setHP(animal.getHP()+heal)
+            if HOSTILE_ANIMALS_LIST.has(animal.getTypeId()) and not animal.getTypeId() == UNIT_ELK
+                animal.setBaseDamage(animal.getBaseDamage(1)*1.2.round(), 1)
+                if not animal.hasAbility(AbilityIds.resistantSkin)
+                    animal.addPermanentAbility(AbilityIds.resistantSkin)
+
+
 function initItemSpawnInfo()
     new ItemSpawnInfo(ITEM_TINDER, 450, 90, 860)
     new ItemSpawnInfo(ITEM_CLAY_BALL, 100, 185, 360)
@@ -328,14 +380,19 @@ function initAnimalSpawnInfo()
 
     animalSpawnFunctions.put(UNIT_ELK) (x, y) ->
         lastSpawnedUnit = createUnit(players[PLAYER_NEUTRAL_AGGRESSIVE], UNIT_ELK, vec2(x, y), randomAngle())
+        //upgradeAnimal(lastSpawnedUnit)             
     animalSpawnFunctions.put(UNIT_SNAKE) (x, y) ->
         lastSpawnedUnit = createUnit(players[PLAYER_NEUTRAL_AGGRESSIVE], UNIT_SNAKE, vec2(x, y), randomAngle())
+        //upgradeAnimal(lastSpawnedUnit) 
     animalSpawnFunctions.put(UNIT_JUNGLE_WOLF) (x, y) ->
-        lastSpawnedUnit = createUnit(players[PLAYER_NEUTRAL_AGGRESSIVE], UNIT_JUNGLE_WOLF, vec2(x, y), randomAngle())
+        lastSpawnedUnit = createUnit(players[PLAYER_NEUTRAL_AGGRESSIVE], UNIT_JUNGLE_WOLF, vec2(x, y), randomAngle()) 
+        //upgradeAnimal(lastSpawnedUnit) 
     animalSpawnFunctions.put(UNIT_JUNGLE_BEAR) (x, y) ->
-        lastSpawnedUnit = createUnit(players[PLAYER_NEUTRAL_AGGRESSIVE], UNIT_JUNGLE_BEAR, vec2(x, y), randomAngle())
+        lastSpawnedUnit = createUnit(players[PLAYER_NEUTRAL_AGGRESSIVE], UNIT_JUNGLE_BEAR, vec2(x, y), randomAngle()) 
+        //upgradeAnimal(lastSpawnedUnit) 
     animalSpawnFunctions.put(UNIT_PANTHER) (x, y) ->
         lastSpawnedUnit = createUnit(players[PLAYER_NEUTRAL_AGGRESSIVE], UNIT_PANTHER, vec2(x, y), randomAngle())
+        //upgradeAnimal(lastSpawnedUnit) 
 
 // From Marsunpaisti :
 // this is the part that handles the island balance
@@ -494,3 +551,10 @@ init
                     printTimedToPlayer(msg.format("valid".color(COLOR_GREEN)), 15, p)
                 else
                     printTimedToPlayer(msg.format("invalid".color(COLOR_RED)), 15, p)
+
+    //GameStates.gameplay.onEnter() state->
+        //doPeriodicallyCounted(animalsUpgradeTimer-1, 2) cb  ->
+            //upgradeAnimals()
+ 
+            
+        

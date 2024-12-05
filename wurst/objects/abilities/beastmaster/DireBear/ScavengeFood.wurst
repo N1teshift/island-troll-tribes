@@ -78,17 +78,21 @@ class ScavengedStash
     function onScavengeFood()
         if scavengedStash.getTypeId() == UNIT_MUSHROOM_COLONY
             handleMushrooms()
-        nullTimer() ->        
-            for each in scavengedStash.getInventory()
+        nullTimer() ->
+            var scavengedStashInventory = scavengedStash.getInventory()        
+            for each in scavengedStashInventory
                 if bearFoodList.has(each.getTypeId())
                     nullTimer() -> 
                         stackAndSplitFood(each)
+            destroy scavengedStashInventory
+            scavengedStashInventory = scavengedStash.getInventory()
             nullTimer() -> 
-                for each in scavengedStash.getInventory() 
+                for each in scavengedStashInventory
                     if bearFoodList.has(each.getTypeId())
                         nullTimer() -> 
                             moveIntoFoodSlot(each)
                             nullTimer() -> 
+            destroy scavengedStashInventory
             generateFoodItem()    
     
     function moveFood(item food)
@@ -114,9 +118,11 @@ class ScavengedStash
         if food.getTypeId() == ITEM_HONEYCOMB
             maxCharges = 8
         item trollItem = null
-        for each in troll.getInventory()
+        let inventory = troll.getInventory()
+        for each in inventory
             if bearFoodList.has(each.getTypeId()) and each.getCharges()< maxCharges and each.getTypeId()==food.getTypeId()
                 trollItem =each
+        destroy inventory
         if trollItem == null
             troll.addItemHandle(food)
             //print("added")
@@ -133,17 +139,20 @@ class ScavengedStash
 
     function handleMushrooms()
         var mushroomCharges = 0 
-        for each in scavengedStash.getInventory()
+        let scavengedStashInventory = scavengedStash.getInventory()
+        for each in scavengedStashInventory
             if each.getTypeId() == ITEM_MUSHROOM
                 each.remove()
                 mushroomCharges+=1
         if mushroomCharges<1
+            destroy scavengedStashInventory
             return
         let itm = createItem(ITEM_SCAVENGED_MUSHROOM, scavengedStash.getPos())
         nullTimer() -> 
             itm.setCharges(mushroomCharges)
             nullTimer() -> 
                 scavengedStash.addItemHandle(itm)
+        destroy scavengedStashInventory
 
                     
       

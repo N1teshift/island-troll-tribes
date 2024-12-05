@@ -7,6 +7,7 @@ import TradeShipStop
 import TradeShipCoordinator
 import TradeShipRoutePair
 import GameConfig
+import LinkedList
 
 let TRADE_SHIP_PAUSE_TIME = 11.0
 TradeShipCoordinator coordinator
@@ -32,6 +33,7 @@ init
 
     bottomBranchN
         .addStop(gg_rct_ship_B_1)
+        .addStop(gg_rct_ship_B_2)
     let bottomBranchS = bottomBranchN.clone().reverse()
 
     topBranchS

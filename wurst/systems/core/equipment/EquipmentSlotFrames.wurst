@@ -1,0 +1,297 @@
+package EquipmentSlotFrames
+
+import ClosureTimers
+import TableLayout
+import Icons
+import GameTimer
+import Textures
+import ClosureEvents
+import SoundUtils
+import AxesDefinition
+import FramehandleNames
+import LinkedList
+import UnitExtensions
+import PlayerExtensions
+import ClosureKeyPresses
+import HashMap
+
+public let INVENTORY_BUTTON_AMOUNT = 2
+let FRAME_POS_X = 0.515
+let FRAME_POS_Y = 0.11810
+let WIDTH = 0.03457
+let HEIGHT = 0.03123
+let relativeFrame = getOriginFrame(ORIGIN_FRAME_ITEM_BUTTON, 0)
+public let clickSound = new SoundDefinition(Sounds.click)
+
+let DEFAULT_TT = "Equipment Slot"
+let DEFAULT_TT_EXT = "A special slot in which you can hold equipment."
+                    
+let EQUIP_TT = "\n\nClick this icon to equip an item.".color(COLOR_GOLD_STR)
+let UNEQUIP_TT = "\n\nClick this icon to unequip this item.".color(COLOR_GOLD_STR)
+let DEFAULT_ICON = Icons.bTNOrcMeleeUpOne
+
+//public LinkedList<InventoryButton> inventoryButtons = new LinkedList<InventoryButton>()
+
+//function onSelection(unit u, player p)
+//    for each in inventoryButtons
+//        each.onSelection(u, p)
+
+
+class InventoryButtonTooltip
+    static int globalContext = 0
+    int context
+    framehandle tooltipBackdrop
+    framehandle tooltipText
+    framehandle tooltip
+    framehandle tooltipTitle
+    framehandle tooltipIcon
+    framehandle buttonFrame
+    InventoryButton inventoryButton
+    string currentItemTooltipText
+    string currentItemName
+    string currentIcon
+    int slotIndex
+    int itemId
+    real defaultTooltipHeight = 0.08
+
+    construct(string currentItemTooltipText, string currentItemName, string currentIcon, item itm, player p, int slotIndex, InventoryButton inventoryButton)
+        this.currentItemTooltipText = currentItemTooltipText
+        this.currentItemName = currentItemName
+        this.currentIcon = currentIcon
+        this.slotIndex = slotIndex
+        this.inventoryButton = inventoryButton
+        context = globalContext
+        globalContext+=1
+        createButton()    
+        createTooltip()
+
+    function createButton()
+        buttonFrame = imgBtn(currentIcon)
+        ..setAbsPoint(FRAMEPOINT_BOTTOMLEFT, FRAME_POS_X+WIDTH*1.1*slotIndex, FRAME_POS_Y)
+        ..setWidth(WIDTH)
+        ..setHeight(HEIGHT)
+        ..enable()
+        ..hide()
+        buttonFrame.onClick() ->
+            //if currentButton.isEnabled() 
+            inventoryButton.onClick(GetTriggerPlayer())
+        //..show(owner)  
+
+    function createTooltip()
+        //print(context)
+
+        let xOffset = -WIDTH*1.1*slotIndex
+        tooltip = createFrame("FRAME", "", buttonFrame, "", context)
+        ..setPoint(FRAMEPOINT_BOTTOMLEFT,    buttonFrame , FRAMEPOINT_BOTTOMLEFT, vec2(xOffset, defaultTooltipHeight))
+        ..setSize(0.3, 0.04)
+        //..hide()
+             
+        tooltipBackdrop = createFrame("BoxedText", tooltip, 0, context)
+        //..hide()
+
+        tooltipIcon = createFrame(FramehandleTypeNames.backdrop, "", tooltip, "", 0)
+        ..setPoint(FRAMEPOINT_TOPLEFT, tooltip, FRAMEPOINT_TOPLEFT)
+        ..setSize(0.025, 0.025)
+        ..setTexture(currentIcon, 0, false)
+        //..hide()
+
+        tooltipTitle = getFrame("BoxedTextTitle", context)
+        ..setText(currentItemName)
+        ..setPoint(FRAMEPOINT_TOPLEFT, tooltipIcon, FRAMEPOINT_TOPRIGHT, vec2(0.002, 0))
+        ..setSize(0.3, 0)
+        //..hide()
+
+        tooltipText = getFrame("BoxedTextValue", context)
+        ..setText(currentItemTooltipText)
+        ..setPoint(FRAMEPOINT_TOPLEFT, tooltipIcon, FRAMEPOINT_BOTTOMLEFT, 0, -0.005)
+        ..setSize(0.3, 0)
+        //..hide()
+
+        let height = tooltipText.getHeight()
+        tooltip.setHeight(height)
+        tooltip.hide()  
+
+        buttonFrame.setTooltip(tooltip) 
+
+        tooltipBackdrop.setPoint(FRAMEPOINT_TOPLEFT, tooltipIcon, FRAMEPOINT_TOPLEFT, -0.005, 0.005)
+        tooltipBackdrop.setPoint(FRAMEPOINT_BOTTOMRIGHT, tooltipText, FRAMEPOINT_BOTTOMRIGHT, 0.005, -0.005)
+
+
+public class InventoryButton
+    HashMap<int, InventoryButtonTooltip> inventoryButtonTooltips = new HashMap<int, InventoryButtonTooltip>()
+    string currentItemTooltipText = DEFAULT_TT_EXT+EQUIP_TT
+    string currentItemName = DEFAULT_TT
+    string currentIcon = DEFAULT_ICON
+    //framehandle currentTooltipFrame
+    framehandle defaultButton
+    framehandle currentButton
+    EventListener onSelectionEvent
+    player owner
+    unit playerTroll
+    item currentItem
+    int index
+
+    construct(int _index, player _owner)
+        index = _index
+        owner = _owner
+        playerTroll = owner.getTroll()
+        //createButton(null)
+        defaultButton = new InventoryButtonTooltip(currentItemTooltipText, currentItemName, currentIcon, null, owner, index, this).buttonFrame
+        setDefaultSettings()
+        //registerHotkeys()
+        registerOnSelectionEvent() 
+
+    function registerOnSelectionEvent()
+        onSelectionEvent = EventListener.add(EVENT_PLAYER_UNIT_SELECTED)->
+            let p = GetTriggerPlayer()
+            if p == owner
+                onSelection(GetTriggerUnit(), p)  
+        
+    //function onMouseEnter(player p)
+    //    currentTooltipFrame.show(p)
+    //    print("onMouseEnter")
+
+    //function onMouseLeave(player p)
+    //    print("onMouseLeave")
+    //    currentTooltipFrame.hide(p)
+
+    function createButton(item itm) returns framehandle
+        let inventoryButtonTooltip = new InventoryButtonTooltip(currentItemTooltipText, currentItemName, currentIcon, itm, owner, index, this)
+        inventoryButtonTooltips.put(itm.getTypeId(), inventoryButtonTooltip)
+        let newButton =inventoryButtonTooltip.buttonFrame              
+        //newButton.onClick() ->
+            //if currentButton.isEnabled() 
+            //onClick(GetTriggerPlayer())
+        return newButton
+    
+
+    function onClick(player p)
+        //print("clicked")
+        //print("hotkey player = "+p.getName()+" owner = "+owner.getName())
+        if p != owner
+            //print("return")
+            //print(p.getName()+" != "+owner.getName())
+            unFocus(p)
+            return
+        clickSound.playForPlayer(owner)
+        //print("playing sound for player "+p.getName())
+        let equipmentSlots = owner.getEquipmentSlots()
+        equipmentSlots.onEquipmentSlotUse(index)
+        refreshFrames(playerTroll)
+
+    function refreshFrames(unit target)
+        //print("refreshFrames")
+        let targetPlayer = target.getOwner()
+        getTargetInventorySlotData(target)
+        for i =0 to bj_MAX_PLAYER_SLOTS-1     
+            if IsUnitSelected(target, players[i])
+                refreshFrameForPlayer(target, players[i])
+                //refreshTooltipForPlayer(players[i])
+
+
+    function refreshFrameForPlayer(unit target, player p)
+        if target.getOwner() == p
+            //print("own target")
+            if currentIcon == DEFAULT_ICON and not currentIcon.contains("DISBTN")
+                currentIcon = currentIcon.replace("BTN", "DISBTN").replace("CommandButtons", "CommandButtonsDisabled")    
+            currentButton.getChild(0).setTexture(p, currentIcon, 0, true)
+            currentButton.show(p)
+        else 
+            //print("enemy target")
+            if not currentIcon.contains("DISBTN")
+                currentIcon = currentIcon.replace("BTN", "DISBTN").replace("CommandButtons", "CommandButtonsDisabled")
+            //currentButton.hide(p)
+            currentButton.getChild(0).setTexture(p, currentIcon, 0, true)
+            currentButton.show(p)
+            //currentButton.getChild(0).show(p) // only show backdrop and not the button if target is not your own hero
+        //printTimedToPlayer(currentIcon, 10, p)
+        unFocus(p)         
+
+    function unFocus(player p)
+        currentButton.disable(p)
+        currentButton.enable(p) 
+    
+    function setDefaultSettings()
+        currentItemTooltipText = DEFAULT_TT_EXT+EQUIP_TT
+        currentItemName = DEFAULT_TT
+        currentIcon = DEFAULT_ICON
+        currentButton.hide()
+        currentButton = defaultButton
+        //if currentItem == null
+            //return
+        //currentItem = null
+        //currentTooltipFrame.hide()
+        //currentButton = createButton(null)
+        //print("showing defaul button in slot "+index.toString())
+        //currentButton = new InventoryButtonTooltip(currentItemTooltipText, currentItemName, currentIcon, null, owner).currentButton
+        //currentTooltipFrame.show(owner)
+
+    function updateSettings(item itm)
+        currentItemName = itm.getName()
+        currentItemTooltipText = itm.getExtendedTooltip()+UNEQUIP_TT
+        currentIcon = itm.getIconPath()
+        currentButton.hide()
+        let instance = inventoryButtonTooltips.get(itm.getTypeId())
+        if instance == null
+            //print("creating button for "+GetObjectName(itm.getTypeId())+" in slot "+index.toString())
+            currentButton = createButton(itm)
+            return
+        currentButton = instance.buttonFrame
+        //print("showing button for "+GetObjectName(itm.getTypeId())+" in slot "+index.toString())
+        //createItemTooltip(itm)
+
+    function getTargetInventorySlotData(unit u)
+        let equipmentSlots = u.getOwner().getEquipmentSlots()
+        if equipmentSlots == null
+            return
+        let itm = equipmentSlots.currentItems.get(index)
+        if itm == null
+            setDefaultSettings()
+            currentButton.show(owner)
+        else
+            updateSettings(itm)
+
+
+    //function createItemTooltip(item itm)
+    //    currentTooltipFrame.hide()
+    //    currentTooltipFrame = null
+
+    function onSelection(unit target, player p)
+        //print("onSelection")
+        currentButton.hide(p)
+        if not target.isTroll()
+            return
+        //if not target != playerTroll
+        //    return
+        //print("target owner is "+target.getOwner().getName())
+        //print("selecting player is "+p.getName())
+        getTargetInventorySlotData(target)
+        refreshFrameForPlayer(target, p)  
+
+
+
+
+ 
+
+init        
+    //    for i = 0 to INVENTORY_BUTTON_AMOUNT-1
+    //        inventoryButtons.push(new InventoryButton(i))
+ 
+   // EventListener.add(EVENT_PLAYER_UNIT_SELECTED)->
+    //    onSelection(GetTriggerUnit(), GetTriggerPlayer())
+
+
+
+/*
+    onKeyPress(OSKEY_3, OSKEY_META.SHIFT) ->
+        onHotkey(GetTriggerPlayer(), 3)
+
+    onKeyPress(OSKEY_4, OSKEY_META.SHIFT) ->
+        onHotkey(GetTriggerPlayer(), 4)
+
+    onKeyPress(OSKEY_5, OSKEY_META.SHIFT) ->
+        onHotkey(GetTriggerPlayer(), 5)
+
+    onKeyPress(OSKEY_6, OSKEY_META.SHIFT) ->
+        onHotkey(GetTriggerPlayer(), 6)
+*/    

@@ -6,6 +6,8 @@ import GameConfig
 import Lodash
 import GameStates
 import LocalObjectIDs
+import PlayerExtensions
+import ClosureTimers
 
 class Restriction
     int maxCount
@@ -21,23 +23,40 @@ class Restriction
 
 let restrictions = new OwnedLinkedList<Restriction>()
 
-function enforceInventoryLimits()
-    let whichUnit = GetManipulatingUnit()
+public function enforceInventoryLimits(unit whichUnit, item whichItem)
     if not whichUnit.isTroll()
         return
 
-    let whichItem = GetManipulatedItem()
+    bool isManipulatedItemEquipped = false
+    int equippedItemIndex = 0
     let restrictionsForItem = filter(r -> r.getCount.call(whichItem) > 0, restrictions)
 
+
     for restriction in restrictionsForItem
-        let currCount = whichUnit
-            .getInventory()
+        
+        var inventory = whichUnit.getInventory()
+        let equippedItems = whichUnit.getOwner().getEquipmentSlots().currentItems
+        for i = 0 to equippedItems.size()
+            let equippedItem = equippedItems.get(i)
+            if equippedItem!= null
+                inventory.add(equippedItem)
+            if equippedItem == whichItem
+                isManipulatedItemEquipped = true
+                equippedItemIndex = i
+        
+        let currCount = inventory
             .map(i -> restriction.getCount.call(i))
             .sum()
 
         if currCount > restriction.maxCount
-            whichUnit.removeItem(whichItem)
+            if isManipulatedItemEquipped
+                nullTimer() ->
+                    whichUnit.getOwner().getEquipmentSlots().unequipItem(whichItem, equippedItemIndex)
+            else
+                whichUnit.removeItem(whichItem)
             break
+
+        destroy inventory
 
     destroy restrictionsForItem
 
@@ -58,4 +77,5 @@ init
 
     GameStates.gameplay.onEnter() state ->
         if gameConfig.getInventoryLimits()
-            registerPlayerUnitEvent(EVENT_PLAYER_UNIT_PICKUP_ITEM, function enforceInventoryLimits)
+            registerPlayerUnitEvent(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->
+                enforceInventoryLimits(GetManipulatingUnit(), GetManipulatedItem())

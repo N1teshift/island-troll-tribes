@@ -20,6 +20,7 @@ import DamageListeners
 import Pets
 import CloaksDefinition
 import LocalAssets
+import EquipmentSlots
 
 
 IterableMap<item, CloakOfFlamesDamageCounter> instances = new IterableMap<item, CloakOfFlamesDamageCounter>()
@@ -56,8 +57,7 @@ class CloakOfFlamesDamageCounter
             dummyUnit.setInvulnerable(true)
             dummyUnit.setOwner(currentOwner.getOwner(), true)
             nullTimer() -> 
-                cb = doPeriodically(ANIMATION_PERIOD) (CallbackPeriodic cb) ->
-                    //print("setpos")   
+                cb = doPeriodically(ANIMATION_PERIOD*2) (CallbackPeriodic cb) -> 
                     dummyUnit.setXY(currentOwner.getPos())
             
 
@@ -71,11 +71,14 @@ class CloakOfFlamesDamageCounter
 
     
     function onDrop()
+        efx.destr()
         currentOwner = null
         updateDummyUnit()
 
 
 function onPickup(unit u, item itm)
+    if not u.isTroll()
+        return
     let instance = instances.get(itm)
     if instance == null
         instances.put(itm, new CloakOfFlamesDamageCounter(itm, u))
@@ -87,7 +90,7 @@ function onPickup(unit u, item itm)
 	new UnitDefinition(UNIT_CLOAK_OF_FLAMES_DUMMY, 'ewsp')
 	..setName("UNIT_CLOAK_OF_FLAMES_DUMMY")
 	..setManaMaximum(1000000)
-	..setMovementType(MovementType.Fly)
+	//..setMovementType(MovementType.Fly)
 	..setUpgradesUsed("")
 	..setCollisionSize(0.0)
 	..setStructuresBuilt("")
@@ -116,6 +119,8 @@ function onPickup(unit u, item itm)
 
 
 function onDrop(unit u, item itm)
+    if not u.isTroll()
+        return
     let instance = instances.get(itm)
     if instance == null
         return
@@ -132,12 +137,18 @@ function onDamage(unit source, unit target, real amount)
 
 init
     EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM)->
-        if EventData.getManipulatedItem().getTypeId() == ITEM_CLOAK_OF_FLAMES and EventData.getManipulatingUnit().isTroll()
+        if EventData.getManipulatedItem().getTypeId() == ITEM_CLOAK_OF_FLAMES
             onPickup(GetManipulatingUnit(), GetManipulatedItem())
 
+    registerOnEquipEvent(ITEM_CLOAK_OF_FLAMES) (unit troll, item itm) ->
+        onPickup(troll, itm) 
+
     EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM)->
-        if EventData.getManipulatedItem().getTypeId() == ITEM_CLOAK_OF_FLAMES and EventData.getManipulatingUnit().isTroll()
+        if EventData.getManipulatedItem().getTypeId() == ITEM_CLOAK_OF_FLAMES
             onDrop(GetManipulatingUnit(), GetManipulatedItem()) 
+
+    registerOnUnequipEvent(ITEM_CLOAK_OF_FLAMES) (unit troll, item itm) ->
+        onDrop(troll, itm)
 
     DamageEvent.addListener(DamageListenerPriorities.PANTHER_INSTINCT castTo int) ->
         if DamageEvent.getSource().getTypeId() == UNIT_CLOAK_OF_FLAMES_DUMMY

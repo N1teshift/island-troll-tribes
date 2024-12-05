@@ -9,26 +9,27 @@ import ForceExtensions
 import initlater Tribe
 import UnitExtensions
 import TrollUnitTextConstant
-
+import initlater EquipmentSlots
 // TODO: Although this import is not used, it is needed to avoid breaking the
 //       underlying hashtables used elsewhere. It's not clear if this is due to
 //       the initialization order of objects or just an odd behavior of the
 //       compiler. This should be reinvestigated once #593 is complete.
 import GameMode
 
+
 let newObs = new HashSet<player>()
 
 public let trolls = new HashMap<player, unit>()
-public let backpacks = new HashMap<player, unit>()
+public let equimpentSlots = new HashMap<player, EquipmentSlots>()
 
 public function player.getTribe() returns Tribe
     return Tribe.ofPlayer(this)
 
-public function player.setBackpack(unit backpack)
-    backpacks.put(this, backpack)
+public function player.setEquipmentSlots(EquipmentSlots equipmentSlots)
+    equimpentSlots.put(this, equipmentSlots)
 
-public function player.getBackpack() returns unit
-    return backpacks.get(this) 
+public function player.getEquipmentSlots() returns EquipmentSlots
+    return equimpentSlots.get(this) 
 
 public function player.getTribePlayer() returns player
     let tribe = this.getTribe()
@@ -55,6 +56,11 @@ public function player.isObserver() returns bool
 public function player.removeTroll()
     // Remove both references to the current troll.
     trolls.getAndRemove(this).deregisterTroll()
+
+public function player.removeEquipmentSlots()
+    // Remove both references to the current troll.
+    equimpentSlots.getAndRemove(this)
+
 
 public function player.setTroll(unit troll)
     // Ensure that each player only has one troll each.

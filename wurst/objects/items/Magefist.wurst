@@ -23,41 +23,65 @@ import SimError
 import PlayerExtensions
 import Transformation
 import UnitExtensions
+import BonusHandler
+import EquipmentSlots
+import CustomItemDefinition
 
 
 
 
-
+/*
 @compiletime function createSpeedBonusAbility()
     new AbilityDefinitionAttackSpeedIncrease(ABILITY_MAGEFIST_ATTACK_SPEED)
         ..setLevels(80)
         ..presetAttackSpeedIncrease(lvl->0.01*lvl/2)        
         ..setName("Magefist Attack speed bonus")
         ..setEditorSuffix("(Wurst)")
-
+*/
 IterableMap<unit, Magefist> instances = new IterableMap<unit, Magefist>()
 
 class Magefist
     unit wearer
     item itm = null
+    real currentBonus = 0
     int abilId = ABILITY_MAGEFIST_ATTACK_SPEED
+    CallbackPeriodic cb
     construct(unit _wearer, item _itm)
         wearer = _wearer
         itm = _itm
-        updateAttackSpeedBonus()
+        cb = doPeriodically(0.25) (CallbackPeriodic cb) ->
+            updateAgilityBonus()
 
 
-    function updateAttackSpeedBonus()
-        let lvl = min(80, wearer.getInt(true))
-        if wearer.hasAbility(abilId)
-            wearer.setAbilityLevel(abilId, lvl)
-        nullTimer() -> 
-            wearer.addAbility(abilId, lvl)
-                
+    function updateAgilityBonus()
+        let equippedItems = wearer.getOwner().getEquipmentSlots().currentItems
+        var totalAgilityBonus = 0
+        for each in equippedItems
+            let customItemDefinition = customItemDefinitions.get(equippedItems.get(each).getTypeId())
+            if customItemDefinition != null
+                totalAgilityBonus += customItemDefinition.agilityBonus
+        currentBonus = (wearer.getInt(true))/2
+        if not (wearer.hasItem(itm) or hasMagefist())
+            currentBonus = 0
+        wearer.setBonus(Bonus.AGILITY, (currentBonus+totalAgilityBonus).round())    
+
+    function hasMagefist() returns bool
+        let equippedItems = wearer.getOwner().getEquipmentSlots().currentItems
+        for each in equippedItems 
+            if equippedItems.get(each).getTypeId()== ITEM_MAGEFIST
+                return true
+        return false            
  
     function onItemDrop()
-        wearer.removeAbility(abilId)
-        destroy this
+        nullTimer() -> 
+            destroy cb 
+            updateAgilityBonus()
+            destroy this
+    
+    function onUnequip()
+        doAfter(ANIMATION_PERIOD) ->
+            if not hasMagefist() and not wearer.hasItem(itm)       
+                onItemDrop()
 
     ondestroy
         instances.remove(wearer)
@@ -70,8 +94,8 @@ function onItemPickup(unit u, item itm)
     if instance == null and itm.getTypeId() == ITEM_MAGEFIST
         instances.put(u, new Magefist(u, itm)) 
         return
-    else if instance != null
-        instance.updateAttackSpeedBonus()
+    else if instance != null and itm.getTypeId() != ITEM_MAGEFIST
+        instance.updateAgilityBonus()
 
 function onItemDrop(unit u, item itm)
     let instance = instances.get(u)
@@ -80,26 +104,31 @@ function onItemDrop(unit u, item itm)
     if itm == instance.itm
         instance.onItemDrop()
     else
-        instance.updateAttackSpeedBonus()
+        instance.updateAgilityBonus()
 
-function updateAttackSpeedBonus(unit u)
+function updateAgilityBonus(unit u)
     let instance = instances.get(u)
     if instance == null
         return
-    instance.updateAttackSpeedBonus()
+    instance.updateAgilityBonus()
 
 init
     EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->
-        if GetManipulatedItem().getTypeId() == ITEM_MAGEFIST
-            onItemPickup(GetManipulatingUnit(), GetManipulatedItem())
+        onItemPickup(GetManipulatingUnit(), GetManipulatedItem())
+
+    registerOnEquipEvent(ITEM_MAGEFIST) (unit troll, item itm) ->
+        doAfter(ANIMATION_PERIOD) ->       
+            onItemPickup(troll, itm) 
 
     EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
-        if GetManipulatedItem().getTypeId() == ITEM_MAGEFIST
-            onItemDrop(GetManipulatingUnit(), GetManipulatedItem())
+        onItemDrop(GetManipulatingUnit(), GetManipulatedItem())
+
+    registerOnUnequipEvent(ITEM_MAGEFIST) (unit troll, item itm) ->
+        onItemDrop(troll, itm) 
 
     registerAfterEffect() (unit target, int unitID) ->
         doAfter(ANIMATION_PERIOD)->
-            updateAttackSpeedBonus(target)
+            updateAgilityBonus(target)
 
     EventListener.add(EVENT_PLAYER_HERO_LEVEL) -> 
-        updateAttackSpeedBonus(GetTriggerUnit()) 
+        updateAgilityBonus(GetTriggerUnit()) 

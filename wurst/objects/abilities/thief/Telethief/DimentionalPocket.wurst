@@ -29,6 +29,7 @@ import LinkedList
 import InventoryEvent
 import Classes
 import StackNSplit
+import Transformation
 
 
 let DIMENTIONAL_POCKET_MANACOST = 40
@@ -37,21 +38,20 @@ let DIMENTIONAL_POCKET_COOLDOWN = 60.
 LinkedList<item>conjuredItems = new LinkedList<item>()
 
 let TT_TELE_FEED ="Telethief uses his dimentional magic to reach into a random thief's bush on the map and steal a consumable item."+
-                    "\n Items stolen this way can only be held in thief's pocket. Casting this ability will replace an item currently held in thief's pocket."+
-                    "\n     At lvl 4 Telethief acquires mastery of this ability, doubling the charges of the stolen item."+
-                    "\n60 ".color(ENERGY_COLOR)+ "seconds cooldown."
+                    "\nItems stolen this way can only be held in thief's pocket. Casting this ability will replace an item currently held in thief's pocket."+
+                    "\nAt {0} Telethief acquires mastery of this ability, reducing cooldown to {1} seconds.".format("lvl 4".color(COLOR_GOLD_STR), "30".color(ENERGY_COLOR))
 
 @compiletime function createDimentionalPocketAbility()
     new ChannelAbilityPreset(ABILITY_DIMENTIONAL_POCKET, 1, true)
+        ..setLevels(2)
         ..presetTooltipNormal(lvl -> "Dimentional pocket")
-        ..presetTooltipNormalExtended(lvl-> TT_TELE_FEED)        
+        ..presetTooltipNormalExtended(lvl-> TT_TELE_FEED+"\n"+(DIMENTIONAL_POCKET_COOLDOWN/lvl).toString().color(ENERGY_COLOR)+" seconds cooldown.")        
         ..presetCastingTime(lvl ->0.1)
-        ..presetCooldown(lvl -> DIMENTIONAL_POCKET_COOLDOWN)
+        ..presetCooldown(lvl -> DIMENTIONAL_POCKET_COOLDOWN/lvl)
         ..presetManaCost(lvl->DIMENTIONAL_POCKET_MANACOST)
         ..presetHotkey("S")
-        ..setButtonPositionNormalX(1)
-        ..setButtonPositionNormalY(0)
-        ..setIconNormal(Icons.bTNFaerieFire)
+        ..presetButtonPosNormal(1, 0)
+        ..presetIcon(Icons.bTNFaerieFire)
 
 
 function conjureItem(unit caster) returns item
@@ -68,12 +68,14 @@ function conjureItem(unit caster) returns item
 function onItemMoved(unit troll, item itm)
     if troll.getTrollBaseClass() == UNIT_THIEF
         doAfter(ANIMATION_PERIOD) -> 
-            for each in troll.getInventory()   
+            let inventory = troll.getInventory() 
+            for each in inventory  
                 if conjuredItems.has(each)
                     each.remove()  
                     conjuredItems.remove(each)
                     //print("conjured item removed - onItemMoved()")
                     flashEffect(Abilities.blinkCaster, troll.getPos())
+            destroy inventory
 
 
 function onItemDropped(unit troll, item itm)
@@ -104,14 +106,18 @@ function onCast(unit caster)
         conjuredItems.add(itm)
         doAfter(ANIMATION_PERIOD) -> 
             instance.onTargetOrder(itm)
-            if itm.getTypeId() != ITEM_THIEF_MED and (caster.getLevel() >=4 or caster.getTrollClassType() == ClassType.SUPER_CLASS)
-                let charges = itm.getCharges()
-                itm.setCharges(charges*2)
+            //if itm.getTypeId() != ITEM_THIEF_MED and (caster.getLevel() >=4 or caster.getTrollClassType() == ClassType.SUPER_CLASS)
+                //let charges = itm.getCharges()
+                //itm.setCharges(charges*2)
             doAfter(ANIMATION_PERIOD) -> 
                 for each in removedItems
                     caster.addItemHandle(each)
                 instance.suspendTriggersFlag = false        
  
+function onLevel(unit troll)
+    if troll.getLevel() >=4 and  troll.getTypeId() != troll.getTrollBaseClass()
+        troll.setAbilityCooldown(ABILITY_DIMENTIONAL_POCKET, 0, DIMENTIONAL_POCKET_COOLDOWN/2)
+            
 
 init
     registerInventoryEvent(EVENT_ITEM_INVENTORY.MOVE)->
@@ -121,6 +127,15 @@ init
         onItemDropped(GetTriggerUnit(), GetManipulatedItem())
 
     EventListener.onCast(ABILITY_DIMENTIONAL_POCKET) (unit caster) ->
-        onCast(caster)        
+        onCast(caster)
+
+    EventListener.add(EVENT_PLAYER_HERO_LEVEL) ->
+        if GetTriggerUnit().getTrollBaseClass() == UNIT_THIEF
+            onLevel(GetTriggerUnit())
+    
+    registerAfterEffect() (unit target, int unitID) ->
+        doAfter(ANIMATION_PERIOD) -> 
+            onLevel(target)
+                
         
     

@@ -105,7 +105,8 @@ class ThiefsPocket
     function updateThiefsPocket() returns bool  
         var dummyslot = -1
         dummyslot = hero.getItemSlot(dummy)
-        for each in hero.getInventory()
+        let inventory = hero.getInventory()
+        for each in inventory
             if stolenItems.has(each)
                 suspendTriggersFlag = true
                 hero.removeItem(dummy)
@@ -117,8 +118,10 @@ class ThiefsPocket
                             suspendTriggersFlag = false
                     else
                         suspendTriggersFlag = false
-                    dummy.setVisible(false)   
-                return true           
+                    dummy.setVisible(false)
+                destroy inventory   
+                return true
+        destroy inventory           
         return false
 
     function onTargetOrder(item itemHandle)

@@ -68,8 +68,8 @@ public LinkedList<int>tradeShip4Items = asList(
                 ITEM_STEEL_INGOT,
                 ITEM_IRON_INGOT,
                 ITEM_MAGIC,
-                ITEM_ENSNARE_TRAP_KIT,
-                ITEM_OMNITOWER_KIT,
+                ITEM_POISON_SPEAR,
+                ITEM_DISEASE_POTION,
                 ITEM_POISON,
                 ITEM_STONE,
                 ITEM_MANA_CRYSTAL

@@ -61,6 +61,7 @@ function onCast(unit caster, unit target)
     let owner = caster.getOwner()
 
     owner.addPet(target)
+    target.setOwner(owner, true)
 
     owner.setTechResearched(UPGD_PET_TAMED_TRUE, 1)
     owner.setTechResearched(UPGD_PET_TAMED_FALSE, 0)

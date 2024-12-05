@@ -246,7 +246,7 @@ public let TT_HYDRA_FINS = TT_UNFORMAT_HYDRA_FINS_STRING.format(
 @compiletime function createBoneBoots() returns ItemDefinition
     return createBasicItem(ITEM_BONE_BOOTS)
         ..setAbilities(commaList(
-            ABILITY_SPEED_BONUS_60,
+            ABILITY_SPEED_BONUS_70,
             ABILITY_INT_BONUS_3,
             ABILITY_ARMOR_BONUS_2
             )

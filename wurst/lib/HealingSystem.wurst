@@ -2,6 +2,7 @@ package HealingSystem
 
 // Standard library imports:
 import StandardTextTags
+import ClosureTimers
 
 trigger eventTrigger = CreateTrigger()
 HealingInstance eventHealing = null
@@ -41,6 +42,8 @@ public class HealingInstance
     // Whether a text tag should be shown for the healing.
     bool showTag
 
+    real modifiedHealAmount
+
     construct(unit target, real amount, HealingType healingType)
         constructor(target, target, amount, healingType, true)
 
@@ -61,7 +64,8 @@ public class HealingInstance
         this.amount = amount
         // Compute the actual amount of health to be healed.
         // TODO: Fire a separate event after healing with the true amount.
-        this.trueAmount = min(target.getMissingHP(), amount)
+        this.modifiedHealAmount = this.amount * this.multiplier
+        this.trueAmount = min(target.getMissingHP(), modifiedHealAmount)
         this.target = target
         this.caster = caster
         this.showTag = showTag
@@ -80,7 +84,8 @@ public class HealingInstance
         this.fireHealingEvent()
 
         // Compute the final amount to be healed.
-        let modifiedHealAmount = this.amount * this.multiplier
+        this.modifiedHealAmount = this.amount * this.multiplier
+        this.trueAmount = min(target.getMissingHP(), this.modifiedHealAmount)
 
         // Perform the operation.
         this.target.setHP(this.target.getHP() + modifiedHealAmount)
@@ -95,7 +100,8 @@ public class HealingInstance
                 ..matchVisibility(this.target)
 
         // Destroy upon completion.
-        destroy this
+        doAfter(ANIMATION_PERIOD) ->
+            destroy this
 
     function reduceHealAmount(real reduction) returns real
         this.amount = max(0, this.amount - reduction)

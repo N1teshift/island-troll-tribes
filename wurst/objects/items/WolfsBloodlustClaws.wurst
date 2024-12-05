@@ -19,6 +19,7 @@ import Icons
 import InstantDummyCaster
 import ClosureTimers
 import UnitExtensions
+import EquipmentSlots
 
 constant WOLFS_BLOODLUST_CLAWS_BLOODLUST = compiletime(ABIL_ID_GEN.next())
 constant WOLFS_BLOODLUST_CLAWS_BUFF = compiletime(ABIL_ID_GEN.next())
@@ -77,18 +78,20 @@ class WolfSkinBloodLust extends AbilityDefinitionBloodlustCreep
 class WolfGlovesInstance
     private unit wearer
     private real baseClock
+    CallbackPeriodic cb = null
     construct(unit wearer)
         this.wearer = wearer
         this.baseClock = 0
-        doPeriodically(0.1) (CallbackPeriodic cb) ->
-            if not wearer.hasItemById(ITEM_WOLFS_BLOODLUST_CLAWS)
+        cb = doPeriodically(0.125) (CallbackPeriodic cb) ->
+            if not wearer.isAlive()
                 destroy cb
-            else            
+            if cb != null          
                 if not wearer.hasAbility(BuffIds.bloodlust)
                     InstantDummyCaster.castTarget(wearer.getOwner(), WOLFS_BLOODLUST_CLAWS_BLOODLUST, 1, OrderIds.bloodlust, wearer)
 
     ondestroy
-        //destroy cb
+        if cb != null
+            destroy cb
         wearer.removeAbility(WOLFS_BLOODLUST_CLAWS_BLOODLUST)
         wearer.removeAbility(BuffIds.bloodlust)
 
@@ -101,8 +104,6 @@ function onPickupGloves(unit u)
 
 function onDropGloves(unit u)
     if instances.has(u)
-        
-       // u.removeAbility(ABILITY_WOLFSKIN_GLOVES_BLOODLUST)
         destroy instances.getAndRemove(u)
 
 @compiletime function createWolfSkillBloodLust()
@@ -114,7 +115,13 @@ init
         if GetManipulatedItem().getTypeId() == ITEM_WOLFS_BLOODLUST_CLAWS
             onPickupGloves(GetManipulatingUnit())
 
-
     EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
         if GetManipulatedItem().getTypeId() == ITEM_WOLFS_BLOODLUST_CLAWS
             onDropGloves(GetManipulatingUnit())
+
+    registerOnEquipEvent(ITEM_WOLFS_BLOODLUST_CLAWS) (unit troll, item itm) ->
+        onPickupGloves(troll)
+
+    registerOnUnequipEvent(ITEM_WOLFS_BLOODLUST_CLAWS) (unit troll, item itm) ->
+        onDropGloves(troll)
+

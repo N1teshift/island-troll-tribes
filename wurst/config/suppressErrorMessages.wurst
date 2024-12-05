@@ -1,0 +1,6 @@
+package suppressErrorMessages
+
+import ErrorHandling
+
+init
+    suppressErrorMessages = true

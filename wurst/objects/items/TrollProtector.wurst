@@ -17,6 +17,7 @@ import Orders
 import HashMap
 import PlayerExtensions
 import Pets
+import EquipmentSlots
 
 let ARMOR_BONUS = 2.5
 let MAGIC_RESISTANCE = 0.15
@@ -53,8 +54,11 @@ class TrollProtectorResistAura
                 u.addAbility(ABILITY_TROLL_PROTECTOR_RESIST_AURA)
                 doAfter(3.) -> 
                     u.removeAbility(ABILITY_TROLL_PROTECTOR_RESIST_AURA)
+        else
+            doAfter(3.) -> 
+                u.removeAbility(ABILITY_TROLL_PROTECTOR_AURA)
 /*
-    function onDamage(unit u)
+    function onDamage(unit u)   
         if not affectedUnits.has(u)
             affectedUnits.add(u)
         if not u.hasAbility(ABILITY_TROLL_PROTECTOR_RESIST_AURA)
@@ -69,7 +73,11 @@ class TrollProtectorResistAura
             dummy.getOwner().getPlayerAlliance(otherPlayer, whichAllianceSetting)
             */
     function onDrop()
-        currentOwner = null
+        if currentOwner.hasAbility(ABILITY_TROLL_PROTECTOR_AURA)
+            currentOwner.removeAbility(ABILITY_TROLL_PROTECTOR_AURA)
+        if currentOwner.hasAbility(ABILITY_TROLL_PROTECTOR_RESIST_AURA)
+            currentOwner.removeAbility(ABILITY_TROLL_PROTECTOR_RESIST_AURA)
+        currentOwner = null    
         if cb!= null
             destroy cb
 
@@ -181,6 +189,14 @@ init
         if EventData.getManipulatedItem().getTypeId() == ITEM_TROLL_PROTECTOR
             onPickUp(EventData.getManipulatingUnit(), EventData.getManipulatedItem()) 
 
+    registerOnEquipEvent(ITEM_TROLL_PROTECTOR) (unit troll, item itm) ->
+        if itm.getTypeId() == ITEM_TROLL_PROTECTOR
+            onPickUp(troll, itm)
+
     EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
         if EventData.getManipulatedItem().getTypeId() == ITEM_TROLL_PROTECTOR
-            onDrop(EventData.getManipulatingUnit(), EventData.getManipulatedItem())         
+            onDrop(EventData.getManipulatingUnit(), EventData.getManipulatedItem())
+
+    registerOnUnequipEvent(ITEM_TROLL_PROTECTOR) (unit troll, item itm) ->
+        if itm.getTypeId() == ITEM_TROLL_PROTECTOR
+            onDrop(troll, itm)

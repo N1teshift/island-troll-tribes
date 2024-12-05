@@ -209,6 +209,7 @@ function onRevive(unit troll)
 
 
 init
+    /*
     EventListener.add(EVENT_PLAYER_UNIT_SPELL_FINISH)->
         if EventData.getSpellAbilityId()== ABILITY_DIRE_WOLF
             onSub(EventData.getSpellAbilityUnit())
@@ -227,5 +228,6 @@ init
 
     registerPlayerUnitEvent(EVENT_PLAYER_HERO_REVIVE_FINISH)->
         if GetTriggerUnit().getTypeId() == UNIT_DIRE_WOLF
-            onRevive(GetTriggerUnit())                        
+            onRevive(GetTriggerUnit())
+    */                        
         

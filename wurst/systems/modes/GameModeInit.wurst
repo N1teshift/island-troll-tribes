@@ -14,6 +14,7 @@ import ColorUtils
 import GameConfig
 import GameMode
 import GameStates
+import ErrorHandling
 
 init
     new GameMode("players-per-tribe", "ppt", "General", "Set the number of players in each tribe, eg: \"-ppt 6\"") (mode, args) ->
@@ -179,6 +180,9 @@ init
     new GameMode("start", "st", "General", "Start the game by entering class selection") (mode, args) ->
         GameMode.endModeSelection(true)
 
+    new GameMode("debug", "debug", "General", "Error messages are enabled") (mode, args) ->
+        suppressErrorMessages = false
+
     new GameMode("respawn-system", "re", "General", "Use the new respawn system instead of grace period") (mode, args) ->
         gameConfig.setRespawnSystemEnabled(true)
         GameMode.find("gp").enable(asList("0"))
@@ -287,6 +291,7 @@ init
         GameMode.find("qp").enable()
         GameMode.find("tm").enable()
         GameMode.find("st").enable()
+        GameMode.find("debug").enable()
 
     new GameMode("start-level", "sl", "Fun", "Set Starting level, eg -sl 6", true) (mode, args) ->
         if args.size() < 2

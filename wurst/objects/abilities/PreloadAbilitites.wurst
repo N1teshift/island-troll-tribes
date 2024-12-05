@@ -1,4 +1,4 @@
-package AbilitiesInit
+package PreloadAbilitites
 
 // Standard-library imports:
 import Assets
@@ -31,12 +31,9 @@ import LocalAssets
 import SimError
 import DummyCaster
 import DummyRecycler
+import Preloader
 
-//these abilities have a lot of levels to simulate scaling with int which causes a lag spike the first time they are used
-let ABILITIES_TO_INITIATE=asList(ABILITY_LIGHTNING_SHIELD, ABILITY_ANTI_MAGIC)
-IterableMap<int, int> abilitiesToInitiate = new IterableMap<int, int>()
-    ..put(ABILITY_LIGHTNING_SHIELD, OrderIds.lightningshield)
-    ..put(ABILITY_ANTI_MAGIC, OrderIds.antimagicshell)
+IterableMap<int, int>abilitiesToPreload = null
 
 
 function initiateAbilities()
@@ -46,14 +43,18 @@ function initiateAbilities()
         DUMMY_UNIT_ID,
         vec2(5., 5.))
 
-    doPeriodicallyCounted(1., ABILITIES_TO_INITIATE.size()) (CallbackCounted cb) ->
-        let abilId = ABILITIES_TO_INITIATE.get(i)
-        let order  = abilitiesToInitiate.get(abilId)
+    doPeriodicallyCounted(1., abilitiesToPreload.size()) (CallbackCounted cb) ->
+        let abilId = abilitiesToPreload.get(i)
+        let order  = abilitiesToPreload.get(abilId)
         InstantDummyCaster.castTarget(players[PLAYER_NEUTRAL_PASSIVE], abilId, 11, order, dummy, dummy.getPos())
         i+=1
-    dummy.remove()    
+        if cb.isLast()
+            dummy.remove()    
 
 init
-    //GameStates.gameplay.onEnter() state ->
-    doAfter(10.) -> 
-        initiateAbilities()
+    doAfter(1.) -> 
+        abilitiesToPreload = new IterableMap<int,int>()
+        ..put(ABILITY_LIGHTNING_SHIELD, OrderIds.lightningshield)
+        ..put(ABILITY_ANTI_MAGIC, OrderIds.antimagicshell)
+        ..put(ABILITY_BOOSTER_FORTITUDE, OrderIds.antimagicshell)
+        initiateAbilities()  

@@ -256,7 +256,8 @@ function createCloak(int newId) returns ItemDefinition
 @compiletime function createBuffImmolation() returns BuffDefinition
     return new BuffDefinition(BUFF_FLAMES, BuffIds.immolation) //Immolation
         ..setName(1, "Red Immolation")
-        ..setArtTarget(1, FLAMES_WEARER_MODEL)
+        //..setArtTarget(1, FLAMES_WEARER_MODEL)
+        ..setArtTarget(1, "")
         ..setArtSpecial(1, FLAMES_TARGET_MODEL)
         ..setTargetAttachmentPoint0(1, "chest")
         ..setEditorSuffix(1, "(Wurst)")

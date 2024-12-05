@@ -17,6 +17,7 @@ import LocalAssets
 import AttachmentPoints
 import DreamEater2
 import ColorUtils
+import BuffIds
 
 
 
@@ -55,7 +56,9 @@ class Dream
         if cb != null
             destroy cb
         if target.isAlive()
-            instance.eatDream(target)
+            target.removeAbility(BuffIds.sleep)
+            doAfter(ANIMATION_PERIOD) -> 
+                instance.eatDream(target)
 
 
 public class DreamEater
@@ -72,8 +75,10 @@ public class DreamEater
         dreams.add(new Dream(target, this))
     
     function eatDream(unit target)
-        instance.onDreamEaten(target)
-        flashEffect(Abilities.darkRitualTarget, target, AttachmentPoints.origin)
+        if target.isAlive()
+            flashEffect(Abilities.darkRitualTarget, target, AttachmentPoints.origin)
+        else
+            flashEffect(Abilities.darkRitualTarget, target.getPos())
         let intelligence = troll.getInt(true)
         let totalDamage = DAMAGE_BASE+DAMAGE_INT_MULTIPLIER*intelligence
         let manaStealAmount = MANA_STEAL_BASE+MANA_STEAL_INT_MULTIPLTIER*intelligence
@@ -93,9 +98,13 @@ public class DreamEater
         if dreams.isEmpty()
             simError(troll.getOwner(), "You have no dreams to consume.")
             troll.setMana(troll.getMana()+DREAM_EATER_MANACOST)
+            doAfter(ANIMATION_PERIOD) -> 
+                troll.endAbilityCooldown(ABILITY_DREAMWALKER_DREAM_EATER)
+                
         for dream in dreams
             dreams.remove(dream)
-            destroy dream
+            if dream != null
+                destroy dream
 
 
 
@@ -126,6 +135,7 @@ init
     EventListener.onTargetCast(ABILITY_SLEEP_INSIDE_HUT , (unit caster, unit target) -> onSleepCast(caster, target, ABILITY_SLEEP_INSIDE_HUT))
     EventListener.onTargetCast(ABILITY_HIBERNATE , (unit caster, unit target) -> onSleepCast(caster, target, ABILITY_HIBERNATE))
     EventListener.onTargetCast(ABILITY_SLEEP_ANIMAL , (unit caster, unit target) -> onSleepCast(caster, target, ABILITY_SLEEP_ANIMAL))
+    EventListener.onTargetCast(ABILITY_SLEEP_HYPNOSIS , (unit caster, unit target) -> onSleepCast(caster, target, ABILITY_SLEEP_HYPNOSIS))
 
     EventListener.add(EVENT_PLAYER_UNIT_SPELL_FINISH) ->
         if EventData.getSpellAbilityId() == ABILITY_DREAMWALKER

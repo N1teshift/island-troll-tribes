@@ -28,12 +28,12 @@ import ColorUtils
 constant CRITICAL_ABILITY_ID = compiletime(ABIL_ID_GEN.next())
 constant SPELLBOOK_ABILITY_ID = compiletime(createHiddenSpellbookWithAbilities(toRawCode(CRITICAL_ABILITY_ID)))
 public constant COOLDOWN = 12.
-public constant COOLDOWN_SKIP_PER_ATTACK = .5
+public constant COOLDOWN_REFUND_PER_ATTACK = .5
 public constant bleedDps = 7.5
 
-let TT_NORMAL = "Your next tear out a chunk of flesh from your target, recovering 1 raw meat "+
+let TT_NORMAL = "Your next attack will tear out a chunk of flesh from your target, recovering 1 raw meat "+
                 "and applying a bleed effect which does {0} damage and slows target briefly.".format((bleedDps*4).toString().color(COLOR_RED))+
-                "\nYour auto attacks lower the cooldown by {0} second.".format(COOLDOWN_SKIP_PER_ATTACK.toString().color(COLOR_LIGHT_BLUE))+
+                "\nYour auto attacks lower the cooldown by {0} second.".format(COOLDOWN_REFUND_PER_ATTACK.toString().color(COLOR_LIGHT_BLUE))+
                 "\nHas {0} seconds cooldown.".format(COOLDOWN.toString().color(COLOR_LIGHT_BLUE))
 
 
@@ -93,7 +93,7 @@ class RipAndTear
             troll.setAbilityLevel(ABILITY_RIP_AND_TEAR, 1)
             this.baseClock = 0
         else
-            this.baseClock += COOLDOWN_SKIP_PER_ATTACK
+            this.baseClock += COOLDOWN_REFUND_PER_ATTACK
 
     function onSpellEffect(unit target)
         doPeriodicallyCounted(0.5, 4) (CallbackCounted cb) -> 
@@ -118,7 +118,7 @@ function onUnitEnter(unit u)
 function onRipAndTear(unit caster, unit target)
     let count = counts.get(caster)
     if count==8
-        new HealingInstance(caster, caster, MEAT_HEAL, HealingType.ITEM)
+        //new HealingInstance(caster, caster, MEAT_HEAL, HealingType.ITEM)
     else 
         updateCount(caster, 1) 
 

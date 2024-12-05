@@ -40,6 +40,7 @@ let TT_TOOLTIP = "A hungry bear always carries plenty of food on him."+
             ..setCanBeDropped(true)
             ..setInterfaceIcon(LocalIcons.bTNBearFoodSlot)
             ..setTooltipExtended(TT_TOOLTIP)
+            ..setCanBeSoldToMerchants(false)
 
 
 public class DireBearFoodSlot
@@ -83,18 +84,22 @@ public class DireBearFoodSlot
 
     function getCurrentFoodItems() returns int
         int currentFoodItems = 0
-        for each in hero.getInventory()
+        let inventory = hero.getInventory()
+        for each in inventory
             if bearFoodList.has(each.getTypeId())
                 currentFoodItems+=1
         if currentFoodItems >2
-            currentFoodItems = 2                
+            currentFoodItems = 2
+        destroy inventory               
         return currentFoodItems
 
     function getCurrentDummyItems() returns int
         int currentDummyItems = 0
-        for each in hero.getInventory()
+        let inventory = hero.getInventory()
+        for each in inventory
             if each.getTypeId() == ITEM_DIRE_BEAR_FOOD_SLOT
-                currentDummyItems+=1        
+                currentDummyItems+=1 
+        destroy inventory       
         return currentDummyItems       
 
 
@@ -118,6 +123,7 @@ public class DireBearFoodSlot
                 //print("removed item")
                 hero.removeItem(inventory.getLast())
         hero.addItemHandle(dummyItemsList.get(index))
+        destroy inventory
         //print("added dummy item "+index.toString())
     
     function onTargetOrder(item itm) 

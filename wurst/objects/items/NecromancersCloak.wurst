@@ -28,6 +28,7 @@ import HashList
 import UnitIds
 import Abilities
 import NecromancersCloakDamageCounter
+import EquipmentSlots
 
 
 //IterableMap<unit, NecromancersCloak> instances = new IterableMap<unit, NecromancersCloak>()
@@ -142,6 +143,7 @@ function onTargetOrder()
 
 function onPickUp(unit troll, item itm)
     if itm.getTypeId() == ITEM_NECROMANCERS_CLOAK or itm.getTypeId() == ITEM_EMPOWERED_NECROMANCERS_CLOAK
+       //print("picked up cloak")
         doAfter(ANIMATION_PERIOD) -> 
             if troll.useItem(itm)               
                 doAfter(ANIMATION_PERIOD) -> 
@@ -174,6 +176,12 @@ init
     registerPlayerUnitEvent(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->
         //if GetManipulatedItem().getTypeId() == ITEM_NECROMANCERS_CLOAK
         onPickUp(GetTriggerUnit(), GetManipulatedItem()) 
+
+    //registerOnEquipEvent(ITEM_NECROMANCERS_CLOAK)(unit troll) ->
+    //    onPickUp(troll, troll.getItemById(ITEM_NECROMANCERS_CLOAK))
+
+    //registerOnEquipEvent(ITEM_EMPOWERED_NECROMANCERS_CLOAK)(unit troll) ->
+    //    onPickUp(troll, troll.getItemById(ITEM_NECROMANCERS_CLOAK))
 
     registerPlayerUnitEvent(EVENT_PLAYER_UNIT_USE_ITEM) ->
         if GetManipulatedItem().getTypeId() == ITEM_NECROMANCERS_CLOAK or GetManipulatedItem().getTypeId() == ITEM_EMPOWERED_NECROMANCERS_CLOAK

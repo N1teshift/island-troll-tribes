@@ -20,7 +20,6 @@ import Orders
 import ClosureTimers
 import Transformation
 import MoveCorpses
-public constant ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME = compiletime(ABIL_ID_GEN.next())
 
 
 @compiletime function consumeCorpse()
@@ -28,11 +27,11 @@ public constant ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME = compiletime(ABIL_ID_
         ..setName("Consume Corpse")
         ..setCheckDependencies(false)
         ..setButtonPositionNormalX(1)
-        ..setButtonPositionNormalY(2)
-        ..setHotkeyNormal("D")
-        ..presetHitPointsperSecond(lvl -> 0)
-        ..presetDurationHero(lvl -> 0.01)
-        ..presetDurationNormal(lvl -> 0.01)
+        ..setButtonPositionNormalY(1)
+        ..setHotkeyNormal("E")
+        ..presetHitPointsperSecond(lvl -> 20)
+        ..presetDurationHero(lvl -> 2.5)
+        ..presetDurationNormal(lvl -> 2.5)
         ..presetTooltipNormal(lvl -> "|cffC2E8EB[|r|cffFF6347D|r|cffC2E8EB] - Eat Raw Meat|r")
         ..presetTooltipNormalExtended(lvl -> "Consume a nearby corpse for 50 |cffd67a7ahealth|r.")
 
@@ -79,13 +78,15 @@ function onDropCoat(unit u, item itm)
         destroy instances.getAndRemove(u)
 
 
-public function onWolfVoracityCoat(unit caster)
+public function onWolfVoracityCoat(unit caster) returns bool
     // Create the corpse that is dropped.
     //createCorpse(caster.getPos())
     // Decrement the count.
     if (counts.get(caster)>0)
         new HealingInstance(caster, caster, MEAT_HEAL, HealingType.ITEM)
-    updateCount(caster, -1)
+        updateCount(caster, -1)
+        return true
+    return false
 
 
 function onWolfVoracityCoatDrop(unit caster, item itm)

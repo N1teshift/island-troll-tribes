@@ -80,7 +80,8 @@ public class Tribe
         let range = getPlayerIdRangeForTribe(tribeId)
         for pid = range.min to range.max
             let member = players[pid]
-            if member.isIngame() and not member.isObserver()
+            //print(member.getName())
+            if not member.isObserver() and (member.isIngame() or gameConfig.isTestModeEnabled())
                 addMember(member)
                 defeated = false
 

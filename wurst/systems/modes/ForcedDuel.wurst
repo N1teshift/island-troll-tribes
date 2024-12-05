@@ -11,6 +11,7 @@ import PlayerExtensions
 import TimerUtils
 import Tribe
 import UnitExtensions
+import SoundUtils
 
 public timer DUEL_TIMER
 
@@ -47,3 +48,9 @@ init
         if gameConfig.isForcedDuelEnabled()
             let timeout = gameConfig.getForcedDuelAfter()
             DUEL_TIMER = getTimer()..doAfter(timeout.toReal(), () -> moveTrollsToArena())
+            doAfter(timeout.toReal()-300) ->
+                print("Duel will start in 5 minutes".color(COLOR_RED))
+            doAfter(timeout.toReal()-120) ->
+                new SoundDefinition(Sounds.arrangedTeamInvitation).play()
+                print("Duel will start in 2 minutes".color(COLOR_RED))                
+                

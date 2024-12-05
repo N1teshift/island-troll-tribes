@@ -1,0 +1,58 @@
+package foodFrame
+
+import ClosureTimers
+import TableLayout
+import Icons
+import GameTimer
+import Textures
+import ClosureEvents
+import SoundUtils
+import AxesDefinition
+import FramehandleNames
+import LinkedList
+import UnitExtensions
+import PlayerExtensions
+import ClosureKeyPresses
+import HashMap
+import Tribe
+import HashList
+
+HashMap<framehandle, framehandle> foodFrameInstances = new HashMap<framehandle, framehandle>()
+
+function onSelection(unit target, player whichPlayer)
+    var index = 2
+    let tribe = whichPlayer.getTribe().getMembers()
+    for each in tribe
+        let originFrame = getOriginFrame(ORIGIN_FRAME_HERO_BUTTON, index)
+        originFrame.disable()
+        let troll = each.getTroll()
+        let instance =foodFrameInstances.get(originFrame)
+        if instance == null
+            foodFrameInstances.put(originFrame, createFoodFrame(originFrame, troll))
+        else
+            updateFrames(instance, troll)
+            
+        
+        //var
+        index+=1
+
+
+function updateFrames(framehandle foodFrame, unit troll)
+    let icon = troll.getIcon()
+    foodFrame.setTexture(icon, 0, true)
+
+
+function createFoodFrame(framehandle originFrame, unit troll) returns framehandle
+    print("created")
+    let icon = troll.getIcon()
+    let foodFrame = createFrame(FramehandleTypeNames.backdrop, "", originFrame, "", 0)
+        ..setPoint(FRAMEPOINT_LEFT, originFrame, FRAMEPOINT_RIGHT, vec2(0.005, 0.))
+        ..setSize(0.025, 0.025)
+        ..setTexture(icon, 0, false)
+    return foodFrame
+        //..disable()
+
+init
+    //EventListener.add(EVENT_PLAYER_UNIT_SELECTED)->
+        //onSelection(GetTriggerUnit(), GetTriggerPlayer()) 
+        

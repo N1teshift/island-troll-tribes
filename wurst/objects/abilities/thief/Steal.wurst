@@ -44,10 +44,10 @@ HashMap<int, LinkedList<int>> tradeShipItemsHashMap = new HashMap<int, LinkedLis
 LinkedList<int>stealFromPlayesList = asList(ITEM_STONE, ITEM_ELK_HIDE, ITEM_MANA_CRYSTAL, ITEM_FLINT)
 
 let TT_STEAL = "Steal an item from a target. Different targets are allowed depending on the lvl of the Rogue:"+
-                "\n\nLvl 2".color(COLOR_GOLD)+ "- Can be used on thief's bush to find a hidden item."+
-                "\n\nLvl 3".color(COLOR_GOLD)+ "- Can be used on enemy trolls to steal a stone/hide/mana crystal/flint."+
-                "\n\nLvl 4".color(COLOR_GOLD)+ "- Can be used on a trading ship to steal a random item. You can only steal a single item from a ship."+
-                "\n "+"60 ".color(ENERGY_COLOR)+ "seconds cooldown"
+                "\n\nLvl 2".color(COLOR_GOLD)+ " - Can be used on thief's bush to find a hidden item."+
+                "\n\nLvl 3".color(COLOR_GOLD)+ " - Can be used on enemy trolls to steal a stone/hide/mana crystal/flint."+
+                "\n\nLvl 4".color(COLOR_GOLD)+ " - Can be used on a trading ship to steal a random item. You can only steal a single item from a ship."+
+                "\n"+"60 ".color(ENERGY_COLOR)+ "seconds cooldown"
 
 let TT_TELE_STEAL ="\n\nTele-thief's mastery over dimentional magic greatly increases range of this ability".color(ENERGY_COLOR)                
 
