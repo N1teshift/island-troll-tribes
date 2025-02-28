@@ -29,7 +29,7 @@ public class Pingable
         this.id = _id
         this.itsColor = _itsColor
 
-let pingers = new IterableMap<string, Pingable>()
+public let pingers = new IterableMap<string, Pingable>()
     ..put("purple",   new Pingable(UNIT_PURPLE_HERB_BUSH, color(255,   0, 255)))
     ..put("blue",     new Pingable(UNIT_BLUE_HERB_BUSH,   color(  0,   0, 255)))
     ..put("orange",   new Pingable(UNIT_ORANGE_HERB_BUSH, color(255, 155,   0)))
