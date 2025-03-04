@@ -1,0 +1,275 @@
+package Swoop
+
+import Icons
+import ClosureEvents
+import Orders
+import ToolTipsUtils
+import LocalObjectIDs
+import ChannelAbilityPreset
+import Lodash
+import InstantDummyCaster
+import ClosureForGroups
+import ErrorHandling
+import HashMap
+import ClosureTimers
+import Classes
+import LinkedList
+import ClosuresForItems
+import GameStates
+import PlayerExtensions
+import Radars
+import PingHerbs
+import UnitIds
+import initlater ScoutHawk
+import StateMachine
+import UnitExtensions
+import Idle
+import Returning
+import Attack
+import SoundUtils
+import FetchSmallAnimal
+import FetchItem
+import FetchHawk
+import PinHawk
+import EagleSight
+import SimError
+import Rescue
+
+public let SWOOP_RANGE = 1200.
+public let SWOOP_CD = 20.
+public let FETCH_ITEM_CD = 20.
+public let FETCH_SMALL_ANIMAL_CD = 10.
+public let FETCH_FISH_CD = 5.
+public let FETCH_FISH_SEARCH_RADIUS = 300.
+public let TT_COMMAND_NAME = "Swoop"
+public let TT_COMMAND_EXT = "Command your Hawk to swoop at a target. Can be used on various targets for different effects. See tooltips in spellbook to learn more."+
+                   "\nRange: {0}".format(SWOOP_RANGE.toInt().toString())
+
+let TT_SWOOP_NAME = "Swoop"
+let TT_SWOOP_EXT = "Hawk swoops down onto a target, attempting to claw their eyes out, blinding them."+
+                    "\nDeals {0} damage per second. Lasts for {1} seconds.".format(BLIND_DAMAGE_PER_SECOND.toToolTipRed(), BLIND_DURATION_HERO.toToolTipLightBlue())+
+                    "\nLasts for twice as long on animals." 
+
+let TT_FETCH_ITEM_NAME = "Fetch"
+let TT_FETCH_EXT =  "Hawk can fetch an item for you."+
+                    "\n"+makeToolTipCooldown(FETCH_ITEM_CD)
+
+let TT_BIRD_OF_PREY_NAME = "Bird of Prey"
+let TT_BIRD_OF_PREY_EXT =  "Hawk can instantly kill and bring small prey to you."+
+                    "\nLvl 1".color(COLOR_GOLD_STR)+": can be used on fish."+makeToolTipCooldown(FETCH_FISH_CD)+
+                    "\nLvl 2:".color(COLOR_GOLD_STR)+" can be used on baby animals."+makeToolTipCooldown(FETCH_SMALL_ANIMAL_CD)+
+                    "\nLvl 4:".color(COLOR_GOLD_STR)+" can be used on snakes."+makeToolTipCooldown(FETCH_SMALL_ANIMAL_CD)
+
+let TT_FETCH_HAWK_NAME = "Bring down"
+let TT_FETCH_HAWK_EXT = "Hawk can bring down a bird, slamming it into the ground, preventing it from flying for {0} seconds. ".format(PIN_DURATION.toToolTipLightBlue())+
+                        "\nLvl 2: ".color(COLOR_GOLD_STR)+"deals {0} damage".format(PIN_DAMAGE_LVL_1.toToolTipRed())+
+                        "\nLvl 4: ".color(COLOR_GOLD_STR)+"deals {0} damage".format(PIN_DAMAGE_LVL_2.toToolTipRed())
+
+let soundSwoop1 = new SoundDefinition(Sounds.hawkWhat2)
+let soundSwoop2 = new SoundDefinition(Sounds.hawkYes2)
+let bushList = asList(0)
+
+public enum SwoopTargets
+    smallAnimal
+    enemy
+    fish 
+    stash 
+    hawk
+    itm
+    error
+    self
+    ally
+
+public class Swoop extends HawkState
+    unit target
+    item targetItem
+    unit hawk
+    unit troll
+    real returningSpeed = 20.
+    real timeElapsed
+    SwoopTargets swoopTargetType
+    vec2 targetPointPos
+    vec3 targetPos
+    vec3 currentPos
+    ScoutHawk scoutHawkInstance
+
+    construct(HawkStates state, unit _target, item _targetItem, ScoutHawk _scoutHawkInstance)
+        super(state)
+        target = _target
+        targetItem = _targetItem
+        scoutHawkInstance = _scoutHawkInstance
+        troll = scoutHawkInstance.troll
+
+    construct(HawkStates state, unit _target, vec2 _targetPointPos, ScoutHawk _scoutHawkInstance)
+        super(state)
+        target = _target
+        targetPointPos = _targetPointPos
+        scoutHawkInstance = _scoutHawkInstance
+        troll = scoutHawkInstance.troll
+
+    override function updateState()
+        timeElapsed+=ANIMATION_PERIOD
+        if timeElapsed>=1.5
+            swoopTargetType = SwoopTargets.error
+            queueNextState()
+            return
+        if queuedState != null
+            return
+        currentPos = hawk.getPos3Real() 
+        if scoutHawkInstance == null
+            //print("null")
+            return
+        let newPos = currentPos.moveTowards(targetPos, 100)
+        if currentPos.distanceTo2d(targetPos)<=100
+            queueNextState()
+            return
+        ////print("swoop update") 
+        hawk.setPosReal(newPos)
+        hawk.setFacing(currentPos.angleTo2d(target.getPos3Real()))
+        currentPos=newPos
+
+    function queueNextState()
+        if swoopTargetType == SwoopTargets.error
+            queuedState = new Idle(HawkStates.idle, scoutHawkInstance)
+            hawk.setPos(troll.getPos())
+            printTimedToPlayer("Swoop failed.", 4., troll.getOwner())
+            return        
+        if swoopTargetType == SwoopTargets.itm or swoopTargetType == SwoopTargets.stash
+            queuedState = new FetchItem(HawkStates.fetchItem, scoutHawkInstance, targetItem, target, swoopTargetType)
+            //print("changed next state to fetchItem")
+            return
+        if swoopTargetType == SwoopTargets.hawk 
+            //queuedState = new PinHawk(HawkStates.idle, target ,scoutHawkInstance)
+            queuedState = new FetchHawk(HawkStates.fetchHawk, scoutHawkInstance, target, swoopTargetType)
+            //print("changed next state to fetchHawk")
+            return   
+        if swoopTargetType == SwoopTargets.self //or swoopTargetType == SwoopTargets.ally
+            queuedState = new Rescue(HawkStates.rescue, scoutHawkInstance, target, targetPointPos, swoopTargetType)
+            //print("changed next state to Rescue self")
+            return
+        if swoopTargetType == SwoopTargets.ally //or swoopTargetType == SwoopTargets.ally
+            queuedState = new Rescue(HawkStates.rescue, scoutHawkInstance, target, troll.getPos(), swoopTargetType)
+            //print("changed next state to Rescue ally")
+            return          
+        if (swoopTargetType == SwoopTargets.smallAnimal and (troll.getLevel()>=2 or troll.getTrollClassType() != ClassType.BASE_CLASS)) 
+            or swoopTargetType == SwoopTargets.fish
+            queuedState = new FetchSmallAnimal(HawkStates.fetchSmallAnimal, scoutHawkInstance, target, swoopTargetType)
+            //print("changed next state to fetchSmallAnimal")          
+        else 
+            queuedState = new Attack(HawkStates.attack, target, scoutHawkInstance)
+            //print("changed next state to attack")
+            //queuedState = new Returning(HawkStates.returning, scoutHawkInstance)        
+
+    function getTargetType() returns SwoopTargets
+        //print("target  = "+GetObjectName(target.getTypeId())+" item = "+GetObjectName(targetItem.getTypeId()))      
+        if target == null and targetItem != null
+            targetPos = targetItem.getPos().toVec3()
+            //print("item swoop")
+            return SwoopTargets.itm       
+        else if target != null and targetItem == null
+            if target == troll
+                //print("fish swoop")
+                return SwoopTargets.self
+            if target.isAllyOf(troll.getOwner()) and target.isTroll()
+                //print("fish swoop")
+                return SwoopTargets.ally
+            if target.getTypeId() == UNIT_FISH or target.getTypeId() == UNIT_GREEN_FISH
+                //print("fish swoop")
+                return SwoopTargets.fish
+            if target.getTypeId() == UNIT_HAWK 
+                //print("hawk swoop")
+                return SwoopTargets.hawk
+            if bushList.has(target.getTypeId())
+                //print("bush swoop")
+                return SwoopTargets.stash
+            if target.getTypeId() == UNIT_WOLF_PUP or target.getTypeId() == UNIT_FAWN  or
+                (target.getTypeId() == UNIT_SNAKE and (troll.getLevel()>=4 or troll.getTrollClassType()!=ClassType.BASE_CLASS))
+                //print("smolk swoop")
+                return SwoopTargets.smallAnimal 
+            if STASH_LIST.has(target.getTypeId())
+                //print("stash swoop")
+                return SwoopTargets.stash
+            if target.isAlive()
+                //print("enemy swoop")
+                return SwoopTargets.enemy
+        //print("couldnt determine target type")
+        return SwoopTargets.error 
+
+
+    override function enterState()
+        swoopTargetType = getTargetType()
+        updateCooldown()
+        let soundEfx = GetRandomInt(1, 2) == 1? soundSwoop1 : soundSwoop2
+        for i=0 to GetBJMaxPlayerSlots()-1
+            if GetLocalPlayer() == players[i]
+                soundEfx.playOnPoint(target.getPos3Real())
+        //soundEfx.play()
+        hawk = scoutHawkInstance.hawk
+        //print("swoop enter state")
+        if swoopTargetType == SwoopTargets.itm
+            targetPos = targetItem.getPos().toVec3()
+            //print("item swoop")
+        else 
+            targetPos = target.getPos3Real()
+            //print("target swoop")
+        currentPos = hawk.getPos3Fly()
+        hawk.setVertexColor(0, 0, 0, 255)
+
+    function updateCooldown()
+        if swoopTargetType == SwoopTargets.fish
+            troll.startAbilityCooldown(ABILITY_HAWK_SWOOP, FETCH_FISH_CD)
+            return
+        if swoopTargetType == SwoopTargets.enemy or swoopTargetType == SwoopTargets.itm or swoopTargetType == SwoopTargets.hawk or swoopTargetType == SwoopTargets.stash
+            troll.startAbilityCooldown(ABILITY_HAWK_SWOOP, FETCH_ITEM_CD)
+            return
+        if swoopTargetType == SwoopTargets.smallAnimal
+            troll.startAbilityCooldown(ABILITY_HAWK_SWOOP, FETCH_SMALL_ANIMAL_CD)
+            return   
+
+    override function exitState()
+        if swoopTargetType == SwoopTargets.error
+            doAfter(ANIMATION_PERIOD) ->    
+                troll.endAbilityCooldown(ABILITY_HAWK_SWOOP)
+        hawk.setVertexColor(255, 255, 255, 255)
+        //print("destroy swoop")
+        //destroy this
+            
+
+function onSwoopCast(unit troll, unit target, item targetItem)
+    let instance = scoutHawkInstances.get(troll)
+    if instance == null
+        return
+    if target == null and targetItem == null
+        return 
+    instance.stateMachine.onSwoopTargetCast(target, targetItem, instance)
+
+function onSwoopPointCast(unit troll, item targetItem, vec2 targetPos)
+    let instance = scoutHawkInstances.get(troll)
+    if instance == null
+        return
+    if GetSpellTargetUnit()!= null
+        return       
+    instance.stateMachine.onSwoopPointCast(targetPos, targetItem, instance)
+
+
+function onLevel(unit troll)
+    let instance = scoutHawkInstances.get(troll)
+    if instance == null
+        return
+    instance.onLevel()
+
+
+init
+    EventListener.add(EVENT_PLAYER_HERO_LEVEL)->
+        onLevel(GetLevelingUnit())
+
+    EventListener.onTargetCast(ABILITY_HAWK_SWOOP) (unit caster, unit target) ->
+        onSwoopCast(GetTriggerUnit(), GetSpellTargetUnit(), GetSpellTargetItem())
+
+    EventListener.onPointCast(ABILITY_HAWK_SWOOP) (unit caster, vec2 target) ->
+        onSwoopPointCast(caster, GetSpellTargetItem(), target)
+
+
+
+
+

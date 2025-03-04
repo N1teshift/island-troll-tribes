@@ -1,0 +1,143 @@
+package PinHawk
+
+import Icons
+import ClosureEvents
+import Orders
+import ToolTipsUtils
+import LocalObjectIDs
+import ChannelAbilityPreset
+import Lodash
+import InstantDummyCaster
+import ClosureForGroups
+import ErrorHandling
+import HashMap
+import ClosureTimers
+import Classes
+import LinkedList
+import ClosuresForItems
+import GameStates
+import PlayerExtensions
+import Radars
+import PingHerbs
+import UnitIds
+import initlater ScoutHawk
+import StateMachine
+import UnitExtensions
+import Idle
+import Returning
+import BuffObjEditing
+import BuffIds
+import Abilities
+import LocalAssets
+
+public let PIN_DURATION = 8.
+public let PIN_DAMAGE_LVL_1 = 20.
+public let PIN_DAMAGE_LVL_2 = 40.
+public let PIN_DMG_PERIOD = 0.5
+
+public class PinHawk extends HawkState
+    unit target
+    item itm
+    unit hawk
+    unit troll
+    vec3 newPos
+    real elapsedTime = 0
+    effect attackEfx
+    CallbackPeriodic cb
+    ScoutHawk scoutHawkInstance 
+    construct(HawkStates state, unit _target, ScoutHawk _scoutHawkInstance)
+        super(state)
+        target = _target
+        scoutHawkInstance = _scoutHawkInstance 
+        troll = scoutHawkInstance.troll 
+
+    override function updateState()
+        elapsedTime+=ANIMATION_PERIOD
+        //print(elapsedTime.toString())
+        //if not target.hasAbility(BUFF_SCOUT_HAWK_PIN)
+        if elapsedTime>1. and not target.hasAbility(BUFF_SCOUT_HAWK_PIN)
+            //hawk.issueImmediateOrder("stop")
+            queuedState = new Returning(HawkStates.returning, scoutHawkInstance)
+            //print("changed next state to Returning")
+            return       
+        if queuedState != null
+            return
+        if scoutHawkInstance == null
+            //print("null")
+            return
+       //let damage = PIN_DAMAGE/PIN_DURATION*ANIMATION_PERIOD
+        //hawk.damageTarget(target, damage, true, false, ATTACK_TYPE_NORMAL , DAMAGE_TYPE_NORMAL, null)
+        //newPos = target.getPos3Fly()
+        let xOffset = 75*(Cos(target.getFacingAngle().radians()))
+        let yOffset = 75*(Sin(target.getFacingAngle().radians()))
+        //newPos.z+=75
+        newPos.x+=xOffset
+        newPos.y+=yOffset
+        ////print("PinHawk update") 
+        //hawk.setPosReal(newPos)
+        //hawk.setFacing((target.getFacingAngle().radians()-180).asAngleDegrees())
+        //hawk.setFacing(currentPos.angleTo2d(target.getPos3Real()))
+
+    override function enterState()
+        hawk = scoutHawkInstance.hawk
+        //print("PinHawk enter state")
+        applySpell()
+
+    function applySpell()
+        hawk.issueTargetOrderById(OrderIds.attack, target)
+        hawk.setAnimation(1)
+        if InstantDummyCaster.castTarget(hawk.getOwner(), ABILITY_SCOUT_HAWK_PIN, 1, OrderIds.ensnare, target, target.getPos())
+            //print("applied ensnare")
+        let dmg = (troll.getLevel()>=4 or troll.getTrollClassType()!= ClassType.BASE_CLASS)? PIN_DAMAGE_LVL_2: PIN_DAMAGE_LVL_1
+        attackEfx = addEffect(Abilities.warStompCaster, hawk.getPos())..setScale(0.5)..destr()
+        cb = doPeriodically(PIN_DMG_PERIOD) (CallbackPeriodic cb) ->
+            if cb!= null
+                hawk.damageTarget(target, dmg*PIN_DMG_PERIOD/PIN_DURATION, true, false, ATTACK_TYPE_NORMAL , DAMAGE_TYPE_NORMAL, null)
+                playEfx()        
+        doAfter(ANIMATION_PERIOD) ->
+            target.setPosReal(hawk.getPos3Real()) 
+            
+    function playEfx()
+        attackEfx = addEffect(LocalAbilities.hawkClawAnimation, hawk.getPos())
+            ..setScale(0.6)
+            ..setPitch(GetRandomReal(-0.45, 45))
+            ..destr()
+
+    override function exitState()
+        if cb!= null
+            destroy cb
+        if target.isAlive()
+            var pos = target.getPos3Real()
+            pos.z = 450.
+            target.setPosFly(pos)
+            //target.setPosFly(newPos)
+        //print("destroy PinHawk")
+        //destroy this
+
+@compiletime function createPinAbility()
+    new AbilityDefinitionEnsnareCreep(ABILITY_SCOUT_HAWK_PIN)
+        ..presetDurationNormal(lvl->PIN_DURATION)
+        ..presetDurationHero(lvl->0.)
+        ..presetTargetsAllowed(lvl ->commaList(
+            TargetsAllowed.enemies,
+            TargetsAllowed.air,
+            TargetsAllowed.neutral
+        ))
+        ..presetBuffs(lvl->toRawCode(BUFF_SCOUT_HAWK_PIN))
+        ..setArtCaster("")
+        ..setArtTarget("")
+        ..setArtEffect("")
+        ..setArtSpecial("")
+        ..setDummyAbility()
+
+    new BuffDefinition(BUFF_SCOUT_HAWK_PIN, BuffIds.ensnareAir)
+        ..setIcon(Icons.bTNSpellSteal)
+        ..setTargetAttachmentPoint0(1, "overhead")
+        ..setArtTarget(1, Abilities.bloodImpact)
+        ..setTooltipNormal(1, "Pinned.")
+        ..setTooltipNormalExtended(1, "Pinned to the ground. Lasts for {0} seconds".format(PIN_DURATION.toString()))
+        ..setEditorSuffix(1, "(Wurst)")
+
+            
+            
+        

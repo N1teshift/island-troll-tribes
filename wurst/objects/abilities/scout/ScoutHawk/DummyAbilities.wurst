@@ -1,0 +1,241 @@
+package DummyAbilities
+
+import Icons
+import ClosureEvents
+import Orders
+import ToolTipsUtils
+import LocalObjectIDs
+import ChannelAbilityPreset
+import Lodash
+import InstantDummyCaster
+import ClosureForGroups
+import ErrorHandling
+import HashMap
+import ClosureTimers
+import Classes
+import LinkedList
+import ClosuresForItems
+import GameStates
+import PlayerExtensions
+import Radars
+import PingHerbs
+import UnitIds
+import initlater ScoutHawk
+import StateMachine
+import UnitExtensions
+import Idle
+import Returning
+import Attack
+import SoundUtils
+import FetchSmallAnimal
+import FetchItem
+import FetchHawk
+import PinHawk
+import EagleSight
+import Swoop
+import DreamVision
+import LocalAssets
+import Rescue
+import Cyclone
+
+let TT_COMMAND_NAME = "Swoop"
+let TT_COMMAND_EXT = "Command your Hawk to swoop at a target. Can be used on various targets for different effects. See tooltips in spellbook to learn more."+
+                   "\nRange: {0}".format(SWOOP_RANGE.toToolTipLightBlue())
+
+let TT_SWOOP_NAME = "Swoop"
+let TT_SWOOP_EXT = "Hawk swoops down onto a target, attempting to claw their eyes out, blinding them."+
+                    "\nDeals {0} damage per second.".format(BLIND_DAMAGE_PER_SECOND.toToolTipRed())+
+                    "\nLasts for {0}({1}) seconds.".format(BLIND_DURATION_UNIT.toToolTipLightBlue(), BLIND_DURATION_HERO.toToolTipLightBlue())+
+                    "\nHas {0} seconds cooldown.".format(FETCH_ITEM_CD.toToolTipLightBlue())
+
+let TT_FETCH_NAME = "Fetch"
+let TT_FETCH_EXT =  "Hawk can fetch an item for you. Can be used on bushes."+
+                    "\nLvl 1: ".color(COLOR_GOLD_STR)+"can be used on items."+
+                    "\nLvl 2: ".color(COLOR_GOLD_STR)+"can be used on bushes."+
+                    "\nHas {0} seconds cooldown.".format(FETCH_ITEM_CD.toToolTipLightBlue())
+
+let TT_BIRD_OF_PREY_NAME = "Bird of Prey"
+let TT_BIRD_OF_PREY_EXT =  "Hawk can instantly kill and bring small prey to you."+
+                    "\nLvl 1: ".color(COLOR_GOLD_STR)+"can be on area to catch closest fish in {0} radius.".format(FETCH_FISH_SEARCH_RADIUS.toToolTipLightBlue())+makeToolTipCooldown(FETCH_FISH_CD)+
+                    "\nLvl 2: ".color(COLOR_GOLD_STR)+"can be used on baby animals."+makeToolTipCooldown(FETCH_SMALL_ANIMAL_CD)+
+                    "\nLvl 4: ".color(COLOR_GOLD_STR)+"can be used on snakes."+makeToolTipCooldown(FETCH_SMALL_ANIMAL_CD)
+
+let TT_BRING_DOWN_NAME = "Bring Down"
+let TT_BRING_DOWN_EXT = "Hawk can bring down a bird, slamming it into the ground, preventing it from flying for {0} seconds. ".format(PIN_DURATION.toToolTipLightBlue())+
+                        "\nLvl 2: ".color(COLOR_GOLD_STR)+"deals {0} damage.".format(PIN_DAMAGE_LVL_1.toToolTipRed())+
+                        "\nLvl 4: ".color(COLOR_GOLD_STR)+"deals {0} damage.".format(PIN_DAMAGE_LVL_2.toToolTipRed())+
+                        "\nHas {0} seconds cooldown.".format(FETCH_ITEM_CD.toToolTipLightBlue())
+
+let TT_EAGLE_SIGHT_NAME = "Eagle Sight"
+let TT_EAGLE_SIGHT_EXT = "Hawk grants Scout vision of nearby resources and bushes."+
+                        "\nLvl 1: ".color(COLOR_GOLD_STR)+"gain vision of resources in {0} radius. ".format(EAGLE_SIGHT_RADIUS_BASE.toToolTipLightBlue())+
+                        "\nLvl 2: ".color(COLOR_GOLD_STR)+"gain vision of bushes, radius increased to {0}.".format((EAGLE_SIGHT_RADIUS_BASE+EAGLE_SIGHT_PER_LEVEL).toToolTipLightBlue())+
+                        "\nLvl 4: ".color(COLOR_GOLD_STR)+"radius increased to {0}.".format((EAGLE_SIGHT_RADIUS_BASE+EAGLE_SIGHT_PER_LEVEL*2).toToolTipLightBlue())
+
+let TT_DREAM_VISION_NAME = "Dream Vision"
+let TT_DREAM_VISION_EXT = "Hawk can see through the eyes of nearby hawks while dreaming."+ 
+                          "\nUpon entering sleep, gain shared vision with a nearest hawk in radius"+
+                        "\nLvl 2: ".color(COLOR_GOLD_STR)+"{0} radius.".format(DREAM_VISION_RANGE_LVL_1.toToolTipLightBlue())+
+                        "\nLvl 4: ".color(COLOR_GOLD_STR)+"{0} radius.".format(DREAM_VISION_RANGE_LVL_2.toToolTipLightBlue())
+
+let TT_RESCUE_NAME = "Rescue"
+let TT_RESCUE_EXT = "Command Greater Hawk to carry you to safety, flying a short distance. Can be used on an ally."+
+                        "\nLvl 2: ".color(COLOR_GOLD_STR)+"can be used on area to order hawk to carry you to that location."+
+                        "\nLvl 4: ".color(COLOR_GOLD_STR)+"can be used on an ally to order hawk to carry them in your direction."+
+                        "\nDistance: {0}".format(RESCUE_MAX_RANGE.toToolTipLightBlue())+
+                        "\nHas {0} seconds cooldown.".format(HAWK_RESCUE_COOLDOWN.toToolTipLightBlue())
+
+let TT_CYCLONE_NAME = "Cyclone"
+let TT_CYCLONE_EXT = "Greater Hawk circles around an ally creating a cyclone, protecting him for the duration."+
+                        "\nTarget becomes invulnerable for {0} seconds ".format(CYCLONE_DURATION.toToolTipLightBlue())+
+                        "and causes {0} damage to enemies upon landing.".format(CYCLONE_IMPACT_DAMAGE.toToolTipRed())+
+                        "\nHas {0} seconds cooldown.".format(HAWK_CYCLONE_COOLDOWN.toToolTipLightBlue())
+
+@compiletime function createDummyAbilities()
+    new AbilityDefinitionEvasion(ABILITY_SWOOP_DUMMY)
+        ..setChancetoEvade(1, 0.)
+		..setLevels(1)
+        ..setIconNormal(LocalIcons.pASBTNSwoopEnemy)
+        ..setTooltipNormal(1, TT_SWOOP_NAME)
+        ..setTooltipLearn(TT_SWOOP_NAME)
+        ..setTooltipLearnExtended(TT_SWOOP_EXT)
+        ..setTooltipNormalExtended(1, TT_SWOOP_EXT)
+
+    new AbilityDefinitionEvasion(ABILITY_SCOUT_FETCH_DUMMY)
+        ..setChancetoEvade(1, 0.)
+		..setLevels(1)
+        ..setIconNormal(LocalIcons.pASBTNFetchItem)
+        ..setTooltipNormal(1, TT_FETCH_NAME)
+        ..setTooltipLearn(TT_FETCH_NAME)
+        ..setTooltipLearnExtended(TT_FETCH_EXT)
+        ..setTooltipNormalExtended(1, TT_FETCH_EXT)
+
+    new AbilityDefinitionEvasion(ABILITY_SCOUT_BIRD_OF_PREY_DUMMY)
+        ..setChancetoEvade(1, 0.)
+		..setLevels(1)
+        ..setIconNormal(LocalIcons.pASBTNBirdOfPrey)
+        ..setTooltipNormal(1, TT_BIRD_OF_PREY_NAME)
+        ..setTooltipLearn(TT_BIRD_OF_PREY_NAME)
+        ..setTooltipLearnExtended(TT_BIRD_OF_PREY_EXT)
+        ..setTooltipNormalExtended(1, TT_BIRD_OF_PREY_EXT)
+
+
+    new AbilityDefinitionEvasion(ABILITY_BRING_DOWN_DUMMY)
+        ..setChancetoEvade(1, 0.)
+		..setLevels(1)
+        ..setIconNormal(LocalIcons.pASBTNBringDown)
+        ..setRequirements(UPGD_LVL_2.toRawCode())
+        ..setTooltipNormal(1, TT_BRING_DOWN_NAME)
+        ..setTooltipLearn(TT_BRING_DOWN_NAME)
+        ..setTooltipLearnExtended(TT_BRING_DOWN_EXT)
+        ..setTooltipNormalExtended(1, TT_BRING_DOWN_EXT)
+
+    new AbilityDefinitionEvasion(ABILITY_SCOUT_EAGLE_SIGHT)
+        ..setChancetoEvade(1, 0.)
+		..setLevels(1)
+        ..setIconNormal(LocalIcons.pASBTNEagleSight)
+        ..setTooltipNormal(1, TT_EAGLE_SIGHT_NAME)
+        ..setTooltipLearn(TT_EAGLE_SIGHT_NAME)
+        ..setTooltipLearnExtended(TT_EAGLE_SIGHT_EXT)
+        ..setTooltipNormalExtended(1, TT_EAGLE_SIGHT_EXT)
+
+    new AbilityDefinitionEvasion(ABILITY_SCOUT_DREAM_VISION)
+        ..setChancetoEvade(1, 0.)
+		..setLevels(1)
+        ..setIconNormal(LocalIcons.pASBTNDreamVision)
+        ..setRequirements(UPGD_LVL_2.toRawCode())
+        ..setTooltipNormal(1, TT_DREAM_VISION_NAME)
+        ..setTooltipLearn(TT_DREAM_VISION_NAME)
+        ..setTooltipLearnExtended(TT_DREAM_VISION_EXT)
+        ..setTooltipNormalExtended(1, TT_DREAM_VISION_EXT)
+
+    new ChannelAbilityPreset(ABILITY_HAWK_SWOOP, 2, true)
+        ..setLevels(2)
+        ..presetCastingTime(lvl ->0.)
+        ..presetCastRange(lvl -> SWOOP_RANGE)
+        ..presetTargetTypes(Targettype.UNIT)
+        ..setIconNormal(LocalIcons.bTNHawkSwoop)
+        ..presetHotkey("R")
+        ..presetButtonPosNormal(2, 1)
+        ..presetTargetTypes(Targettype.POINTUNIT)
+        ..setTargetsAllowed(1, commaList(
+            TargetsAllowed.enemies,
+            TargetsAllowed.ground,
+            TargetsAllowed.neutral,
+            TargetsAllowed.item_t,
+            TargetsAllowed.vulnerable,
+            TargetsAllowed.invulnerable
+        ))
+        ..setTargetsAllowed(2, commaList(
+            TargetsAllowed.enemies,
+            TargetsAllowed.air,
+            TargetsAllowed.ground,
+            TargetsAllowed.neutral,
+            TargetsAllowed.item_t,
+            TargetsAllowed.structure,
+            TargetsAllowed.vulnerable,
+            TargetsAllowed.invulnerable
+        ))
+        ..presetTooltipNormal(lvl->TT_COMMAND_NAME)
+        ..presetTooltipNormalExtended(lvl-> TT_COMMAND_EXT)
+
+    new ChannelAbilityPreset(ABILITY_HAWK_RESCUE, 2, true)
+        ..setLevels(2)
+        ..presetCastingTime(lvl ->0.)
+        ..presetCastRange(lvl -> 2000.)
+        ..setIconNormal(LocalIcons.bTNWing)
+        ..presetHotkey("E")
+        ..presetButtonPosNormal(0, 2)
+        ..presetCooldown(lvl->HAWK_RESCUE_COOLDOWN)
+        ..presetTargetTypes(Targettype.POINTUNIT)
+        ..setTargetsAllowed(1, commaList(TargetsAllowed.self
+        ))
+        ..setTargetsAllowed(2, commaList(
+            TargetsAllowed.ground,
+            TargetsAllowed.neutral,
+            TargetsAllowed.vulnerable,
+            TargetsAllowed.invulnerable,
+            TargetsAllowed.friend
+
+        ))
+        ..presetTooltipNormal(lvl->TT_RESCUE_NAME)
+        ..presetTooltipNormalExtended(lvl-> TT_RESCUE_EXT)
+
+    new AbilityDefinitionCyclone(ABILITY_HAWK_CYCLONE)
+        ..setLevels(1)
+        ..presetCastingTime(lvl ->0.)
+        ..presetCastRange(lvl -> 1200.)
+        ..presetDurationHero(lvl->2.5)
+        ..setIconNormal(Icons.bTNTornado)
+        ..presetHotkey("W")
+        ..presetManaCost(lvl->0)       
+        ..presetCooldown(lvl->HAWK_CYCLONE_COOLDOWN) 
+        ..presetButtonPosNormal(0, 1)
+        ..setRequirements("")
+
+        ..setTargetsAllowed(1, commaList(
+            TargetsAllowed.self,
+            TargetsAllowed.friend,
+            TargetsAllowed.alive
+        ))
+        ..presetTooltipNormal(lvl->TT_CYCLONE_NAME)
+        ..presetTooltipNormalExtended(lvl-> TT_CYCLONE_EXT)
+
+    new ChannelAbilityPreset(ABILITY_HAWK_CYCLONE_DUMMY, 1, true)
+        ..setLevels(2)
+        ..presetCastingTime(lvl ->0.)
+        ..presetCastRange(lvl -> 1200.)
+        ..setIconNormal(LocalIcons.bTNHawkSwoop)
+        ..presetHotkey("W")
+
+        ..presetButtonPosNormal(0, 1)
+        ..presetTargetTypes(Targettype.POINTUNIT)
+        ..setTargetsAllowed(1, commaList(
+            TargetsAllowed.self,
+            TargetsAllowed.friend,
+            TargetsAllowed.alive
+        ))
+        ..presetTooltipNormal(lvl->TT_CYCLONE_NAME)
+        ..presetTooltipNormalExtended(lvl-> TT_CYCLONE_EXT)       
+
+      

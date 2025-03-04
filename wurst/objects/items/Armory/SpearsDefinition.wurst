@@ -187,12 +187,13 @@ function createSpear(int spearId) returns ItemDefinition
         ..setInterfaceIcon(Icons.bTNEnvenomedSpear)
         ..setHotkey("Q")
         ..setTooltipExtended(TT_RPOISON)
-        ..setLumberCost(14)
+        ..setLumberCost(10)
         ..setAbilities(commaList(ABILITY_SPEAR_RPOISON))
         ..setStockReplenishInterval(120)
         ..setTintingColor1Red(100)
         ..setTintingColor2Green(255)
         ..setTintingColor3Blue(100)
+        ..setStockMaximum(4)
 
 @compiletime function createUltraPoisonSpear() returns ItemDefinition
     return createSpear(ITEM_ULTRA_POISON_SPEAR)

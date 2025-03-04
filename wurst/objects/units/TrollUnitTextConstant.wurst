@@ -155,7 +155,7 @@ public constant HERO_SPELLS_PRIEST       = commaList(ABILITY_PRIEST_SPELLBOOK, A
 // TODO: Fix this hack by properly listing out abilities and class selection separately.
 public constant HERO_SPELLS_BEASTMASTER = commaList(ABILITY_SPIRIT_BEAST,     ABILITY_SHAPESHIFTER,   ABILITY_DRUID, ABILITY_DIRE_WOLF, ABILITY_DIRE_BEAR)
 public constant HERO_SPELLS_THIEF        = commaList(ABILITY_CLOAK,            ABILITY_ROGUE,  ABILITY_TELETHIEF,   ABILITY_ASSASSIN)
-public constant HERO_SPELLS_SCOUT        = commaList(ABILITY_REVEAL_ID,        ABILITY_OBSERVER,       ABILITY_TRAPPER,      ABILITY_SPY)
+public constant HERO_SPELLS_SCOUT        = commaList(ABILITY_SCOUT_SPELLBOOK,        ABILITY_OBSERVER,      ABILITY_SPY)
 public constant HERO_SPELLS_GATHERER     = commaList(ABILITY_ITEM_RADAR,       ABILITY_RADAR_GATHERER, ABILITY_HERB_MASTER,  ABILITY_OMNIGATHERER, ABILITY_ALCHEMIST)
 // Unsub Normal Spells
 public constant  NORMAL_SPELLS_HUNTER       = commaList(ABILITY_HUNTER_WEB)
@@ -163,7 +163,7 @@ public constant  NORMAL_SPELLS_MAGE         = commaList(ABILITY_NEGATIVE_BLAST)
 public constant  NORMAL_SPELLS_PRIEST       = commaList(ABILITY_THE_GLOW)
 public constant  NORMAL_SPELLS_BEASTMASTER  = commaList(ABILITY_PET_SPELLS,ABILITY_SPIRIT_BEAST)
 public constant  NORMAL_SPELLS_THIEF        = commaList(ABILITY_TELEPORT, ABILITY_THIEF_SPELLBOOK)
-public constant  NORMAL_SPELLS_SCOUT        = commaList(ABILITY_PING_ENEMY)
+public constant  NORMAL_SPELLS_SCOUT        = commaList(ABILITY_SCOUT_SPELLBOOK, ABILITY_HAWK_SWOOP ) //ABILITY_PING_ENEMY
 public constant  NORMAL_SPELLS_GATHERER     = commaList(ABILITY_SALVE_RECIPE)
 
 // Sub Hero Spells
@@ -180,6 +180,7 @@ public constant HERO_SPELLS_TELETHIEF      = commaList(ABILITY_TELETHIEF_SPELLBO
 public constant HERO_SPELLS_CONTORTIONIST  = commaList(ABILITY_CONTORTIONIST_SPELLBOOK,    ABILITY_ASSASSIN)
 public constant HERO_SPELLS_TRAPPER        = commaList(ABILITY_TRAPPER_SPELLBOOK,          ABILITY_SPY)
 public constant HERO_SPELLS_OBSERVER       = commaList(ABILITY_OBSERVER_WARD_AREA,         ABILITY_SPY)
+public constant HERO_SPELLS_HAWK           = commaList(ABILITY_HAWK_SPELLBOOK)
 public constant HERO_SPELLS_RADAR_GATHERER = commaList(ABILITY_TELE_RADAR_GATHER,                ABILITY_OMNIGATHERER)
 public constant HERO_SPELLS_HERB_MASTER    = commaList(ABILITY_TELE_HERB_GATHER,                ABILITY_OMNIGATHERER)
 public constant HERO_SPELLS_DRUID          = commaList(ABILITY_DRUID_SPELLBOOK,            ABILITY_JUNGLE_TYRANT)
@@ -201,6 +202,7 @@ public constant NORMAL_SPELLS_CONTORTIONIST  = commaList(ABILITY_TELEPORT)
 public constant NORMAL_SPELLS_TELETHIEF      = commaList(ABILITY_TELEPORT)
 public constant NORMAL_SPELLS_TRAPPER        = commaList(ABILITY_GREATER_REVEAL_ID)
 public constant NORMAL_SPELLS_OBSERVER       = commaList(ABILITY_OBSERVER_SPELLBOOK,ABILITY_GREATER_REVEAL_ID)
+public constant NORMAL_SPELLS_HAWK           = commaList(ABILITY_HAWK_SWOOP)
 public constant NORMAL_SPELLS_RADAR_GATHERER = commaList(ABILITY_RADAR_GATHERER_SPELLBOOK)
 public constant NORMAL_SPELLS_HERB_MASTER    = commaList(ABILITY_MIX_HERBS)
 public constant NORMAL_SPELLS_ALCHEMIST      = commaList(ABILITY_CREATE_PHILOSOPHERS_STONE)
@@ -226,7 +228,7 @@ public constant  HERO_SPELLS_DEMENTIA_MASTER = commaList(ABILITY_DEMENTIA_MASTER
 public constant  HERO_SPELLS_SAGE            = commaList(ABILITY_SAGE_SPELLBOOK)
 public constant  HERO_SPELLS_JUNGLE_TYRANT   = commaList("")
 public constant  HERO_SPELLS_ASSASSIN        = commaList(ABILITY_ASSASSINATE)
-public constant  HERO_SPELLS_SPY             = commaList(ABILITY_CHAIN_REVEAL)
+public constant  HERO_SPELLS_SPY             = commaList(ABILITY_SPY_INHERITED_SPELLBOOK)
 public constant  HERO_SPELLS_OMNIGATHERER    = commaList(ABILITY_OMNIGATHERER_ALCHEMIST_SPELLBOOK)
 
 // SuperSub Normal Spells
@@ -235,7 +237,7 @@ public constant  NORMAL_SPELLS_DEMENTIA_MASTER = commaList(ABILITY_DEMENTIA_MAST
 public constant  NORMAL_SPELLS_SAGE            = commaList(ABILITY_SAGE_INHERITED_SPELLBOOK)
 public constant  NORMAL_SPELLS_JUNGLE_TYRANT   = commaList(ABILITY_JUNGLE_TYRANT_EVOLUTION, ABILITY_PET_SPELLS, ABILITY_RENDO_DEVOUR)
 public constant  NORMAL_SPELLS_ASSASSIN        = commaList(ABILITY_ASSASSIN_SPELLBOOK)
-public constant  NORMAL_SPELLS_SPY             = commaList(ABILITY_SPY_INHERITED_SPELLBOOK)
+public constant  NORMAL_SPELLS_SPY             = commaList(ABILITY_HAWK_INHERITED_SPELLBOOK,ABILITY_HAWK_SWOOP)
 public constant  NORMAL_SPELLS_OMNIGATHERER    = commaList(ABILITY_CREATE_PHILOSOPHERS_STONE, ABILITY_OMNIGATHERER_INHERITED_SPELLBOOK)
 
 // Few constant to save space
@@ -454,7 +456,7 @@ public constant trollIcons = new HashMap<int,string>()
     ..put(UNIT_CONTORTIONIST,        LocalIcons.bTNContortionist)
     ..put(UNIT_ASSASSIN,             Icons.bTNDarkTrollTrapper)
     ..put(UNIT_SCOUT,                LocalIcons.bTNScout)
-    ..put(UNIT_OBSERVER,             LocalIcons.bTNObserverSentry)
+    ..put(UNIT_OBSERVER,             Icons.bTNWyvernRider)
     ..put(UNIT_TRAPPER,              LocalIcons.bTNTrapper)
     ..put(UNIT_SPY,                  Icons.bTNForestTrollTrapper)
     ..put(UNIT_GATHERER,             LocalIcons.bTNGatherer)

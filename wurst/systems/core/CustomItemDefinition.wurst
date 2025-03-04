@@ -123,7 +123,7 @@ class CustomItemDefinition
             if abilId == 0
                 return
             troll.removeAbility(abilId)
-            //print("removing "+GetObjectName(abilId))
+            print("removing "+GetObjectName(abilId))
 
     function createItem(int itemId)
         itemDefinition = createBasicItem(itemId)

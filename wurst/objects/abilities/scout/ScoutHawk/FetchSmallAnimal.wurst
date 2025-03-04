@@ -1,0 +1,122 @@
+package FetchSmallAnimal
+
+import Icons
+import ClosureEvents
+import Orders
+import ToolTipsUtils
+import LocalObjectIDs
+import ChannelAbilityPreset
+import Lodash
+import InstantDummyCaster
+import ClosureForGroups
+import ErrorHandling
+import HashMap
+import ClosureTimers
+import Classes
+import LinkedList
+import ClosuresForItems
+import GameStates
+import PlayerExtensions
+import Radars
+import PingHerbs
+import UnitIds
+import initlater ScoutHawk
+import StateMachine
+import initlater Idle
+import initlater Swoop
+import SoundUtils
+import JumpSystem
+
+let FETCH_SPEED_PER_TICK = 20.
+let FLIGHT_HEIGHT = 200.
+public let soundFetchAnimal = new SoundDefinition(Sounds.warEagleDeath)
+public let soundFetchFish1 = new SoundDefinition(Sounds.bigWaterStep1)
+public let soundFetchFish2 = new SoundDefinition(Sounds.bigWaterStep2)
+public let soundFetchFish3 = new SoundDefinition(Sounds.bigWaterStep3)
+public let soundFetchFish4 = new SoundDefinition(Sounds.bigWaterStep4)
+
+public class FetchSmallAnimal extends HawkState
+    unit target
+    unit hawk
+    unit troll
+    real speedPerTick
+    vec2 currentPos
+    vec3 targetPos
+
+    real zOffset = 0
+    ScoutHawk scoutHawkInstance
+    SwoopTargets swoopTargetType
+    
+    construct(HawkStates state, ScoutHawk _scoutHawkInstance, unit _target, SwoopTargets _swoopTargetType)
+        super(state)
+        //print("Fetching constructed")
+        swoopTargetType =_swoopTargetType
+        scoutHawkInstance = _scoutHawkInstance 
+        target = _target
+        hawk = scoutHawkInstance.hawk
+        troll = scoutHawkInstance.troll
+
+    override function updateState()
+        if queuedState != null
+            return
+        if scoutHawkInstance == null
+            //print("null")
+            return
+        if currentPos.distanceTo(troll.getPos())<=100.
+            queuedState = new Idle(HawkStates.idle, scoutHawkInstance)
+            //print("changed next state to Idle")
+            return
+        ////print("fetchSmalAnimal update") 
+        setHawkPos()
+        setTargetPos()  
+
+    function setHawkPos()
+        currentPos = hawk.getPos()
+        let newPos2 = currentPos.moveTowards(troll.getPos(), FETCH_SPEED_PER_TICK)
+        var newPos3 = newPos2.toVec3()
+        if zOffset<FLIGHT_HEIGHT
+            zOffset+=15.
+        newPos3.z=zOffset  
+        hawk.setPosFly(newPos3)
+        hawk.setFacing(currentPos.angleTo(troll.getPos()))
+        currentPos=newPos2
+
+    function setTargetPos()
+        targetPos = hawk.getPos3Real()
+        targetPos.z-=30.
+        target.setPosReal(targetPos)
+
+    function playSound()
+        if swoopTargetType == SwoopTargets.smallAnimal
+            soundFetchAnimal.playOnPoint(target.getPos3Real())
+            return
+        SoundDefinition whichSound = null
+        switch GetRandomInt(1, 4)
+            case 1
+                whichSound = soundFetchFish1
+            case 2
+                whichSound = soundFetchFish2
+            case 3
+                whichSound = soundFetchFish3
+            case 4
+                whichSound = soundFetchFish4
+        for i=0 to GetBJMaxPlayerSlots()-1
+            if GetLocalPlayer() == players[i]
+                whichSound.playOnPoint(target.getPos3Real())
+
+    override function enterState()
+        playSound()
+        //print("FetchSmallAnimal enter state")
+        target.addAbility('Aloc') 
+        target.addAbility(CROWFORM_ID)       
+        hawk = scoutHawkInstance.hawk
+        troll = scoutHawkInstance.troll
+
+    override function exitState()
+        target.removeAbility('Aloc')
+        target.removeAbility(CROWFORM_ID)
+        doAfter(ANIMATION_PERIOD) ->
+            //target.kill() 
+            troll.damageTarget(target, 45, true, false, ATTACK_TYPE_NORMAL , DAMAGE_TYPE_NORMAL, null)
+        //print("destroy fetchSmallAnimal")
+        //destroy this

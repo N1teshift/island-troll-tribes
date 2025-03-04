@@ -1,0 +1,134 @@
+package DreamVision
+
+import Icons
+import ClosureEvents
+import Orders
+import ToolTipsUtils
+import LocalObjectIDs
+import ChannelAbilityPreset
+import Lodash
+import InstantDummyCaster
+import ClosureForGroups
+import ErrorHandling
+import HashMap
+import ClosureTimers
+import Classes
+import LinkedList
+import ClosuresForItems
+import GameStates
+import PlayerExtensions
+import Radars
+import PingHerbs
+import UnitIds
+import initlater ScoutHawk
+import StateMachine
+import UnitExtensions
+import Idle
+import Returning
+import BuffObjEditing
+import BuffIds
+import Abilities
+import BonusHandler
+
+
+public let DREAM_VISION_RANGE_LVL_1 = 2000.
+public let DREAM_VISION_RANGE_LVL_2 = 3000.
+public let HAWK_VISION_RANGE = 1200.
+
+
+HashMap<unit, DreamVision> dreamVisionInstances = new HashMap<unit,DreamVision>()
+
+class DreamVision
+    unit troll
+    real dreamVisionRadius
+    unit closestHawk
+    //CallbackPeriodic cb
+   // LinkedList<item>visibleItems = new LinkedList<item>() 
+   // LinkedList<unit>visibleUnits = new LinkedList<unit>()
+    construct(unit _troll)
+        //print("created")
+        troll = _troll
+
+    
+    function getClosestHawk() returns unit
+        dreamVisionRadius = (troll.getLevel()>=4 or troll.getTrollClassType() != ClassType.BASE_CLASS) ? DREAM_VISION_RANGE_LVL_2 : DREAM_VISION_RANGE_LVL_1
+        var closestHawkDistance = dreamVisionRadius
+        closestHawk = null
+        let trollPos = troll.getPos()
+        forUnitsInRange(troll.getPos(), dreamVisionRadius) (unit u) ->
+            if u.getTypeId() == UNIT_HAWK
+                //print("found a hawk")
+                let newDistance = u.getPos().distanceTo(trollPos)                
+                if newDistance < closestHawkDistance
+                    //print("found new closest hawk")
+                    closestHawk = u
+                    closestHawkDistance = newDistance
+        return closestHawk
+        //handleVision(closestHawk)
+
+
+
+    function moveCamera()
+        //troll.getOwner().c
+
+    function handleVision(unit closestHawk)
+        closestHawk.shareVision(troll.getOwner(), true)
+        troll.getOwner().panCameraTo(closestHawk.getPos())
+        doPeriodically(0.125) (CallbackPeriodic cb) ->
+            if not troll.hasAbility('BUsl')// sleep buffId
+                //print("sleep ended")
+                closestHawk.shareVision(troll.getOwner(), false)
+                if cb != null
+                    destroy cb
+
+    function gainYourHawkVision()
+        let instance = scoutHawkInstances.get(troll)
+        let hawk = instance.hawk
+        hawk.addBonus(Bonus.SIGHTRANGE, HAWK_VISION_RANGE)
+        doPeriodically(0.125) (CallbackPeriodic cb) ->
+            if not troll.hasAbility('BUsl')// sleep buffId
+                //print("sleep ended")
+                hawk.addBonus(Bonus.SIGHTRANGE, -HAWK_VISION_RANGE)
+                if cb != null
+                    destroy cb
+
+    function onCast()
+        if troll.getLevel()<2 and troll.getTrollClassType() == ClassType.BASE_CLASS
+            //print("low lvl")
+            return
+        let closestHawk = getClosestHawk()
+        if closestHawk == null
+            //gainYourHawkVision()
+            //print("no hawks found")
+            return
+        handleVision(closestHawk)
+
+    function onLevelup()
+        if not troll.getTrollClassType() == ClassType.BASE_CLASS
+            return
+        if troll.getLevel() == 2 or troll.getLevel() == 4
+            dreamVisionRadius+=100
+
+function onCast(unit troll, unit target)
+    //if not GetSpellAbilityId() == ABILITY_SLEEP_OUTSIDE
+    //    return
+    let instance = dreamVisionInstances.get(target)
+    if instance == null
+        //print("null")
+        return
+    instance.onCast()
+
+function initializeScouts()
+    GameStates.gameplay.onEnter() state ->
+        for i=0 to GetBJMaxPlayerSlots()-1
+            let troll = players[i].getTroll()
+            if troll.getTypeId() == UNIT_SCOUT
+                dreamVisionInstances.put(troll, new DreamVision(troll))
+
+
+init
+    initializeScouts()
+
+    EventListener.onTargetCast(ABILITY_SLEEP_OUTSIDE    , (unit caster, unit target) -> onCast(caster, target))
+
+        

@@ -67,6 +67,8 @@ function createBushNeutralBuilding(int unitId) returns BuildingDefinition
         ..setDeathType(0)
         ..setHitPointsMaximumBase(100)
         ..setPlacementRequires("")
+        ..setSightRadiusDay(150)
+        ..setSightRadiusNight(150)
         ..setRace(Race.Creeps)
         ..setUnitClassification("ancient,mechanical")
         ..setGroundTexture("")

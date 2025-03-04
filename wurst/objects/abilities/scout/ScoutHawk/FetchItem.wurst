@@ -1,0 +1,161 @@
+package FetchItem
+
+import Icons
+import ClosureEvents
+import Orders
+import ToolTipsUtils
+import LocalObjectIDs
+import ChannelAbilityPreset
+import Lodash
+import InstantDummyCaster
+import ClosureForGroups
+import ErrorHandling
+import HashMap
+import ClosureTimers
+import Classes
+import LinkedList
+import ClosuresForItems
+import GameStates
+import PlayerExtensions
+import Radars
+import PingHerbs
+import UnitIds
+import SimError
+import initlater ScoutHawk
+import StateMachine
+import initlater Idle
+import initlater Swoop
+import SoundUtils
+import UnitExtensions
+import EagleSight
+
+let FETCH_SPEED_PER_TICK = 20.
+let FLIGHT_HEIGHT = 200.
+let soundFetchItem1 = new SoundDefinition(Sounds.hawkWhat1)
+let soundFetchItem2 = new SoundDefinition(Sounds.hawkYes1)
+
+
+public class FetchItem extends HawkState
+    unit target
+    unit hawk
+    unit troll
+    unit dummyUnit
+    real speedPerTick
+    vec2 currentPos
+    vec3 dummyUnitPos
+    item fetchedItem
+    item targetItem
+    real zOffset = 0
+    ScoutHawk scoutHawkInstance
+    SwoopTargets swoopTargetType
+    
+    construct(HawkStates state, ScoutHawk _scoutHawkInstance, item _targetItem, unit _target, SwoopTargets _swoopTargetType)
+        super(state)
+        //print("fetchItem constructed")
+        swoopTargetType =_swoopTargetType
+        scoutHawkInstance = _scoutHawkInstance 
+        target = _target
+        targetItem = _targetItem
+        hawk = scoutHawkInstance.hawk
+        troll = scoutHawkInstance.troll
+
+    override function updateState()
+        if queuedState != null
+            return
+        if scoutHawkInstance == null
+            //print("null")
+            return
+        if currentPos.distanceTo(troll.getPos())<=100.
+            queuedState = new Idle(HawkStates.idle, scoutHawkInstance)
+            //print("changed next state to Idle")
+            return
+        ////print("FetchItem update") 
+        setHawkPos()
+        setdummyUnitPos()  
+
+    function setHawkPos()
+        currentPos = hawk.getPos()
+        let newPos2 = currentPos.moveTowards(troll.getPos(), FETCH_SPEED_PER_TICK)
+        var newPos3 = newPos2.toVec3()
+        if zOffset<FLIGHT_HEIGHT
+            zOffset+=15.
+        newPos3.z=zOffset  
+        hawk.setPosReal(newPos3)
+        hawk.setFacing(currentPos.angleTo(troll.getPos()))
+        currentPos=newPos2
+
+    function setdummyUnitPos()
+        if fetchedItem == null
+            dummyUnit.remove()
+            return
+        dummyUnitPos = hawk.getPos3Real()
+        dummyUnitPos.z-=100.
+        dummyUnit.setPosReal(dummyUnitPos)
+    /*
+    function playSound()
+        switch GetRandomInt(1, 2)
+            case 1
+                soundFetchItem1.playOnPoint(target.getPos3Real())
+            case 2
+                soundFetchItem2.playOnPoint(target.getPos3Real())
+    */
+    function fetchItemFromStash()
+        //print("fetchingFromStash")
+        if not STASH_LIST.has(target.getTypeId())
+            //print("not a stash")
+            return
+        let stashInventory = target.getInventory()
+ 
+        for each in stashInventory
+            if each != null
+                fetchedItem = each
+                break
+        if fetchedItem == null
+            simError(hawk.getOwner(), "{0} is empty.".format(GetObjectName(target.getTypeId())))
+            destroy stashInventory
+            return
+        destroy stashInventory
+        target.removeItem(fetchedItem)
+        nullTimer() -> 
+            fetchedItem.setVisible(false)
+
+    override function enterState()
+        //print("FetchItem enter state") 
+        dummyUnit = createUnit(troll.getOwner(), UNIT_ITEM_MODEL_DUMMY, hawk.getPos3Fly(), hawk.getFacingAngle())
+        //playSound()
+        if targetItem!= null
+            //print("regular item")
+            fetchedItem = targetItem
+            fetchedItem.setVisible(false)
+        else 
+            fetchItemFromStash()      
+        hawk = scoutHawkInstance.hawk
+        troll = scoutHawkInstance.troll
+
+    override function exitState()
+        dummyUnit.remove()
+        fetchedItem.setPos(troll.getPos())
+        nullTimer() ->
+            troll.addItemHandle(fetchedItem) 
+        //print("destroy fetchItem")
+        //destroy this
+
+
+@compiletime function radarDummies()
+    new UnitDefinition(UNIT_ITEM_MODEL_DUMMY, 'hfoo')
+        ..setName("Radar Dummy")
+        ..setModelFile("Objects\\InventoryItems\\TreasureChest\\treasurechest.mdl")
+        //..setScalingValue(DUMMY_SCALING[i])
+        ..setMovementHeight(0)
+        ..setCollisionSize(0.0)
+        ..setSightRadiusDay(0)
+        ..setSightRadiusNight(0)
+        ..setSpeedBase(1)
+        ..setMovementType(MovementType.Fly)
+        ..setHideMinimapDisplay(true)
+        ..setShadowImageHeight(0.0)
+        ..setShadowImageWidth(0.0)
+        ..setFoodCost(0)
+        ..setNormalAbilities("Aloc,Avul,Aeth") //Locust, invulnerable, Ghost(visible)
+        ..setAttacksEnabled(0)
+        ..setIsaBuilding(true)

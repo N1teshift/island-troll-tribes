@@ -41,7 +41,7 @@ import Transformation
 constant CAST_RANGE = 150.
 constant CHARGE_CD = 10.
 constant TT_NAME = "Pass Meat"
-constant MAX_CHARGES = 4
+constant MAX_CHARGES = 6
 constant TT_EXT = "Use this ability to pass meat to an ally."+
                     "\n{0} seconds charge recovery.".format(CHARGE_CD.toInt().toString().color(COLOR_LIGHT_BLUE))
                     

@@ -1,0 +1,126 @@
+package Cyclone
+
+import Icons
+import ClosureEvents
+import Orders
+import ToolTipsUtils
+import LocalObjectIDs
+import ChannelAbilityPreset
+import Lodash
+import InstantDummyCaster
+import ClosureForGroups
+import ErrorHandling
+import HashMap
+import ClosureTimers
+import Classes
+import LinkedList
+import ClosuresForItems
+import GameStates
+import PlayerExtensions
+import Radars
+import PingHerbs
+import UnitIds
+import initlater ScoutHawk
+import StateMachine
+import UnitExtensions
+import Idle
+import Returning
+import BuffObjEditing
+import BuffIds
+import Abilities
+import LocalAssets
+import Attack
+
+public let CYCLONE_IMPACT_DAMAGE = 40.
+public let CYCLONE_DURATION = 3.
+public let CYCLONE_HAWK_SPEED = 50.
+public let CYCLONE_AOE = 400.
+public let HAWK_CYCLONE_COOLDOWN = 20.
+public let HAWK_CYCLONE_CIRCLING_RADIUS = 150.
+
+public class Cyclone extends HawkState
+    unit target
+    unit hawk
+    vec3 newPos
+    real elapsedTime
+    effect attackEfx
+    real radians = 0.
+    vec3 currentPos
+    real zOffset = 100.
+    real radiusOffset = 0.
+    CallbackPeriodic cb
+    ScoutHawk scoutHawkInstance
+    construct(HawkStates state, unit _target, ScoutHawk _scoutHawkInstance)
+        super(state)
+        target = _target
+        scoutHawkInstance = _scoutHawkInstance  
+    
+        
+    override function updateState()
+        if queuedState != null
+            return    
+        if scoutHawkInstance == null
+            //print("null")
+            return
+        elapsedTime+=ANIMATION_PERIOD
+        if elapsedTime>=0.5 and not target.hasAbility(BuffIds.cycloneExtra)
+           // print("no buff")
+            queuedState = new Idle(HawkStates.idle, scoutHawkInstance)
+            return
+        //troll.kill()
+        //hawk.kill()
+        radians+=0.3
+        if zOffset<450.
+            radiusOffset+=5
+            zOffset+=15
+        //radians.cos() = pos.x*2/hawkCirclingArea
+        ////print("radians = "+radians.toString())
+        currentPos = target.getPos3Real()
+        currentPos.x +=(CYCLONE_AOE+radiusOffset)/2*radians.cos()
+        currentPos.y +=(CYCLONE_AOE+radiusOffset)/2*radians.sin()
+        currentPos.z=zOffset
+        hawk.setPosFly(currentPos)
+        hawk.setFacing(angle(radians+Deg2Rad(-100.))) 
+        ////print("x = "+pos.x.toString()+" y = "+pos.y.toString()+" radians = "+radians.toString()) 
+
+
+    function playEfx()
+        addEffect(Abilities.warStompCaster, target.getPos())
+            ..setScale(1.5)
+            ..destr()
+
+
+    override function enterState()
+        currentPos = target.getPos3Real()          
+        hawk = scoutHawkInstance.hawk
+        applySpell()          
+
+
+    function applySpell()
+        //scoutHawkInstance.troll.startAbilityCooldown(ABILITY_HAWK_CYCLONE, HAWK_CYCLONE_COOLDOWN)
+        //hawk.issueTargetOrderById(OrderIds.attack, target)
+        //playEfx()   
+        //if InstantDummyCaster.castTarget(hawk.getOwner(), ABILITY_SCOUT_HAWK_BLIND, 1, OrderIds.curse, target, target.getPos())
+            //print("applied blind")
+
+    override function exitState() 
+        playEfx()
+        forUnitsInRange(target.getPos(), HAWK_CYCLONE_CIRCLING_RADIUS) (unit u) ->
+            if u.isEnemyOf(hawk.getOwner())
+                hawk.damageTarget(u, CYCLONE_IMPACT_DAMAGE, true, false, ATTACK_TYPE_NORMAL , DAMAGE_TYPE_NORMAL, null)
+        if cb!= null
+            destroy cb
+        //print("destroy attack")
+        //destroy this
+
+
+function onTargetCast(unit caster, unit target)
+    let instance = scoutHawkInstances.get(caster)
+    if instance == null
+        return
+    instance.stateMachine.onCycloneCast(target, instance) 
+
+init
+    EventListener.onTargetCast(ABILITY_HAWK_CYCLONE) (unit caster, unit target) ->
+        onTargetCast(caster, target)
+        

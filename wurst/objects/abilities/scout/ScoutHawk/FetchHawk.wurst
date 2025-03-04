@@ -1,0 +1,103 @@
+package FetchHawk
+
+import Icons
+import ClosureEvents
+import Orders
+import ToolTipsUtils
+import LocalObjectIDs
+import ChannelAbilityPreset
+import Lodash
+import InstantDummyCaster
+import ClosureForGroups
+import ErrorHandling
+import HashMap
+import ClosureTimers
+import Classes
+import LinkedList
+import ClosuresForItems
+import GameStates
+import PlayerExtensions
+import Radars
+import PingHerbs
+import UnitIds
+import initlater ScoutHawk
+import StateMachine
+import initlater Idle
+import initlater Swoop
+import SoundUtils
+import Attack
+import PinHawk
+import FetchSmallAnimal
+
+let FETCH_HAWK_SPEED_PER_TICK = 50.
+let FLIGHT_HEIGHT = 200.
+
+public class FetchHawk extends HawkState
+    unit target
+    unit hawk
+    unit troll
+    real speedPerTick
+    vec3 currentPos
+    vec3 targetPos
+
+    real zOffset = 0
+    ScoutHawk scoutHawkInstance
+    SwoopTargets swoopTargetType
+    
+    construct(HawkStates state, ScoutHawk _scoutHawkInstance, unit _target, SwoopTargets _swoopTargetType)
+        super(state)
+        //print("FetchHawk constructed")
+        swoopTargetType =_swoopTargetType
+        scoutHawkInstance = _scoutHawkInstance 
+        target = _target
+        hawk = scoutHawkInstance.hawk
+        troll = scoutHawkInstance.troll
+
+    override function updateState()
+        if queuedState != null
+            return
+        if scoutHawkInstance == null
+            //print("null")
+            return
+        if currentPos.distanceTo(troll.getPos3Real())<=100.
+            queuedState = new PinHawk(HawkStates.idle, target ,scoutHawkInstance)
+            //print("changed next state to Idle")
+            return
+        //print("fetchHawk update") 
+        setHawkPos()
+        setTargetPos()  
+
+    function setHawkPos()
+        currentPos = hawk.getPos3Real()
+        let newPos3 = currentPos.moveTowards(troll.getPos3Real(), 50.)
+        //if zOffset<FLIGHT_HEIGHT
+        //    zOffset+=15.
+        //newPos3.z=zOffset  
+        hawk.setPosReal(newPos3)
+        hawk.setFacing(currentPos.angleTo2d(troll.getPos3Real()))
+        currentPos=newPos3
+
+    function setTargetPos()
+        targetPos = hawk.getPos3Real()
+        targetPos.z-=50.
+        target.setPosReal(targetPos)
+
+    function playSound()
+        for i=0 to GetBJMaxPlayerSlots()-1
+            if GetLocalPlayer() == players[i]
+                soundFetchAnimal.playOnPoint(target.getPos3Real())
+
+    override function enterState()
+        playSound()
+        //print("FetchHawk enter state")
+        //target.addAbility('Aloc')        
+        hawk = scoutHawkInstance.hawk
+        troll = scoutHawkInstance.troll
+
+    override function exitState()
+        //target.removeAbility('Aloc')
+        //doAfter(ANIMATION_PERIOD) ->
+            //target.kill() 
+            //troll.damageTarget(target, 45, true, false, ATTACK_TYPE_NORMAL , DAMAGE_TYPE_NORMAL, null)
+        //print("destroy fetchHawk")
+        //destroy this

@@ -176,7 +176,7 @@ public let BONE_BOOTS_RECIPE  = "a pair of " + "Bone Boots. "  .color(COLOR_ORAN
 public let IRON_BOOTS_RECIPE  = "a pair of " + "Iron Boots. "  .color(COLOR_GRAY     ) + TT_IRON_BOOTS  + " \n\n1x " + BASICBOOTS + " + 2x " + IRON
 public let STEEL_BOOTS_RECIPE = "a pair of " + "Steel Boots. " .color(COLOR_TURQUOISE) + TT_STEEL_BOOTS + " \n\n1x " + BASICBOOTS + " + 2x " + STEEL
 
-public let IRON_STAFF_RECIPE = TT_IRON_STAFF+"\n\n1x "+STICK+"1x "+MC+"2x "+IRON+"1x "+MC
+public let IRON_STAFF_RECIPE = TT_IRON_STAFF+"\n\n1x "+STICK+"1x "+"2x "+IRON+"1x "+MC
 
 
 

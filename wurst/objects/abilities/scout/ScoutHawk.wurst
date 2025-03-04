@@ -1,0 +1,100 @@
+package ScoutHawk
+
+import Icons
+import ClosureEvents
+import Orders
+import ToolTipsUtils
+import LocalObjectIDs
+import ChannelAbilityPreset
+import Lodash
+import InstantDummyCaster
+import ClosureForGroups
+import ErrorHandling
+import HashMap
+import ClosureTimers
+import Classes
+import LinkedList
+import ClosuresForItems
+import GameStates
+import PlayerExtensions
+import Radars
+import PingHerbs
+import UnitIds
+import StateMachine
+
+
+public HashMap<unit, ScoutHawk> scoutHawkInstances = new HashMap<unit,ScoutHawk>()
+
+public class ScoutHawk
+
+    unit troll
+    unit hawk
+    real hawkCirclingArea  = 800.
+    real fullCircleTime = 10.
+    real hawkVelocity = 100.
+    real radians = 0
+    StateMachine stateMachine
+    vec3 pos
+
+    construct(unit _troll)
+        troll = _troll
+        hawk = CreateUnit(troll.getOwner(), UNIT_SCOUT_HAWK, troll.getPos().x, troll.getPos().y, 0.)
+        doAfter(ANIMATION_PERIOD) ->     
+            stateMachine = new StateMachine(this)
+        //doPeriodically(ANIMATION_PERIOD) (CallbackPeriodic cb) ->
+            //update()
+
+    function onLevel()
+        troll.setAbilityLevel(ABILITY_HAWK_SWOOP, 2)
+        if troll.getLevel() == 4 and troll.getTrollClassType() == ClassType.SUB_CLASS
+            troll.setAbilityLevel(ABILITY_HAWK_RESCUE, 2)
+
+    function onSub()
+        hawk.setScale(1.25)
+
+class ScoutHawkDefinition extends UnitDefinition
+    construct(int unitId)
+        super(unitId, UnitIds.wareagle3)
+        this.setUnitClassification("Peon")
+        this.setNormalAbilities("Aloc")
+        this.setUpgradesUsed("")
+        this.setScalingValue(1)
+        this.setTurnRate(3.)
+        //this.setAttack1AnimationDamagePoint(0.01)
+        this.setAttacksEnabled(0)
+        this.setMovementHeight(450)
+        this.setMovementHeightMinimum(50)
+        this.setSpeedBase(400)
+        this.setGoldBountyAwardedBase(0)
+        this.setGoldBountyAwardedNumberofDice(0)
+        this.setGoldBountyAwardedSidesperDie(0)
+        this.setHitPointsMaximumBase(135)
+        this.setSightRadiusDay(100)
+        this.setSightRadiusNight(100)
+        this.setLevel(4)
+        this.setHitPointsRegenerationType("")
+        this.setNameEditorSuffix("(Wurst)")
+
+
+function initializeScouts()
+    GameStates.gameplay.onEnter() state ->
+        for i=0 to GetBJMaxPlayerSlots()-1
+            let troll = players[i].getTroll()
+            if troll.getTypeId() == UNIT_SCOUT
+                scoutHawkInstances.put(troll, new ScoutHawk(troll))
+
+@compiletime function createHawks()
+    new ScoutHawkDefinition(UNIT_SCOUT_HAWK)
+
+function onSub(unit caster)
+    let instance = scoutHawkInstances.get(caster)
+    if instance == null
+        return
+    instance.onSub()
+
+init
+    initializeScouts()
+
+    EventListener.onCast(ABILITY_OBSERVER) (unit caster) ->
+        onSub(caster) 
+

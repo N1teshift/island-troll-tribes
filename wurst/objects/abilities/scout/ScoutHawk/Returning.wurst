@@ -1,0 +1,69 @@
+package Returning
+
+import Icons
+import ClosureEvents
+import Orders
+import ToolTipsUtils
+import LocalObjectIDs
+import ChannelAbilityPreset
+import Lodash
+import InstantDummyCaster
+import ClosureForGroups
+import ErrorHandling
+import HashMap
+import ClosureTimers
+import Classes
+import LinkedList
+import ClosuresForItems
+import GameStates
+import PlayerExtensions
+import Radars
+import PingHerbs
+import UnitIds
+import initlater ScoutHawk
+import initlater StateMachine
+import initlater Idle
+
+let FOLLOW_SPEED_PER_TICK = 20.
+
+public class Returning extends HawkState
+    unit target
+    unit hawk
+    unit troll
+    real hawkCirclingArea  = 800.
+    real speedPerTick
+    vec2 currentPos
+    ScoutHawk scoutHawkInstance
+    construct(HawkStates state, ScoutHawk _scoutHawkInstance)
+        super(state)
+        //print("Returning constructed")
+        scoutHawkInstance = _scoutHawkInstance  
+        hawk = scoutHawkInstance.hawk
+        troll = scoutHawkInstance.troll
+
+    override function updateState()
+        if queuedState != null
+            return
+        if scoutHawkInstance == null
+            //print("null")
+            return
+        currentPos = hawk.getPos()
+        let newPos = currentPos.moveTowards(troll.getPos(), FOLLOW_SPEED_PER_TICK)
+        if currentPos.distanceTo(troll.getPos())<=350.
+            queuedState = new Idle(HawkStates.idle, scoutHawkInstance)
+            //print("changed next state to Idle")
+            return
+        ////print("returning update") 
+        hawk.setPos(newPos)
+        hawk.setFacing(currentPos.angleTo(troll.getPos()))
+        currentPos=newPos
+        ////print("x = "+pos.x.toString()+" y = "+pos.y.toString()+" radians = "+radians.toString())  
+
+    override function enterState()
+        //print("Returning enter state")
+        hawk = scoutHawkInstance.hawk
+        troll = scoutHawkInstance.troll
+
+    override function exitState()
+        //print("destroy Returning")
+        //destroy this

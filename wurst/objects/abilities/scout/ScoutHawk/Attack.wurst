@@ -1,0 +1,139 @@
+package Attack
+
+import Icons
+import ClosureEvents
+import Orders
+import ToolTipsUtils
+import LocalObjectIDs
+import ChannelAbilityPreset
+import Lodash
+import InstantDummyCaster
+import ClosureForGroups
+import ErrorHandling
+import HashMap
+import ClosureTimers
+import Classes
+import LinkedList
+import ClosuresForItems
+import GameStates
+import PlayerExtensions
+import Radars
+import PingHerbs
+import UnitIds
+import initlater ScoutHawk
+import StateMachine
+import UnitExtensions
+import Idle
+import Returning
+import BuffObjEditing
+import BuffIds
+import Abilities
+import LocalAssets
+
+public let BLIND_DURATION_HERO = 2.
+public let BLIND_DURATION_UNIT = 4.
+public let BLIND_DAMAGE_PER_SECOND = 10.
+
+public class Attack extends HawkState
+    unit target
+    item itm
+    unit hawk
+    vec3 newPos
+    real elapsedTime
+    effect attackEfx
+    CallbackPeriodic cb
+    ScoutHawk scoutHawkInstance
+    construct(HawkStates state, unit _target, ScoutHawk _scoutHawkInstance)
+        super(state)
+        target = _target
+        scoutHawkInstance = _scoutHawkInstance  
+
+    override function updateState()
+        if not target.hasAbility(BUFF_SCOUT_HAWK_BLIND)
+            hawk.issueImmediateOrder("stop")
+            queuedState = new Returning(HawkStates.returning, scoutHawkInstance)
+            //print("changed next state to Returning")
+            return       
+        elapsedTime+=ANIMATION_PERIOD
+        if queuedState != null
+            return
+        if scoutHawkInstance == null
+            //print("null")
+            return       
+        
+        newPos = target.getPos3Fly()
+        let xOffset = 75*(Cos(target.getFacingAngle().radians()))
+        let yOffset = 75*(Sin(target.getFacingAngle().radians()))
+        newPos.z+=75
+        newPos.x+=xOffset
+        newPos.y+=yOffset
+        ////print("attack update") 
+        hawk.setPosReal(newPos)
+        let angleOffset = 180.
+        hawk.setFacing(target.getFacingAngle().op_plus(angleOffset.asAngleDegrees()))
+        //hawk.setFacing(currentPos.angleTo2d(target.getPos3Real()))
+
+    function playEfx()
+        let pitch = GetRandomReal(-0.45, 45)
+        attackEfx = addEffect(LocalAbilities.hawkClawAnimation, hawk.getPos())
+            ..setScale(0.4)
+            ..setPitch(pitch)
+            ..destr()
+
+
+    override function enterState()
+            //..setScale(0.5)            
+        hawk = scoutHawkInstance.hawk
+        //print("attack enter state")
+        applySpell()          
+
+
+    function applySpell()
+        hawk.issueTargetOrderById(OrderIds.attack, target)
+        playEfx()
+        //playEfx()
+        let duration = target.isTroll() ? BLIND_DURATION_HERO : BLIND_DURATION_UNIT
+        let dmgPerTick = duration/(1+(duration))*BLIND_DAMAGE_PER_SECOND
+        hawk.damageTarget(target, dmgPerTick, true, false, ATTACK_TYPE_NORMAL , DAMAGE_TYPE_NORMAL, null)
+        cb = doPeriodically(1.) (CallbackPeriodic cb) ->
+            if cb!= null
+                hawk.damageTarget(target, dmgPerTick, true, false, ATTACK_TYPE_NORMAL , DAMAGE_TYPE_NORMAL, null)
+                playEfx()        
+        if InstantDummyCaster.castTarget(hawk.getOwner(), ABILITY_SCOUT_HAWK_BLIND, 1, OrderIds.curse, target, target.getPos())
+            //print("applied blind")
+
+    override function exitState()
+        if cb!= null
+            destroy cb
+        //print("destroy attack")
+        //destroy this
+
+@compiletime function createBlindAbility()
+    new AbilityDefinitionCurse(ABILITY_SCOUT_HAWK_BLIND)
+        ..presetChancetoMiss(lvl->1)
+        ..presetDurationHero(lvl->BLIND_DURATION_HERO)
+        ..presetDurationNormal(lvl->BLIND_DURATION_UNIT)
+        ..presetTargetsAllowed(lvl ->commaList(
+            TargetsAllowed.enemies,
+            TargetsAllowed.air,
+            TargetsAllowed.ground,
+            TargetsAllowed.neutral
+        ))
+        ..presetBuffs(lvl->toRawCode(BUFF_SCOUT_HAWK_BLIND))
+        ..setArtCaster("")
+        ..setArtTarget("")
+        ..setArtEffect("")
+        ..setArtSpecial("")
+        ..setDummyAbility()
+
+    new BuffDefinition(BUFF_SCOUT_HAWK_BLIND, BuffIds.curse)
+        ..setIcon(Icons.bTNSpellSteal)
+        ..setTargetAttachmentPoint0(1, "overhead")
+        ..setArtTarget(1, Abilities.bloodImpact)
+        ..setTooltipNormal(1, "Blinded")
+        ..setTooltipNormalExtended(1, "100% to miss. Lasts for {0} seconds".format(BLIND_DURATION_HERO.toString()))
+        ..setEditorSuffix(1, "(Wurst)")
+
+            
+            
+        

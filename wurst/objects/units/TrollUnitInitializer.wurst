@@ -6,6 +6,7 @@ import TrollUnitTextConstant
 import UnitObjEditing
 import Assets
 import LocalAssets
+import ObjEditingUtils
 
 
 
@@ -740,11 +741,11 @@ function createScout(int unitId) returns HeroDefinition
 
 function createObserver(int unitId) returns HeroDefinition
     return createSubTroll(unitId)
-        ..setNameEnhance("Observer")
+        ..setNameEnhance("Hawk")
         ..setAttackDamage(10)
         ..setAttackSpeed(1.8)
-        ..setModelFile(LocalUnits.observer)
-        ..setIcons(LocalIcons.bTNObserverSentry)
+        ..setModelFile(LocalUnits.hawkTroll)
+        ..setIcons(Icons.bTNWyvernRider)
         ..setUnitSoundSet(Soundsets.shade)
         ..setSpeedBase(300)
         ..setButtonPositionX(1)
@@ -756,7 +757,7 @@ function createObserver(int unitId) returns HeroDefinition
         ..setProperNames(NAME_OBSERVER)
         ..setProperNamesUsed(3)
         ..setHotkey("Q")
-        ..setAbilitiesEnhance(NORMAL_SPELLS_OBSERVER, HERO_SPELLS_OBSERVER)
+        ..setAbilitiesEnhance(NORMAL_SPELLS_HAWK, HERO_SPELLS_HAWK)
 
 @compiletime function createObserver()
     createObserver(UNIT_OBSERVER)
@@ -897,7 +898,7 @@ function createAlchemist(int unitId) returns HeroDefinition
         ..setSightRadiusDay(1800)
         ..setSightRadiusNight(1800)
         ..setTooltipExtended(TOOLTIP_ALCHEMIST)
-        ..setProperNames("Waltuh")
+        ..setProperNames("Waltuh, potion el even")
         ..setProperNamesUsed(1)
         ..setHotkey("E")
         ..setAbilitiesEnhance(NORMAL_SPELLS_ALCHEMIST, HERO_SPELLS_ALCHEMIST)

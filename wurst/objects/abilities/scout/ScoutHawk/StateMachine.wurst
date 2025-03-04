@@ -1,0 +1,143 @@
+package StateMachine
+
+import Icons
+import ClosureEvents
+import Orders
+import ToolTipsUtils
+import LocalObjectIDs
+import ChannelAbilityPreset
+import Lodash
+import InstantDummyCaster
+import ClosureForGroups
+import ErrorHandling
+import HashMap
+import ClosureTimers
+import Classes
+import LinkedList
+import ClosuresForItems
+import GameStates
+import PlayerExtensions
+import Radars
+import PingHerbs
+import UnitIds
+import initlater ScoutHawk
+import initlater Idle
+import initlater Swoop
+import SimError
+import initlater Cyclone
+
+public enum HawkStates
+    idle
+    follow
+    swoop
+    attack
+    returning
+    fetchItem
+    fetchHawk
+    fetchSmallAnimal
+    rescue
+    cyclone
+
+public abstract class HawkState
+    HawkStates stateKey
+    //HawkStates nextStateKey
+    HawkState queuedState
+    construct(HawkStates state)
+        stateKey = state
+        //nextStateKey = stateKey
+    abstract function updateState()
+    abstract function enterState()
+    abstract function exitState()
+
+
+
+public class StateMachine
+    //HashMap<HawkStates, HawkState> states
+    HawkState currentState
+    //HawkStates queuedStateKey
+    HawkState queuedState
+    ScoutHawk scoutHawkInstance
+    bool isTransitioning = false
+    unit closestFish
+    real closestDistance = FETCH_FISH_SEARCH_RADIUS
+    construct(ScoutHawk _scoutHawkInstance)
+        scoutHawkInstance = _scoutHawkInstance
+        currentState = new Idle(HawkStates.idle, scoutHawkInstance)
+        start()
+        doPeriodically(ANIMATION_PERIOD) (CallbackPeriodic cb) ->
+            update()
+    
+    function start()
+        currentState.enterState()
+    
+    function update()
+        if isTransitioning == true
+            return
+        if queuedState != null
+            transitionToState(queuedState)
+            //print("issued state change")
+            return
+        let nextState = currentState.queuedState
+        if nextState != null
+            transitionToState(nextState)
+            //print("next state change")
+            return
+        if currentState == null
+            //print("update null state")
+            return
+        currentState.updateState()
+    
+    function transitionToState(HawkState _queuedState)
+        isTransitioning = true
+        currentState.exitState()
+        currentState = _queuedState
+        //print("state transition to ")
+        queuedState = null
+        if currentState == null
+            //print("transition null state")
+        currentState.enterState()
+        isTransitioning = false
+        //this.queuedState = null
+
+    function queueState(HawkState newState)
+        queuedState = newState
+        //print("queued new state ")
+
+    function findNearestFish(vec2 targetPos) returns unit
+        let troll =scoutHawkInstance.troll
+        closestFish = troll
+        closestDistance = FETCH_FISH_SEARCH_RADIUS
+        forUnitsInRange(targetPos, FETCH_FISH_SEARCH_RADIUS) (unit u) ->
+            if (u.getTypeId() == UNIT_FISH or u.getTypeId() == UNIT_GREEN_FISH) and closestFish.getTypeId() != UNIT_GREEN_FISH
+                let newDistance = u.getPos().distanceTo(targetPos)                
+                if newDistance < closestDistance
+                    this.closestFish = u
+                    this.closestDistance = newDistance
+        if closestFish == troll
+            simError(troll.getOwner(), "There is no fish in radius.")
+            return null
+        return closestFish
+
+    function onSwoopPointCast(vec2 targetPos, item targetItem, ScoutHawk instance)
+        let target = findNearestFish(targetPos)
+
+        if target == null
+            return
+        queuedState = new Swoop(HawkStates.swoop, target, targetItem, instance) 
+
+    function onSwoopTargetCast(unit target, item targetItem, ScoutHawk instance)
+        queuedState = new Swoop(HawkStates.swoop, target, targetItem, instance) 
+
+    function onRescuePointCast(unit target, vec2 targetPos, ScoutHawk instance)
+        queuedState = new Swoop(HawkStates.swoop, target, targetPos, instance) 
+
+    function onRescueTargetCast(unit target, ScoutHawk instance)
+        queuedState = new Swoop(HawkStates.swoop, target, null, instance)
+
+    function onCycloneCast(unit target, ScoutHawk instance)
+        queuedState = new Cyclone(HawkStates.cyclone, target, instance)
+
+      
+
+
+

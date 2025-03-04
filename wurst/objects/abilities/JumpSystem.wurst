@@ -15,7 +15,7 @@ import UnitExtensions
 let DEFAULT_GRAVITY = 175.
 let MAX_TURNSPEED = 3.
 let HEIGHT_CHANGE_RATE = 10000.
-let CROWFORM_ID = 'Amrf'
+public let CROWFORM_ID = 'Amrf'
 
 let TARGET_SEARCH_MIN_RANGE = 200.
 let TARGET_SEARCH_INCREMENT = 25

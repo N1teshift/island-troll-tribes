@@ -1,0 +1,97 @@
+package LvlUpUpgrades
+
+// Standard library imports:
+import HashMap
+import RegisterEvents
+
+// Local imports:
+import Classes
+import LocalObjectIDs
+import Transformation
+import UnitExtensions
+import LegacyHotkeys
+import TrollUnitTextConstant
+import IdListConstant
+import UpgradeObjEditing
+import ClosureEvents
+import ClosureTimers
+import PlayerExtensions
+import ObjectIds
+import GameStates
+
+
+
+@compiletime function createUpgradeDefinitions()
+    new UpgradeDefinition(UPGD_LVL_2)
+        ..setName(1, "Level 2")
+        ..setLevels(1)
+        ..addEffectAbilityLevelBonus(0, 1, ABILITY_PANIC.toRawCode())
+
+    new UpgradeDefinition(UPGD_LVL_3)
+        ..setName(1, "Level 3")
+        ..setLevels(1)
+        ..addEffectAbilityLevelBonus(0, 1, ABILITY_PANIC.toRawCode())
+
+    new UpgradeDefinition(UPGD_LVL_4)
+        ..setName(1, "Level 4")
+        ..setLevels(1)
+        ..addEffectAbilityLevelBonus(0, 1, ABILITY_PANIC.toRawCode())
+
+    new UpgradeDefinition(UPGD_LVL_2_SUBBED)
+        ..setName(1, "Level 2 subbed")
+        ..setLevels(1)
+        ..addEffectAbilityLevelBonus(0, 1, ABILITY_PANIC.toRawCode())
+
+    new UpgradeDefinition(UPGD_LVL_3_SUBBED)
+        ..setName(1, "Level 3 subbed")
+        ..setLevels(1)
+        ..addEffectAbilityLevelBonus(0, 1, ABILITY_PANIC.toRawCode())
+
+    new UpgradeDefinition(UPGD_LVL_4_SUBBED)
+        ..setName(1, "Level 4 subbed")
+        ..setLevels(1)
+        ..addEffectAbilityLevelBonus(0, 1, ABILITY_PANIC.toRawCode())
+
+function onLevel(unit troll)
+    let p = troll.getOwner()
+    switch troll.getLevel()
+        case 2
+            //print("1")
+            p.setTechResearched(UPGD_LVL_2, 1)
+        case 3
+            //print("2")
+            p.setTechResearched(UPGD_LVL_3, 1)
+        case 4
+            //print("3")
+            p.setTechResearched(UPGD_LVL_4, 1)
+    if troll.getTrollClassType() == ClassType.BASE_CLASS
+        return
+    switch troll.getLevel()
+        case 2
+            //print("11")
+            p.setTechResearched(UPGD_LVL_2_SUBBED, 1)
+        case 3
+            //print("22")
+            p.setTechResearched(UPGD_LVL_3_SUBBED, 1)
+        case 4
+            //print("33")
+            p.setTechResearched(UPGD_LVL_4_SUBBED, 1)    
+        
+function disableUpgrades(player p)
+    p.setTechResearched(UPGD_LVL_2, 0)
+    p.setTechResearched(UPGD_LVL_3, 0) 
+    p.setTechResearched(UPGD_LVL_4, 0) 
+    p.setTechResearched(UPGD_LVL_2_SUBBED, 0) 
+    p.setTechResearched(UPGD_LVL_3_SUBBED, 0) 
+    p.setTechResearched(UPGD_LVL_4_SUBBED, 0)  
+
+init
+    EventListener.add(EVENT_PLAYER_HERO_LEVEL) ->
+        let troll =GetLevelingUnit()
+        doAfter(ANIMATION_PERIOD)->
+            onLevel(troll)
+
+    GameStates.gameplay.onEnter() state -> 
+        for i=0 to GetBJMaxPlayerSlots()-1
+            disableUpgrades(players[i])
+            //print("disabled for "+GetPlayerName(players[i]))          

@@ -59,11 +59,12 @@ public constant TT_DISEASE_POTION = "" +
         ..setNameEnhance("Disease Potion")
         ..setTooltipExtended(TT_DISEASE_POTION)
         ..setDescription(TT_DISEASE_POTION)
-        ..setLumberCost(13)
+        ..setLumberCost(10)
         ..setAbilities(commaList(ABILITY_DISEASE_POTION))
         ..setScalingValue(0.70)
         ..setCooldownGroup(commaList(ABILITY_DISEASE_POTION))
         ..setStockReplenishInterval(120)
+        ..setStockMaximum(4)
 
 public function isUnitDiseased(unit u) returns bool
     return diseaseInstances.has(u)

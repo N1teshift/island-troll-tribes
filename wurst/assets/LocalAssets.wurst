@@ -4,6 +4,14 @@ package LocalAssets
 import ObjectIdGenerator
 
 public class LocalIcons
+    static constant bTNWing                  ="ReplaceableTextures\\CommandButtons\\BTNWing.blp"
+    static constant pASBTNBringDown          ="ReplaceableTextures\\CommandButtons\\PASBTNBringDown.blp"
+    static constant pASBTNSwoopEnemy          ="ReplaceableTextures\\CommandButtons\\PASBTNSwoopEnemy.blp"
+    static constant pASBTNFetchItem           ="ReplaceableTextures\\CommandButtons\\PASBTNFetchItem.blp"
+    static constant pASBTNBirdOfPrey           ="ReplaceableTextures\\CommandButtons\\PASBTNBirdOfPrey.blp"
+    static constant bTNHawkSwoop           ="ReplaceableTextures\\CommandButtons\\BTNHawkSwoop.blp"
+    static constant pASBTNDreamVision           ="ReplaceableTextures\\CommandButtons\\PASBTNDreamVision.blp"
+    static constant pASBTNEagleSight           ="ReplaceableTextures\\CommandButtons\\PASBTNEagleSight.blp"
     static constant bTNWindSerpentPassive             ="ReplaceableTextures\\CommandButtons\\bTNWindSerpentPassive.blp"
     static constant bTNTimberWolfPassive             ="ReplaceableTextures\\CommandButtons\\BTNTimberWolfPassive.blp"
     static constant bTNPantherPassive             ="ReplaceableTextures\\CommandButtons\\BTNPantherPassive.blp"
@@ -185,6 +193,7 @@ public class LocalIcons
 
 public class LocalUnits
     // A nonexistent model used to hide units.
+    static constant hawkTroll                      = "Models\\Units\\HawkFix.mdx"
     static constant ForestTrollWithElkHide         = "Models\\Units\\ForestTrollWithElkHide.mdx"
     static constant TrollHexerMasked               = "Models\\Units\\TrollHexerMasked.mdx"
     static constant dummy                          = "Models\\Units\\Dummy.mdl"
@@ -224,6 +233,7 @@ public class LocalBuildings
     static constant workshop   = "Models\\Buildings\\OrcLumbermill(noground)V2.01.mdx"
 
 public class LocalAbilities
+    static constant hawkClawAnimation              = "Models\\Abilities\\Reaper'sClawsRed.mdx"
     static constant undeadDissipate                = "Models\\Abilities\\pizdec.mdx"
     static constant bladeStorm                     = "Models\\Abilities\\BladeStorm.mdx"
     static constant bearTrap                       = "Models\\Abilities\\BearTrap.mdx"
