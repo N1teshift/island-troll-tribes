@@ -74,7 +74,7 @@ let transformations = new LinkedList<Pair<int, int>>()
     ..add(new Pair(UNIT_MAGE, UNIT_DREAMWALKER))
     ..add(new Pair(UNIT_MAGE, UNIT_DEMENTIA_MASTER))
     ..add(new Pair(UNIT_ELEMENTALIST, UNIT_DEMENTIA_MASTER))
-    ..add(new Pair(UNIT_HYPNOTIST, UNIT_DEMENTIA_MASTER))
+    ..add(new Pair(UNIT_DREAMWALKER, UNIT_DEMENTIA_MASTER))
     // Scout
     ..add(new Pair(UNIT_SCOUT, UNIT_TRAPPER))
     ..add(new Pair(UNIT_SCOUT, UNIT_OBSERVER))

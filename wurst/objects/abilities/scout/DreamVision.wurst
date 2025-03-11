@@ -34,6 +34,7 @@ import BonusHandler
 public let DREAM_VISION_RANGE_LVL_1 = 2000.
 public let DREAM_VISION_RANGE_LVL_2 = 3000.
 public let HAWK_VISION_RANGE = 1200.
+public let VISION_LOSS_DELAY = 1.5
 
 
 HashMap<unit, DreamVision> dreamVisionInstances = new HashMap<unit,DreamVision>()
@@ -88,7 +89,8 @@ class DreamVision
         doPeriodically(0.125) (CallbackPeriodic cb) ->
             if not troll.hasAbility('BUsl')// sleep buffId
                 //print("sleep ended")
-                hawk.addBonus(Bonus.SIGHTRANGE, -HAWK_VISION_RANGE)
+                doAfter(VISION_LOSS_DELAY) ->              
+                    hawk.addBonus(Bonus.SIGHTRANGE, -HAWK_VISION_RANGE)
                 if cb != null
                     destroy cb
 
@@ -98,7 +100,7 @@ class DreamVision
             return
         let closestHawk = getClosestHawk()
         if closestHawk == null
-            //gainYourHawkVision()
+            gainYourHawkVision()
             //print("no hawks found")
             return
         handleVision(closestHawk)

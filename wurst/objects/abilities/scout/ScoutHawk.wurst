@@ -55,7 +55,6 @@ public class ScoutHawk
 class ScoutHawkDefinition extends UnitDefinition
     construct(int unitId)
         super(unitId, UnitIds.wareagle3)
-        this.setUnitClassification("Peon")
         this.setNormalAbilities("Aloc")
         this.setUpgradesUsed("")
         this.setScalingValue(1)

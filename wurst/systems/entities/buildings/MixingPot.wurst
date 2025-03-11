@@ -5,7 +5,7 @@ import Building
 import LocalObjectIDs
 
 public class MixingPot extends Building
-    private static let unitTypeId = UNIT_POT
+    private static let unitTypeId = UNIT_MIXING_POT
 
     static function initialize()
         register(unitTypeId, building -> new MixingPot(building))

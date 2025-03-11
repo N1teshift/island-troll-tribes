@@ -1,0 +1,178 @@
+package ForgeV2
+
+import LocalObjectIDs
+import ClosureTimers
+import CustomItemDefinition
+import ShieldsDefinition
+
+let UNIT_REQUIREMENT = UNIT_FORGE
+
+public function initializeForgeItems()
+    new CustomItemDefinition(ITEM_BONE_GLOVES)
+    ..addBonusAttackSpeed(20)
+    ..addBonusDamage(1)
+    ..addBonusArmour(2)
+    ..setItemRecipe(ITEM_ELK_SKIN_GLOVES, ITEM_BONE, ITEM_BONE, ITEM_BONE, ITEM_BONE, ITEM_BONE)
+    ..setQuickMakeAbility(ABILITY_QM_BONE_GLOVES)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+
+    new CustomItemDefinition(ITEM_BONE_BOOTS)
+    ..addBonusMovementSpeed(70)
+    ..addBonusIntelligence(3)
+    ..addBonusArmour(3)
+    ..addSpecialAbilities(ABILITY_SPEED_BONUS_70)
+    ..setItemRecipe(ITEM_ELK_SKIN_BOOTS, ITEM_BONE, ITEM_BONE, ITEM_BONE, ITEM_BONE, ITEM_BONE)
+    ..setQuickMakeAbility(ABILITY_QM_BONE_BOOTS)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+
+    new CustomItemDefinition(ITEM_BONE_COAT)
+    ..addBonusStrength(3)
+    ..addBonusIntelligence(4)
+    ..addBonusArmour(2)
+    ..setItemRecipe(ITEM_ELK_SKIN_COAT, ITEM_BONE, ITEM_BONE, ITEM_BONE, ITEM_BONE, ITEM_BONE)
+    ..setQuickMakeAbility(ABILITY_QM_BONE_COAT)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+    
+    new CustomItemDefinition(ITEM_IRON_BOOTS)
+    ..addBonusMovementSpeed(80)
+    ..addBonusIntelligence(6)
+    ..addBonusArmour(3)
+    ..addSpecialAbilities(ABILITY_SPEED_BONUS_80)
+    ..setItemRecipe(ITEM_ELK_SKIN_BOOTS, ITEM_IRON_INGOT, ITEM_IRON_INGOT)
+    ..setQuickMakeAbility(ABILITY_QM_IRON_BOOTS)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+
+    new CustomItemDefinition(ITEM_MAGE_MASHER)
+    ..addBonusDamage(7)
+    ..addSpecialAbilities(ABILITY_ATTACK_TREE)
+    ..setItemRecipe(ITEM_STICK, ITEM_SPIRIT_WIND, ITEM_SPIRIT_WATER, ITEM_MANA_CRYSTAL)
+    ..setQuickMakeAbility(ABILITY_QM_MAGE_MASHER)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+         
+    new CustomItemDefinition(ITEM_IRON_COAT)
+    ..addBonusStrength(4)
+    ..addBonusIntelligence(6)
+    ..addBonusArmour(3)
+    ..setItemRecipe(ITEM_ELK_SKIN_COAT, ITEM_IRON_INGOT, ITEM_IRON_INGOT)
+    ..setQuickMakeAbility(ABILITY_QM_IRON_COAT)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+
+    new CustomItemDefinition(ITEM_IRON_GLOVES)
+    ..addBonusAttackSpeed(25)
+    ..addBonusDamage(2)
+    ..addBonusArmour(3)
+    ..setItemRecipe(ITEM_ELK_SKIN_GLOVES, ITEM_IRON_INGOT, ITEM_IRON_INGOT)
+    ..setQuickMakeAbility(ABILITY_QM_IRON_GLOVES)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+
+    new CustomItemDefinition(ITEM_STEEL_GLOVES)
+    ..addBonusAttackSpeed(35)
+    ..addBonusArmour(5)
+    ..addBonusDamage(4)
+    ..setItemRecipe(ITEM_ELK_SKIN_GLOVES, ITEM_STEEL_INGOT, ITEM_STEEL_INGOT)
+    ..setQuickMakeAbility(ABILITY_QM_STEEL_GLOVES)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+
+    new CustomItemDefinition(ITEM_STEEL_BOOTS)
+    ..addSpecialAbilities(ABILITY_SPEED_BONUS_100)
+    ..addBonusIntelligence(10)
+    ..addBonusArmour(5)
+    ..setItemRecipe(ITEM_ELK_SKIN_BOOTS, ITEM_STEEL_INGOT, ITEM_STEEL_INGOT)
+    ..setQuickMakeAbility(ABILITY_QM_STEEL_BOOTS)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+
+    new CustomItemDefinition(ITEM_STEEL_COAT)
+    ..addBonusStrength(8)
+    ..addBonusIntelligence(8)
+    ..addBonusArmour(5)
+    //..addActiveAbility(CureAll)
+    ..setItemRecipe(ITEM_ELK_SKIN_COAT, ITEM_STEEL_INGOT, ITEM_STEEL_INGOT)
+    ..setQuickMakeAbility(ABILITY_QM_STEEL_COAT)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+
+    new CustomItemDefinition(ITEM_STEEL_AXE)
+    ..addBonusDamage(12)
+    ..addSpecialAbilities(ABILITY_ATTACK_TREE)
+    ..setItemRecipe(ITEM_STICK, ITEM_STEEL_INGOT, ITEM_STEEL_INGOT)
+    ..setQuickMakeAbility(ABILITY_QM_STEEL_AXE)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+    
+    new CustomItemDefinition(ITEM_IRON_AXE)
+    ..addBonusDamage(8)
+    ..addSpecialAbilities(ABILITY_ATTACK_TREE)
+    ..setItemRecipe(ITEM_STICK, ITEM_IRON_INGOT, ITEM_IRON_INGOT)
+    ..setQuickMakeAbility(ABILITY_QM_IRON_AXE)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+    
+    new CustomItemDefinition(ITEM_IRON_STAFF)
+    ..addBonusDamage(8)
+    ..addBonusArmour(2)
+    ..addBonusIntelligence(10)
+    ..setItemRecipe(ITEM_STICK, ITEM_IRON_INGOT, ITEM_IRON_INGOT, ITEM_MANA_CRYSTAL)
+    ..setQuickMakeAbility(ABILITY_QM_IRON_STAFF)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+
+    new CustomItemDefinition(ITEM_BONE_SHIELD)
+    ..addSpecialAbilities(ABILITY_BONE_SHIELD_BLOCK_ID)
+    ..addSpecialAbilities(ABILITY_MAGIC_RESIST)
+    ..setItemRecipe(ITEM_SHIELD, ITEM_BONE, ITEM_BONE, ITEM_BONE, ITEM_BONE, ITEM_BONE)
+    ..setQuickMakeAbility(ABILITY_QM_BONE_SHIELD)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+
+    new CustomItemDefinition(ITEM_SHIELD)
+    ..addSpecialAbilities(ABILITY_BASIC_SHIELD_BLOCK_ID)
+    ..addSpecialAbilities(ABILITY_MAGIC_RESIST)
+    ..addBonusArmour(1) 
+    ..setItemRecipe(ITEM_ELK_HIDE, ITEM_STICK, ITEM_STICK)
+    ..setQuickMakeAbility(ABILITY_QM_SHIELD)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+
+    new CustomItemDefinition(ITEM_STEEL_SHIELD)
+    ..addSpecialAbilities(ABILITY_STEEL_SHIELD_BLOCK_ID)
+    ..addSpecialAbilities(ABILITY_MAGIC_RESIST)
+    ..addBonusArmour(4)
+    ..setItemRecipe(ITEM_SHIELD, ITEM_STEEL_INGOT, ITEM_STEEL_INGOT)
+    ..setQuickMakeAbility(ABILITY_QM_STEEL_SHIELD)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+    
+    new CustomItemDefinition(ITEM_IRON_SHIELD)
+    ..addSpecialAbilities(ABILITY_MAGIC_RESIST)
+    ..addSpecialAbilities(ABILITY_IRON_SHIELD_BLOCK_ID)
+    ..addBonusArmour(2)
+    ..setItemRecipe(ITEM_SHIELD, ITEM_IRON_INGOT, ITEM_IRON_INGOT)
+    ..setQuickMakeAbility(ABILITY_QM_IRON_SHIELD)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+
+    new CustomItemDefinition(ITEM_STEEL_INGOT)
+    ..setItemRecipe(ITEM_IRON_INGOT, ITEM_IRON_INGOT, ITEM_FLINT, ITEM_FLINT)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+    ..setQuickMakeAbility(ABILITY_QM_STEEL_INGOT)
+
+    new CustomItemDefinition(ITEM_IRON_INGOT)
+    ..setItemRecipe(ITEM_STONE, ITEM_FLINT)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+    ..setQuickMakeAbility(ABILITY_QM_IRON_INGOT)
+
+    new CustomItemDefinition(ITEM_SPEAR)
+    ..setItemRecipe(ITEM_STICK, ITEM_STONE)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+    ..setQuickMakeAbility(ABILITY_QM_SPEAR)
+
+    new CustomItemDefinition(ITEM_IRON_SPEAR)
+    ..setItemRecipe(ITEM_STICK, ITEM_IRON_INGOT)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+    ..setQuickMakeAbility(ABILITY_QM_IRON_SPEAR)
+
+    new CustomItemDefinition(ITEM_STEEL_SPEAR)
+    ..setItemRecipe(ITEM_STICK, ITEM_STEEL_INGOT)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+    ..setQuickMakeAbility(ABILITY_QM_STEEL_SPEAR)
+
+    new CustomItemDefinition(ITEM_DARK_SPEAR)
+    ..setItemRecipe(ITEM_STICK, ITEM_SPIRIT_DARKNESS)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+    ..setQuickMakeAbility(ABILITY_QM_DARK_SPEAR)
+
+
+
+        

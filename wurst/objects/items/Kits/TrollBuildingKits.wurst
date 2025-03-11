@@ -145,7 +145,7 @@ function createKitAbility(int abilId) returns AbilityDefinitionBuildTinyCastle
         ..setIconNormal(Icons.bTNSacrificialPit)
         ..setName("Build Mixing Pot")
         ..setDurationNormal(1, 10.0)
-        ..setUnitCreatedperplayerrace(1, commaList(UNIT_POT))
+        ..setUnitCreatedperplayerrace(1, commaList(UNIT_MIXING_POT))
 
 @compiletime function createTanneryAbility() returns AbilityDefinitionBuildTinyCastle
     return createKitAbility(ABIL_TANNERY)
@@ -243,6 +243,7 @@ function createKit(int itemId) returns ItemDefinition
     ..setLumberCost(5)
     ..setAbilities(commaList(ABIL_ENSNARE_TRAP))
     ..setScalingValue(1.0)
+    ..setStockMaximum(2)
     ..setStockReplenishInterval(120)
 
 @compiletime function createFireKit() returns ItemDefinition

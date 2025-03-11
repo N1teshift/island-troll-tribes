@@ -24,7 +24,7 @@ let indicators = new IterableMap<int, int>()
     ..put('d118', UNIT_ARMORY)
     ..put('d119', UNIT_WORKSHOP)
     ..put('d120', UNIT_TANNERY)
-    ..put('d121', UNIT_POT)
+    ..put('d121', UNIT_MIXING_POT)
     ..put('d122', UNIT_WITCH_DOCTORS_HUT)
 
 // Add the given abilities to the standard list, rather than overwriting.
@@ -54,7 +54,7 @@ function createBuilding(int newId, int oldId) returns BuildingDefinition
         ..setCollisionSize(144)
 
 @compiletime function createMixingPot() returns BuildingDefinition
-    return createBuilding(UNIT_POT)
+    return createBuilding(UNIT_MIXING_POT)
         ..setIconGameInterface(Icons.bTNSacrificialPit)
         ..setModelFile(LocalBuildings.mixingPot)
         ..setScalingValue(2)

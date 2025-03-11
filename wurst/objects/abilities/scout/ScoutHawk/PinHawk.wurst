@@ -31,8 +31,8 @@ import Abilities
 import LocalAssets
 
 public let PIN_DURATION = 8.
-public let PIN_DAMAGE_LVL_1 = 20.
-public let PIN_DAMAGE_LVL_2 = 40.
+public let PIN_DAMAGE_LVL_1 = 40.
+public let PIN_DAMAGE_LVL_2 = 60.
 public let PIN_DMG_PERIOD = 0.5
 
 public class PinHawk extends HawkState

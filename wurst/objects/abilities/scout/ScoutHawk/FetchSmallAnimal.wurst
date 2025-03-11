@@ -113,10 +113,16 @@ public class FetchSmallAnimal extends HawkState
         troll = scoutHawkInstance.troll
 
     override function exitState()
-        target.removeAbility('Aloc')
-        target.removeAbility(CROWFORM_ID)
+        let angle = target.getFacingAngle()
+        var pos = target.getPos3Real()
+        pos.z = troll.getPos3Real().z
+        let unitId = target.getTypeId()
+        target.remove()
+        target = createUnit(players[PLAYER_NEUTRAL_AGGRESSIVE], unitId, pos, angle)
+        //target.removeAbility('Aloc')
+        //target.removeAbility(CROWFORM_ID)
         doAfter(ANIMATION_PERIOD) ->
             //target.kill() 
-            troll.damageTarget(target, 45, true, false, ATTACK_TYPE_NORMAL , DAMAGE_TYPE_NORMAL, null)
+            troll.damageTarget(target, 100, true, false, ATTACK_TYPE_NORMAL , DAMAGE_TYPE_NORMAL, null)
         //print("destroy fetchSmallAnimal")
         //destroy this

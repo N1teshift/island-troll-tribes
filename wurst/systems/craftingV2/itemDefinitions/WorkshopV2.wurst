@@ -1,0 +1,85 @@
+package WorkshopV2
+
+import LocalObjectIDs
+import ClosureTimers
+import CustomItemDefinition
+
+let UNIT_REQUIREMENT = UNIT_WORKSHOP
+
+public function initializeWorkshopItems()
+    new CustomItemDefinition(ITEM_ENSNARE_TRAP_KIT)
+    ..setItemRecipe(ITEM_TINDER, ITEM_BONE, ITEM_STICK)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+    ..setQuickMakeAbility(ABILITY_QM_ENSNARE_TRAP)
+
+
+    new CustomItemDefinition(ITEM_BLOW_GUN)
+    ..setItemRecipe(ITEM_STICK, ITEM_CLAY_BALL)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+    ..setQuickMakeAbility(ABILITY_QM_BLOW_GUN)
+
+
+    new CustomItemDefinition(ITEM_POISON_THISTLES)
+    ..setItemRecipe(ITEM_THISTLES, ITEM_POISON)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+    ..setQuickMakeAbility(ABILITY_QM_POISON_THISTLES)
+
+
+    new CustomItemDefinition(ITEM_MANA_CRYSTAL)
+    ..setItemRecipe(ITEM_SPIRIT_WIND, ITEM_SPIRIT_WATER)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+    ..setQuickMakeAbility(ABILITY_QM_MANA_CRYSTAL)
+
+
+    new CustomItemDefinition(ITEM_MAGIC)
+    ..setItemRecipe(ITEM_MANA_CRYSTAL, ITEM_MANA_CRYSTAL)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+    ..setQuickMakeAbility(ABILITY_QM_MAGIC)
+
+
+    new CustomItemDefinition(ITEM_POISON_SPEAR)
+    ..setItemRecipe(ITEM_POISON, ITEM_SPEAR)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+    ..setQuickMakeAbility(ABILITY_QM_POISON_SPEAR)
+
+
+    new CustomItemDefinition(ITEM_NETS)
+    ..setItemRecipe(ITEM_TINDER, ITEM_TINDER)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+    ..setQuickMakeAbility(ABILITY_QM_NETS)
+
+
+    new CustomItemDefinition(ITEM_HUNTING_NET)
+    ..setItemRecipe(ITEM_NETS, ITEM_STONE)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+    ..setQuickMakeAbility(ABILITY_QM_HUNTING_NET)
+
+
+    new CustomItemDefinition(ITEM_HEALING_SALVE)
+    ..setItemRecipe(ITEM_ATHELAS_SEED, ITEM_BANANA)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+    ..setQuickMakeAbility(ABILITY_QM_HEALING_SALVE)
+
+
+    new CustomItemDefinition(ITEM_SMOKE_BOMB)
+    ..setItemRecipe(ITEM_BANANA, ITEM_SPIRIT_WIND)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+    ..setQuickMakeAbility(ABILITY_QM_SMOKE_BOMB)
+
+
+    new CustomItemDefinition(ITEM_FIRE_BOMB)
+    ..setItemRecipe(ITEM_SMOKE_BOMB, ITEM_FLINT, ITEM_MANA_CRYSTAL)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+    ..setQuickMakeAbility(ABILITY_QM_FIRE_BOMB)
+
+
+    new CustomItemDefinition(ITEM_DARK_THISTLES)
+    ..setItemRecipe(ITEM_THISTLES, ITEM_SPIRIT_DARKNESS)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+    ..setQuickMakeAbility(ABILITY_QM_DARK_THISTLES)
+
+
+    new CustomItemDefinition(ITEM_EMP)
+    ..setItemRecipe(ITEM_MANA_CRYSTAL, ITEM_MANA_CRYSTAL, ITEM_SPIRIT_WATER, ITEM_SPIRIT_WIND)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+    ..setQuickMakeAbility(ABILITY_QM_EMP)

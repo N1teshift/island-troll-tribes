@@ -86,38 +86,34 @@ class PassMeat
             troll.getOwner().setAbilityIcon(ABILITY_PASS_MEAT, ICONS.get(passMeatCharges))
 
     function calculatePassedAmount(unit target) returns int
-        let targetInstance = instances.get(target)
         var maxChargesReceived = 0
         var maxChargesGiven = 0
         let targetInventory = target.getInventory()
         for each in targetInventory
             if each == null
+                print("found empty slot +10")
                 maxChargesReceived+=10
             if each.getTypeId() == ITEM_COOKED_MEAT
-                maxChargesReceived+=(10-each.getCharges())    
+                maxChargesReceived+=(10-each.getCharges())
+                print("target can be passed +"+maxChargesReceived.toString()+" meat")    
             if maxChargesReceived>=10
                 break
-        //print("target has room for "+maxChargesReceived.toString()+" meat")
-        //print("target can receive "+targetInstance.receiveMeatCharges.toString()+" meat")
-        //maxChargesReceived = min(maxChargesReceived, targetInstance.receiveMeatCharges)
+
         let trollInventory = troll.getInventory()
         for each in trollInventory
             if each.getTypeId() == ITEM_COOKED_MEAT
                 maxChargesGiven += each.getCharges()
+                print("caster can pass "+maxChargesGiven.toString()+" total meat")
             if maxChargesGiven>=10
                 break
-        //print("caster has "+maxChargesGiven.toString()+" meat")
-        //print("caster can pass "+passMeatCharges.toString()+" meat")            
-        maxChargesGiven = min(maxChargesGiven, passMeatCharges)  
-
-        //let meatAmountPassed = maxChargesGiven>= maxChargesReceived ? maxChargesReceived : maxChargesGiven
-        //print(maxChargesGiven.toString()+" meat will be passed") 
+            
+        maxChargesGiven = min(maxChargesGiven, maxChargesReceived)
+        maxChargesGiven = min(maxChargesGiven, passMeatCharges) 
         destroy trollInventory
         destroy targetInventory   
         return maxChargesGiven
 
     function onCast(unit target)
-        let targetInstance = instances.get(target)
         let meatAmountPassed = calculatePassedAmount(target)
         //if targetInstance.receiveMeatCharges == 0
             //simError(troll.getOwner(), "Target has been passed maximum amount of meat recently")
@@ -128,7 +124,6 @@ class PassMeat
         reduceCasterMeat(meatAmountPassed)
         increaseTargetMeat(meatAmountPassed, target)
         passMeatCharges-=meatAmountPassed
-        //spendCharges(meatAmountPassed, target)
         chargeRecovery()
 
     function reduceCasterMeat(int amount)
@@ -137,7 +132,7 @@ class PassMeat
         for each in inventory
             if each.getTypeId() == ITEM_COOKED_MEAT
                 let charges = each.getCharges()
-                if charges == amountLeft
+                if charges == amountLeft or charges == 1
                     RemoveItem(each)
                     break
                 if charges >amountLeft

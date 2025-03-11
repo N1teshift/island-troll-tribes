@@ -46,7 +46,7 @@ let TT_SWOOP_NAME = "Swoop"
 let TT_SWOOP_EXT = "Hawk swoops down onto a target, attempting to claw their eyes out, blinding them."+
                     "\nDeals {0} damage per second.".format(BLIND_DAMAGE_PER_SECOND.toToolTipRed())+
                     "\nLasts for {0}({1}) seconds.".format(BLIND_DURATION_UNIT.toToolTipLightBlue(), BLIND_DURATION_HERO.toToolTipLightBlue())+
-                    "\nHas {0} seconds cooldown.".format(FETCH_ITEM_CD.toToolTipLightBlue())
+                    "\nHas {0} seconds cooldown.".format(SWOOP_CD.toToolTipLightBlue())
 
 let TT_FETCH_NAME = "Fetch"
 let TT_FETCH_EXT =  "Hawk can fetch an item for you. Can be used on bushes."+
@@ -64,7 +64,7 @@ let TT_BRING_DOWN_NAME = "Bring Down"
 let TT_BRING_DOWN_EXT = "Hawk can bring down a bird, slamming it into the ground, preventing it from flying for {0} seconds. ".format(PIN_DURATION.toToolTipLightBlue())+
                         "\nLvl 2: ".color(COLOR_GOLD_STR)+"deals {0} damage.".format(PIN_DAMAGE_LVL_1.toToolTipRed())+
                         "\nLvl 4: ".color(COLOR_GOLD_STR)+"deals {0} damage.".format(PIN_DAMAGE_LVL_2.toToolTipRed())+
-                        "\nHas {0} seconds cooldown.".format(FETCH_ITEM_CD.toToolTipLightBlue())
+                        "\nHas {0} seconds cooldown.".format(SWOOP_CD.toToolTipLightBlue())
 
 let TT_EAGLE_SIGHT_NAME = "Eagle Sight"
 let TT_EAGLE_SIGHT_EXT = "Hawk grants Scout vision of nearby resources and bushes."+
@@ -73,8 +73,8 @@ let TT_EAGLE_SIGHT_EXT = "Hawk grants Scout vision of nearby resources and bushe
                         "\nLvl 4: ".color(COLOR_GOLD_STR)+"radius increased to {0}.".format((EAGLE_SIGHT_RADIUS_BASE+EAGLE_SIGHT_PER_LEVEL*2).toToolTipLightBlue())
 
 let TT_DREAM_VISION_NAME = "Dream Vision"
-let TT_DREAM_VISION_EXT = "Hawk can see through the eyes of nearby hawks while dreaming."+ 
-                          "\nUpon entering sleep, gain shared vision with a nearest hawk in radius"+
+let TT_DREAM_VISION_EXT = "You can see through the eyes of nearby hawks while dreaming."+ 
+                          "\nUpon entering sleep, gain shared vision with a nearest neutral hawk in radius, if no hawk was found, gain vision of your hawk instead."+
                         "\nLvl 2: ".color(COLOR_GOLD_STR)+"{0} radius.".format(DREAM_VISION_RANGE_LVL_1.toToolTipLightBlue())+
                         "\nLvl 4: ".color(COLOR_GOLD_STR)+"{0} radius.".format(DREAM_VISION_RANGE_LVL_2.toToolTipLightBlue())
 

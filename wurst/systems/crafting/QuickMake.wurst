@@ -48,6 +48,8 @@ public class QuickMake
         EventListener.onCast(spellAbilityId, caster -> onCast(caster))
 
     function onCast(unit caster)
+        if caster.getTypeId() != UNIT_MIXING_POT and not caster.isTroll() and caster.getTypeId() != UNIT_CRAFT_MASTER
+            return
         runCallbacks(prior, caster, 0)
         // The position around which matches are searched for.
         let pos = caster.getPos()

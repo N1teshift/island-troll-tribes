@@ -112,6 +112,7 @@ public class FetchItem extends HawkState
                 break
         if fetchedItem == null
             simError(hawk.getOwner(), "{0} is empty.".format(GetObjectName(target.getTypeId())))
+            troll.endAbilityCooldown(ABILITY_HAWK_SWOOP)
             destroy stashInventory
             return
         destroy stashInventory

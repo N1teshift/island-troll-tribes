@@ -1,0 +1,252 @@
+package QuickMakeV2
+
+// Standard library imports:
+import LinkedList
+import HashMap
+import ClosureEvents
+import ClosureTimers
+import ErrorHandling
+
+// Extension library imports:
+import Lodash
+
+// Local imports:
+import ClosuresForItems
+import LocalObjectIDs
+import ObjectIDManager
+import IdListConstant
+import ResourceSpawns
+import UnitExtensions
+import ColorUtils
+import HashList
+import ItemRecipeV2
+import initlater CustomItemDefinition
+
+public HashMap<int, QuickMakeV2> quickMakes  = new HashMap<int, QuickMakeV2>()
+public let BUILDING_CRAFTING_AOE = 900.
+let MESSAGE_MISSING_UNIT_REQUIRED = "Missing required building: "
+let MESSAGE_DURATION = 10.
+
+
+public class QuickMakeV2
+    int itemId
+    unit caster
+    item craftedItem = null
+    int unitRequirementId = 0
+    boolean isCraftFailed = false
+    rect searchSpace
+    QuickMakeV2 parentInstance = null
+    ItemRecipe itemRecipe
+    HashList<item> cashedItems
+    HashList<item> cashedOwnedItems
+    HashList<int> missingRequiredBuildings
+    IterableMap<int, int> missingItemsCountMap
+    IterableMap<item, QuickMakeV2> foundItems = new IterableMap<item, QuickMakeV2>()
+    LinkedList<item> ignoredOwnedItems = new LinkedList<item>()
+
+    construct(int itemId, unit caster)
+        this.itemId = itemId
+        this.caster = caster
+        cashedItems = new HashList<item>()
+        cashedOwnedItems = new HashList<item>()
+        missingItemsCountMap = new IterableMap<int, int>()
+        missingRequiredBuildings = new HashList<int>()
+        initialize()
+
+    construct(int itemId, unit caster, QuickMakeV2 parentInstance)
+        this.itemId = itemId
+        this.caster = caster
+        this.parentInstance = parentInstance
+        this.cashedItems = parentInstance.cashedItems
+        this.cashedOwnedItems = parentInstance.cashedOwnedItems
+        this.missingItemsCountMap = parentInstance.missingItemsCountMap
+        this.missingRequiredBuildings = parentInstance.missingRequiredBuildings
+        initialize()
+
+    function initialize() 
+        itemRecipe = customItemDefinitions.get(itemId).recipe 
+        if parentInstance == null       
+            cashItems()                   
+        quickMakes.put(itemId, this)
+        //print("crafting "+GetObjectName(itemId))    
+        unitRequirementId = itemRecipe.unitRequirementId
+        if itemRecipe == null
+            //print("null itemRecipe")
+
+    function cashItems()
+        let pos = caster.getPos()
+        searchSpace = Rect(pos.x - BUILDING_CRAFTING_AOE, pos.y - BUILDING_CRAFTING_AOE, pos.x + BUILDING_CRAFTING_AOE, pos.y + BUILDING_CRAFTING_AOE)
+        forItemsInRect(searchSpace) (item i) ->
+            //if i.getPos().distanceTo(pos) <=900.
+            cashedItems.add(i)
+        let units = CreateGroup()
+            ..enumUnitsInRange(caster.getPos(), BUILDING_CRAFTING_AOE)
+        for u in units
+            if u.isAllyOf(caster.getOwner()) or u.getOwner() == caster.getOwner()
+                let inventory = u.getInventory()
+                for each in inventory
+                    if each != null
+                        cashedOwnedItems.add(each)
+                destroy inventory
+        units.destr() 
+
+    function generateMissingItemsMessage() returns string
+        if missingItemsCountMap.size() == 0
+            return null
+        var missingItems = "Missing resources to craft {0}:\n".format(GetObjectName(itemId))
+        for each in missingItemsCountMap
+            let count = missingItemsCountMap.get(each)
+            missingItems+="{0}x {1}\n".format(count.toString(), GetObjectName(each))
+        return missingItems
+
+    function generateMissingBuildingsMessage() returns string
+        if missingRequiredBuildings.size() == 0
+            return null
+        var missingBuildings = "Missing buildings required to craft {0}:\n".format(GetObjectName(itemId))
+        for each in missingRequiredBuildings
+            missingBuildings+="{0}\n".format(GetObjectName(each))
+        missingBuildings+="\n"
+        return missingBuildings        
+
+    function craftItem(unit caster) returns item
+        if not assertUnitRequirement()
+            printToTeam(MESSAGE_MISSING_UNIT_REQUIRED+GetObjectName(unitRequirementId))
+            isCraftFailed = true
+
+        for each in itemRecipe.ingredients
+            //print("next ingredient is "+GetObjectName(each))
+            let found = findNextIngredient(each)
+            if found == null
+                isCraftFailed = true
+
+        if isCraftFailed == true
+            onFailure()
+            return null
+        craftedItem = createItem(itemId, caster.getPos())
+        craftedItem.setVisible(false)        
+        return craftedItem         
+
+
+    function findNextIngredient(int ingredient) returns item          
+        item found = null
+        found = findIngredientInInventories(ingredient)
+        if found == null
+            found = findIngredientInRect(ingredient)
+        if found != null
+            foundItems.put(found, null)
+            found.setVisible(false)  
+        if found == null
+            found = craftIngredient(ingredient)
+            if found == null
+                //print("missing ingredient "+GetObjectName(ingredient)+" to craft "+GetObjectName(itemId))
+                return null
+            //print("have enough ingredients to craft "+GetObjectName(found.getTypeId()))                   
+        return found
+
+    function findIngredientInInventories(int itemId) returns item
+        for each in cashedOwnedItems
+            if each.getTypeId() == itemId 
+                //print("removing "+GetObjectName(itemId))
+                cashedOwnedItems.remove(each)
+                return each
+        return null
+
+    function registerMissingItem(int itemId)
+        let count = missingItemsCountMap.get(itemId)
+        missingItemsCountMap.put(itemId, count+1)
+
+    function findIngredientInRect(int itemId) returns item
+        for each in cashedItems
+            if each.getTypeId() == itemId
+                cashedItems.remove(each)
+                return each       
+        return null
+
+    function craftIngredient(int itemId) returns item
+        //let craftedIngredientRecipe = customItemDefinitions.get(itemId).recipe
+       //if craftedIngredientRecipe == null
+        if customItemDefinitions.get(itemId).recipe.isCrafted == false
+            //print("recipe is missing or item is a basic material")
+            registerMissingItem(itemId)
+            return null
+        let newQuickmake = new QuickMakeV2(itemId, caster, this)
+        let craftedIngredient = newQuickmake.craftItem(caster)
+        if craftedIngredient == null      
+            return null
+        foundItems.put(craftedIngredient, newQuickmake)      
+        return craftedIngredient
+
+    function printToTeam(string msg)
+        if msg == null
+            return
+        for i =0 to bj_MAX_PLAYER_SLOTS-1
+            let p = players[i]
+            if IsUnitSelected(caster, p) and p.isAllyOf(caster.getOwner()) 
+                printTimedToPlayerClear(msg, MESSAGE_DURATION, p)
+
+
+    function assertUnitRequirement() returns boolean
+        if unitRequirementId == 0
+            return true
+        if caster.getTypeId() == unitRequirementId
+            return true
+        let units = CreateGroup()
+            ..enumUnitsInRange(caster.getPos(), BUILDING_CRAFTING_AOE)
+        for u in units
+            if u.getTypeId() == unitRequirementId and u.isAllyOf(caster.getOwner())
+                units.destr()
+                return true
+        units.destr()
+        if not missingRequiredBuildings.has(unitRequirementId)
+            missingRequiredBuildings.add(unitRequirementId)
+        return false
+
+    function onSuccess()
+        craftedItem.setVisible(true)      
+        //print("successfully crafted "+GetObjectName(itemId))
+        for each in ignoredOwnedItems
+            each.remove()
+        for each in foundItems
+            let quickmake = foundItems.get(each)
+            if quickmake != null
+                foundItems.get(each).onSuccess()
+            //print("removing "+GetObjectName(each.getTypeId()))
+            let charges = each.getCharges()
+            if charges >1
+                let pos = each.getPos()
+                caster.addItemHandle(each)
+                each.setCharges(charges-1)
+                caster.removeItem(each)
+                each.setPos(pos)
+            else
+                each.remove()
+        if this!= null
+            destroy this    
+
+    function onFailure()
+        //print("failed to craft "+GetObjectName(itemId))
+        for each in foundItems
+            let quickmake = foundItems.get(each)
+            if quickmake != null
+                foundItems.get(each).onFailure()
+            each.setVisible(true)
+            //print("removing crafted ingredient "+GetObjectName(craftedItem.getTypeId()))
+            craftedItem.remove()
+        destroy this
+
+    
+    ondestroy
+        //print("destroyed")
+        if parentInstance == null
+            printToTeam(generateMissingBuildingsMessage()+generateMissingItemsMessage())
+            destroy cashedItems
+            destroy cashedOwnedItems
+            destroy missingItemsCountMap
+            destroy missingRequiredBuildings
+        destroy ignoredOwnedItems
+        destroy foundItems
+            //    new QuickMakeV2(each)
+            
+        
+    
+

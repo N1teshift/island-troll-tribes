@@ -37,7 +37,7 @@ import Rescue
 
 public let SWOOP_RANGE = 1200.
 public let SWOOP_CD = 20.
-public let FETCH_ITEM_CD = 20.
+public let FETCH_ITEM_CD = 10.
 public let FETCH_SMALL_ANIMAL_CD = 10.
 public let FETCH_FISH_CD = 5.
 public let FETCH_FISH_SEARCH_RADIUS = 300.
@@ -219,9 +219,12 @@ public class Swoop extends HawkState
         if swoopTargetType == SwoopTargets.fish
             troll.startAbilityCooldown(ABILITY_HAWK_SWOOP, FETCH_FISH_CD)
             return
-        if swoopTargetType == SwoopTargets.enemy or swoopTargetType == SwoopTargets.itm or swoopTargetType == SwoopTargets.hawk or swoopTargetType == SwoopTargets.stash
-            troll.startAbilityCooldown(ABILITY_HAWK_SWOOP, FETCH_ITEM_CD)
+        if swoopTargetType == SwoopTargets.enemy or swoopTargetType == SwoopTargets.hawk 
+            troll.startAbilityCooldown(ABILITY_HAWK_SWOOP, SWOOP_CD)
             return
+        if swoopTargetType == SwoopTargets.itm  or swoopTargetType == SwoopTargets.stash
+            troll.startAbilityCooldown(ABILITY_HAWK_SWOOP, FETCH_ITEM_CD)
+            return        
         if swoopTargetType == SwoopTargets.smallAnimal
             troll.startAbilityCooldown(ABILITY_HAWK_SWOOP, FETCH_SMALL_ANIMAL_CD)
             return   
