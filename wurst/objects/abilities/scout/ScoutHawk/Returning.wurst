@@ -67,3 +67,6 @@ public class Returning extends HawkState
     override function exitState()
         //print("destroy Returning")
         //destroy this
+
+    ondestroy
+        //print("destroyed follow")

@@ -31,9 +31,11 @@ public class Pingable
 
 public let pingers = new IterableMap<string, Pingable>()
     ..put("purple",   new Pingable(UNIT_PURPLE_HERB_BUSH, color(255,   0, 255)))
+    ..put("exotic",   new Pingable(UNIT_PURPLE_HERB_BUSH, color(255,   0, 255)))
     ..put("blue",     new Pingable(UNIT_BLUE_HERB_BUSH,   color(  0,   0, 255)))
     ..put("orange",   new Pingable(UNIT_ORANGE_HERB_BUSH, color(255, 155,   0)))
     ..put("yellow",   new Pingable(UNIT_YELLOW_HERB_BUSH, color(255, 255,   0)))
+    ..put("native",   new Pingable(UNIT_YELLOW_HERB_BUSH, color(255, 255,   0)))
     ..put("athelas",  new Pingable(UNIT_ATHELAS_BUSH,     color(255, 255, 255)))
     ..put("mushroom", new Pingable(UNIT_MUSHROOM_COLONY,  color(165,  42,  42)))
     ..put("thistle",  new Pingable(UNIT_THISTLE_SHRUB,    color(100, 100, 100)))

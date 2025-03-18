@@ -15,9 +15,9 @@ constant HERB_SUFFIX_MIX = " can be mixed with other herbs to make various potio
 constant TT_RIVER_STEM   = "Stem of Water Herb, "
 constant TT_RIVER_ROOT   = "Root of Water Herb, "
 constant TT_ATHELAS_SEED = "The seed of an Athelas herb, well known for its healing properties."
-constant TT_BLUE_HERB    = "A leaf of a Blue herb, "
+constant TT_BLUE_HERB    = "A leaf of a Native herb, "
 constant TT_ORANGE_HERB  = "A leaf of a Orange herb, "
-constant TT_PURPLE_HERB  = "A leaf of a Purple herb, "
+constant TT_PURPLE_HERB  = "A leaf of a Exotic herb, "
 constant TT_YELLOW_HERB  = "A leaf of a Yellow herb, "
 
 function createHerb(int itemId) returns ItemDefinition
@@ -88,10 +88,10 @@ function ItemDefinition.setTooltipExtendedHerb(string toolTip)
         ..setScalingValue(1.00)
 
 @compiletime function createLeafOfPurpleHerb() returns ItemDefinition
-    return createHerb(ITEM_PURPLE_HERB)
+    return createHerb(ITEM_EXOTIC_HERB)
         ..setInterfaceIcon(LocalIcons.bTNPurpleHerb)
         ..setModelUsed(Doodads.outland_Plant4)
-        ..setNameEnhance("Leaf of Purple Herb")
+        ..setNameEnhance("Leaf of Exotic Herb")
         ..setDescription(TT_PURPLE_HERB)
         ..setTooltipExtendedHerb(TT_PURPLE_HERB)
         ..setTintingColor1Red(127)
@@ -100,10 +100,10 @@ function ItemDefinition.setTooltipExtendedHerb(string toolTip)
         ..setScalingValue(0.70)
 
 @compiletime function createLeafOfYellowHerb() returns ItemDefinition
-    return createHerb(ITEM_YELLOW_HERB)
+    return createHerb(ITEM_NATIVE_HERB)
         ..setInterfaceIcon(LocalIcons.bTNYellowHerb)
         ..setModelUsed(Doodads.ruins_Flower1)
-        ..setNameEnhance("Leaf of Yellow Herb")
+        ..setNameEnhance("Leaf of Native Herb")
         ..setDescription(TT_YELLOW_HERB)
         ..setTooltipExtendedHerb(TT_YELLOW_HERB)
         ..setTintingColor1Red(255)

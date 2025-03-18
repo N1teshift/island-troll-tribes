@@ -4,6 +4,8 @@ package LocalAssets
 import ObjectIdGenerator
 
 public class LocalIcons
+    static constant bTNLESSERESSENCE                  ="ReplaceableTextures\\CommandButtons\\BTNOrangeEssence.blp"
+    static constant bTNGREATERESSENCE                  ="ReplaceableTextures\\CommandButtons\\BTNPurpleEssence.blp"
     static constant bTNWing                  ="ReplaceableTextures\\CommandButtons\\BTNWing.blp"
     static constant pASBTNBringDown          ="ReplaceableTextures\\CommandButtons\\PASBTNBringDown.blp"
     static constant pASBTNSwoopEnemy          ="ReplaceableTextures\\CommandButtons\\PASBTNSwoopEnemy.blp"
@@ -255,6 +257,8 @@ public class LocalAbilities
     static constant test                           = "Models\\Abilities\\Test.mdx"
 
 public class LocalItems
+    static constant lesserEssence                 = "Models\\Items\\OrangeEssence.mdx" 
+    static constant greaterEssence                 = "Models\\Items\\PurpleEssence.mdx" 
     static constant ironStaff                      = "Models\\Items\\ironStaff.mdx" 
     static constant battleStaff                    = "Models\\Items\\BattleStaff.mdx"
     static constant cloakOfNecromancy              = "Models\\Items\\cloakOfNecromancy.mdx"

@@ -72,6 +72,8 @@ function onDrop(unit u, item itm)
 
 
 function onDamage(unit source, unit target, real amount, unit u)
+    if not target.isTroll() or target.isPet()
+        return
     int itemId = 0
     if u.getTypeId() == UNIT_GREATER_SKELETON
         itemId = ITEM_EMPOWERED_NECROMANCERS_CLOAK

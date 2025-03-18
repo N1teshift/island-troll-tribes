@@ -19,6 +19,7 @@ import GameStates
 import PlayerExtensions
 import Radars
 import PingHerbs
+import HashList
 
 public let SCAN_PERIOD = 0.25
 public let EAGLE_SIGHT_RADIUS_BASE = 600.
@@ -32,21 +33,25 @@ HashMap<unit, EagleSight> eagleSightInstances = new HashMap<unit,EagleSight>()
 class EagleSight
     unit troll
     real eagleSightRadius = EAGLE_SIGHT_RADIUS_BASE
+    rect searchSpace
     CallbackPeriodic cb
-    LinkedList<item>visibleItems = new LinkedList<item>() 
+    HashList<item>visibleItems = new HashList<item>() 
     LinkedList<unit>visibleUnits = new LinkedList<unit>()
     construct(unit _troll)
-        //print("created")
         troll = _troll
+        let pos = troll.getPos()
+        searchSpace = Rect(pos.x - eagleSightRadius, pos.y - eagleSightRadius, pos.x + eagleSightRadius, pos.y + eagleSightRadius)
         cb = doPeriodically(SCAN_PERIOD) cb ->
             scanItems()
             scanStashes()
             scanUnits() 
     
     function scanItems()
-        //if troll.getLevel()<2 and troll.getTrollClassType() == ClassType.BASE_CLASS
-        forItemsInMap() i ->
-            if i.getPos().distanceTo(troll.getPos()) < EAGLE_SIGHT_RADIUS_BASE and i.isPickupable() and not visibleItems.has(i)
+        let pos = troll.getPos()
+        searchSpace.moveTo(pos)
+        forItemsInRect(searchSpace) (item i) ->
+            let distance = i.getPos().distanceTo(troll.getPos())
+            if distance < eagleSightRadius and i.isPickupable() and not visibleItems.has(i)
                 visibleItems.add(i)
                 let vis = createVision(troll.getOwner(), i.getPos(), 128, true)
                 vis.start()
@@ -54,8 +59,7 @@ class EagleSight
                     if troll.getPos().distanceTo(i.getPos()) > eagleSightRadius
                         vis.destr()
                         visibleItems.remove(i)
-                        destroy cb
-    
+                        destroy cb    
 
     function scanStashes()
         if troll.getLevel()<2 and troll.getTrollClassType() == ClassType.BASE_CLASS
@@ -63,13 +67,9 @@ class EagleSight
         forUnitsInRange(troll.getPos(), eagleSightRadius) (unit u) ->
             if STASH_LIST.has(u.getTypeId()) and not visibleUnits.has(u)
                 u.shareVision(troll.getOwner(), true)
-                //print("true")
                 visibleUnits.add(u)
-                //let vis = createVision(troll.getOwner(), u.getPos(), 200, true)
                 doPeriodically(REVEAL_DURATION) (CallbackPeriodic cb) ->
                     if troll.getPos().distanceTo(u.getPos()) > eagleSightRadius
-                        //print("destroyed")
-                        //vis.destr()
                         visibleUnits.remove(u)
                         u.shareVision(troll.getOwner(), false)
                         destroy cb 
@@ -91,6 +91,8 @@ class EagleSight
             return
         if troll.getLevel() == 2 or troll.getLevel() == 4
             eagleSightRadius+=EAGLE_SIGHT_PER_LEVEL
+            let pos = troll.getPos()
+            searchSpace = Rect(pos.x - eagleSightRadius, pos.y - eagleSightRadius, pos.x + eagleSightRadius, pos.y + eagleSightRadius)
 
 
 function initializeScouts()
@@ -100,5 +102,14 @@ function initializeScouts()
             if troll.getTypeId() == UNIT_SCOUT
                 eagleSightInstances.put(troll, new EagleSight(troll))
 
+function onLevel(unit troll)
+    let instance = eagleSightInstances.get(troll)
+    if instance == null
+        return
+    instance.onLevelup()
+
 init
     initializeScouts()
+
+    EventListener.add(EVENT_PLAYER_HERO_LEVEL)->
+        onLevel(GetLevelingUnit())        

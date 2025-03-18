@@ -3,46 +3,50 @@ package QuickMakeV2
 // Standard library imports:
 import LinkedList
 import HashMap
-import ClosureEvents
 import ClosureTimers
-import ErrorHandling
 
-// Extension library imports:
-import Lodash
 
 // Local imports:
 import ClosuresForItems
 import LocalObjectIDs
-import ObjectIDManager
 import IdListConstant
-import ResourceSpawns
 import UnitExtensions
-import ColorUtils
 import HashList
 import ItemRecipeV2
 import initlater CustomItemDefinition
+import PlayerExtensions
+import initlater EquipmentSlots
+import EquipmentSlotFrames
 
 public HashMap<int, QuickMakeV2> quickMakes  = new HashMap<int, QuickMakeV2>()
 public let BUILDING_CRAFTING_AOE = 900.
 let MESSAGE_MISSING_UNIT_REQUIRED = "Missing required building: "
 let MESSAGE_DURATION = 10.
+public HashList<int> baseItems  = new HashList<int>()
 
 
 public class QuickMakeV2
+    static item baseItem
+    //static unit baseItemOwner
     int itemId
     unit caster
+    unit baseItemOwner = null
     item craftedItem = null
     int unitRequirementId = 0
     boolean isCraftFailed = false
+    boolean isItemEquipped = false
     rect searchSpace
+    group unitsInRadius
     QuickMakeV2 parentInstance = null
     ItemRecipe itemRecipe
+    //itemCharges
     HashList<item> cashedItems
     HashList<item> cashedOwnedItems
     HashList<int> missingRequiredBuildings
+    HashList<int> itemsUsedInRecipe
     IterableMap<int, int> missingItemsCountMap
     IterableMap<item, QuickMakeV2> foundItems = new IterableMap<item, QuickMakeV2>()
-    LinkedList<item> ignoredOwnedItems = new LinkedList<item>()
+    HashList<item> ignoredOwnedItems = new HashList<item>()
 
     construct(int itemId, unit caster)
         this.itemId = itemId
@@ -51,6 +55,7 @@ public class QuickMakeV2
         cashedOwnedItems = new HashList<item>()
         missingItemsCountMap = new IterableMap<int, int>()
         missingRequiredBuildings = new HashList<int>()
+        //itemsUsedInRecipe = new HashList<int>()
         initialize()
 
     construct(int itemId, unit caster, QuickMakeV2 parentInstance)
@@ -69,26 +74,46 @@ public class QuickMakeV2
             cashItems()                   
         quickMakes.put(itemId, this)
         //print("crafting "+GetObjectName(itemId))    
-        unitRequirementId = itemRecipe.unitRequirementId
-        if itemRecipe == null
-            //print("null itemRecipe")
+        unitRequirementId = itemRecipe.unitRequirementId  
+
+    function generateItemsUsedList(HashList<int> list)
+        list.add(itemRecipe.itemId)
+        for each in list
+            print("iterating over item "+GetObjectName(each))
+            let itemRecipe = customItemDefinitions.get(each).recipe
+            if itemRecipe.isCrafted
+                generateItemsUsedList(itemRecipe.ingredients)
+            else
+                if not itemsUsedInRecipe.has(each)
+                    print("adding item "+GetObjectName(each)+" to the list")
+                    itemsUsedInRecipe.add(each)            
+
+    function findBaseItemOwner(item whichItem) returns unit 
+        let players = caster.getOwner().getTribe().getMembers()
+        for each in players
+            let troll = each.getTroll()
+            if troll.hasItem(whichItem)
+                return troll
+        return null
 
     function cashItems()
+        //generateItemsUsedList(itemRecipe.ingredients)
+        //for each in itemsUsedInRecipe
+        //    print(GetObjectName(each))
         let pos = caster.getPos()
         searchSpace = Rect(pos.x - BUILDING_CRAFTING_AOE, pos.y - BUILDING_CRAFTING_AOE, pos.x + BUILDING_CRAFTING_AOE, pos.y + BUILDING_CRAFTING_AOE)
         forItemsInRect(searchSpace) (item i) ->
-            //if i.getPos().distanceTo(pos) <=900.
-            cashedItems.add(i)
-        let units = CreateGroup()
+            if true //itemsUsedInRecipe.has(i.getTypeId())
+                cashedItems.add(i)
+        unitsInRadius = CreateGroup()
             ..enumUnitsInRange(caster.getPos(), BUILDING_CRAFTING_AOE)
-        for u in units
+        for u in unitsInRadius
             if u.isAllyOf(caster.getOwner()) or u.getOwner() == caster.getOwner()
                 let inventory = u.getInventory()
                 for each in inventory
-                    if each != null
+                    if each != null   // and itemsUsedInRecipe.has(each.getTypeId())
                         cashedOwnedItems.add(each)
-                destroy inventory
-        units.destr() 
+                destroy inventory 
 
     function generateMissingItemsMessage() returns string
         if missingItemsCountMap.size() == 0
@@ -123,7 +148,9 @@ public class QuickMakeV2
             onFailure()
             return null
         craftedItem = createItem(itemId, caster.getPos())
-        craftedItem.setVisible(false)        
+        craftedItem.setVisible(false)
+        if parentInstance == null
+            onSuccess()        
         return craftedItem         
 
 
@@ -133,6 +160,10 @@ public class QuickMakeV2
         if found == null
             found = findIngredientInRect(ingredient)
         if found != null
+            if baseItems.has(found.getTypeId())
+                baseItem = found
+                if baseItemOwner == null
+                    baseItemOwner = findBaseItemOwner(found)
             foundItems.put(found, null)
             found.setVisible(false)  
         if found == null
@@ -143,12 +174,28 @@ public class QuickMakeV2
             //print("have enough ingredients to craft "+GetObjectName(found.getTypeId()))                   
         return found
 
+    function findEquippedBaseItem(int itemId) returns item
+        for u in unitsInRadius
+            if u.isTroll()
+                let currentItems = u.getOwner().getEquipmentSlots().currentItems
+                for each in currentItems
+                    let itm = currentItems.get(each)
+                    if itm.getTypeId() == itemId
+                        print("found equipped baseItem "+GetObjectName(itemId))
+                        isItemEquipped = true
+                        baseItemOwner = u
+                        return itm
+        return null        
+
     function findIngredientInInventories(int itemId) returns item
         for each in cashedOwnedItems
             if each.getTypeId() == itemId 
                 //print("removing "+GetObjectName(itemId))
                 cashedOwnedItems.remove(each)
                 return each
+        if EQUIPMENT_LIST.has(itemId)
+            let foundEquipmentItem = findEquippedBaseItem(itemId)
+            return foundEquipmentItem  
         return null
 
     function registerMissingItem(int itemId)
@@ -163,8 +210,6 @@ public class QuickMakeV2
         return null
 
     function craftIngredient(int itemId) returns item
-        //let craftedIngredientRecipe = customItemDefinitions.get(itemId).recipe
-       //if craftedIngredientRecipe == null
         if customItemDefinitions.get(itemId).recipe.isCrafted == false
             //print("recipe is missing or item is a basic material")
             registerMissingItem(itemId)
@@ -201,9 +246,47 @@ public class QuickMakeV2
             missingRequiredBuildings.add(unitRequirementId)
         return false
 
-    function onSuccess()
-        craftedItem.setVisible(true)      
-        //print("successfully crafted "+GetObjectName(itemId))
+
+    function returnItemToTheOwner()
+        if baseItemOwner== null
+            doAfter(ANIMATION_PERIOD) -> 
+                caster.addItemHandle(craftedItem)
+            return
+        if isItemEquipped
+            let equipmentSlots = baseItemOwner.getOwner().getEquipmentSlots()
+            let equippedItems = equipmentSlots.currentItems
+            for index in equippedItems
+                let itm = equippedItems.get(index)
+                if itm == baseItem
+                    if craftedItem == null
+                        itm.setVisible(false)
+                        return
+                    //print("return item unequip"+GetObjectName(itm.getTypeId())) 
+                    equipmentSlots.unequipItem(itm, index)
+                    doAfter(ANIMATION_PERIOD) ->
+                        clickSound.playForPlayer(baseItemOwner.getOwner())
+                        //print("return item onEquip"+GetObjectName(craftedItem.getTypeId()))
+                        craftedItem.setPos(baseItemOwner.getPos())
+                        craftedItem.setVisible(false)
+                        equipmentSlots.equipItem(index, craftedItem)
+        else
+            //print("no item equipped")
+            nullTimer() -> 
+                baseItemOwner.addItemHandle(craftedItem)
+        /*
+        let players = caster.getOwner().getTribe().getMembers()
+        for p in players
+            let equipmentSlots = p.getEquipmentSlots()
+            let equippedItems = equipmentSlots.currentItems
+            for index in equippedItems
+                let itm = equippedItems.get(index)
+                if itm == baseItem
+                    equipmentSlots.unequipItem(itm, index)
+                    doAfter(ANIMATION_PERIOD) -> 
+                        equipmentSlots.equipItem(index, craftedItem) 
+                        */                     
+
+    function removeConsumedItems()
         for each in ignoredOwnedItems
             each.remove()
         for each in foundItems
@@ -212,7 +295,7 @@ public class QuickMakeV2
                 foundItems.get(each).onSuccess()
             //print("removing "+GetObjectName(each.getTypeId()))
             let charges = each.getCharges()
-            if charges >1
+            if charges >1 and not each == baseItem
                 let pos = each.getPos()
                 caster.addItemHandle(each)
                 each.setCharges(charges-1)
@@ -220,6 +303,16 @@ public class QuickMakeV2
                 each.setPos(pos)
             else
                 each.remove()
+
+
+    function onSuccess()
+        returnItemToTheOwner()
+        let baseItemCharges = baseItem.getCharges()
+        if baseItemCharges != 0
+            craftedItem.setCharges(baseItemCharges)
+        craftedItem.setVisible(true)      
+        //print("successfully crafted "+GetObjectName(itemId))
+        removeConsumedItems()
         if this!= null
             destroy this    
 
@@ -229,7 +322,8 @@ public class QuickMakeV2
             let quickmake = foundItems.get(each)
             if quickmake != null
                 foundItems.get(each).onFailure()
-            each.setVisible(true)
+            if not (each == baseItem and isItemEquipped)
+                each.setVisible(true)   
             //print("removing crafted ingredient "+GetObjectName(craftedItem.getTypeId()))
             craftedItem.remove()
         destroy this
@@ -239,14 +333,23 @@ public class QuickMakeV2
         //print("destroyed")
         if parentInstance == null
             printToTeam(generateMissingBuildingsMessage()+generateMissingItemsMessage())
+            unitsInRadius.destr()
             destroy cashedItems
             destroy cashedOwnedItems
             destroy missingItemsCountMap
             destroy missingRequiredBuildings
+            //destroy itemsUsedInRecipe
         destroy ignoredOwnedItems
         destroy foundItems
-            //    new QuickMakeV2(each)
             
+function initializeBaseItems()
+    for each in EQUIPMENT_LIST
+        baseItems.add(each)
+    baseItems.add(ITEM_THISTLES)       
+
+
+init
+    doAfter(1.) ->
+        initializeBaseItems()
         
-    
 

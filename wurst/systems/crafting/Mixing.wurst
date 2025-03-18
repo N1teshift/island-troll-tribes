@@ -21,9 +21,9 @@ public function mixIt(LinkedList<item> inv)
             items.remove()
         if items.getTypeId() == ITEM_ORANGE_HERB
             items.remove()
-        if items.getTypeId() == ITEM_PURPLE_HERB
+        if items.getTypeId() == ITEM_EXOTIC_HERB
             items.remove()
-        if items.getTypeId() == ITEM_YELLOW_HERB
+        if items.getTypeId() == ITEM_NATIVE_HERB
             items.remove()
         if items.getTypeId() == ITEM_SPIRIT_WATER
             items.remove()
@@ -43,8 +43,8 @@ public function mix(unit caster)
 
     let blue = count.get(ITEM_BLUE_HERB)
     let oran = count.get(ITEM_ORANGE_HERB)
-    let purp = count.get(ITEM_PURPLE_HERB)
-    let yell = count.get(ITEM_YELLOW_HERB)
+    let purp = count.get(ITEM_EXOTIC_HERB)
+    let yell = count.get(ITEM_NATIVE_HERB)
 
     let root = count.get(ITEM_RIVER_ROOT)
     let stem = count.get(ITEM_RIVER_STEM)
@@ -61,9 +61,9 @@ public function mix(unit caster)
         specTypes += 1
     if count.get(ITEM_ORANGE_HERB) > 0
         specTypes += 1
-    if count.get(ITEM_PURPLE_HERB) > 0
+    if count.get(ITEM_EXOTIC_HERB) > 0
         specTypes += 1
-    if count.get(ITEM_YELLOW_HERB) > 0
+    if count.get(ITEM_NATIVE_HERB) > 0
         specTypes += 1
 
     // Essence of Bees

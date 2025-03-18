@@ -84,7 +84,10 @@ public class DreamEater
         let manaStealAmount = MANA_STEAL_BASE+MANA_STEAL_INT_MULTIPLTIER*intelligence
         let healAmount = HEAL_BASE+HEAL_INT_MULTIPLIER*intelligence
         let damagePerInterval = 0.5*totalDamage*DAMAGE_DOT_INTERVAL/DREAM_DURATION
-        troll.damageTarget(target, totalDamage, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_MAGIC, null) //deal half the damge instantly
+        target.removeAbility(BuffIds.sleepPause)
+        //target.removeAbility(BuffIds.sleepStun)
+        nullTimer()->      
+            troll.damageTarget(target, totalDamage, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_MAGIC, null) //deal half the damge instantly
         /*
         doAfter(INVUL_DURATION+ANIMATION_PERIOD) ->          
             doPeriodicallyTimed(DAMAGE_DOT_INTERVAL, DREAM_DURATION) (CallbackCounted cb) ->

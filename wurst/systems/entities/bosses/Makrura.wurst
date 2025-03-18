@@ -2,16 +2,12 @@ package Makrura
 
 
 // Standard library imports:
-import ClosureForGroups
 import LinkedList
-import MapBounds
 
 // Local imports:
 import Hostile
 import LocalObjectIDs
-import LocalAssets
 import Pool
-import ClosureTimers
 
 // TODO: Allow the respawn mode to register events.
 

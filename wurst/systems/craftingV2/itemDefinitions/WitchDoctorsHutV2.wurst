@@ -65,13 +65,6 @@ public function initializeWitchDoctorsHutItems()
     ..setQuickMakeAbility(ABILITY_QM_VENOM_FANG)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-
-    new CustomItemDefinition(ITEM_SPIRIT_WIND)
-    ..setItemRecipe(ITEM_RIVER_STEM, ITEM_RIVER_STEM)
-    ..setUnitRequirement(UNIT_REQUIREMENT)
-    ..setQuickMakeAbility(ABILITY_QM_SPIRIT_WIND)
-
-
     new CustomItemDefinition(ITEM_SCROLL_ENTANGLING_ROOTS)
     ..setItemRecipe(ITEM_TINDER, ITEM_MANA_CRYSTAL)
     ..setUnitRequirement(UNIT_REQUIREMENT)
@@ -112,12 +105,6 @@ public function initializeWitchDoctorsHutItems()
     ..setItemRecipe(ITEM_SPIRIT_WATER, ITEM_MANA_CRYSTAL)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_SCROLL_CYCLONE)
-
-
-    new CustomItemDefinition(ITEM_SCROLL_HASTE)
-    ..setItemRecipe(ITEM_ELK_SKIN_BOOTS, ITEM_MANA_CRYSTAL)
-    ..setUnitRequirement(UNIT_REQUIREMENT)
-    ..setQuickMakeAbility(ABILITY_QM_SCROLL_HASTE)
 
 
     new CustomItemDefinition(ITEM_SCROLL_HASTE)

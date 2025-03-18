@@ -58,6 +58,9 @@ function addItemToBush(unit target)
         .findForUnitId(target.getTypeId())
         .getItem(target.getPos())
 
+    if choice.getTypeId() == ITEM_HEALING_POTION or choice.getTypeId() == ITEM_MANA_POTION
+        choice.setCharges(choice.getCharges()*2)
+
     // Allow the itempool to miss.
     if target != null
         // Check that the target has room for the item.
@@ -113,10 +116,10 @@ init
         ..addItem(ITEM_ORANGE_HERB, 1)
 
     new BushPool(UNIT_YELLOW_HERB_BUSH, 'd109')
-        ..addItem(ITEM_YELLOW_HERB, 1)
+        ..addItem(ITEM_NATIVE_HERB, 1)
 
     new BushPool(UNIT_PURPLE_HERB_BUSH, 'd104')
-        ..addItem(ITEM_PURPLE_HERB, 1)
+        ..addItem(ITEM_EXOTIC_HERB, 1)
 
     new BushPool(UNIT_ATHELAS_BUSH, 'd100')
         ..addItem(ITEM_ATHELAS_SEED, 1)

@@ -25,8 +25,10 @@ import HashList
 public class ItemRecipe
     HashList<int> ingredients = new HashList<int>()
     boolean isCrafted = false
+    bool isMixingPotConsumable = false
     int itemId 
     int unitRequirementId
+    int mixingPotManaRequirement = 0
 
     construct(int itemId)
         this.itemId = itemId
@@ -37,4 +39,8 @@ public class ItemRecipe
     function addRecipeIngredient(int ingredient)
         isCrafted = true
         ingredients.add(ingredient)
+
+    function setMixingPotManaRequirement(int manaRequirement)
+        mixingPotManaRequirement = manaRequirement
+        isMixingPotConsumable = true
          

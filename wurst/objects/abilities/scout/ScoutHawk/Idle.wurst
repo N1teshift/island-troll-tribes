@@ -46,30 +46,24 @@ public class Idle extends HawkState
         if queuedState != null
             return    
         if scoutHawkInstance == null
-            //print("null")
             return
-        //troll.kill()
-        //hawk.kill()
         radians-=0.03
         pos = trollPos
-        //radians = (hawk.getPos3Real().x*2./hawkCirclingArea).acos()
         let distance = hawk.getPos().distanceTo(troll.getPos())
         if distance >= maxLeashRange
             queuedState = new Returning(HawkStates.returning, scoutHawkInstance)
             //print("changed state to returning")
             return
         pos.z+=300
-        //radians.cos() = pos.x*2/hawkCirclingArea
-        ////print("radians = "+radians.toString())
         pos.x +=hawkCirclingArea/2*radians.cos()
         pos.y +=hawkCirclingArea/2*radians.sin()
         hawk.setPosFly(pos)
         hawk.setFacing(angle(radians+Deg2Rad(-100.))) 
-        ////print("x = "+pos.x.toString()+" y = "+pos.y.toString()+" radians = "+radians.toString())  
 
 
     override function enterState()
         trollPos = troll.getPos3Real()
+        //trollPos.z += 300.
         radians = troll.getPos().angleTo(hawk.getPos()).radians()// -hawk.getPos().angleTo(troll.getPos()).radians()
         ////print("radians = "+radians.toString())
         //print("idle enter state")
@@ -79,4 +73,7 @@ public class Idle extends HawkState
     override function exitState()
         //print("destroy idle")
         //destroy this
+
+    ondestroy
+        //print("destroyed idle")
 

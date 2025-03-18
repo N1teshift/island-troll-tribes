@@ -87,7 +87,7 @@ function onCast(unit caster, unit target, int abilId)
 
     // Modify the unit as appropriate.
     switch abilId
-        case ABILITY_SLEEP_OUTSIDE
+        case ABILITY_SLEEP_OUTSIDE 
             // Mark the damage as triggered.
             DamageEvent.setNextDamageFromCode()
             target
@@ -108,6 +108,7 @@ init
     EventListener.onTargetCast(ABILITY_SLEEP_OUTSIDE    , (unit caster, unit target) -> onCast(caster, target, ABILITY_SLEEP_OUTSIDE))
     EventListener.onTargetCast(ABILITY_SLEEP_INSIDE_TENT, (unit caster, unit target) -> onCast(caster, target, ABILITY_SLEEP_INSIDE_TENT))
     EventListener.onTargetCast(ABILITY_SLEEP_INSIDE_HUT , (unit caster, unit target) -> onCast(caster, target, ABILITY_SLEEP_INSIDE_HUT))
+    EventListener.onTargetCast(ABILITY_SLEEP_HYPNOSIS , (unit caster, unit target) -> onCast(caster, target, ABILITY_SLEEP_OUTSIDE))
     EventListener.onTargetCast(ABILITY_HIBERNATE , (unit caster, unit target) -> onCast(caster, target, ABILITY_HIBERNATE))
 
     registerCommandAll("sleep") (triggerPlayer, args) ->

@@ -25,7 +25,7 @@ constant HYPNOSIS_DUMMY_COOLDOWN = 10.
 constant HYPNOSIS_COOLDOWN = 10.
 constant CAST_RANGE = 300.
 constant DURATION = 5.
-constant SLEEP_OUTSIDE_HEAT_PENALTY = 10
+constant SLEEP_OUTSIDE_HEAT_PENALTY = 15
 
 constant TT_NORM = "Hypnosis"
 constant TOOLTIP_EXTENDED = "" +
@@ -101,9 +101,10 @@ class HypnosisCooldown
 
     function castSleep(unit caster, unit target)
         let abilId = target.isTroll() ? ABILITY_SLEEP_HYPNOSIS : ABILITY_SLEEP_ANIMAL
-        DamageEvent.setNextDamageFromCode()
-        caster.damageTarget(target, SLEEP_OUTSIDE_HP_PENALTY, ATTACK_TYPE_NORMAL)
-        target.subHeat(SLEEP_OUTSIDE_HEAT_PENALTY)
+        if abilId == ABILITY_SLEEP_ANIMAL
+            DamageEvent.setNextDamageFromCode()
+            caster.damageTarget(target, SLEEP_OUTSIDE_HP_PENALTY, ATTACK_TYPE_NORMAL)
+        //target.subHeat(SLEEP_OUTSIDE_HEAT_PENALTY)
         nullTimer() -> 
             InstantDummyCaster.castTarget(target.getOwner(), abilId, 1, "Sleep", target, target.getPos())
 

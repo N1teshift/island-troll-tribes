@@ -193,9 +193,9 @@ public constant CRAFTING_BUILDING_LIST = asList(
 
 public constant COLOR_HERB_LIST = asList(
     ITEM_BLUE_HERB,
-    ITEM_YELLOW_HERB,
+    ITEM_NATIVE_HERB,
     ITEM_ORANGE_HERB,
-    ITEM_PURPLE_HERB
+    ITEM_EXOTIC_HERB
 )
 
 // Can add more items to those list if neccessary later on

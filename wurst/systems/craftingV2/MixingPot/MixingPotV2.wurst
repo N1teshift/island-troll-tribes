@@ -1,0 +1,157 @@
+package MixingPotV2
+
+// Standard library imports:
+import HashMap
+import ClosureEvents
+import LocalObjectIDs
+import Abilities
+import SimError
+import OnUnitEnterLeave
+import ClosuresForItems
+
+// Local imports:
+import ItemRecipeV2
+import QuickMakeV2
+import CustomItemDefinition
+
+
+HashMap<unit, MixingPot> mixingPotInstances = new HashMap<unit, MixingPot>
+HashMap<int, real> mixingPotManaGainPerHerb = new HashMap<int, real>
+    ..put(ITEM_ATHELAS_SEED, 1.)
+    ..put(ITEM_RIVER_STEM, 3.)
+    ..put(ITEM_RIVER_ROOT, 3.)
+    ..put(ITEM_NATIVE_HERB, 5.)
+    ..put(ITEM_EXOTIC_HERB, 7.5)
+    ..put(ITEM_SPIRIT_WIND, 6.)
+    ..put(ITEM_SPIRIT_WATER, 6.)
+    ..put(ITEM_SPIRIT_DARKNESS, 8.)
+    ..put(ITEM_SPIRIT_DARKNESS, 6.)
+    ..put(ITEM_LESSER_ESSENCE, 10.)
+    ..put(ITEM_GREATER_ESSENCE, 15.)
+
+HashMap<int, int> abilIdToHerbMeltedMap = new HashMap<int, int>
+    ..put(ABILITY_MIXING_POT_MELT_STEM, ITEM_RIVER_STEM)
+    ..put(ABILITY_MIXING_POT_MELT_ROOT, ITEM_RIVER_ROOT)
+    ..put(ABILITY_MIXING_POT_MELT_NATIVE_HERB, ITEM_NATIVE_HERB)
+    ..put(ABILITY_MIXING_POT_MELT_EXOTIC_HERB, ITEM_EXOTIC_HERB)
+
+
+
+public class MixingPot
+    unit mixingPot
+    item craftedPotion = null
+    rect searchSpace
+
+    construct(unit mixingPot)
+        this.mixingPot = mixingPot
+        //print("created")
+        mixingPotInstances.put(mixingPot, this)
+        let pos = mixingPot.getPos()
+        searchSpace = Rect(pos.x - BUILDING_CRAFTING_AOE, pos.y - BUILDING_CRAFTING_AOE, pos.x + BUILDING_CRAFTING_AOE, pos.y + BUILDING_CRAFTING_AOE)
+
+
+    function craftPotion(int itemId) returns item
+        //print("craftPotion "+GetObjectName(itemId))
+        let instance = customItemDefinitions.get(itemId)
+        let manaCost = instance.recipe.mixingPotManaRequirement
+        let currentMana = mixingPot.getMana()
+        if currentMana<manaCost
+            printToPlayers("Not enough mana to craft "+(GetObjectName(itemId)))
+            return null
+        mixingPot.subMana(manaCost.toReal())
+        craftedPotion = createItem(itemId, mixingPot.getPos())
+        mixingPot.addItemHandle(craftedPotion)   
+        return craftedPotion
+
+    function printToPlayers(string msg)
+        for i =0 to bj_MAX_PLAYER_SLOTS-1
+            if IsUnitSelected(mixingPot, players[i]) and players[i].isAllyOf(mixingPot.getOwner()) 
+                simError(players[i], msg)
+
+    function playEfxHerb(vec2 pos)
+        flashEffect(Abilities.mirrorImageDeathCaster, pos)
+
+    function playEfxManaGained()
+        flashEffect(Abilities.aImaTarget, mixingPot.getPos(), 1.5)
+
+    function handleManaCap(real manaGained)
+        let currentMana = mixingPot.getMana()
+        let maxMana = mixingPot.getMaxMana()
+        if currentMana+manaGained >maxMana
+            mixingPot.setMaxMana((maxMana+manaGained).ceil())
+
+    function meltHerb(int herbId)
+        //print("meltHerb "+GetObjectName(herbId))
+        let herb = findNearestItem(mixingPot.getPos(), BUILDING_CRAFTING_AOE, i -> i.getTypeId() == herbId)
+        if herb == null
+            printToPlayers("There is no "+GetObjectName(herbId)+" in radius")
+            return
+        let manaGained = mixingPotManaGainPerHerb.get(herbId)
+        handleManaCap(manaGained)
+        playEfxHerb(herb.getPos())
+        playEfxManaGained()
+        herb.remove()
+        mixingPot.addMana(manaGained)        
+
+
+    function onCast(int abilId)
+        let herbId = abilIdToHerbMeltedMap.get(abilId)
+        if abilId == ABILITY_MIXING_POT_MELT_EVERYTHING
+            meltEverything()
+            return
+        meltHerb(herbId)
+
+    function meltEverything()
+        let currentMana = mixingPot.getMana()
+        forItemsInRect(searchSpace) (item i) ->
+            let manaGain = mixingPotManaGainPerHerb.get(i.getTypeId())
+            if manaGain != 0
+                playEfxHerb(i.getPos())
+                i.remove()
+                handleManaCap(manaGain)
+                mixingPot.addMana(manaGain)
+        if mixingPot.getMana()>currentMana
+            playEfxManaGained()
+
+    function onDeath()
+        destroy this
+    
+    ondestroy
+        mixingPotInstances.remove(mixingPot)
+
+public function onMixingPotQuickMake(unit caster, int itemId)
+    //print("onMixingPotQuickmake")
+    //if not abilIdToHerbMeltedMap.has(abilId)
+    //    return
+    let instance = mixingPotInstances.get(caster)
+    if instance == null
+       // print("caster = "+GetObjectName(caster.getTypeId()))
+        //print("null instance")
+        return
+    instance.craftPotion(itemId)
+
+function onCast(int abilId, unit caster)
+    if not abilIdToHerbMeltedMap.has(abilId) and not abilId == ABILITY_MIXING_POT_MELT_EVERYTHING
+        //print("wrong abilityId = "+GetObjectName(abilId))
+        return
+    let instance = mixingPotInstances.get(caster)
+    if instance == null
+        return
+    instance.onCast(abilId)
+    
+function onMixingPotConstructed(unit mixingPot)
+    if not mixingPot.getTypeId() == UNIT_MIXING_POT
+        return
+    if not mixingPotInstances.has(mixingPot)
+        new MixingPot(mixingPot)
+
+init
+    onEnter(()->onMixingPotConstructed(getEnterLeaveUnit())) 
+    //EventListener.add(EVENT_PLAYER_UNIT_CONSTRUCT_FINISH) ->
+   //     onMixingPotConstructed(GetConstructedStructure())
+
+    EventListener.add(EVENT_PLAYER_UNIT_SPELL_CAST) ->
+        onCast(GetSpellAbilityId(), GetTriggerUnit()) 
+        
+        
+        

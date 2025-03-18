@@ -29,9 +29,11 @@ constant TT_IINGOT  = "A Hard and shiny ingot of iron that could be used in prod
 constant TT_SINGOT  = "A Hard and shiny ingot of steel that could be used in production of high quality gear."
 constant TT_SWIND   = "Represents the pure essence of wind. Used in crafting certain stuff."
 constant TT_SWATER  = "Represents the pure essence of water. Used in crafting certain stuff."
-constant TT_SDARK   = "A ominous dark artifact, this essence is somewhat hidden. What does it do?"
-constant TT_POISON  = "A jarl of poison, can be used to embed a spear in poison."
+constant TT_SDARK   = "An ominous dark artifact, this essence is somewhat hidden. What does it do?"
+constant TT_POISON  = "A jar of poison, can be used to embed a spear in poison."
 constant TT_UPOISON = "Just this bit of refined poison is enough to make an extremely deadly spear."
+constant TT_LESSER_ESSENCE = "A lesser essence made from native herbs. Used in crafting."
+constant TT_GRETER_ESSENCE = "A greater essence made from exotic herbs from neighbouring islands. Used in crafting."
 
 @compiletime function createIronIngot() returns ItemDefinition
     return createBasicItem(ITEM_IRON_INGOT)
@@ -70,6 +72,32 @@ constant TT_UPOISON = "Just this bit of refined poison is enough to make an extr
         ..setTintingColor1Red(180)
         ..setTintingColor2Green(180)
         ..setTintingColor3Blue(180)
+        ..setScalingValue(0.75)
+
+@compiletime function createLesserEssence() returns ItemDefinition
+    return createBasicItem(ITEM_LESSER_ESSENCE)
+        ..setInterfaceIcon(LocalIcons.bTNLESSERESSENCE)
+        ..setModelUsed(LocalItems.lesserEssence)
+        ..setNameEnhance("Lesser Essence")
+        ..setTooltipExtended(TT_LESSER_ESSENCE)
+        ..setDescription(TT_LESSER_ESSENCE)
+        ..setLumberCost(10)
+        //..setTintingColor1Red(255)
+        //..setTintingColor2Green(255)
+       // ..setTintingColor3Blue(0)
+        ..setScalingValue(0.75)
+        
+@compiletime function createGreaterEssence() returns ItemDefinition
+    return createBasicItem(ITEM_GREATER_ESSENCE)
+        ..setInterfaceIcon(LocalIcons.bTNGREATERESSENCE)
+        ..setModelUsed(LocalItems.greaterEssence)
+        ..setNameEnhance("Greater Essence")
+        ..setTooltipExtended(TT_GRETER_ESSENCE)
+        ..setDescription(TT_GRETER_ESSENCE)
+        ..setLumberCost(15)
+        //..setTintingColor1Red(255)
+        //..setTintingColor2Green(128)
+        //..setTintingColor3Blue(0)
         ..setScalingValue(0.75)
 
 @compiletime function createSpiritOfWater() returns ItemDefinition

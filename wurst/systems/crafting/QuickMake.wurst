@@ -48,7 +48,7 @@ public class QuickMake
         EventListener.onCast(spellAbilityId, caster -> onCast(caster))
 
     function onCast(unit caster)
-        if caster.getTypeId() != UNIT_MIXING_POT and not caster.isTroll() and caster.getTypeId() != UNIT_CRAFT_MASTER
+        if not caster.isTroll() and caster.getTypeId() != UNIT_CRAFT_MASTER
             return
         runCallbacks(prior, caster, 0)
         // The position around which matches are searched for.
@@ -62,8 +62,8 @@ public class QuickMake
         // The number of matches per type of special herb.
         let specialHerb = new HashMap<int, int>()
             ..put(ITEM_BLUE_HERB, 0)
-            ..put(ITEM_YELLOW_HERB, 0)
-            ..put(ITEM_PURPLE_HERB, 0)
+            ..put(ITEM_NATIVE_HERB, 0)
+            ..put(ITEM_EXOTIC_HERB, 0)
             ..put(ITEM_ORANGE_HERB, 0)
 
         // The range used for the search radius.

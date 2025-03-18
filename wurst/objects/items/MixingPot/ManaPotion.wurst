@@ -44,7 +44,7 @@ public constant TARGETS_ALLOWED = "friend,ground,hero,invulnerable,organic,self,
         ..setScalingValue(0.7)
         ..setCooldownGroup(commaList(ABILITY_MANA_POTION))
         ..setStockReplenishInterval(120)
-        ..setNumberofCharges(2)
+        ..setNumberofCharges(1)
 
 
 

@@ -36,6 +36,8 @@ let YELLOW_HERB        = "Yellow Herb".color(COLOR_YELLOW)
 let RIVER_ROOT         = "River Root".color(COLOR_TEAL)
 let RIVER_STEM         = "River Stem".color(COLOR_GRAY)
 let ATHELAS_SEED       = "Athelas Seed".color(COLOR_GREEN)
+let NATIVE_HERB        = "Native Herb".color(COLOR_YELLOW)
+let EXOTIC_HERB        = "Exotic herb".color(COLOR_VIOLET)
 
 // Basic Materials
 let STONE              = "Stone".color(COLOR_GRAY)
@@ -55,6 +57,8 @@ let MAGIC              = "Magic".color(COLOR_TURQUOISE)
 let WIND               = "Spirit of Wind".color(COLOR_LAVENDER)
 let WATER              = "Spirit of Water".color(COLOR_TURQUOISE)
 let DARKNESS           = "Spirit of Darkness".color(COLOR_VIOLET)
+let LESSER_ESSENCE   = "Lesser essence".color(COLOR_YELLOW)
+let GREATER_ESSENCE    = "Greater essence".color(COLOR_VIOLET)
 let ANABOLIC           = "Anabolic Potion".color(COLOR_MAROON)
 let IRON               = "Iron Ingot".color(COLOR_RED)
 let STEEL              = "Steel Ingot".color(COLOR_RED)
@@ -74,16 +78,14 @@ let STEELGLOVES        = "Steel".color(COLOR_RED)
 // Artifact Materials
 let HYDRA_SCALE = "Hydra Scale".color(ARTIFACT_COLOR)
 
-public let QM_TOOLIP        = "This Quick Make ability will find the nearest material and craft the said item, "+
-                              "material have to be either on the ground or inside the building inventory. "+
-                              "For more information about items, type " + "-recipes".color(GOLD_COLOR) + ", all the items are listed there."
+public let QM_TOOLIP        = "This Quick Make ability will attempt to craft the item, including all intermediary ingridients."
 
 public let QM_BUILD_TOOLIP  = "If you do not have enough inventory to craft to pick all items, you can use the craft master 5000 at the center of the map. "+
                               "This Quick Make ability will find the nearest material and craft the said building, "+
                               "material have to be either on the ground just next to the unit or inside its inventory. "+
                               "For more information abouts item, type " + "-recipes".color(GOLD_COLOR) + ", all the items are listed there."
 
-public let MIX_TOOLTIP       = "Mix those Herb together to get "
+public let MIX_TOOLTIP       = "Spend mana to craft "
 public let TRANSMUTE_TOOLTIP = "Put those materials in the correct order to get "
 
 public let TRANSMUTE_CRAFT_BUILDING_TOOLTIP = "Pick up the following materials in the correct order or click on this once they're in your inventory to get "
@@ -91,9 +93,6 @@ public let TANNERY_PLACEHOLDER_STAT_TOOLTIP = "1 Strength give +8 health point, 
 public let TANNERY_PLACEHOLDER_HIDE_USAGE_TOOLTIP = "It doesn't matter which hide you use to make superior gear, a battle armor made from an elk skin coat will give "+
                                                     "as much stat as a battle armor made from a jungle bear skin coat, wolf & bear hide sell for good money"
 
-public let SPECIAL_MIX_WARNING = ("\n\nWarning : Quick Make should pick up the Special Herb in the following order : Blue/Yellow/Purple/Orange"+
-                                  ", if you have 3 blue and 2 yellow, it will use 3 blue and 1 yellow herb to make a disease potion for example,"+
-                                  " it is recommended to use the Mix Herb ability to make sure it mixes the herb you want.").color(COLOR_RED)
 
 public let MIXING_SPELLBOOK_TOOLTIP       = "More Recipes here\n\nContains Quick Make spell for special herb recipes"
 public let ARMOR_SPELLBOOK_TOOLTIP        = "More Recipes here\n\nContains Quick Make spell for Armor items recipes"
@@ -102,48 +101,55 @@ public let WORKSHOP_SPELLBOOK_TOOLTIP     = "More Recipes here\n\nContains Quick
 public let ARMORY_SPELLBOOK_TOOLTIP        ="More Recipes here\n\nContains Quick Make spell for Anabolic Boots and Troll Protector"
 public let WDH_SPELLBOOK_TOOLTIP          = "More Recipes here\n\nContains Quick Make spell for more scrolls, spirit ward, living clay and magic seeds recipes"
 public let BUILDING_CRAFT_TOOLTIP         = "Look here to construct buildings, this page contains all buildings recipes, type -crafting for explanation about crafting."
+public let MIXING_POT_MANA          = "\nMixing pot gains mana from melting down herbs.".color(COLOR_GOLD_STR)
+public let MIXING_POT_MANA_GAIN =                   "Melt down herbs to gain mana: "+ 
+                                                    "\nAthelas: {0} mana.".format("1".color(COLOR_LIGHT_BLUE))+
+                                                    "\nRiver Root/Stem: {0} mana.".format("3".color(COLOR_LIGHT_BLUE))+
+                                                    "\nNative Herb: {0} mana.".format("5".color(COLOR_LIGHT_BLUE))+
+                                                    "\nExotic Herb: {0} mana.".format("7.5".color(COLOR_LIGHT_BLUE))+
+                                                    "\nSpirit of Wind/Water/Darknes: {0} mana.".format("6".color(COLOR_LIGHT_BLUE))+
+                                                    "\nLesser Essence: {0} mana.".format("10".color(COLOR_LIGHT_BLUE))+
+                                                    "\nGreater Essence: {0} mana.".format("15".color(COLOR_LIGHT_BLUE))
 
 // Mixing Pot
 
-public let HEALING_POTION_RECIPE          = "2x " + "Healing Potion.".color(COLOR_GREEN) + TT_HEALING_POTION + "\n\n1x " +WATER+ " + 1x " +ATHELAS_SEED
-public let MANA_POTION_RECIPE             = "2x Mana Potion, restore 80 mana to the consumer :\n\n1x " +WIND+ " + 1x " +ATHELAS_SEED
-public let CURE_ALL_RECIPE                = "a Cure All, remove positive/negative buff & effect on the target ally :\n\n3x "+ATHELAS_SEED
-public let ESSENCE_BEES_RECIPE            = "an " + "Essence of Bees. ".color(COLOR_ORANGE) + TT_ESSENCE_BEES + "\n\n"+
-                                            "2x "+SPECIAL_HERB+" 1 + 1x "+SPECIAL_HERB+ " 2 + 1x "+SPECIAL_HERB+" 3\nOr\n1x "+SPECIAL_HERB+" 1/2/3/4"+SPECIAL_MIX_WARNING
+public let HEALING_POTION_RECIPE          = "a Healing Potion.".color(COLOR_GREEN) + TT_HEALING_POTION + "\n\n{0} mana required to craft.".format("4".color(COLOR_LIGHT_BLUE))+MIXING_POT_MANA
+public let MANA_POTION_RECIPE             = "a Mana Potion, restore 80 mana to the consumer :" + "\n\n{0} mana required to craft.".format("3".color(COLOR_LIGHT_BLUE))+MIXING_POT_MANA
+public let CURE_ALL_RECIPE                = "a Cure All, remove positive/negative buff & effect on the target ally" + "\n\n{0} mana required to craft.".format("3".color(COLOR_LIGHT_BLUE))+MIXING_POT_MANA
+public let ESSENCE_BEES_RECIPE            = "an " + "Essence of Bees. ".color(COLOR_ORANGE) + TT_ESSENCE_BEES + "\n\n{0} mana required to craft.".format("15".color(COLOR_LIGHT_BLUE))+MIXING_POT_MANA
 public let TWIN_ISLANDS_POTION_RECIPE     = "a " + "Twin Islands Potion. ".color(COLOR_TURQUOISE) + TT_TWIN_ISLAND_POTION
                                             + "(Current Quick Make doesn't work with Blue/Yellow Herb, you have to use Mix Herb ability).".color(COLOR_RED) +
                                             "\n\n3x "+ YELLOW_HERB + " + 3x " + BLUE_HERB + "\n"+
-                                            "Or\n3x " + PURPLE_HERB + " + 3x " + ORANGE_HERB + SPECIAL_MIX_WARNING
+                                            "Or\n3x " + PURPLE_HERB + " + 3x " + ORANGE_HERB 
 
-public let NETHER_POTION_RECIPE           = "a " + "Nether Potion. ".color(COLOR_VIOLET) + TT_NETHER_POTION + "\n\n1x "+SPECIAL_HERB+" + 2x "+RIVER_STEM+" + 2x "+ATHELAS_SEED
+public let NETHER_POTION_RECIPE           = "a " + "Nether Potion. ".color(COLOR_VIOLET) + TT_NETHER_POTION + "\n\n{0} mana required to craft.".format("15".color(COLOR_LIGHT_BLUE))+MIXING_POT_MANA
 
-public let DRUNKS_POTION_RECIPE           = "a " + "Drunk Potion. ".color(COLOR_ORANGE) + TT_DRUNK_POTION + "\n\n1x "+SPECIAL_HERB+" 1 + 2x "+ATHELAS_SEED+" + 1x "+RIVER_ROOT+SPECIAL_MIX_WARNING
+public let DRUNKS_POTION_RECIPE           = "a " + "Drunk Potion. ".color(COLOR_ORANGE) + TT_DRUNK_POTION + "\n\n{0} mana required to craft.".format("10".color(COLOR_LIGHT_BLUE))+MIXING_POT_MANA
 
-public let FERVER_POTION_RECIPE           = "Increase the consumer attack speed by {0}, damage by {1} and armor by {2}. This potion put alot of stress on the consumer body, who takes {3} damage per seconds."
-                                            .format(0.20.toToolTipOrange(), 8..toToolTipRed(), 6..toToolTipGreen(), 9..toToolTipRed()) + makeToolTipDuration(20, 5)+
-                                            "\n\n2x "+SPECIAL_HERB+" 1 + 1x "+SPECIAL_HERB+" 2 + 1x "+ATHELAS_SEED+SPECIAL_MIX_WARNING
+public let FERVER_POTION_RECIPE           = "Increase the consumer attack speed by {0} and armor by {1}. This potion put alot of stress on the consumer body."
+                                            .format(0.20.toToolTipOrange(), 5..toToolTipGreen()) + makeToolTipDuration(20, 5)+
+                                            "\n\n{0} mana required to craft.".format("10".color(COLOR_LIGHT_BLUE))+MIXING_POT_MANA
 
 
-public let DISEASE_POTION_RECIPE          = "a " + "Disease Potion. " + TT_DISEASE_POTION + "\n\n"+
-                                            "3x "+MUSHROOM+" + 1x "+RIVER_STEM
+public let DISEASE_POTION_RECIPE          = "a " + "Disease Potion. " + TT_DISEASE_POTION + "\n\n{0} mana required to craft.".format("5".color(COLOR_LIGHT_BLUE))+MIXING_POT_MANA
 
-public let ANTI_MAGIC_POTION_RECIPE       = "an " + "Anti-Magic Potion. ".color(COLOR_GREEN) + TT_ANTI_MAGIC_POTION + "\n\n1x "+SPECIAL_HERB+" + 1x "+ATHELAS_SEED
+public let ANTI_MAGIC_POTION_RECIPE       = "an " + "Anti-Magic Potion. ".color(COLOR_GREEN) + TT_ANTI_MAGIC_POTION + "\n\n{0} mana required to craft.".format("3".color(COLOR_LIGHT_BLUE))+MIXING_POT_MANA
 
-public let ANABOLIC_POTION_RECIPE         = "an " + "Anabolic Potion. ".color(COLOR_ORANGE) + TT_ANABOLIC_POTION + "\n\n1x "+RIVER_STEM + "\n\n1x "+RIVER_ROOT
+public let ANABOLIC_POTION_RECIPE         = "an " + "Anabolic Potion. ".color(COLOR_ORANGE) + TT_ANABOLIC_POTION + "\n\n{0} mana required to craft.".format("6".color(COLOR_LIGHT_BLUE))+MIXING_POT_MANA
 public let ORACLE_POTION_RECIPE           = "a Oracle Potion, grant true sight to the consumer."+makeToolTipDuration(20, 20, 20)+"\n\n1x "+SPECIAL_HERB+" + 2x "+ATHELAS_SEED
 public let ELEMENTAL_SHIELD_POTION_RECIPE = "an Elemental Shield Potion, grant lighting shield to the consumer, dealing 4 damage per second."+
                                             makeToolTipDuration(10, 10, 30)+ "\n\n1x "+SPECIAL_HERB+" + 1x "+ATHELAS_SEED+" + 1x "+RIVER_STEM
 
-public let ACID_BOMB_RECIPE               = "an " + "Acid Bomb. ".color(COLOR_VIOLET) + TT_ACID_BOMB + "\n\n2x "+SPECIAL_HERB+" 1 + 2x "+SPECIAL_HERB+" 2 + 2x "+RIVER_STEM+"\nOr\n"+
-                                            "3x "+SPECIAL_HERB+" 1 + 1x "+SPECIAL_HERB+" 2 + 2x "+RIVER_STEM+SPECIAL_MIX_WARNING
-public let BEE_HIVE_RECIPE                = "a " + "Bee Hive. ".color(COLOR_ORANGE) + TT_BEE_HIVE + "\n\n1x "+SPECIAL_HERB+" + 2x "+RIVER_STEM
+public let ACID_BOMB_RECIPE               = "an " + "Acid Bomb. ".color(COLOR_VIOLET) + TT_ACID_BOMB + "\n\n{0} mana required to craft.".format("25".color(COLOR_LIGHT_BLUE))+MIXING_POT_MANA
+public let BEE_HIVE_RECIPE                = "a " + "Bee Hive. ".color(COLOR_ORANGE) + TT_BEE_HIVE + "\n\n{0} mana required to craft.".format("6".color(COLOR_LIGHT_BLUE))+MIXING_POT_MANA
 public let SPIRIT_DARKNESS_RECIPE         = "a Spirit Of Darkness, dark essence used to create ominous artefact :\n\n1x "+RIVER_ROOT+" + 1x "+RIVER_STEM+" + 2x "+ATHELAS_SEED
 public let OMNICURE_RECIPE                = "an Omicure, remove positive/negative buff & effect on all allied Trolls :\n\n2x "+ATHELAS_SEED+" + 1x "+SPECIAL_HERB+" 1 + 1x "+SPECIAL_HERB+" 2"
 public let GEM_OF_KNOWLEDGE_RECIPE        = "a Gem Of Knowledge, magical artifact increasing experience gained by 50%, doesn't work on hunter & beastmaster classes"+
-                                            " :\n\n2x "+SPECIAL_HERB+" 1 + 2x "+SPECIAL_HERB+" 2\nOr\n3x "+SPECIAL_HERB+" 1 + 1x "+SPECIAL_HERB+" 2"+SPECIAL_MIX_WARNING
+                                            " :\n\n2x "+SPECIAL_HERB+" 1 + 2x "+SPECIAL_HERB+" 2\nOr\n3x "+SPECIAL_HERB+" 1 + 1x "+SPECIAL_HERB+" 2"
 public let SPIRIT_WIND_RECIPE             = "a Spirit Of Wind, used to craft quality gear, gives your hero +1 all attributes :\n\n2x "+RIVER_STEM
 public let SPIRIT_WATER_RECIPE            = "a Spirit Of Water, used to craft quality gear, gives your hero +1 all attributes :\n\n2x "+RIVER_ROOT
-
+public let GREATER_ESSENCE_RECIPE                = "a Greater Essence, used to craft quality gear :\n\n2x "+EXOTIC_HERB
+public let LESSER_ESSENCE_RECIPE                 = "a Lesser Essence, used to craft quality gear :\n\n2x "+NATIVE_HERB
 
 //Forge
 public let IRON_INGOT_RECIPE   = "an Iron Ingot. A Hard and shiny ingot of iron that could be used in production of powerful weapons :\n\n1x "      +STONE      +" + 1x "+FLINT
@@ -184,33 +190,33 @@ public let IRON_STAFF_RECIPE = TT_IRON_STAFF+"\n\n1x "+STICK+"1x "+"2x "+IRON+"1
 public let BATTLE_GLOVES_RECIPE         = "a pair of " + "Battle Gloves. ".color(COLOR_VIOLET) + TT_BATTLE_GLOVES
                                           +"\n\n1x " + "Steel Gloves".color(COLOR_RED) + " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
 public let BATTLE_AXE_RECIPE            = "a Battle Axe. A two handed axe, increase damage by 14, attack speed by"+" 20%".color(ENERGY_COLOR)+
-                                          "\n\n1x "+"Fervor potion ".color(COLOR_MAROON)+" + 1x  "+"Steel Axe".color(COLOR_RED) +" 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
+                                          "\n\n1x "+GREATER_ESSENCE+" + 1x  "+"Steel Axe".color(COLOR_RED) +" 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
 public let BATTLE_ARMOR_RECIPE          = TT_BATTLE_ARMOR+"\n\n"+"1x " + "Bone Coat".color(COLOR_ORANGE) + " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
 public let BATTLE_SHIELD_RECIPE         = BATTLE_SHIELD_TOOLTIP+
                                            "\n\n"+"1x " + "Bone Shield".color(COLOR_ORANGE) + " + 1x " +ELK_HIDE+" + 1x "+STEEL+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
-public let ANABOLIC_BOOTS_RECIPE        = "a pair of " + "Anabolic Boots. ".color(COLOR_VIOLET) + TT_ANA_BOOTS + "\n\n1x " + "Bone Boots".color(COLOR_ORANGE) +
-                                          " + 1x " + WIND + " + 1x " + WATER + " + 1x " + MC + " + 2x " + ANABOLIC
+public let ANABOLIC_BOOTS_RECIPE        = "a pair of " + "Anabolic Boots. ".color(COLOR_VIOLET) + TT_ANA_BOOTS + "\n\n1x " + "Bone Boots".color(COLOR_ORANGE) + " + 1x " + LESSER_ESSENCE +
+                                          " + 1x " + WIND + " + 1x " + WATER + " + 1x " + MC 
 public let WOLFS_STAMINA_BOOTS_RECIPE  = "Boots of Wolf's Stamina. \n".color(COLOR_VIOLET) +TT_WOLFS_STAMINA_BOOTS
-                                        +"\n\n1x " + "Wolf Skin Boots ".color(COLOR_ORANGE) + " + 1x "+IRON+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MAGIC                                     
+                                        +"\n\n1x " + "Wolf Skin Boots ".color(COLOR_ORANGE) + " + 1x "+IRON+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC                                     
 public let WOLFS_BLOODLUST_CLAWS_RECIPE   = "Claws of Wolf's Bloodlust. \n".color(COLOR_VIOLET) + TT_WOLF_BLOODLUST_CLAWS
-                                        +"\n\n1x " + "Wolf Skin Gloves ".color(COLOR_ORANGE) + " +1x "+STEEL+" + 1x "+"Fervor potion ".color(COLOR_MAROON) + " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MAGIC                                        
+                                        +"\n\n1x " + "Wolf Skin Gloves ".color(COLOR_ORANGE) + " +1x "+STEEL+" + 1x "+GREATER_ESSENCE + " 1x "+WIND+" + 1x "+WATER+" + 1x "+MC                                        
 public let WOLFS_VORACITY_COAT_RECIPE   = "Coat of Wolf's Voracity. \n".color(COLOR_VIOLET) + TT_WOLF_VORACITY_COAT
-                                        +"\n\n1x " + "Wolf Skin Coat ".color(COLOR_ORANGE) +" 1x " +DARKNESS+ " + 1x "+MAGIC
+                                        +"\n\n1x " + "Wolf Skin Coat ".color(COLOR_ORANGE) +" 1x " +DARKNESS+ " + 1x "+MC
 public let BEARS_GREED_PAWS_RECIPE      = "Paws of Bear's Greed. \n".color(COLOR_ORANGE) + TT_BEARS_GREED_PAWS
-                                        +"\n\n1x " + "Bear Skin Gloves ".color(COLOR_ORANGE) +" + "  +IRON+" 1x " + "Bee Hive ".color(COLOR_YELLOW)+ " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MAGIC
+                                        +"\n\n1x " + "Bear Skin Gloves ".color(COLOR_ORANGE) +" + "  +IRON+" 1x " + LESSER_ESSENCE + " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
 public let BEAR_PRESENCE_COAT_RECIPE    = "Coat of Bear's Terrifying Presence. \n".color(COLOR_RED) + TT_BEAR_PRESENCE_COAT
-                                         +"\n\n1x " + "Bear Skin Coat ".color(COLOR_ORANGE)+" + " +STEEL+" + 1x " + DARKNESS+  " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MAGIC                                                                          
+                                         +"\n\n1x " + "Bear Skin Coat ".color(COLOR_ORANGE)+" + " +STEEL+" + 1x " + DARKNESS+  " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC                                                                          
 public let ITEM_BEARS_TENACITY_BOOTS_RECIPE = "Boots of Bear's Tenacity. \n".color(COLOR_RED) + TT_BEARS_TENACITY_BOOTS
-                                        +"\n\n1x " + "Bear Skin Boots ".color(COLOR_ORANGE)+" + " +IRON+" 1x " +"Anti-Magic Potion".color(COLOR_MAROON)+ " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MAGIC 
+                                        +"\n\n1x " + "Bear Skin Boots ".color(COLOR_ORANGE)+" + " +IRON+" 1x " +LESSER_ESSENCE+ " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC 
 public let TROLL_PROTECTOR_RECIPE      ="Troll Protector. \n".color(COLOR_TURQUOISE)+TROLL_PROTECTOR_TT_EXT
                                         +"\n\n1x " + "Iron Shield ".color(COLOR_ORANGE) + "+ 1x "+ELK_HIDE+ " + 1x "+MC
 public let CONDUCTING_ROD_RECIPE      ="Conducting Rod. \n".color(COLOR_VIOLET)+TT_CONDUCTING_ROD
-                                        +"\n\n1x " + "Iron Staff ".color(COLOR_ORANGE) + " + 1x "+STEEL+" + 1x "+"Nether Potion".color(COLOR_PINK)+ " + 1x "+WIND+ " + 1x "+WATER+ " + 1x "+MAGIC
+                                        +"\n\n1x " + "Iron Staff ".color(COLOR_ORANGE) + " + 1x "+STEEL+" + 1x "+"Nether Potion".color(COLOR_PINK)+ " + 1x "+WIND+ " + 1x "+WATER+ " + 1x "+MC
 public let ROBE_OF_THE_MAGI_RECIPE     ="Robe of the Magi. \n".color(COLOR_VIOLET)+TT_ROBE_OF_THE_MAGI
-                                        +"\n\n"+"1x " + "Bone Coat".color(COLOR_ORANGE) + " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MAGIC
+                                        +"\n\n"+"1x " + "Bone Coat".color(COLOR_ORANGE) + " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
 
 public let MAGEFIST_RECIPE             ="Magefist. \n".color(COLOR_VIOLET)+TT_MAGEFIST
-                                        +"\n\n1x "+"Bone Gloves ".color(COLOR_RED)+ "+ 1x "+STEEL+" + 1x "+"Nether Potion".color(COLOR_PINK)+ " + 1x "+WIND+ "+ 1x "+WATER+ " + 1x "+MC     
+                                        +"\n\n1x "+"Bone Gloves ".color(COLOR_RED)+ "+ 1x "+STEEL+" + 1x "+LESSER_ESSENCE+ " + 1x "+WIND+ "+ 1x "+WATER+ " + 1x "+MC     
 public let BATTLE_STAFF_RECIPE         ="a "+"Battle Staff. \n".color(COLOR_VIOLET)+TT_BATTLE_STAFF
                                         +"\n\n1x "+"Iron Staff".color(COLOR_ORANGE)+"+ 1x "+STEEL+" + 2x "+BONE+ " + 1x "+WIND+ " + 1x "+WATER
 
@@ -229,7 +235,7 @@ public let MAGIC_SEED_RECIPE            = "a Magic Seed. Can grow a tree, has 2 
 public let SPIRIT_WARD_RECIPE           = "a Spirit Ward. Can be used to revive 1 allied troll :\n\n3x "+MC+" + 1x "+STICK
 public let POISON_RECIPE                = "a Poison salve. Can be used to craft poison spear :\n\n3x "+MUSHROOM
 public let ULTRA_POISON_RECIPE          = "an Ultra Poison salve. Can be used to craft ultra poison spear :\n\n2x "+POISON
-public let VENOM_FANG_RECIPE            = VENOM_FANG_TT.color(COLOR_TURQUOISE)+":\n\n1x "+PANTHER_FANG_NAME.color(COLOR_ORANGE)+" 2x "+POISON+" 1x "+WIND+" 1x "+WATER+" 1x "+MAGIC
+public let VENOM_FANG_RECIPE            = VENOM_FANG_TT.color(COLOR_TURQUOISE)+":\n\n1x "+PANTHER_FANG_NAME.color(COLOR_ORANGE)+" 2x "+POISON+" 1x "+WIND+" 1x "+WATER+" 1x "+MC
 
 public let CLOAK_FLAMES_RECIPE  = "a " + "Cloak Of Flames. " .color(COLOR_RED      ) + CLOAK_FLAMES_TT  + "\n\n1x "+ MAGIC +" + 1x " + "Bone Coat".color(COLOR_ORANGE) + " + 1x " + FLINT
 public let CLOAK_FROST_RECIPE   = "a " + "Cloak Of Frost. "  .color(COLOR_TURQUOISE) + CLOAK_FROST_TT   + "\n\n1x "+ MAGIC +" + 1x " + "Bone Coat".color(COLOR_ORANGE) + " + 1x " + WATER

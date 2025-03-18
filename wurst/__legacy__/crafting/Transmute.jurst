@@ -184,6 +184,7 @@ library Transmute initializer onInit requires LocalObjectIDs, UnitExtensions, It
         endif
     //End of Troll Inventory Item Creation
     //Beginning of Forge Item Creation
+    /*
         if uid == UNIT_FORGE and not isConstructing(GetTriggerUnit()) then
             loop
                 exitwhen e > 5
@@ -899,6 +900,7 @@ library Transmute initializer onInit requires LocalObjectIDs, UnitExtensions, It
         set t[4] = null
         set t[5] = null
         set added = null
+    */
     endfunction
 
     function onInit takes nothing returns nothing

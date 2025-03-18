@@ -5,7 +5,6 @@ import InventoryUtils
 import Classes
 import UnitUtils
 import LocalObjectIDs
-import PlayerExtensions
 import ThiefsPocket
 
 let MAX_DIST = 300

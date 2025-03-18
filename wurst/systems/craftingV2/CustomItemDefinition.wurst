@@ -50,8 +50,9 @@ import initlater ArmoryV2
 import initlater ForgeV2
 import initlater TanneryV2
 import initlater WitchDoctorsHutV2
+import initlater MixingPotItemDefinitions
+import initlater WorkshopV2
 import initlater MixingPotV2
-import initlater  WorkshopV2
 
 public HashMap<int, CustomItemDefinition> customItemDefinitions = null
 LinkedList<Bonus> bonusTypes = null
@@ -159,23 +160,29 @@ public class CustomItemDefinition
     function setUnitRequirement(int unitRequirementId)
         recipe.unitRequirementId = unitRequirementId
 
+    function setMixingPotManaRequirement(int manaRequirement)
+        recipe.setMixingPotManaRequirement(manaRequirement)
+
+    function setMixingPotQuickMakeAbility(int abilId)
+        quickMakeAbility = abilId
+        EventListener.onCast(abilId) (unit caster) ->
+            onMixingPotQuickMake(caster, itemId)        
 
     function setQuickMakeAbility(int abilId)
-        //print("registered "+GetObjectName(abilId)+" quickmake for item "+GetObjectName(itemId))
         quickMakeAbility = abilId
         EventListener.onCast(abilId) (unit caster) ->
             onQuickMake(caster)
             
-            
+    //function onMixingPotQuickMake(unit caster)
+
     function onQuickMake(unit caster)
-        //print("onQuickmake "+GetObjectName(itemId))
         let quickMake = new QuickMakeV2(itemId, caster)
         let craftedItem = quickMake.craftItem(caster)
         if craftedItem == null
             return
-        doAfter(ANIMATION_PERIOD) ->
-            caster.addItemHandle(craftedItem)   
-            quickMake.onSuccess()        
+        //doAfter(ANIMATION_PERIOD) ->
+            //caster.addItemHandle(craftedItem)   
+            //quickMake.onSuccess()        
 
     function setName(string _name)
         TT_NAME = _name

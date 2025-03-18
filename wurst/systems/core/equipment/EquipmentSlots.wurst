@@ -51,6 +51,7 @@ import CustomItemDefinition
 import InventoryLimits
 import Reflection
 import Lodash
+import TrophyHidev2
 
 public interface EquipmentCallback
     function run(unit troll, item itm)
@@ -113,7 +114,7 @@ public class EquipmentSlots
         let inventory = troll.getInventory()
         for each in inventory
             if each == null and troll.isAlive()
-                troll.addItemHandle(itm)    
+                troll.addItemHandle(itm)
                 removeBonuses(itm.getTypeId(), troll)
                 destroy inventory
                 return
@@ -126,10 +127,50 @@ public class EquipmentSlots
         if cb != null
             destroy cb
 
+
+    function enforceMaximumSlotCount(item whichItem) returns bool
+        if whichItem == null
+            //print("null item")
+            return false
+        var isCheckSuccess = true          
+        let totalItems = troll.getInventory()
+        let trollInventorySize  = totalItems.size()
+        var equippedItemsCount = 0
+        var emptySlots = 0
+
+        for each in currentItems
+            let itm = currentItems.get(each)
+            if itm != null
+                equippedItemsCount+=1
+                totalItems.add(itm)
+        
+        for each in totalItems
+            let itemId = each.getTypeId()
+            if each == null
+                emptySlots+=1
+            if itemId == ITEM_EQUIPMET_DUMMY_SLOT
+                totalItems.remove(each)
+            if BACKPACK_ITEM_LIST.has(itemId) and equippedItemsCount>0
+                equippedItemsCount-=1
+                totalItems.remove(each)
+        var inventorySize = totalItems.size()-emptySlots
+        if not troll.hasItem(whichItem)
+            inventorySize+=1
+        if trollInventorySize<inventorySize
+            isCheckSuccess = false
+        destroy totalItems
+        return isCheckSuccess
+
     function equipItem(int index, item itm)
         if itm == null
             simError(troll.getOwner(), "You dont have any items to equip")
             return
+        if not enforceInventoryLimits(troll, itm)
+            simError(troll.getOwner(), "You already have maximum amount of items of this type equipped")
+            return
+        if not enforceMaximumSlotCount(itm)
+            simError(troll.getOwner(), "You have maximum amount of items equipped")
+            return        
         currentItems.put(index, itm)
         troll.removeItem(itm)
         nullTimer() -> 
@@ -137,9 +178,17 @@ public class EquipmentSlots
             refreshFrames()
             itm.setVisible(false)
         applyBonuses(itm.getTypeId(), troll)
-        enforceInventoryLimits(troll, itm)
-        doAfter(ANIMATION_PERIOD) -> 
-            runOnEquipCallbacks(troll, itm)
+        /*
+        if enforceInventoryLimits(troll, itm) == false
+            doAfter(ANIMATION_PERIOD) -> 
+                equipItem(index, previousItem)
+                doAfter(ANIMATION_PERIOD) -> 
+                    runOnEquipCallbacks(troll, itm)
+        else
+            */
+        doAfter(ANIMATION_PERIOD) ->
+            runOnEquipCallbacks(troll, itm) 
+                
         /*
         cb = doPeriodically(0.125) (CallbackPeriodic cb) ->
             if itm.isOwned()
@@ -217,6 +266,7 @@ function onTargetOrder()
     if (target != null
         and target.isPickupable()
         and u.isInventoryFull())
+        and not (u.hasItemById(ITEM_HUNTER_TROPHY_HIDE_DUMMY) and TROPHY_BASE_LIST.has(target.getTypeId()))
         let collisionSize = u.getCollisionSize()
         let rangeSq = (150.0 + collisionSize).pow(2)
         if u.getPos().distanceToSq(target.getPos()) <= rangeSq
@@ -234,6 +284,7 @@ init
             var maxCount = 0
             var maxCountId = 0
             var maxCountName = ""
+            //let hawkInstanceId = getIns
             for i = 1 to maxTypeId()
                 if instanceCount(i) >maxCount
                     maxCountId = i

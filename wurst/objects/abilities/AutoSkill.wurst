@@ -11,7 +11,6 @@ import Transformation
 import UnitExtensions
 import LegacyHotkeys
 import TrollUnitTextConstant
-import IdListConstant
 
 let legacySkillMap = new HashMap<int, int>()
     ..put(ABILITY_MAGE_SPELLBOOK, ABILITY_MAGE_LEGACY_SPELLBOOK)

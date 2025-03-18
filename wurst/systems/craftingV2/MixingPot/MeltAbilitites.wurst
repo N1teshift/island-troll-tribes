@@ -1,0 +1,106 @@
+package MeltAbilitites
+
+
+// Standard library imports:
+import HashMap
+import AbilityObjEditing
+import ClosureEvents
+import DamageEvent
+import InstantDummyCaster
+import StandardTextTags
+
+// Local imports:s
+import LocalObjectIDs
+import ToolTipsUtils
+import ChannelAbilityPreset
+import LocalAssets
+import QuickMakeV2
+
+
+let COOLDOWN = 0.5
+
+let TT_MELT_STEM_NAME = "Melt a River Stem"
+let TT_MELT_STEM_EXT = "Find and melt a River Stem in {0} radius, granting {1} mana to Mixing Pot.".format(BUILDING_CRAFTING_AOE.toToolTipLightBlue(),3..toToolTipLightBlue()) 
+
+let TT_MELT_ROOT_NAME = "Melt a River Root"
+let TT_MELT_ROOT_EXT = "Find and melt a River Root in {0} radius, granting {1} mana to Mixing Pot.".format(BUILDING_CRAFTING_AOE.toToolTipLightBlue(),3..toToolTipLightBlue()) 
+
+let TT_MELT_NATIVE_HERB_NAME = "Melt a Native Herb"
+let TT_MELT_NATIVE_HERB_EXT = "Find and melt a Native Herb in {0} radius, granting {1} mana to Mixing Pot.".format(BUILDING_CRAFTING_AOE.toToolTipLightBlue(),5..toToolTipLightBlue()) 
+
+let TT_MELT_EXOTIC_HERB_NAME = "Melt an Exotic Herb"
+let TT_MELT_EXOTIC_HERB_EXT = "Find and melt an Exotic Herb in {0} radius, granting {1} mana to Mixing Pot.".format(BUILDING_CRAFTING_AOE.toToolTipLightBlue(),7.5.toToolTipLightBlue()) 
+
+let TT_MELT_EVERYHING_NAME = "Melt everything"
+let TT_MELT_EVERYTHING_EXT = "Find and melt every herb in {0} radius, including athelas, spirits and essences.".format(BUILDING_CRAFTING_AOE.toToolTipLightBlue()) 
+
+@compiletime function createMeltHerbAbilities()
+    new ChannelAbilityPreset(ABILITY_MIXING_POT_MELT_STEM, 1, true)
+        ..setName(TT_MELT_STEM_NAME)
+        ..setIconNormal(Icons.bTNDOTAdeptTraining)
+        ..setTooltipNormal(1, TT_MELT_STEM_NAME)
+        ..setTooltipNormalExtended(1, TT_MELT_STEM_EXT)
+        ..setCooldown(1, COOLDOWN)
+        ..presetTargetTypes(Targettype.NONE)
+        ..setLevels(1)
+        ..setHeroAbility(false)
+        ..setHotkeyNormal("Q")
+        ..setButtonPositionNormalX(0)
+        ..setButtonPositionNormalY(0)
+        //..setBaseOrderID(1, orderId)
+
+    new ChannelAbilityPreset(ABILITY_MIXING_POT_MELT_ROOT, 1, true)
+        ..setName(TT_MELT_ROOT_NAME)
+        ..setIconNormal(Icons.bTNWandOfNeutralization)
+        ..setTooltipNormal(1, TT_MELT_ROOT_NAME)
+        ..setTooltipNormalExtended(1, TT_MELT_ROOT_EXT)
+        ..setCooldown(1, COOLDOWN)
+        ..presetTargetTypes(Targettype.NONE)
+        ..setLevels(1)
+        ..setHeroAbility(false)
+        ..setHotkeyNormal("W")
+        ..setButtonPositionNormalX(1)
+        ..setButtonPositionNormalY(0)
+        //..setBaseOrderID(1, orderId)
+
+    new ChannelAbilityPreset(ABILITY_MIXING_POT_MELT_NATIVE_HERB, 1, true)
+        ..setName(TT_MELT_NATIVE_HERB_NAME)
+        ..setIconNormal(LocalIcons.bTNYellowHerb)
+        ..setTooltipNormal(1, TT_MELT_NATIVE_HERB_NAME)
+        ..setTooltipNormalExtended(1, TT_MELT_NATIVE_HERB_EXT)
+        ..setCooldown(1, COOLDOWN)
+        ..presetTargetTypes(Targettype.NONE)
+        ..setLevels(1)
+        ..setHeroAbility(false)
+        ..setHotkeyNormal("E")
+        ..setButtonPositionNormalX(2)
+        ..setButtonPositionNormalY(0)
+        //..setBaseOrderID(1, orderId)
+
+    new ChannelAbilityPreset(ABILITY_MIXING_POT_MELT_EXOTIC_HERB, 1, true)
+        ..setName(TT_MELT_EXOTIC_HERB_NAME)
+        ..setIconNormal(LocalIcons.bTNPurpleHerb)
+        ..setTooltipNormal(1, TT_MELT_EXOTIC_HERB_NAME)
+        ..setTooltipNormalExtended(1, TT_MELT_EXOTIC_HERB_EXT)
+        ..setCooldown(1, COOLDOWN)
+        ..presetTargetTypes(Targettype.NONE)
+        ..setLevels(1)
+        ..setHeroAbility(false)
+        ..setHotkeyNormal("R")
+        ..setButtonPositionNormalX(3)
+        ..setButtonPositionNormalY(0)
+        //..setBaseOrderID(1, orderId)
+
+    new ChannelAbilityPreset(ABILITY_MIXING_POT_MELT_EVERYTHING, 1, true)
+        ..setName(TT_MELT_EVERYHING_NAME)
+        ..setIconNormal(Icons.bTNDizzy)
+        ..setTooltipNormal(1, TT_MELT_EVERYHING_NAME)
+        ..setTooltipNormalExtended(1, TT_MELT_EVERYTHING_EXT)
+        ..setCooldown(1, COOLDOWN)
+        ..presetTargetTypes(Targettype.NONE)
+        ..setLevels(1)
+        ..setHeroAbility(false)
+        ..setHotkeyNormal("X")
+        ..setButtonPositionNormalX(1)
+        ..setButtonPositionNormalY(2)
+        //..setBaseOrderID(1, "chemicalrage")

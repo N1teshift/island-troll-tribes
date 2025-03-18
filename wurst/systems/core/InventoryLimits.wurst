@@ -23,10 +23,11 @@ class Restriction
 
 let restrictions = new OwnedLinkedList<Restriction>()
 
-public function enforceInventoryLimits(unit whichUnit, item whichItem)
+public function enforceInventoryLimits(unit whichUnit, item whichItem) returns boolean
     if not whichUnit.isTroll()
-        return
+        return false
 
+    bool isCheckSuccess = true
     bool isManipulatedItemEquipped = false
     int equippedItemIndex = 0
     let restrictionsForItem = filter(r -> r.getCount.call(whichItem) > 0, restrictions)
@@ -34,7 +35,9 @@ public function enforceInventoryLimits(unit whichUnit, item whichItem)
 
     for restriction in restrictionsForItem
         
-        var inventory = whichUnit.getInventory()
+        let inventory = whichUnit.getInventory()
+        if not whichUnit.hasItem(whichItem)
+            inventory.add(whichItem)
         let equippedItems = whichUnit.getOwner().getEquipmentSlots().currentItems
         for i = 0 to equippedItems.size()
             let equippedItem = equippedItems.get(i)
@@ -49,16 +52,21 @@ public function enforceInventoryLimits(unit whichUnit, item whichItem)
             .sum()
 
         if currCount > restriction.maxCount
+            isCheckSuccess = false
             if isManipulatedItemEquipped
                 nullTimer() ->
                     whichUnit.getOwner().getEquipmentSlots().unequipItem(whichItem, equippedItemIndex)
             else
                 whichUnit.removeItem(whichItem)
             break
-
+    
         destroy inventory
 
     destroy restrictionsForItem
+    if isCheckSuccess == false
+        return false
+    return true
+
 
 init
     restrictions

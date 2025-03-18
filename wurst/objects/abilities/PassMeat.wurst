@@ -91,11 +91,9 @@ class PassMeat
         let targetInventory = target.getInventory()
         for each in targetInventory
             if each == null
-                print("found empty slot +10")
                 maxChargesReceived+=10
             if each.getTypeId() == ITEM_COOKED_MEAT
-                maxChargesReceived+=(10-each.getCharges())
-                print("target can be passed +"+maxChargesReceived.toString()+" meat")    
+                maxChargesReceived+=(10-each.getCharges())   
             if maxChargesReceived>=10
                 break
 
@@ -103,7 +101,6 @@ class PassMeat
         for each in trollInventory
             if each.getTypeId() == ITEM_COOKED_MEAT
                 maxChargesGiven += each.getCharges()
-                print("caster can pass "+maxChargesGiven.toString()+" total meat")
             if maxChargesGiven>=10
                 break
             

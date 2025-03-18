@@ -205,7 +205,10 @@ public class InventoryButton
             currentButton.show(p)
             //currentButton.getChild(0).show(p) // only show backdrop and not the button if target is not your own hero
         //printTimedToPlayer(currentIcon, 10, p)
-        unFocus(p)         
+        unFocus(p)
+        doAfter(ANIMATION_PERIOD*3) ->
+            unFocus(p) 
+                     
 
     function unFocus(player p)
         currentButton.disable(p)

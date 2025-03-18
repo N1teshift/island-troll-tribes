@@ -25,6 +25,7 @@ import initlater Idle
 import initlater Swoop
 import SimError
 import initlater Cyclone
+import Execute
 
 public enum HawkStates
     idle
@@ -42,7 +43,9 @@ public abstract class HawkState
     HawkStates stateKey
     //HawkStates nextStateKey
     HawkState queuedState
+    static int instanceCoount = 0
     construct(HawkStates state)
+        instanceCoount+=1
         stateKey = state
         //nextStateKey = stateKey
     abstract function updateState()
@@ -50,12 +53,17 @@ public abstract class HawkState
     abstract function exitState()
 
 
+        
+function printCount()
+    doPeriodically(1.) (CallbackPeriodic cb) ->
+        //print(HawkState.instanceCoount)
 
 public class StateMachine
     //HashMap<HawkStates, HawkState> states
     HawkState currentState
     //HawkStates queuedStateKey
     HawkState queuedState
+    HawkState nextState
     ScoutHawk scoutHawkInstance
     bool isTransitioning = false
     unit closestFish
@@ -77,7 +85,7 @@ public class StateMachine
             transitionToState(queuedState)
             //print("issued state change")
             return
-        let nextState = currentState.queuedState
+        nextState = currentState.queuedState
         if nextState != null
             transitionToState(nextState)
             //print("next state change")
@@ -85,6 +93,7 @@ public class StateMachine
         if currentState == null
             //print("update null state")
             return
+        
         currentState.updateState()
     
     function transitionToState(HawkState _queuedState)
@@ -141,3 +150,4 @@ public class StateMachine
 
 
 
+init

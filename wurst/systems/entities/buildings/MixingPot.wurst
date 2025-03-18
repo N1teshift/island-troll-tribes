@@ -17,16 +17,16 @@ public class MixingPot extends Building
         super.postCreate()
 
         getUnit().addAbility(ABILITY_QM_HEALING_POTION)
-        getUnit().addAbility(ABILITY_POT_MIX_HERBS)
+        getUnit().addAbility(ABILITY_MELT_HERBS_SPELLBOOK_ID)
         getUnit().addAbility(ABILITY_QM_MANA_POTION)
-        getUnit().addAbility(ABILITY_QM_FERVOR_POTION)
         getUnit().addAbility(ABILITY_QM_DISEASE_POTION)
         getUnit().addAbility(ABILITY_QM_DRUNKS_POTION)
-        getUnit().addAbility(ABILITY_QM_ANABOLIC_POTION)
+        getUnit().addAbility(ABILITY_QM_LESSER_ESSENCE)
         getUnit().addAbility(ABILITY_QM_SPIRIT_WIND)
         getUnit().addAbility(ABILITY_QM_SPIRIT_WATER)
         getUnit().addAbility(ABILITY_QM_SPIRIT_DARKNESS)
         getUnit().addAbility(ABILITY_MIXING_POT_SPELLBOOK_ID)
+        getUnit().addAbility(ABILITY_QM_GREATER_ESSENCE)
 
 init
     MixingPot.initialize()
