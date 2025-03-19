@@ -1,5 +1,8 @@
+/python
+
 # VS Code
 .vscode/*
+.vs/
 
 # Wurst
 /_build
