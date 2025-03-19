@@ -274,7 +274,7 @@ init
 
     //Setup slots per item map
     slotsPerItem = new HashMap<int, int>()
-    slotsPerItem.put(ITEM_BONE, 15)
+    slotsPerItem.put(ITEM_BONE, 3)
     slotsPerItem.put(ITEM_THISTLES, 1)
     slotsPerItem.put(ITEM_POISON_THISTLES, 1)
     slotsPerItem.put(ITEM_DARK_THISTLES, 1)
