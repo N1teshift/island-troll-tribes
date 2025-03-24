@@ -26,6 +26,7 @@ import TrollBuildingKits
 import TrollProtector
 import VenomFang
 import StavesDefinition
+import ChameleonHatchet
 
 // Herbs
 let SPECIAL_HERB       = "Special Herb".color(SPECIAL_COLOR)
@@ -159,6 +160,7 @@ public let STONE_AXE_RECIPE   = "a Stone Axe. Increase damage by 6, allows tree 
 public let IRON_AXE_RECIPE    = "an Iron Axe. Increase damage by 9, allows tree to be cut :\n\n1x "                                    +STICK+"/"+BONE+" + 2x "+IRON
 public let STEEL_AXE_RECIPE   = "a Steel Axe. Increase damage by 12, allows tree to be cut :\n\n1x "                                   +STICK+"/"+BONE+" + 2x "+STEEL
 public let MAGE_MASHER_RECIPE = "a Mage Masher. " + TT_MM + "\n\n1x "+STICK+"/"+BONE+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
+public let CHAMELEON_HATCHET_RECIPE = "a Chameleon Hatchet. " + TT_CHAMELEON_HATCHET_STR + "\n\n1x "+STICK+"/"+BONE+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
 
 public let SPEAR_RECIPE       = "a Spear. Deals 40 damage on target, has 60% chance of being recoverable :\n\n1x "                             +STICK+"/"+BONE+" + 1x "+STONE
 public let IRON_SPEAR_RECIPE  = "a Iron Spear. Deals 70 damage on target, has 60% chance of being recoverable :\n\n1x "                        +STICK+"/"+BONE+" + 1x "+IRON
@@ -197,7 +199,7 @@ public let BATTLE_SHIELD_RECIPE         = BATTLE_SHIELD_TOOLTIP+
 public let ANABOLIC_BOOTS_RECIPE        = "a pair of " + "Anabolic Boots. ".color(COLOR_VIOLET) + TT_ANA_BOOTS + "\n\n1x " + "Bone Boots".color(COLOR_ORANGE) + " + 1x " + LESSER_ESSENCE +
                                           " + 1x " + WIND + " + 1x " + WATER + " + 1x " + MC 
 public let WOLFS_STAMINA_BOOTS_RECIPE  = "Boots of Wolf's Stamina. \n".color(COLOR_VIOLET) +TT_WOLFS_STAMINA_BOOTS
-                                        +"\n\n1x " + "Wolf Skin Boots ".color(COLOR_ORANGE) + " + 1x "+IRON+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC                                     
+                                        +"\n\n1x " + "Wolf Skin Boots ".color(COLOR_ORANGE) + " + 1x "+LESSER_ESSENCE+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC                                     
 public let WOLFS_BLOODLUST_CLAWS_RECIPE   = "Claws of Wolf's Bloodlust. \n".color(COLOR_VIOLET) + TT_WOLF_BLOODLUST_CLAWS
                                         +"\n\n1x " + "Wolf Skin Gloves ".color(COLOR_ORANGE) + " +1x "+STEEL+" + 1x "+GREATER_ESSENCE + " 1x "+WIND+" + 1x "+WATER+" + 1x "+MC                                        
 public let WOLFS_VORACITY_COAT_RECIPE   = "Coat of Wolf's Voracity. \n".color(COLOR_VIOLET) + TT_WOLF_VORACITY_COAT
@@ -207,7 +209,7 @@ public let BEARS_GREED_PAWS_RECIPE      = "Paws of Bear's Greed. \n".color(COLOR
 public let BEAR_PRESENCE_COAT_RECIPE    = "Coat of Bear's Terrifying Presence. \n".color(COLOR_RED) + TT_BEAR_PRESENCE_COAT
                                          +"\n\n1x " + "Bear Skin Coat ".color(COLOR_ORANGE)+" + " +STEEL+" + 1x " + DARKNESS+  " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC                                                                          
 public let ITEM_BEARS_TENACITY_BOOTS_RECIPE = "Boots of Bear's Tenacity. \n".color(COLOR_RED) + TT_BEARS_TENACITY_BOOTS
-                                        +"\n\n1x " + "Bear Skin Boots ".color(COLOR_ORANGE)+" + " +IRON+" 1x " +LESSER_ESSENCE+ " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC 
+                                        +"\n\n1x " + "Bear Skin Boots ".color(COLOR_ORANGE)+" + " +" 1x " +LESSER_ESSENCE+ " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC 
 public let TROLL_PROTECTOR_RECIPE      ="Troll Protector. \n".color(COLOR_TURQUOISE)+TROLL_PROTECTOR_TT_EXT
                                         +"\n\n1x " + "Iron Shield ".color(COLOR_ORANGE) + "+ 1x "+ELK_HIDE+ " + 1x "+MC
 public let CONDUCTING_ROD_RECIPE      ="Conducting Rod. \n".color(COLOR_VIOLET)+TT_CONDUCTING_ROD
@@ -253,7 +255,7 @@ public let MANA_CRYSTAL_RECIPE = "A glowing crystal of mana. Used to make magica
 
 public let POISON_SPEAR_RECIPE  = "a Poison Spear. Hurls a poisoned spear at a targeted enemy unit, dealing 15 initial damage and 15 damage every 3 seconds."+
                                           "Reduce attack speed by 30% and movement speed by 30%."+makeToolTipDuration(30, 40, 2)+"\n\n1x "+
-                                          POISON+" + 1x "+SPEAR
+                                          POISON+" + 1x "+BONE+ " + 1x "+STONE
 
 
 public let NETS_RECIPE                   = "a Nets. Can cast net on targeted enemy, locking them down, good for hunting animals and catch enemy troll. Has 3 charges. Last 2.5(10) seconds, has 15 seconds cooldown"+

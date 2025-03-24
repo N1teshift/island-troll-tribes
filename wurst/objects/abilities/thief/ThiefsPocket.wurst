@@ -236,6 +236,8 @@ function onRevive(unit troll)
 
 public function generateThiefsBushItem(unit caster) returns item
     let itm = thiefsBush.getItem(caster.getPos())
+    if itm.getTypeId() == ITEM_HEALING_POTION or itm.getTypeId() == ITEM_MANA_POTION
+        itm.setCharges(itm.getCharges()*2)
     return itm
 
 function addStolenItem(item itm)

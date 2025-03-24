@@ -72,6 +72,7 @@ let TT_ABILITY_EXT = "Dire Wolf hungers for the blood of others."+
         ..setCanBeDropped(true)
         ..setCanBeSoldToMerchants(false)
         ..setAbilities(commaList(ABILITY_WOLFS_VORACITY_COAT_ACTIVE))
+        ..setCooldownGroup(commaList(ABILITY_WOLFS_VORACITY_COAT_ACTIVE))
 
 
 

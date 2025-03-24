@@ -1,0 +1,136 @@
+package ChameleonHatchet
+
+// Standard library imports:
+import HashMap
+import AbilityObjEditing
+import ClosureEvents
+import DamageEvent
+import InstantDummyCaster
+import StandardTextTags
+
+// Local imports:
+import ColorUtils
+import ChatCommands
+import ChatUtils
+import LocalObjectIDs
+import UnitExtensions
+import ToolTipsUtils
+import ObjectIds
+import Sleep
+import ChannelAbilityPreset
+import ClosureTimers
+import Orders
+import HealingSystem
+import BuffObjEditing
+import BuffIds
+import Abilities
+import StupefyField
+import DamageListeners
+import LocalAssets
+import SimError
+import FoodSlots
+import ItemPoolExtensions
+import LinkedList
+import OnUnitEnterLeave
+import GameStates
+import Tribe
+import PlayerExtensions
+import GameConfig
+import Transformation
+import UnitIds
+import Items
+import LocalItemObjEditing
+import HashList
+import IdListConstant
+import AxesDefinition
+
+HashMap<int, int> attributeSwitchMap = new HashMap<int, int>
+..put(ITEM_CHAMELEON_HATCHET_STR, ITEM_CHAMELEON_HATCHET_AGI)
+..put(ITEM_CHAMELEON_HATCHET_AGI, ITEM_CHAMELEON_HATCHET_INT)
+..put(ITEM_CHAMELEON_HATCHET_INT, ITEM_CHAMELEON_HATCHET_STR)
+
+public let CHAMELEON_HATCHET_ATTRIBUTE_BONUS = 8
+
+let TT_NAME = "Chameleon Hatchet"
+let TT_LORE = "Hatchet becomes an extension of the wielder's will, changing in response to their needs. "+
+              "\nWhen wielded by a warrior, it pulses with the vigor of strength, cleaving through enemies with brute force. In the hands of a rogue, it becomes a weapon of speed and precision, dancing with agility. "+
+              "\nAnd when embraced by a sorcerer, it channels the wielder’s arcane powers, enhancing their intellect and focus."
+let TT_SWITCH = "Activate this item to switch attribute.".color(COLOR_GOLD_STR)
+
+let TT_DAMAGE_BONUS = "+{0} to Damage".format(CHAMELEON_HATCHET_ATTRIBUTE_BONUS.toString().color(COLOR_GREEN))
+
+let TT_ATTRIBUTE_STR =  "+{0} to Strength".format(CHAMELEON_HATCHET_ATTRIBUTE_BONUS.toString().color(COLOR_GREEN))
+                        +"\n+{0} to Agility".format(CHAMELEON_HATCHET_ATTRIBUTE_BONUS.toString()).color(COLOR_GRAY)
+                        +"\n+{0} to Intelligence".format(CHAMELEON_HATCHET_ATTRIBUTE_BONUS.toString()).color(COLOR_GRAY)
+
+let TT_ATTRIBUTE_AGI =  "+{0} to Strength".format(CHAMELEON_HATCHET_ATTRIBUTE_BONUS.toString()).color(COLOR_GRAY)
+                        +"\n+{0} to Agility".format(CHAMELEON_HATCHET_ATTRIBUTE_BONUS.toString().color(COLOR_GREEN))
+                        +"\n+{0} to Intelligence".format(CHAMELEON_HATCHET_ATTRIBUTE_BONUS.toString()).color(COLOR_GRAY)
+
+let TT_ATTRIBUTE_INT =  "+{0} to Strength".format(CHAMELEON_HATCHET_ATTRIBUTE_BONUS.toString()).color(COLOR_GRAY)
+                        +"\n+{0} to Agility".format(CHAMELEON_HATCHET_ATTRIBUTE_BONUS.toString()).color(COLOR_GRAY)
+                        +"\n+{0} to Intelligence".format(CHAMELEON_HATCHET_ATTRIBUTE_BONUS.toString().color(COLOR_GREEN))
+
+public let TT_CHAMELEON_HATCHET_STR = TT_LORE+"\n"+TT_DAMAGE_BONUS+"\n"+TT_ATTRIBUTE_STR+"\n"+TT_SWITCH
+public let TT_CHAMELEON_HATCHET_AGI = TT_LORE+"\n"+TT_DAMAGE_BONUS+"\n"+TT_ATTRIBUTE_AGI+"\n"+TT_SWITCH
+public let TT_CHAMELEON_HATCHET_INT = TT_LORE+"\n"+TT_DAMAGE_BONUS+"\n"+TT_ATTRIBUTE_INT+"\n"+TT_SWITCH
+
+let ABILITIES_STR  = asList(ABILITY_CHAMELEON_AXE_DUMMY, ABIL_DMG_IRON, ABILITY_STR_BONUS_8, ABILITY_ATTACK_TREE)
+let ABILITIES_AGI  = asList(ABILITY_CHAMELEON_AXE_DUMMY, ABIL_DMG_IRON, ABILITY_AGI_BONUS_8, ABILITY_ATTACK_TREE)
+let ABILITIES_INT  = asList(ABILITY_CHAMELEON_AXE_DUMMY, ABIL_DMG_IRON, ABILITY_INT_BONUS_8, ABILITY_ATTACK_TREE)
+
+
+
+@compiletime function createHatchets()
+    createItemBerserkCast(ABILITY_CHAMELEON_AXE_DUMMY)
+
+    createUsableItem(ITEM_CHAMELEON_HATCHET_STR)
+        ..setStockReplenishInterval(120)
+        ..setInterfaceIcon(LocalIcons.bTNChameleonHatchetStr)
+        ..setModelUsed(LocalItems.chameleonHatchet)
+        ..setHotkey("A")
+        ..setScalingValue(0.7)
+        ..setLumberCost(64)
+        ..setTooltipBasic(TT_NAME)
+        ..setTooltipExtended(TT_CHAMELEON_HATCHET_STR)
+        ..setAbilities(commaList(ABILITIES_STR))
+        ..setNameEnhance(TT_NAME)
+
+    createUsableItem(ITEM_CHAMELEON_HATCHET_AGI)
+        ..setStockReplenishInterval(120)
+        ..setInterfaceIcon(LocalIcons.bTNChameleonHatchetAgi)
+        ..setModelUsed(LocalItems.chameleonHatchet)
+        ..setHotkey("A")
+        ..setScalingValue(0.7)
+        ..setLumberCost(64)
+        ..setTooltipBasic(TT_NAME)
+        ..setTooltipExtended(TT_CHAMELEON_HATCHET_AGI)
+        ..setAbilities(commaList(ABILITIES_AGI))
+        ..setNameEnhance(TT_NAME)
+        
+    createUsableItem(ITEM_CHAMELEON_HATCHET_INT)
+        ..setStockReplenishInterval(120)
+        ..setInterfaceIcon(LocalIcons.bTNChameleonHatchetInt)
+        ..setModelUsed(LocalItems.chameleonHatchet)
+        ..setHotkey("A")
+        ..setScalingValue(0.7)
+        ..setLumberCost(64)
+        ..setTooltipBasic(TT_NAME)
+        ..setTooltipExtended(TT_CHAMELEON_HATCHET_INT)
+        ..setAbilities(commaList(ABILITIES_INT))
+        ..setNameEnhance(TT_NAME)
+
+
+function onUse(item itm, unit troll)
+    let switchTo = attributeSwitchMap.get(itm.getTypeId())
+    if switchTo == 0
+        return
+    itm.remove()
+    let nextAttribute = createItem(switchTo, troll.getPos())
+    nullTimer() -> 
+        troll.addItemHandle(nextAttribute)
+
+init
+    EventListener.add(EVENT_PLAYER_UNIT_USE_ITEM) ->
+        onUse(GetManipulatedItem(), GetManipulatingUnit()) 
+        

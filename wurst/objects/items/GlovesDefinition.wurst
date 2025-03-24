@@ -54,11 +54,11 @@ let TT_UNFORMAT_HYDRA_CLAWS_STRING = "Increases wearer's attack speed by {0}, al
 
 let TT_MAGEFIST_DESCRIPTION        = "Crafted by the most skilled sorcerers of Azeroth, Magefist radiates with an ethereal glow, "+
                                         "resonating with the potent energies of magic."+
-                                        "\nGrants {0}: ".format("Arcane Switftness".color(COLOR_TURQUOISE))
+                                        "\nGrants {0}: ".format("Arcane Might".color(COLOR_TURQUOISE))
 let TT_MAGEFIST_STATS              = "\n+{0} Attack speed"+
                                      "\n+{1} Armor"+
                                      "\n+{3} Intelligence"
-let TT_MAGEFIST_ABILITY            = "\n+{0} Agility per {1}".format("1".color(COLOR_GREEN), "2 Intelligence".color(COLOR_TURQUOISE))
+let TT_MAGEFIST_ABILITY            = "\n+{0} Strength per {1}".format("1".color(COLOR_GREEN), "3 Intelligence".color(COLOR_TURQUOISE))
 
 
 // We can retrieve the ability data field, returning an Int in those case

@@ -167,11 +167,7 @@ class Grimoire
             if spellCastTimeStamps.has(abilId)
                 let defaultCd = hero.getAbilityCooldown(abilId, 0)
                 let remainingCd = defaultCd-(getElapsedGameTime()-spellCastTimeStamps.get(abilId))
-                hero.setAbilityCooldown(abilId, 0, remainingCd)
-                nullTimer() -> 
-                    hero.startAbilityCooldown(abilId)
-                    nullTimer() -> 
-                        hero.setAbilityCooldown(abilId, 1, defaultCd)       
+                hero.startAbilityCooldown(abilId, remainingCd)     
 
 
     function updateIntBonus()  

@@ -134,7 +134,6 @@ public class EquipmentSlots
             return false
         var isCheckSuccess = true          
         let totalItems = troll.getInventory()
-        let trollInventorySize  = totalItems.size()
         var equippedItemsCount = 0
         var emptySlots = 0
 
@@ -143,17 +142,21 @@ public class EquipmentSlots
             if itm != null
                 equippedItemsCount+=1
                 totalItems.add(itm)
-        
+
+        var materialItems = 0
         for each in totalItems
             let itemId = each.getTypeId()
             if each == null
                 emptySlots+=1
             if itemId == ITEM_EQUIPMET_DUMMY_SLOT
                 totalItems.remove(each)
-            if BACKPACK_ITEM_LIST.has(itemId) and equippedItemsCount>0
+            if BACKPACK_ITEM_LIST.has(itemId) and materialItems<2
+                materialItems+=1
                 equippedItemsCount-=1
+                emptySlots+=1
                 totalItems.remove(each)
-        var inventorySize = totalItems.size()-emptySlots
+        let trollInventorySize  = totalItems.size()        
+        var inventorySize = totalItems.size()-emptySlots//-2+equippedItemsCount
         if not troll.hasItem(whichItem)
             inventorySize+=1
         if trollInventorySize<inventorySize
@@ -164,12 +167,15 @@ public class EquipmentSlots
     function equipItem(int index, item itm)
         if itm == null
             simError(troll.getOwner(), "You dont have any items to equip")
+            itm.setVisible(true)
             return
         if not enforceInventoryLimits(troll, itm)
             simError(troll.getOwner(), "You already have maximum amount of items of this type equipped")
+            itm.setVisible(true)
             return
         if not enforceMaximumSlotCount(itm)
             simError(troll.getOwner(), "You have maximum amount of items equipped")
+            itm.setVisible(true)
             return        
         currentItems.put(index, itm)
         troll.removeItem(itm)

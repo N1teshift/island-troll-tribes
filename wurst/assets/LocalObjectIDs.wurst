@@ -6,6 +6,7 @@ import ObjectIdGenerator
 // Third-party imports:
 import ObjectIDManager
 public let BUFF_THRILL_OF_THE_BATTLE                    =compiletime(ABIL_ID_GEN.next())..registerObjectID("BUFF_THRILL_OF_THE_BATTLE_BUFF")
+public let ABILITY_CHAMELEON_AXE_DUMMY                            =compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_CHAMELEON_AXE_DUMMY")
 public let ABILITY_DEVOUR_SNAKE                            =compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_DEVOUR_SNAKE")
 public let ABILITY_DEVOUR_SNAKE_DUMMY                            =compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_DEVOUR_SNAKE_DUMMY")
 public let ABILITY_DEVOUR_WOLF                            =compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_DEVOUR_WOLF")
@@ -404,6 +405,7 @@ public let ABILITY_QM_CLOAK_HEALING                    = compiletime(ABIL_ID_GEN
 public let ABILITY_QM_CLOAK_MANA                       = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_QM_CLOAK_MANA")
 public let ABILITY_QM_CURE_ALL                         = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_QM_CURE_ALL")
 public let ABILITY_QM_DARK_SPEAR                       = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_QM_DARK_SPEAR")
+public let ABILITY_QM_CHAMELEON_HATCHET                = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_QM_CHAMELEON_HATCHET")
 public let ABILITY_QM_DARK_THISTLES                    = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_QM_DARK_THISTLES")
 public let ABILITY_QM_DISEASE_POTION                   = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_QM_DISEASE_POTION")
 public let ABILITY_QM_DRUNKS_POTION                    = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_QM_DRUNKS_POTION")
@@ -600,6 +602,7 @@ public let ABILITY_DIRE_BEAR_COCONUT_BONUS             = compiletime(ABIL_ID_GEN
 public let ABILITY_DIRE_BEAR_MUSHROOM_BONUS            = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_DIRE_BEAR_MUSHROOM_BONUS")
 public let ABILITY_AGI_BONUS_4                         = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_AGI_BONUS_4")
 public let ABILITY_AGI_BONUS_6                         = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_AGI_BONUS_6")
+public let ABILITY_AGI_BONUS_8                         = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_AGI_BONUS_8")
 public let ABILITY_GRIMOIRE_INT_BONUS                         = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_GRIMOIRE_INT_BONUS")
 public let ABILITY_STR_BONUS_8                         = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_STR_BONUS_8")
 public let ABILITY_STR_BONUS_10                        = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_STR_BONUS_10")
@@ -772,6 +775,9 @@ public let ITEM_CLOAK_OF_MANA                          = compiletime(ITEM_ID_GEN
 public let ITEM_COOKED_MEAT                            = compiletime(ITEM_ID_GEN.next())..registerObjectID("ITEM_COOKED_MEAT")
 public let ITEM_CURE_ALL                               = compiletime(ITEM_ID_GEN.next())..registerObjectID("ITEM_CURE_ALL")
 public let ITEM_DARK_SPEAR                             = compiletime(ITEM_ID_GEN.next())..registerObjectID("ITEM_DARK_SPEAR")
+public let ITEM_CHAMELEON_HATCHET_STR                  = compiletime(ITEM_ID_GEN.next())..registerObjectID("ITEM_CHAMELEON_HATCHET_STR")
+public let ITEM_CHAMELEON_HATCHET_AGI                  = compiletime(ITEM_ID_GEN.next())..registerObjectID("ITEM_CHAMELEON_HATCHET_AGI")
+public let ITEM_CHAMELEON_HATCHET_INT                  = compiletime(ITEM_ID_GEN.next())..registerObjectID("ITEM_CHAMELEON_HATCHET_INT")
 public let ITEM_DARK_THISTLES                          = compiletime(ITEM_ID_GEN.next())..registerObjectID("ITEM_DARK_THISTLES")
 public let ITEM_DD_PINION_FIRE                         = compiletime(ITEM_ID_GEN.next())..registerObjectID("ITEM_DD_PINION_FIRE")
 public let ITEM_DD_PINION_PAIN                         = compiletime(ITEM_ID_GEN.next())..registerObjectID("ITEM_DD_PINION_PAIN")

@@ -21,11 +21,12 @@ public class Forge extends Building
         getUnit().addAbility(ABILITY_QM_IRON_AXE)
         getUnit().addAbility(ABILITY_QM_STEEL_AXE)
         getUnit().addAbility(ABILITY_ARMOR_SPELLBOOK_ID)
-        getUnit().addAbility(ABILITY_QM_SPEAR)
+        getUnit().addAbility(ABILITY_QM_IRON_STAFF)
         getUnit().addAbility(ABILITY_QM_IRON_SPEAR)
         getUnit().addAbility(ABILITY_QM_STEEL_SPEAR)
         getUnit().addAbility(ABILITY_QM_DARK_SPEAR)
-        getUnit().addAbility(ABILITY_QM_MAGE_MASHER)
+        //getUnit().addAbility(ABILITY_QM_MAGE_MASHER)
+        getUnit().addAbility(ABILITY_QM_CHAMELEON_HATCHET)
         getUnit().addAbility(ABILITY_FORGE_SPELLBOOK_ID)
 
 init
