@@ -17,6 +17,7 @@ import initlater CustomItemDefinition
 import PlayerExtensions
 import initlater EquipmentSlots
 import EquipmentSlotFrames
+import GatheringSlot
 
 public HashMap<int, QuickMakeV2> quickMakes  = new HashMap<int, QuickMakeV2>()
 public let BUILDING_CRAFTING_AOE = 900.
@@ -79,13 +80,13 @@ public class QuickMakeV2
     function generateItemsUsedList(HashList<int> list)
         list.add(itemRecipe.itemId)
         for each in list
-            print("iterating over item "+GetObjectName(each))
+            //print("iterating over item "+GetObjectName(each))
             let itemRecipe = customItemDefinitions.get(each).recipe
             if itemRecipe.isCrafted
                 generateItemsUsedList(itemRecipe.ingredients)
             else
                 if not itemsUsedInRecipe.has(each)
-                    print("adding item "+GetObjectName(each)+" to the list")
+                    //print("adding item "+GetObjectName(each)+" to the list")
                     itemsUsedInRecipe.add(each)            
 
     function findBaseItemOwner(item whichItem) returns unit 
@@ -181,7 +182,7 @@ public class QuickMakeV2
                 for each in currentItems
                     let itm = currentItems.get(each)
                     if itm.getTypeId() == itemId
-                        print("found equipped baseItem "+GetObjectName(itemId))
+                        //print("found equipped baseItem "+GetObjectName(itemId))
                         isItemEquipped = true
                         baseItemOwner = u
                         return itm
@@ -261,8 +262,11 @@ public class QuickMakeV2
                     if craftedItem == null
                         itm.setVisible(false)
                         return
-                    //print("return item unequip"+GetObjectName(itm.getTypeId())) 
+                    //print("return item unequip"+GetObjectName(itm.getTypeId()))
+                    //equipmentSlots.onEquipmentSlotUse(index)
                     equipmentSlots.unequipItem(itm, index)
+                    nullTimer() -> 
+                        gatheringSlotInstances.get(baseItemOwner).updateDummyItems()
                     doAfter(ANIMATION_PERIOD) ->
                         clickSound.playForPlayer(baseItemOwner.getOwner())
                         //print("return item onEquip"+GetObjectName(craftedItem.getTypeId()))
@@ -312,6 +316,7 @@ public class QuickMakeV2
             craftedItem.setCharges(baseItemCharges)
         craftedItem.setVisible(true)      
         //print("successfully crafted "+GetObjectName(itemId))
+        printToTeam("Successfuly crafted "+GetObjectName(craftedItem.getTypeId()))
         removeConsumedItems()
         if this!= null
             destroy this    

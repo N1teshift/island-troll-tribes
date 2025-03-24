@@ -4,6 +4,7 @@ import LocalObjectIDs
 import ClosureTimers
 import CustomItemDefinition
 import ShieldsDefinition
+import ChameleonHatchet
 
 let UNIT_REQUIREMENT = UNIT_FORGE
 
@@ -173,6 +174,19 @@ public function initializeForgeItems()
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_DARK_SPEAR)
 
+    new CustomItemDefinition(ITEM_CHAMELEON_HATCHET_STR)
+    ..addBonusDamage(8)
+    ..addBonusStrength(CHAMELEON_HATCHET_ATTRIBUTE_BONUS)
+    ..setItemRecipe(ITEM_IRON_AXE, ITEM_IRON_INGOT, ITEM_SPIRIT_WIND, ITEM_SPIRIT_WATER, ITEM_MANA_CRYSTAL)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+    ..setQuickMakeAbility(ABILITY_QM_CHAMELEON_HATCHET)
 
+    new CustomItemDefinition(ITEM_CHAMELEON_HATCHET_AGI)
+    ..addBonusDamage(8)
+    ..addBonusAgility(CHAMELEON_HATCHET_ATTRIBUTE_BONUS)
+
+    new CustomItemDefinition(ITEM_CHAMELEON_HATCHET_INT)
+    ..addBonusDamage(8)
+    ..addBonusIntelligence(CHAMELEON_HATCHET_ATTRIBUTE_BONUS)
 
         

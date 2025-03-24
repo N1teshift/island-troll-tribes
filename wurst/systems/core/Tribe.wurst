@@ -78,6 +78,7 @@ public class Tribe
         this.name = name
 
         let range = getPlayerIdRangeForTribe(tribeId)
+
         for pid = range.min to range.max
             let member = players[pid]
             //print(member.getName())

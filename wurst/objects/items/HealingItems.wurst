@@ -16,6 +16,8 @@ import LocalAssets
 import ToolTipsUtils
 import HealingPotion
 import StandardTextTags
+import Orders
+import UnitExtensions
 
 public constant ABIL_MEAT   = compiletime(ABIL_ID_GEN.next())
 public constant ABIL_BANANA = compiletime(ABIL_ID_GEN.next())
@@ -159,16 +161,58 @@ function doubleClickSelfCast(unit caster, item targetItem)
         return
     new HealingInstance(EventData.getSpellAbilityUnit(), EventData.getSpellAbilityUnit(), POT_HEAL, HealingType.ABILITY)
 
-init
-    EventListener.onCast(ABIL_COCONUT) (unit caster) ->
-        caster.addMana(COCONUT_MANA)
-        standardTextTag(
-                caster.getPos(),
-                "+{0}".format(COCONUT_MANA.floor().toString())
+
+function onTargetOrderCoconut()
+    let order = GetIssuedOrderId()
+    let u = GetOrderedUnit()
+    if order != Orders.smart or not u.isInventoryFull()
+        return
+
+    let target = GetOrderTargetItem()
+
+    // Smart pickup system -> simulate picking up meat like an item if full inventory, like in Bannars StackNSplit system
+    // Used to pick up ammo even if inventory's full
+    // TODO: Currently only work when troll is in pick up range, make it so the troll move toward ammo even if inventory is full
+    if (target != null
+        and target.isPickupable()
+        and target.getTypeId() == ITEM_COCONUT
+        and u.isInventoryFull())
+        bool hasCoconut = false
+        let inventory = u.getInventory()
+        for each in inventory
+            if each.getTypeId() == ITEM_COCONUT
+                and each.getCharges()<10
+                hasCoconut = true
+                break
+        destroy inventory
+        if hasCoconut == true
+            return
+        let collisionSize = u.getCollisionSize()
+        let rangeSq = (150.0 + collisionSize).pow(2)
+        if u.getPos().distanceToSq(target.getPos()) <= rangeSq
+            target.remove()
+            new HealingInstance(u, u, COCONUT_HEAL, HealingType.ITEM)
+            onCoconutAddMana(u)
+            flashEffect(Abilities.healTarget, u, AttachmentPoints.chest)
+
+function onCoconutAddMana(unit caster)
+    caster.addMana(COCONUT_MANA)
+    standardTextTag(
+            caster.getPos(),
+            "+{0}".format(COCONUT_MANA.floor().toString())
             )
-                ..setColor(colorA(0, 131, 191, 255))
-                ..setPos(caster.getPos().x, caster.getPos().y-70, 0.)
-                ..matchVisibility(caster)
+            ..setColor(colorA(0, 131, 191, 255))
+            ..setPos(caster.getPos().x, caster.getPos().y-70, 0.)
+            ..matchVisibility(caster)
+
+
+init
+    EventListener.add(EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER, () -> onTargetOrderCoconut())
+
+    EventListener.onCast(ABIL_COCONUT) (unit caster) ->
+        onCoconutAddMana(caster)
+
+
     EventListener.onTargetCast(ABILITY_HEALING_POTION) (unit caster, unit target) ->
         new HealingInstance(target, caster, POT_HEAL, HealingType.ABILITY)
 
@@ -183,3 +227,8 @@ init
         onSelfHealItem()
     EventListener.add(EVENT_PLAYER_UNIT_SPELL_EFFECT) ->
         onSpellEffect()
+
+
+
+
+        

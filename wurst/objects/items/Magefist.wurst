@@ -50,20 +50,20 @@ class Magefist
         wearer = _wearer
         itm = _itm
         cb = doPeriodically(0.25) (CallbackPeriodic cb) ->
-            updateAgilityBonus()
+            updateStrengthBonus()
 
 
-    function updateAgilityBonus()
+    function updateStrengthBonus()
         let equippedItems = wearer.getOwner().getEquipmentSlots().currentItems
-        var totalAgilityBonus = 0
+        var totalStrengthBonus = 0
         for each in equippedItems
             let customItemDefinition = customItemDefinitions.get(equippedItems.get(each).getTypeId())
             if customItemDefinition != null
-                totalAgilityBonus += customItemDefinition.agilityBonus
-        currentBonus = (wearer.getInt(true))/2
+                totalStrengthBonus += customItemDefinition.strengthBonus
+        currentBonus = (wearer.getInt(true))/3
         if not (wearer.hasItem(itm) or hasMagefist())
             currentBonus = 0
-        wearer.setBonus(Bonus.AGILITY, (currentBonus+totalAgilityBonus).round())    
+        wearer.setBonus(Bonus.STRENGTH, (currentBonus+totalStrengthBonus).round())    
 
     function hasMagefist() returns bool
         let equippedItems = wearer.getOwner().getEquipmentSlots().currentItems
@@ -75,7 +75,7 @@ class Magefist
     function onItemDrop()
         nullTimer() -> 
             destroy cb 
-            updateAgilityBonus()
+            updateStrengthBonus()
             destroy this
     
     function onUnequip()
@@ -95,7 +95,7 @@ function onItemPickup(unit u, item itm)
         instances.put(u, new Magefist(u, itm)) 
         return
     else if instance != null and itm.getTypeId() != ITEM_MAGEFIST
-        instance.updateAgilityBonus()
+        instance.updateStrengthBonus()
 
 function onItemDrop(unit u, item itm)
     let instance = instances.get(u)
@@ -104,13 +104,13 @@ function onItemDrop(unit u, item itm)
     if itm == instance.itm
         instance.onItemDrop()
     else
-        instance.updateAgilityBonus()
+        instance.updateStrengthBonus()
 
-function updateAgilityBonus(unit u)
+function updateStrengthBonus(unit u)
     let instance = instances.get(u)
     if instance == null
         return
-    instance.updateAgilityBonus()
+    instance.updateStrengthBonus()
 
 init
     EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->
@@ -128,7 +128,7 @@ init
 
     registerAfterEffect() (unit target, int unitID) ->
         doAfter(ANIMATION_PERIOD)->
-            updateAgilityBonus(target)
+            updateStrengthBonus(target)
 
     EventListener.add(EVENT_PLAYER_HERO_LEVEL) -> 
-        updateAgilityBonus(GetTriggerUnit()) 
+        updateStrengthBonus(GetTriggerUnit()) 

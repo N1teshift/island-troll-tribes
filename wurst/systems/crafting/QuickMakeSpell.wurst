@@ -10,7 +10,7 @@ import QuickMakeToolTips
 import ToolTipsUtils
 import Transformation
 
-constant COOLDOWN = 1.
+constant COOLDOWN = 0.25
 
 // Additional pages for Quick Make
 constant MIXING_POT_SPELLBOOK = commaList(
@@ -66,8 +66,8 @@ constant FORGE_SECOND_SPELLBOOK = commaList(
     ABILITY_QM_SHIELD,
     ABILITY_QM_BONE_SHIELD,
     ABILITY_QM_IRON_SHIELD,
-    ABILITY_QM_STEEL_SHIELD,
-    ABILITY_QM_IRON_STAFF
+    ABILITY_QM_STEEL_SHIELD
+    //ABILITY_QM_IRON_STAFF
 )
 
 constant ARMORY_SPELLBOOK = commaList(
@@ -341,13 +341,15 @@ function getQuickMakeSpells() returns LinkedList<QuickMakeSpell>
 
 
         //Forge
-        new QuickMakeSpell("Spear"        , TRANSMUTE_TOOLTIP+SPEAR_RECIPE        , "SteelRanged"                , ABILITY_QM_SPEAR        , 0, 0, "Q", QM_TOOLIP, "stop"),
+        new QuickMakeSpell("Iron Staff"   , TRANSMUTE_TOOLTIP+IRON_STAFF_RECIPE   , "Wand"                    , ABILITY_QM_IRON_STAFF      , 0, 0, "Q", QM_TOOLIP, "stop"),
+        //new QuickMakeSpell("Spear"        , TRANSMUTE_TOOLTIP+SPEAR_RECIPE        , "SteelRanged"                , ABILITY_QM_SPEAR        , 0, 0, "Q", QM_TOOLIP, "stop"),
         new QuickMakeSpell("Iron Spear"   , TRANSMUTE_TOOLTIP+IRON_SPEAR_RECIPE   , "StrengthOfTheMoon"          , ABILITY_QM_IRON_SPEAR   , 1, 0, "W", QM_TOOLIP, "holdposition"),
         new QuickMakeSpell("Steel Spear"  , TRANSMUTE_TOOLTIP+STEEL_SPEAR_RECIPE  , "ThoriumRanged"              , ABILITY_QM_STEEL_SPEAR  , 2, 0, "E", QM_TOOLIP, "frenzy"),
         new QuickMakeSpell("Dark Spear"   , TRANSMUTE_TOOLTIP+DARK_SPEAR_RECIPE   , "ArcaniteRanged"             , ABILITY_QM_DARK_SPEAR   , 3, 0, "R", QM_TOOLIP, "manashieldoff"),
         new QuickMakeSpell("Iron Axe"     , TRANSMUTE_TOOLTIP+IRON_AXE_RECIPE     , "OrcMeleeUpTwo"              , ABILITY_QM_IRON_AXE     , 0, 1, "A", QM_TOOLIP, "ambush"),
         new QuickMakeSpell("Steel Axe"    , TRANSMUTE_TOOLTIP+STEEL_AXE_RECIPE    , "SpiritWalkerAdeptTraining"  , ABILITY_QM_STEEL_AXE    , 1, 1, "S", QM_TOOLIP, "animatedead"),
-        new QuickMakeSpell("Mage Masher"  , TRANSMUTE_TOOLTIP+MAGE_MASHER_RECIPE  , "SpiritWalkerMasterTraining" , ABILITY_QM_MAGE_MASHER  , 2, 1, "D", QM_TOOLIP, "mirrorimage"),
+        new QuickMakeSpell("Chameleon Hatchet"  , TRANSMUTE_TOOLTIP+CHAMELEON_HATCHET_RECIPE  , "ChameleonHatchetStr" , ABILITY_QM_CHAMELEON_HATCHET  , 2, 1, "D", QM_TOOLIP, "mirrorimage"),
+        //new QuickMakeSpell("Mage Masher"  , TRANSMUTE_TOOLTIP+MAGE_MASHER_RECIPE  , "SpiritWalkerMasterTraining" , ABILITY_QM_MAGE_MASHER  , 2, 1, "D", QM_TOOLIP, "mirrorimage"),
         new QuickMakeSpell("Iron Ingot"   , TRANSMUTE_TOOLTIP+IRON_INGOT_RECIPE   , "IronIngot"                  , ABILITY_QM_IRON_INGOT   , 0, 2, "Z", QM_TOOLIP, "avatar"),
         new QuickMakeSpell("Steel Ingot"  , TRANSMUTE_TOOLTIP+STEEL_INGOT_RECIPE  , "SteelIngot"                 , ABILITY_QM_STEEL_INGOT  , 1, 2, "X", QM_TOOLIP, "battlestations"),
 
@@ -357,7 +359,7 @@ function getQuickMakeSpells() returns LinkedList<QuickMakeSpell>
         new QuickMakeSpell("Bone Shield"  , TRANSMUTE_TOOLTIP+BONE_SHIELD_RECIPE  , "ImprovedUnholyArmor"        , ABILITY_QM_BONE_SHIELD  , 1, 0, "W", QM_TOOLIP, "manashieldon"),
         new QuickMakeSpell("Iron Shield"  , TRANSMUTE_TOOLTIP+IRON_SHIELD_RECIPE  , "HumanArmorUpOne"            , ABILITY_QM_IRON_SHIELD  , 2, 0, "E", QM_TOOLIP, "manaflareoff"),
         new QuickMakeSpell("Steel Shield" , TRANSMUTE_TOOLTIP+STEEL_SHIELD_RECIPE , "ThoriumArmor"               , ABILITY_QM_STEEL_SHIELD , 3, 0, "R", QM_TOOLIP, "manaflareon"),
-        new QuickMakeSpell("Iron Staff"   , TRANSMUTE_TOOLTIP+IRON_STAFF_RECIPE   , "Wand"                    , ABILITY_QM_IRON_STAFF   , 0, 1, "A", QM_TOOLIP, "summonwareagle"),
+        //new QuickMakeSpell("Iron Staff"   , TRANSMUTE_TOOLTIP+IRON_STAFF_RECIPE   , "Wand"                    , ABILITY_QM_IRON_STAFF   , 0, 1, "A", QM_TOOLIP, "summonwareagle"),
         
 
         // Armor Page in Forge

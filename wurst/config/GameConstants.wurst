@@ -7,10 +7,10 @@ import LinkedList
 // TODO: Automate generation.
 
 public class GameConstants
-    static let agiAttackSpeedBonus=0.01
+    static let agiAttackSpeedBonus=0.02
     static let agiDefenseBase=-1
     static let agiDefenseBonus=0.1
-    static let agiMoveBonus=7.5
+    static let agiMoveBonus=0
     static let damageBonusMagic=asList(1.25,0.50,2.00,0.35,1.00,0.50,0.05,1.00)
     static let damageBonusPierce=asList(2.00,0.50,1.00,0.25,1.00,0.50,0.05,1.50)
     static let boneDecayTime=120
@@ -33,7 +33,7 @@ public class GameConstants
     static let pawnItemRate=0.65
     static let reactionDelay=0.1
     static let strAttackBonus=0.5
-    static let strHitPointBonus=8
+    static let strHitPointBonus=4
     static let strRegenBonus=0
     static let tradingIncLarge=0
     static let tradingIncSmall=0

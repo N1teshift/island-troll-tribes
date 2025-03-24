@@ -38,7 +38,7 @@ public function initializeWorkshopItems()
 
 
     new CustomItemDefinition(ITEM_POISON_SPEAR)
-    ..setItemRecipe(ITEM_POISON, ITEM_SPEAR)
+    ..setItemRecipe(ITEM_POISON, ITEM_BONE, ITEM_STONE)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_POISON_SPEAR)
 
@@ -83,3 +83,9 @@ public function initializeWorkshopItems()
     ..setItemRecipe(ITEM_MANA_CRYSTAL, ITEM_MANA_CRYSTAL, ITEM_SPIRIT_WATER, ITEM_SPIRIT_WIND)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_EMP)
+
+
+    new CustomItemDefinition(ITEM_TRANSPORT_SHIP_KIT)
+    ..setItemRecipe(ITEM_STICK, ITEM_STICK, ITEM_CLAY_BALL, ITEM_CLAY_BALL, ITEM_ELK_HIDE, ITEM_ELK_HIDE)
+    ..setUnitRequirement(UNIT_REQUIREMENT)
+    ..setQuickMakeAbility(ABILITY_QM_TRANSPORT_SHIP)
