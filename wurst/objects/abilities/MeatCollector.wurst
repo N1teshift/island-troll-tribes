@@ -37,7 +37,7 @@ public constant ABILITY_MEAT_COLLECTOR = compiletime(ABIL_ID_GEN.next())
         ..setHotkeyNormal("R")
         ..presetTargetTypes(Targettype.NONE)
         ..setFollowThroughTime(1, 0)
-        ..setBaseOrderID(1, "stop")
+        ..setBaseOrderID(1, "collectmeat")
 
 function onCast()
     let building = GetSpellAbilityUnit()
