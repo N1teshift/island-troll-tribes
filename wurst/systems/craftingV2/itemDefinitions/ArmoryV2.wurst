@@ -81,7 +81,7 @@ public function initializeArmoryItems()
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
     new CustomItemDefinition(ITEM_BATTLE_STAFF)
-    ..addBonusDamage(12)
+    ..addBonusDamage(14)
     ..addBonusArmour(4)
     ..addBonusIntelligence(12)
     ..setItemRecipe(ITEM_IRON_STAFF, ITEM_STEEL_INGOT, ITEM_SPIRIT_WIND, ITEM_SPIRIT_WATER, ITEM_BONE, ITEM_BONE)

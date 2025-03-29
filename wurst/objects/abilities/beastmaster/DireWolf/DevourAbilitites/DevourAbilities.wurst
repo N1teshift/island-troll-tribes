@@ -100,11 +100,14 @@ class BearAbility extends DevourAbility
     construct(int _dummySpell, int _devourAbility, int _devourBuff, unit _troll, int _upgradeId)
         super( _dummySpell,  _devourAbility,  _devourBuff,  _troll,  _upgradeId)
         troll = _troll
+        registerOnSleepEvent()
 
     function registerOnSleepEvent()
         onSleep = EventListener.onTargetCast(troll, ABILITY_SLEEP_OUTSIDE) (unit caster, unit target) ->
-            troll.setHP(troll.getHP()+SLEEP_OUTSIDE_HP_PENALTY)
-            troll.getOwner().addGold(SLEEP_OUTSIDE_HEAT_PENALTY)
+            if troll.hasAbility(ABILITY_DEVOUR_BEAR)
+                troll.setHP(troll.getHP()+SLEEP_OUTSIDE_HP_PENALTY)
+                troll.getOwner().addGold(SLEEP_OUTSIDE_HEAT_PENALTY)
+                
             
     
 
@@ -222,7 +225,7 @@ class DevourAbilities
         devourAbilities = new HashList<DevourAbility>()
             ..add(new DevourAbility(ABILITY_DEVOUR_SNAKE_DUMMY, ABILITY_DEVOUR_SNAKE, BUFF_DEVOUR_SNAKE, troll, UPGD_DEVOUR_SNAKE_DUMMY))
             ..add(new WolfAbility(ABILITY_DEVOUR_WOLF_DUMMY, ABILITY_DEVOUR_WOLF, BUFF_DEVOUR_WOLF, troll, UPGD_DEVOUR_WOLF_DUMMY))
-            ..add(new DevourAbility(ABILITY_DEVOUR_BEAR_DUMMY, ABILITY_DEVOUR_BEAR, BUFF_DEVOUR_BEAR, troll, UPGD_DEVOUR_BEAR_DUMMY))
+            ..add(new BearAbility(ABILITY_DEVOUR_BEAR_DUMMY, ABILITY_DEVOUR_BEAR, BUFF_DEVOUR_BEAR, troll, UPGD_DEVOUR_BEAR_DUMMY))
             ..add(new PantherAbility(ABILITY_DEVOUR_PANTHER_DUMMY, ABILITY_DEVOUR_PANTHER, BUFF_DEVOUR_PANTHER, troll, UPGD_DEVOUR_PANTHER_DUMMY))
 
     function updateAbility(unit target)    

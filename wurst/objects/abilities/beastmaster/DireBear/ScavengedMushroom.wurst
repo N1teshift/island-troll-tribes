@@ -29,9 +29,9 @@ import HealingSystem
 import Abilities
 import FoodSlots
 
-let HEAL_AMOUNT = 35.
+public let SCAVENGED_MUSHROOM_HEAL_AMOUNT = 35.
 let TT_MUSHROOM = "Scavenged Mushroom"
-let TT_MUSHROOM_EXT ="Restores {0} life to whoever has stomach strong enough to eat this thing.".format(HEAL_AMOUNT.toString().color(COLOR_GREEN))+
+let TT_MUSHROOM_EXT ="Restores {0} life to whoever has stomach strong enough to eat this thing.".format(SCAVENGED_MUSHROOM_HEAL_AMOUNT.toString().color(COLOR_GREEN))+
                      "\nPoisonous for a regular troll.".color(COLOR_RED)
 @compiletime function createMushroomAbility()
     createItemBerserkCast(ABILITY_SCAVENGED_MUSHROOM)
@@ -63,7 +63,7 @@ function onCast(unit troll)
     let instance =instances.get(troll)
     if instance == null
         return
-    new HealingInstance(troll, HEAL_AMOUNT, HealingType.ITEM)
+    new HealingInstance(troll, SCAVENGED_MUSHROOM_HEAL_AMOUNT, HealingType.ITEM)
 
 
 function onTargetOrder()

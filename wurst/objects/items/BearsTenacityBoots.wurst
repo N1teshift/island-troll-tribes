@@ -26,9 +26,15 @@ import Icons
 import EquipmentSlots
 import HashList
 import SoundUtils
+import Abilities
 
 constant ABILITY_WOLFS_STAMINA_BOOTS_PANIC = compiletime(ABIL_ID_GEN.next())
-let warcrySound = new SoundDefinition(Sounds.druidOfTheClawWarcry1)
+let DURATION = 2.
+let WARCRY_SOUNDS = new HashList<SoundDefinition>
+..add(new SoundDefinition(Sounds.druidOfTheClawMorphedWarcry1))
+..add(new SoundDefinition(Sounds.druidOfTheClawMorphedWhat1))
+..add(new SoundDefinition(Sounds.druidOfTheClawMorphedWhat2))
+..add(new SoundDefinition(Sounds.druidOfTheClawMorphedWhat3))
 
 let IMMOBILIZING_ABILITIES_LIST = new HashList<int>()
     ..add(ABILITY_HUNTER_WEB)
@@ -57,7 +63,7 @@ let TT = new StringBuilder()
         DAMAGE_FACTOR.toToolTipRed()
     )
 
-function createBearsTenacitBuff()
+@compiletime function createBearsTenacitBuff()
     new BuffDefinition(BUFF_BEARS_TENACITY, BuffIds.slow)
         ..setIcon(Icons.bTNStampede)
         ..setName("Bear's Tenacity")
@@ -68,6 +74,22 @@ function createBearsTenacitBuff()
         ..setTargetAttachmentPoint0(1, "")
         ..setTargetAttachmentPoint1(1, "")
 
+@compiletime function createSnareModelDummy()
+    new UnitDefinition(UNIT_ENSNARE_MODEL_DUMMY, 'hfoo')
+        ..setName("Radar Dummy")
+        ..setModelFile(Abilities.ensnareTarget)
+        //..setScalingValue(UNIT_ENSNARE_MODEL_DUMMY)
+        ..setMovementHeight(0)
+        ..setCollisionSize(0.0)
+        ..setSightRadiusDay(0)
+        ..setSightRadiusNight(0)
+        ..setSpeedBase(1)
+        ..setHideMinimapDisplay(true)
+        ..setShadowImageHeight(0.0)
+        ..setShadowImageWidth(0.0)
+        ..setFoodCost(0)
+        ..setNormalAbilities("Aloc,Avul,Aeth") //Locust, invulnerable, Ghost(visible)
+        ..setAttacksEnabled(0)
 
 
 @compiletime function createBearsTenacity() returns AbilityDefinitionSlowCreep
@@ -95,19 +117,51 @@ function createBearsTenacitBuff()
         ..setTooltipNormalExtended(1, TT)
 
 class BearsTenacityBootsInstance
-    private unit wearer  
+    unit wearer  
+    unit snareModelDummy = null
+    real remainingDuration = 0.
+    real updatePeriod = 0.125
+    CallbackPeriodic durationCb
+    CallbackCounted cb
     construct(unit wearer)
         this.wearer = wearer
+        snareModelDummy = createUnit(wearer.getOwner(), UNIT_ENSNARE_MODEL_DUMMY, vec2(0, 0))
+        durationCb = doPeriodically(updatePeriod) (CallbackPeriodic cb) ->
+            updateDuration()
+
+            
+
+    function updateDuration()
+        if remainingDuration == 0
+            return
+        remainingDuration-=updatePeriod
+        if remainingDuration<0
+            remainingDuration = 0
+
+    function playSound()
+        let whichSound = WARCRY_SOUNDS.getRandomElement()
+        whichSound.playOnPoint(wearer.getPos3Real())
+
+    function updateDummyPos()
+        doPeriodicallyTimed(ANIMATION_PERIOD, remainingDuration) (CallbackCounted cb) ->
+            if cb.isLast() 
+                snareModelDummy.setPos(vec2(0, 0))
+            else
+                snareModelDummy.setPos(wearer.getPos())
+            
+
 
     function onEnsnare()
-        doPeriodicallyTimed(ANIMATION_PERIOD, 3) (CallbackCounted cb) ->
+        cb = doPeriodicallyTimed(ANIMATION_PERIOD, 3) (CallbackCounted cb) ->
             if (wearer.hasAbility(BuffIds.ensnareGround)) or (wearer.hasAbility(BuffIds.entanglingRoots)) or (wearer.hasAbility(BuffIds.ensnareGeneral))
-                warcrySound.playOnPoint(wearer.getPos3Real())
+                playSound()
                 wearer.removeAbility(BuffIds.ensnareGround)
                 wearer.removeAbility(BuffIds.entanglingRoots)
                 wearer.removeAbility(BuffIds.ensnareGeneral)
+                remainingDuration = DURATION
+                updateDummyPos()
                 InstantDummyCaster.castTarget(wearer.getOwner(), ABILITY_BEARS_TENACITY, 5, OrderIds.slow, wearer)
-                doPeriodicallyCounted(0.5, 4) (CallbackCounted cb) -> 
+                doPeriodicallyCounted(DURATION/4, 4) (CallbackCounted cb) -> 
                     InstantDummyCaster.castTarget(wearer.getOwner(), ABILITY_BEARS_TENACITY, cb.getCount(), OrderIds.slow, wearer)
                 destroy cb                      
             

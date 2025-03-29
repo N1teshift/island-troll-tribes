@@ -34,7 +34,7 @@ function transferItems(unit u, player p)
             for slot = 0 to 5
                 let itm = u.itemInSlot(slot)
                 if itm != null 
-                    instances.get(match).onTargetOrder(itm)
+                    thiefsPocketInstances.get(match).onTargetOrder(itm)
                     break
 
         u.transferItems(match)

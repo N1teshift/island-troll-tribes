@@ -102,7 +102,7 @@ public function initializeWitchDoctorsHutItems()
 
 
     new CustomItemDefinition(ITEM_SCROLL_CYCLONE)
-    ..setItemRecipe(ITEM_SPIRIT_WATER, ITEM_MANA_CRYSTAL)
+    ..setItemRecipe(ITEM_SPIRIT_WIND, ITEM_MANA_CRYSTAL)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_SCROLL_CYCLONE)
 

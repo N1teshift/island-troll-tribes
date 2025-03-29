@@ -67,9 +67,9 @@ let TT_TELE_FEED ="Feed a piece of food directly to your ally using dimentional 
 
 /*
 @compiletime function createTeleStealMeatAbility() returns AbilityDefinitionBerserk
-    return new AbilityDefinitionBerserk(ABILITY_TELE_STEAL_MEAT)
+    return new AbilityDefinitionBerserk(ABILITY_TELE_STEAL_FOOD)
         ..presetTooltipNormal(lvl -> "Tele-Steal Meat")
-        ..presetTooltipNormalExtended(lvl-> TT_STEAL_MEAT+TT_TELE_STEAL_MEAT)   
+        ..presetTooltipNormalExtended(lvl-> TT_STEAL_FOOD+TT_TELE_STEAL_FOOD)   
         ..presetHotkey("R")
         ..setCooldown(1, COOLDOWN)
         ..setIconNormal(LocalIcons.bTNTeleStealMeat)

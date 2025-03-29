@@ -138,7 +138,7 @@ function stealFromTradeShip(unit caster, unit target) returns item
         doAfter(ANIMATION_PERIOD) ->   
             caster.endAbilityCooldown(ABILITY_STEAL)
         return null
-    let instance = instances.get(caster)
+    let instance = thiefsPocketInstances.get(caster)
     if instance == null
         return null
     if instance.robbedTradingShips.has(target)
@@ -157,7 +157,7 @@ function stealFromTradeShip(unit caster, unit target) returns item
     return null     
 
 function onSteal(unit caster, unit target)
-    let instance = instances.get(caster)
+    let instance = thiefsPocketInstances.get(caster)
     item itm = null
     if target.getTypeId() == UNIT_THIEFS_BUSH
         itm = stealFromThiefsBush(caster, target)

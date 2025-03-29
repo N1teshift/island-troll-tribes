@@ -1,0 +1,127 @@
+package EnvenomedHarpoon
+
+// Standard library imports:
+import Assets
+import UnitObjEditing
+import LinkedList
+
+// Local imports:
+import LocalObjectIDs
+import LocalAssets
+import ObjEditingUtils
+import BossAbilities
+import AbilityObjEditing
+import BuffObjEditing
+import ObjectIds
+import ClosureEvents
+import ClosureTimers
+import ColorUtils
+import SpearsDefinition
+import ChannelAbilityPreset
+import MurlocPoison
+import Orders
+import DamageEvent
+import DamageListeners
+
+let DAMAGE = 40.
+let STACKS_AMOUNT = 3
+let HARPOON_COOLDOWN = 10.
+let HARPOON_STUN_DURATION = 0.1
+let CAST_RANGE = 800.
+let TT_NAME = "Envenomed Harpoon"
+let TT_EXT = "Mur'gul Hunter throws a harpoon at the target with the lowest amount of hp."+
+            "\nDoes {0} damage and applies {1} stacks of poison.".format(DAMAGE.toString().color(COLOR_RED), STACKS_AMOUNT.toString().color(COLOR_DARK_GREEN))
+
+
+@compiletime function createEnvenomedHarpoonAbility()
+    new ChannelAbilityPreset(ABILITY_ENVENOMED_HARPOON, 1, true)
+        ..setHeroAbility(false)
+        ..setItemAbility(true)
+        ..setTargetType(1, 1)
+        ..setTargetsAllowed(1, commaList(
+                TargetsAllowed.air,
+                TargetsAllowed.enemies,
+                TargetsAllowed.ground,
+                TargetsAllowed.neutral,
+                TargetsAllowed.organic,
+                TargetsAllowed.terrain
+                )
+        )
+        ..setCastRange(1, CAST_RANGE)
+        ..setCooldown(1, HARPOON_COOLDOWN)
+        ..presetTooltipNormal(lvl->TT_NAME)
+        ..presetTooltipNormalExtended(lvl->TT_EXT)
+        ..presetCastRange(lvl->CAST_RANGE)
+        ..presetIcon(Icons.bTNNagaWeaponUp2)
+
+    new AbilityDefinitionThunderBoltCreep(ABILITY_ENVENOMED_HARPOON_DUMMY)
+        ..presetDamage(lvl->DAMAGE)
+        ..setMissileArc(0.30)
+        ..setMissileSpeed(700) 
+        ..setDurationHero(1, HARPOON_STUN_DURATION)
+        ..setDurationNormal(1, HARPOON_STUN_DURATION)               
+        ..setMissileArt(Abilities.banditmissile)
+        ..setMissileHomingEnabled(true)
+        ..setEditorSuffix("(Wurst)")
+        ..setDummyAbility()
+
+    new UnitDefinition(UNIT_ENVENOMED_HARPOON_DUMMY, 'ewsp')
+        ..setName("UNIT_ENVENOMED_HARPOON_DUMMY")
+        ..setManaMaximum(1000000)
+        ..setMovementType(MovementType.Fly)
+        ..setUpgradesUsed("")
+        ..setCollisionSize(0.0)
+        ..setStructuresBuilt("")
+        ..setRace(Race.Commoner)
+        ..setFoodCost(0)
+        ..setArmorType(ArmorType.Divine)
+        ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNtemp.blp")
+        ..setSpeedBase(522)
+        ..setModelFile("dummy.mdl")
+        ..setAnimationBlendTimeseconds(0.0)
+        ..setAnimationCastBackswing(0.0)
+        ..setMaximumPitchAngledegrees(0.0)
+        ..setMaximumRollAngledegrees(0.0)
+        ..setTurnRate(3)
+        ..setArtSpecial("")
+        ..setProjectileImpactZ(0.0)
+        ..setProjectileLaunchZ(0.0)
+        ..setNameEditorSuffix("(Basics)")
+        ..setSightRadiusDay(1)
+        ..setSightRadiusNight(1)
+        ..setUnitClassification("_")
+        ..setPropulsionWindowdegrees(1.0)
+        ..setTooltipBasic("")
+        ..setNormalAbilities(commaList(LOCUST_ID, GHOST_INVIS_ID, ABILITY_ENVENOMED_HARPOON_DUMMY)) //(commaList(LOCUST_ID, GHOST_INVIS_ID, ABILITY_CLOAK_FLAMES))
+        ..setCollisionSize(0)
+
+
+function onImpact(unit source, unit target)
+    if DamageEvent.getAmount() == 0
+        return
+    if DamageEvent.getType() == DamageType.CODE
+        return
+    if source.getTypeId() != UNIT_ENVENOMED_HARPOON_DUMMY
+        return
+    print("onImpact")
+    addVenomStacks(source, target, STACKS_AMOUNT)
+    let efx = addEffect(envenomedWeaponsMdl, target, AttachmentPoints.origin)
+    doAfter(MURLOC_POISON_DURATION) -> 
+        efx.destr()
+
+function onCast(unit caster, unit target)
+    let dummy = createUnit(caster.getOwner(), UNIT_ENVENOMED_HARPOON_DUMMY, caster.getPos(), caster.getFacingAngle())
+    nullTimer() -> 
+        dummy.issueTargetOrderById(OrderIds.creepthunderbolt, target)
+
+    
+init
+    doAfter(1.) ->  
+        DamageEvent.addListener(DamageListenerPriorities.PANTHER_INSTINCT castTo int) ->
+            onImpact(DamageEvent.getSource(), DamageEvent.getTarget())
+        
+        EventListener.add(EVENT_PLAYER_UNIT_SPELL_EFFECT) ->
+            if GetSpellAbilityId() == ABILITY_ENVENOMED_HARPOON
+                onCast(GetSpellAbilityUnit(), GetSpellTargetUnit()) 
+            
+     

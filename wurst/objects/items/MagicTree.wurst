@@ -44,7 +44,7 @@ import DestructableObjEditing
 
 
 @compiletime function createBuildingTree()
-    new BuildingDefinition(UNIT_BUILDING_MAGIC_TREE, UnitIds.scouttower)
+    new BuildingDefinition(UNIT_MAGIC_TREE, UnitIds.scouttower)
         ..setNormalAbilities("")
         ..setModelFile("Doodads\\Cinematic\\EyeOfSargeras\\EyeOfSargeras.mdl")
         ..setName("Building Tree")
@@ -78,7 +78,7 @@ class MagicTree
 
 init
     registerPlayerUnitEvent(EVENT_PLAYER_UNIT_CONSTRUCT_FINISH)->
-        if GetConstructedStructure().getTypeId() == UNIT_BUILDING_MAGIC_TREE
+        if GetConstructedStructure().getTypeId() == UNIT_MAGIC_TREE
             new MagicTree(GetTriggerUnit())
 
 

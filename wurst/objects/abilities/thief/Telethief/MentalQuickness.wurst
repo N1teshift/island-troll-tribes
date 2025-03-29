@@ -73,8 +73,8 @@ init
     EventListener.onCast(ABILITY_TELE_FEED) (unit caster) ->
         onCast(caster, ABILITY_TELE_FEED)         
         
-    EventListener.onCast(ABILITY_TELE_STEAL_MEAT) (unit caster) ->
-        onCast(caster, ABILITY_TELE_STEAL_MEAT)
+    EventListener.onCast(ABILITY_TELE_STEAL_FOOD) (unit caster) ->
+        onCast(caster, ABILITY_TELE_STEAL_FOOD)
 
     EventListener.onCast(ABILITY_NETHER_POTION_BANISH) (unit caster) ->
         onCast(caster, ABILITY_NETHER_POTION_BANISH)        

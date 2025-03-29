@@ -1,0 +1,47 @@
+package MurlocWarriorDefinition
+
+// Standard library imports:
+import Assets
+import UnitObjEditing
+import LinkedList
+
+// Local imports:
+import LocalObjectIDs
+import LocalAssets
+import ObjEditingUtils
+import BossAbilities
+import AbilityObjEditing
+
+let ABILITIES = asList(
+    AbilityIds.trueSight1,
+    AbilityIds.resistantSkin,
+    ABILITY_SPELL_DMG_REDUCTION,
+    ABILITY_SPELL_DMG_REDUCTION_DUMMY_BUFF,
+    ABILITY_BOSS_ATTACK_SPEED_BONUS,
+    ABILITY_MURLOC_POISON
+)
+let TT_NAME = "Ner’kaz The Hunter"
+
+@compiletime function createMurloc()
+    new UnitDefinition(UNIT_MURLOC_WARRIOR, UnitIds.murlocnightcrawler)
+        ..setNormalAbilities(commaList(ABILITIES))
+        //..setAcquisitionRange(250.0)
+        ..setGoldBountyAwardedNumberofDice(0)
+        ..setGoldBountyAwardedBase(0)
+        ..setGoldBountyAwardedSidesperDie(0)
+        ..setCollisionSize(125.0)
+        ..setArmorType(ArmorType.Medium)
+        ..setUnitClassification("ancient")
+        ..setAttack1CooldownTime(1.25)
+        ..setAttack1DamageNumberofDice(2)
+        ..setAttack1DamageBase(7)
+        ..setHitPointsMaximumBase(1175)
+        ..setModelFile(Units.murlocNightCrawler1)
+        ..setScalingValue(1.5)
+        ..setName(TT_NAME)
+        ..setSelectionScale(1.0)
+        ..setSpeedBase(450)
+        ..setLevel(20)
+        ..setTooltipBasic("Hire THE MAKRURA!?!")
+        ..setTooltipExtended("Super Heavy melee unit")
+        ..setTilesets("Z")        

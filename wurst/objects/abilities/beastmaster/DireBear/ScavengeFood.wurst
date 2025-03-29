@@ -30,6 +30,7 @@ import LocalAssets
 import SimError
 import FoodSlots
 import ItemPoolExtensions
+import StackNSplit
 
 let TT_NAME = "Scavenge for food"
 let TT_EXT = "Scavenge for food from hidden stash or mushroom colony, attempting to collect all edible food as well as generating one unit of food."+
@@ -66,7 +67,7 @@ let hiddenStashPool = CreateItemPool()
 class ScavengedStash
     unit scavengedStash
     unit troll
-    real cooldown = 120.
+    real cooldown = 1.
     construct(unit _scavengedStash, unit _troll)
         scavengedStash = _scavengedStash
         troll = _troll
@@ -76,28 +77,23 @@ class ScavengedStash
                 destroy this
 
     function onScavengeFood()
+        removeDummyItems()
         if scavengedStash.getTypeId() == UNIT_MUSHROOM_COLONY
             handleMushrooms()
         nullTimer() ->
-            var scavengedStashInventory = scavengedStash.getInventory()        
+            let scavengedStashInventory = scavengedStash.getInventory()
             for each in scavengedStashInventory
                 if bearFoodList.has(each.getTypeId())
+                    troll.addItemHandle(each)
                     nullTimer() -> 
-                        stackAndSplitFood(each)
-            destroy scavengedStashInventory
-            scavengedStashInventory = scavengedStash.getInventory()
-            nullTimer() -> 
-                for each in scavengedStashInventory
-                    if bearFoodList.has(each.getTypeId())
+                        scavengedStash.removeItem(each)
                         nullTimer() -> 
-                            moveIntoFoodSlot(each)
-                            nullTimer() -> 
-            destroy scavengedStashInventory
-            generateFoodItem()    
-    
-    function moveFood(item food)
-        nullTimer() -> 
-            stackAndSplitFood(food) 
+                            triggerSmoothPickup(troll, each)                       
+            destroy scavengedStashInventory         
+            generateFoodItem()   
+            let bearFoodSlotInstance = bearFoodSlotInstances.get(troll)
+            bearFoodSlotInstance.pauseTriggers=false            
+
         
     function generateFoodItem()
         item food = null    
@@ -105,37 +101,13 @@ class ScavengedStash
             food =  hiddenStashPool.placeRandomItem(troll.getPos())
         else if scavengedStash.getTypeId() == UNIT_MUSHROOM_COLONY
             food =  createItem(ITEM_SCAVENGED_MUSHROOM, scavengedStash.getPos())
-        nullTimer() ->
-            if troll.getLevel()>=4
-                food.setCharges(2)
-            stackAndSplitFood(food)
-            nullTimer() -> 
-                moveIntoFoodSlot(food)   
-
-    function stackAndSplitFood(item food)
-        let bearFoodSlotInstance = bearFoodSlotInstances.get(troll) 
-        var maxCharges = 10
-        if food.getTypeId() == ITEM_HONEYCOMB
-            maxCharges = 8
-        item trollItem = null
-        let inventory = troll.getInventory()
-        for each in inventory
-            if bearFoodList.has(each.getTypeId()) and each.getCharges()< maxCharges and each.getTypeId()==food.getTypeId()
-                trollItem =each
-        destroy inventory
-        if trollItem == null
+        if troll.getLevel()>=4
+            food.setCharges(2)
+        if troll.hasItemById(food.getTypeId())
+            triggerSmoothPickup(troll, food)
+        else
             troll.addItemHandle(food)
-            //print("added")
-            return
-        bearFoodSlotInstance.pauseTriggers=true
-        if trollItem.getCharges()+food.getCharges()<=maxCharges
-            trollItem.setCharges(trollItem.getCharges()+food.getCharges())
-            food.remove()
-        else    
-            let diff = maxCharges-trollItem.getCharges()
-            food.setCharges(food.getCharges()-diff)
-            trollItem.setCharges(trollItem.getCharges()+diff)
-        bearFoodSlotInstance.pauseTriggers=false      
+   
 
     function handleMushrooms()
         var mushroomCharges = 0 
@@ -148,34 +120,36 @@ class ScavengedStash
             destroy scavengedStashInventory
             return
         let itm = createItem(ITEM_SCAVENGED_MUSHROOM, scavengedStash.getPos())
-        nullTimer() -> 
-            itm.setCharges(mushroomCharges)
-            nullTimer() -> 
-                scavengedStash.addItemHandle(itm)
+        //nullTimer() -> 
+        itm.setCharges(mushroomCharges)
+        //nullTimer() -> 
+        scavengedStash.addItemHandle(itm)
         destroy scavengedStashInventory
 
                     
       
 
 
-    function moveIntoFoodSlot(item food)
+    function removeDummyItems()
         if not troll.hasItemById(ITEM_DIRE_BEAR_FOOD_SLOT)
             return
         let bearFoodSlotInstance = bearFoodSlotInstances.get(troll)
         item dummy = null
+        bearFoodSlotInstance.pauseTriggers=true        
         if troll.hasItem(bearFoodSlotInstance.dummy2)
             dummy = bearFoodSlotInstance.dummy2
-        else if troll.hasItem(bearFoodSlotInstance.dummy1)
+            troll.removeItem(dummy)
+        if troll.hasItem(bearFoodSlotInstance.dummy1)
             dummy = bearFoodSlotInstance.dummy1
-        bearFoodSlotInstance.pauseTriggers=true
+            troll.removeItem(dummy)
         if dummy== null
             return
-        troll.removeItem(dummy)
-        nullTimer() -> 
-            troll.addItemHandle(food)
-            nullTimer() ->           
-                bearFoodSlotInstance.pauseTriggers=false
-                bearFoodSlotInstance.updateDummyItems()
+        bearFoodSlotInstance.pauseTriggers=false
+        //nullTimer() -> 
+        //    troll.addItemHandle(food)
+        //    nullTimer() ->           
+        //        bearFoodSlotInstance.pauseTriggers=false
+        //        bearFoodSlotInstance.updateDummyItems()
             
 
     ondestroy

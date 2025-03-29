@@ -85,11 +85,11 @@ class PhilosophersStoneInstance
                 updateCharges()          
 
     function updateCharges()
+        if hero.getMana()<=20. and hero.hasItem(itemHandle)
+            return        
         let chargesCap = 10+hero.getInt(true)
         let chargesRegenPerSecond = 0.25+0.0125*hero.getInt(true)
         if charges>=chargesCap
-            return
-        if hero.getMana()<=20. and hero.hasItem(itemHandle)
             return
         hero.setMana(hero.getMana()-2*chargesRegenPeriod*chargesRegenPerSecond)
         charges=charges+chargesRegenPeriod*chargesRegenPerSecond
@@ -166,7 +166,7 @@ init
             onAbilityCreatePhilosophersStone(caster)  
 
     EventListener.add(EVENT_PLAYER_HERO_REVIVE_FINISH) ->
-        onRevive(GetManipulatingUnit())
+        onRevive(GetTriggerUnit())
 
     EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
         if GetManipulatedItem().getTypeId() == ITEM_PHILOSOPHERS_STONE

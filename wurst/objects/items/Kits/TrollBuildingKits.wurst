@@ -194,7 +194,7 @@ function createKitAbility(int abilId) returns AbilityDefinitionBuildTinyCastle
         ..setIconNormal(Icons.bTNTemp)
         ..setName("Build Magic palm Tree")
         ..setDurationNormal(1, 5.0)
-        ..setUnitCreatedperplayerrace(1,  commaList(UNIT_BUILDING_MAGIC_TREE))
+        ..setUnitCreatedperplayerrace(1,  commaList(UNIT_MAGIC_TREE))
 
 @compiletime function createForgeAbility() returns AbilityDefinitionBuildTinyCastle
     return createKitAbility(ABIL_FORGE)

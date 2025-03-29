@@ -88,7 +88,7 @@ function onItemDropped(unit troll, item itm)
             flashEffect(Abilities.blinkCaster, pos)
         
 function onCast(unit caster)
-    let instance = instances.get(caster)
+    let instance = thiefsPocketInstances.get(caster)
     if instance == null
         return
     let itm = conjureItem(caster)

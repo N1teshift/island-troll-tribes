@@ -1,0 +1,48 @@
+package MurlocHunterDefinition
+
+// Standard library imports:
+import Assets
+import UnitObjEditing
+import LinkedList
+
+// Local imports:
+import LocalObjectIDs
+import LocalAssets
+import ObjEditingUtils
+import BossAbilities
+import AbilityObjEditing
+
+let ABILITIES = asList(
+    AbilityIds.trueSight1,
+    AbilityIds.resistantSkin,
+    ABILITY_SPELL_DMG_REDUCTION,
+    ABILITY_SPELL_DMG_REDUCTION_DUMMY_BUFF,
+    ABILITY_BOSS_ATTACK_SPEED_BONUS,
+    ABILITY_MURLOC_NET,
+    ABILITY_ENVENOMED_HARPOON
+)
+let TT_NAME = "R’thrak The Venomblade"
+
+
+@compiletime function createMurloc()
+    new UnitDefinition(UNIT_MURLOC_HUNTER, UnitIds.murlochuntsman)
+        ..setNormalAbilities(commaList(ABILITIES))
+        //..setAcquisitionRange(250.0)
+        ..setGoldBountyAwardedNumberofDice(0)
+        ..setGoldBountyAwardedBase(0)
+        ..setGoldBountyAwardedSidesperDie(0)
+        ..setCollisionSize(125.0)
+        ..setArmorType(ArmorType.Medium)
+        ..setUnitClassification("ancient")
+        ..setAttack1CooldownTime(2.)
+        ..setAttack1DamageNumberofDice(2)
+        ..setAttack1DamageBase(14)
+        ..setHitPointsMaximumBase(1175)
+        ..setScalingValue(1.5)
+        ..setName(TT_NAME)
+        ..setSelectionScale(1.0)
+        ..setSpeedBase(450)
+        ..setLevel(20)
+        ..setTooltipBasic("Hire THE MAKRURA!?!")
+        ..setTooltipExtended("Super Heavy melee unit")
+        ..setTilesets("Z")     

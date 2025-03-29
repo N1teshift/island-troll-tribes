@@ -205,7 +205,7 @@ public class QuickMakeV2
 
     function findIngredientInRect(int itemId) returns item
         for each in cashedItems
-            if each.getTypeId() == itemId
+            if each.getTypeId() == itemId and each.isVisible()
                 cashedItems.remove(each)
                 return each       
         return null
@@ -316,7 +316,8 @@ public class QuickMakeV2
             craftedItem.setCharges(baseItemCharges)
         craftedItem.setVisible(true)      
         //print("successfully crafted "+GetObjectName(itemId))
-        printToTeam("Successfuly crafted "+GetObjectName(craftedItem.getTypeId()))
+        if parentInstance == null
+            printToTeam("Successfuly crafted "+GetObjectName(craftedItem.getTypeId()))
         removeConsumedItems()
         if this!= null
             destroy this    

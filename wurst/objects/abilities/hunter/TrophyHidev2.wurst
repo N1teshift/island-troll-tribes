@@ -28,6 +28,7 @@ import UnitExtensions
 import Orders
 import QuickMake
 import AxesDefinition
+import initlater GatheringSlot
 
 constant TT_ELK_TROPHY_HIDE ="\n\nElk hide: "+
                              "\n +1 ".color(ENERGY_COLOR)+"armor."+ 
@@ -137,35 +138,49 @@ class TrophyHide
     item hunterDummyItem = null
     item trophyHide = null
     bool suspendTriggersFlag = false
+    GatheringSlot gatheringSlot = null
     Attachment attachment
 
     construct(unit hero)
         this.hero = hero
         hunterDummyItem = createItem(ITEM_HUNTER_TROPHY_HIDE_DUMMY, hero.getPos())
         hunterDummyItem.setVisible(false)
+        doAfter(1.) ->  
+            gatheringSlot = gatheringSlotInstances.get(hero)
+            
         nullTimer() ->            
             hero.addItemHandleToSlot(hunterDummyItem, 3)
 
     function updateDummySlot()
+        suspendTriggersFlag = true
         if updateHides()
+            nullTimer() ->   
+                gatheringSlot.updateDummyItems()
+                suspendTriggersFlag = false  
             return
         if hero.hasItem(hunterDummyItem)
+            nullTimer() -> 
+                suspendTriggersFlag = false     
+                gatheringSlot.updateDummyItems()
             return
         suspendTriggersFlag = true        
         if hero.isInventoryFull()
-            hero.removeItemFromSlot(3)
         nullTimer() ->
             hero.addItemHandle(hunterDummyItem)
-            suspendTriggersFlag = false
+            doAfter(ANIMATION_PERIOD) ->  
+                gatheringSlot.updateDummyItems()   
+                suspendTriggersFlag = false  
+            
 
     function onHideDrop()
+        if suspendTriggersFlag == true
+            return
         nullTimer() ->     
             hunterDummyItem.setVisible(false)
         suspendTriggersFlag = true
         replaceTrophyWithHide()
         nullTimer() ->
-            updateDummySlot()
-        suspendTriggersFlag = false            
+            updateDummySlot()          
 
     function updateHides() returns bool
         if trophyHide== null
@@ -194,7 +209,7 @@ class TrophyHide
             hero.removeItem(hunterDummyItem) 
             nullTimer() ->
                 hunterDummyItem.setVisible(false)
-                suspendTriggersFlag = false
+                //suspendTriggersFlag = false
             return
         let trophy= hideToTrophyMap.get(itemHandle.getTypeId())
         //updateAttachment(itemHandle.getTypeId())
@@ -205,7 +220,7 @@ class TrophyHide
         nullTimer() ->
             hunterDummyItem.setVisible(false)
             hero.addItemHandleToSlot(trophyHide, slot)
-            suspendTriggersFlag = false
+            //suspendTriggersFlag = false
 
     function updateAttachment(int newAttachment)
         if trophyHide != null
@@ -232,10 +247,11 @@ class TrophyHide
     function onTargetOrder(item itemHandle)
         suspendTriggersFlag = true    
         hero.removeItem(hunterDummyItem)
-        suspendTriggersFlag = false 
         nullTimer() -> 
             hero.addItemHandle(itemHandle)
             hunterDummyItem.setVisible(false)
+            suspendTriggersFlag = false
+            updateDummySlot() 
             //replaceHideWithTrophy(itemHandle)
 
 
@@ -272,7 +288,7 @@ function onHidePickup(unit hero, item itemHandle)
         return
     if instance.suspendTriggersFlag == true
         return
-    nullTimer() ->   
+    nullTimer() ->  
         instance.updateDummySlot()
 
 

@@ -27,24 +27,46 @@ import ThiefsPocket
 import ColorUtils
 import LocalAssets
 import SimError
+import HealingItems
+import ScavengedMushroom
+import StackNSplit
 
 let COOLDOWN = 30.
+let TT_STEAL_FOOD_NAME = "Steal Food"
+let TT_TELE_STEAL_FOOD_NAME = "Tele-Steal Food"
 let TELE_STEAL_COOLDOWN = 25.
 let TELE_STEAL_CAST_RANGE = 500.
 let TELE_STEAL_MANA_COST = 20
 
-let TT_STEAL_MEAT ="Steal a piece of meat from a closest enemy in {0} range.".format(TELE_STEAL_CAST_RANGE.toString().color(ENERGY_COLOR))+ 
+let STOLEN_FOOD_HEAL_MAP = FOOD_ITEMS_HEAL_AMOUNT
+    ..put(ITEM_SCAVENGED_MUSHROOM, SCAVENGED_MUSHROOM_HEAL_AMOUNT) 
+
+let FOOD_STEAL_PRIORITY = new HashList<int>()
+    ..add(ITEM_COOKED_MEAT)
+    ..add(ITEM_COCONUT)
+    ..add(ITEM_BANANA)
+    ..add(ITEM_SCAVENGED_MUSHROOM)
+    ..add(ITEM_HONEYCOMB)
+
+let TT_STEAL_FOOD ="Steal a piece of food from a closest enemy in {0} range.".format(TELE_STEAL_CAST_RANGE.toString().color(ENERGY_COLOR))+ 
                     " If your inventory is full, it is gonna be automatically consumed."+
+                    "\nSteal Food priority list:"+
+                    "\n - Cooked Meat"+
+                    "\n - Coconut"+
+                    "\n - Banana"+
+                    "\n - Scavenged Mushroom."+
+                    "\n - Honeycomb."+
                     "\n{0} seconds cooldown.".format(COOLDOWN.toString().color(ENERGY_COLOR))
-let TT_TELE_STEAL_MEAT = TT_STEAL_MEAT.replace(COOLDOWN.toString(), TELE_STEAL_COOLDOWN.toString().color(ENERGY_COLOR))+
+
+let TT_TELE_STEAL_FOOD = TT_STEAL_FOOD.replace(COOLDOWN.toString(), TELE_STEAL_COOLDOWN.toString().color(ENERGY_COLOR))+
                     "\n\nTele-thief's mastery over dimentional magic greatly increases range of this ability".color(ENERGY_COLOR)
 
 
 
 @compiletime function createStealMeatAbility()
-    new ChannelAbilityPreset(ABILITY_STEAL_MEAT, 1, true)
-        ..presetTooltipNormal(lvl -> "Steal Meat")
-        ..presetTooltipNormalExtended(lvl-> TT_STEAL_MEAT)        
+    new ChannelAbilityPreset(ABILITY_STEAL_FOOD, 1, true)
+        ..presetTooltipNormal(lvl -> TT_STEAL_FOOD_NAME)
+        ..presetTooltipNormalExtended(lvl-> TT_STEAL_FOOD)        
         ..presetCastingTime(lvl ->0.1)
         ..presetCastRange(lvl -> 150)
         ..presetCooldown(lvl -> 30)
@@ -65,28 +87,37 @@ let TT_TELE_STEAL_MEAT = TT_STEAL_MEAT.replace(COOLDOWN.toString(), TELE_STEAL_C
 
 
 @compiletime function createTeleStealMeatAbility()
-    new ChannelAbilityPreset(ABILITY_TELE_STEAL_MEAT, 1, true)
-        ..presetTooltipNormal(lvl -> "Tele-Steal Meat")
+    new ChannelAbilityPreset(ABILITY_TELE_STEAL_FOOD, 1, true)
+        ..presetTooltipNormal(lvl -> TT_TELE_STEAL_FOOD_NAME)
         ..presetManaCost(lvl->TELE_STEAL_MANA_COST)
-        ..presetTooltipNormalExtended(lvl-> TT_STEAL_MEAT+TT_TELE_STEAL_MEAT)   
+        ..presetTooltipNormalExtended(lvl-> TT_TELE_STEAL_FOOD)   
         ..presetCooldown(lvl -> TELE_STEAL_COOLDOWN)
         ..presetHotkey("R")
         ..setButtonPositionNormalX(3)
         ..setButtonPositionNormalY(0)
         ..setIconNormal(LocalIcons.bTNTeleStealMeat)
-        ..setTooltipNormal(1, makeToolTipNorm("R", "Tele-Steal Meat"))
+        ..setTooltipNormal(1, makeToolTipNorm("R", TT_TELE_STEAL_FOOD_NAME))
         ..setCastingTime(1, 0.)
 
 
+function findFoodItem(unit target) returns item
+    for each in FOOD_STEAL_PRIORITY
+        let itm = target.getItemById(each)
+        if itm != null
+            return itm
+    return null
+
+
 function onStealCast(unit caster, unit target)
-    let itm = target.getItemById(ITEM_COOKED_MEAT)
+    let itm = findFoodItem(target)
     if itm == null
         doAfter(ANIMATION_PERIOD) -> 
-            caster.endAbilityCooldown(ABILITY_STEAL_MEAT)
-            caster.endAbilityCooldown(ABILITY_TELE_STEAL_MEAT)
-            if caster.hasAbility(ABILITY_TELE_STEAL_MEAT)
+            caster.endAbilityCooldown(ABILITY_STEAL_FOOD)
+            caster.endAbilityCooldown(ABILITY_TELE_STEAL_FOOD)
+            if caster.hasAbility(ABILITY_TELE_STEAL_FOOD)
                 caster.setMana(caster.getMana()+TELE_STEAL_MANA_COST)
         return
+    let foodId = itm.getTypeId()
     let charges = itm.getCharges()
     if charges > 1
         itm.setCharges(charges-1)
@@ -94,15 +125,16 @@ function onStealCast(unit caster, unit target)
         itm.remove()
     let casterInventory = caster.getInventory()
     for itm2 in casterInventory
-        if itm2.getTypeId() == ITEM_COOKED_MEAT and itm2.getCharges()<10
+        if itm2.getTypeId() == foodId and itm2.getCharges() < getItemMaxStacks(foodId)
             itm2.setCharges(itm2.getCharges()+1)
             destroy casterInventory
             return
-    if caster.isInventoryFull()
-        new HealingInstance(caster, 50, HealingType.ITEM)
+    if caster.isInventoryFull() or foodId == ITEM_SCAVENGED_MUSHROOM
+        let healAmount = STOLEN_FOOD_HEAL_MAP.get(foodId)
+        new HealingInstance(caster, healAmount, HealingType.ITEM)
         destroy casterInventory
         return
-    let itm3 = createItem(ITEM_COOKED_MEAT, caster.getPos())
+    let itm3 = createItem(foodId, caster.getPos())
     stolenItems.add(itm3)
     caster.addItemHandle(itm3)
     destroy casterInventory
@@ -111,12 +143,16 @@ function onTeleStealCast(unit caster)
     ENUM_GROUP.enumUnitsInRange(
         caster.getPos(),
         TELE_STEAL_CAST_RANGE,
-        Filter(-> GetFilterUnit().hasItemById(ITEM_COOKED_MEAT))
+        Filter(-> GetFilterUnit().hasItemById(ITEM_COOKED_MEAT) or
+                 GetFilterUnit().hasItemById(ITEM_COCONUT) or
+                 GetFilterUnit().hasItemById(ITEM_BANANA) or
+                 GetFilterUnit().hasItemById(ITEM_SCAVENGED_MUSHROOM) or
+                 GetFilterUnit().hasItemById(ITEM_HONEYCOMB))
     )
     ENUM_GROUP.remove(caster)
     if ENUM_GROUP.isEmpty()
         doAfter(ANIMATION_PERIOD*2)-> 
-            caster.endAbilityCooldown(ABILITY_TELE_STEAL_MEAT)
+            caster.endAbilityCooldown(ABILITY_TELE_STEAL_FOOD)
             caster.setMana(caster.getMana()+TELE_STEAL_MANA_COST)
             simError(caster.getOwner(), "There is no valid target in radius.")
         return
@@ -129,7 +165,7 @@ function onTeleStealCast(unit caster)
             target = each
     if target == null
         doAfter(ANIMATION_PERIOD*2)-> 
-            caster.endAbilityCooldown(ABILITY_TELE_STEAL_MEAT)
+            caster.endAbilityCooldown(ABILITY_TELE_STEAL_FOOD)
             caster.setMana(caster.getMana()+TELE_STEAL_MANA_COST)        
         simError(caster.getOwner(), "There is no valid target in radius.")
         return        
@@ -140,9 +176,9 @@ function onTeleStealCast(unit caster)
 
 
 init 
-    EventListener.onTargetCast(ABILITY_STEAL_MEAT) (unit caster, unit target) ->
+    EventListener.onTargetCast(ABILITY_STEAL_FOOD) (unit caster, unit target) ->
         onStealCast(caster, target)
-    EventListener.onTargetCast(ABILITY_TELE_STEAL_MEAT) (unit caster, unit target) ->
+    EventListener.onTargetCast(ABILITY_TELE_STEAL_FOOD) (unit caster, unit target) ->
         onTeleStealCast(caster)        
         
     

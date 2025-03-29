@@ -1,0 +1,81 @@
+package MurlocHunterNet
+
+// Standard library imports:
+import Assets
+import UnitObjEditing
+import LinkedList
+
+// Local imports:
+import LocalObjectIDs
+import LocalAssets
+import ObjEditingUtils
+import BossAbilities
+import AbilityObjEditing
+import BuffObjEditing
+import ObjectIds
+import ClosureEvents
+import ClosureTimers
+
+public let MURLOC_NET_COOLDOWN = 10.
+public let MURLOC_NET_CAST_RANGE = 800.
+public let MURLOC_NET_DURATION = 3.
+public let MURLOC_NET_REEL_DISTANCE_MIN = 150.
+
+@compiletime function createMurlocEnsnareBuffs()
+    new BuffDefinition(BUFF_MURLOC_NET_GROUND, BuffIds.ensnareGround)
+        ..setArtTarget(1, "")
+        ..setArtSpecial(1, "")
+    new BuffDefinition(BUFF_MURLOC_NET_AIR, BuffIds.ensnareAir)
+        ..setArtTarget(1, "")
+        ..setArtSpecial(1, "")
+
+
+@compiletime function createMurlocEnsnareAbility()
+    new AbilityDefinitionEnsnare(ABILITY_MURLOC_NET)
+        ..setItemAbility(true)
+        ..setBuffs(1, commaList(toRawCode(BUFF_MURLOC_NET_AIR), toRawCode(BUFF_MURLOC_NET_GROUND)))
+        ..setName("Murloc Hunting Net")
+        ..setTooltipNormal(1, "Murloc Hunting net Ensnare")
+        ..setTooltipNormalExtended(1, "Murloc Hunting net Ensnare")
+        ..setCooldown(1, MURLOC_NET_COOLDOWN)
+        ..setDurationHero(1, MURLOC_NET_DURATION)
+        ..setDurationNormal(1, MURLOC_NET_DURATION)
+        ..setCastRange(1, MURLOC_NET_CAST_RANGE)
+        ..setEditorSuffix("(Wurst)")
+        ..setRequirements("")
+
+function reelTarget(unit caster, unit target, unit dummy)
+    print("reelTarget")
+    let casterPos = caster.getPos()
+    let targetPos = target.getPos()
+    let distance = casterPos.distanceTo(targetPos)
+    if  distance <= MURLOC_NET_REEL_DISTANCE_MIN
+        return
+    let newPos = targetPos.moveTowards(casterPos, MURLOC_NET_CAST_RANGE/MURLOC_NET_DURATION*ANIMATION_PERIOD)
+    target.setPos(newPos)
+    dummy.setPos(newPos)
+
+
+function onCast(int abilId, unit caster, unit target)
+    if abilId != ABILITY_MURLOC_NET
+        return
+    doPeriodicallyTimed(ANIMATION_PERIOD, 3.) (CallbackCounted cb) ->
+        print("onCast")
+        if target.hasAbility(BUFF_MURLOC_NET_GROUND)
+            print("started")
+            target.setPathing(false)
+            let ensanreModelDummy = createUnit(caster.getOwner(), UNIT_ENSNARE_MODEL_DUMMY, target.getPos())    
+            doPeriodically(ANIMATION_PERIOD) (CallbackPeriodic cb) ->
+                if not target.hasAbility(BUFF_MURLOC_NET_GROUND)
+                    print("destroyed")
+                    target.setPathing(true)
+                    ensanreModelDummy.remove()
+                    destroy cb
+                reelTarget(caster, target, ensanreModelDummy)
+            destroy cb
+        
+        
+
+init
+    EventListener.add(EVENT_PLAYER_UNIT_SPELL_EFFECT) ->
+        onCast(GetSpellAbilityId(), GetSpellAbilityUnit() ,GetSpellTargetUnit()) 

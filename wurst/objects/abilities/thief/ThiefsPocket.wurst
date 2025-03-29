@@ -22,7 +22,7 @@ import ColorUtils
 //import Steal
 
 
-public IterableMap<unit, ThiefsPocket> instances = new IterableMap<unit, ThiefsPocket>()
+public IterableMap<unit, ThiefsPocket> thiefsPocketInstances = new IterableMap<unit, ThiefsPocket>()
 
 
 public let stolenItems = new HashSet<item>()
@@ -139,13 +139,13 @@ class ThiefsPocket
 
 function onUnitEnter(unit troll)
     if troll.getTrollBaseClass() == UNIT_THIEF
-        if not instances.has(troll)
-            instances.put(troll, new ThiefsPocket(troll))
+        if not thiefsPocketInstances.has(troll)
+            thiefsPocketInstances.put(troll, new ThiefsPocket(troll))
 
                 
 
 function onItemPickup(unit troll, item manipulatedItem)
-    let instance = instances.get(troll)
+    let instance = thiefsPocketInstances.get(troll)
     if instance == null
         return
     if instance.suspendTriggersFlag == true
@@ -157,7 +157,7 @@ function onItemPickup(unit troll, item manipulatedItem)
     instance.updateDummySlot()
 
 function onDummyItemDrop(unit troll, item manipulatedItem)
-    let instance = instances.get(troll)
+    let instance = thiefsPocketInstances.get(troll)
     if instance == null
         return
     if manipulatedItem.getTypeId()!= ITEM_THIEFS_POCKET_DUMMY and (not stolenItems.has(manipulatedItem))
@@ -177,7 +177,7 @@ function onDummyItemDrop(unit troll, item manipulatedItem)
 function onItemDropped(unit troll, item manipulatedItem)
     let orderItm = GetOrderTargetItem()
     let slotFrom = troll.getItemSlot(orderItm)    
-    let instance = instances.get(troll)
+    let instance = thiefsPocketInstances.get(troll)
     if instance == null
         return
     //if manipulatedItem.getTypeId()!= ITEM_THIEFS_POCKET_DUMMY and (not stolenItems.has(manipulatedItem))
@@ -203,13 +203,13 @@ function onDeath(unit troll)
 function onTargetOrder()
     let order = GetIssuedOrderId()
     let u = GetOrderedUnit()
-    let instance = instances.get(u)
+    let instance = thiefsPocketInstances.get(u)
     let target = GetOrderTargetItem()
     if instance == null
         return
     if instance.suspendTriggersFlag == true
         return
-    if order != Orders.smart or not u.isInventoryFull() or not instances.has(u)
+    if order != Orders.smart or not u.isInventoryFull() or not thiefsPocketInstances.has(u)
         return
     if not stolenItems.has(target)
         return
@@ -226,7 +226,7 @@ function onTargetOrder()
 
 
 function onRevive(unit troll)
-    let instance = instances.get(troll)
+    let instance = thiefsPocketInstances.get(troll)
     if instance == null
         return
     if instance.suspendTriggersFlag == true

@@ -53,6 +53,8 @@ import Reflection
 import Lodash
 import TrophyHidev2
 
+public HashMap<item, EquipmentSlots> equippedItems = new HashMap<item, EquipmentSlots>
+
 public interface EquipmentCallback
     function run(unit troll, item itm)
 
@@ -123,6 +125,8 @@ public class EquipmentSlots
         itm.setVisible(true)
         removeBonuses(itm.getTypeId(), troll)
         refreshFrames()
+        equippedItems.remove(itm)
+        printTimedToPlayer("Unequiped "+GetObjectName(itm.getTypeId()), 5, troll.getOwner())        
         destroy inventory   
         if cb != null
             destroy cb
@@ -178,20 +182,14 @@ public class EquipmentSlots
             itm.setVisible(true)
             return        
         currentItems.put(index, itm)
+        equippedItems.put(itm, this)
         troll.removeItem(itm)
         nullTimer() -> 
             gatheringSlotInstances.get(troll).updateDummyItems()
             refreshFrames()
             itm.setVisible(false)
         applyBonuses(itm.getTypeId(), troll)
-        /*
-        if enforceInventoryLimits(troll, itm) == false
-            doAfter(ANIMATION_PERIOD) -> 
-                equipItem(index, previousItem)
-                doAfter(ANIMATION_PERIOD) -> 
-                    runOnEquipCallbacks(troll, itm)
-        else
-            */
+        printTimedToPlayer("Equiped "+GetObjectName(itm.getTypeId()), 5, troll.getOwner())
         doAfter(ANIMATION_PERIOD) ->
             runOnEquipCallbacks(troll, itm) 
                 

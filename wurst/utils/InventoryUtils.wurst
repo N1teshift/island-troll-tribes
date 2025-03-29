@@ -1,15 +1,20 @@
 package InventoryUtils
 import UnitExtensions
 import LocalObjectIDs
+import GatheringSlot
+import ClosureTimers
 
 public function transferItems(unit source, unit dest)
     let count = source.inventorySize()
+    let instance = gatheringSlotInstances.get(dest)
     for i = 0 to count - 1
-        if dest.freeSlots() == 0
+        if dest.freeSlots() == 0 and not dest.hasItemById(ITEM_EQUIPMET_DUMMY_SLOT)
             break
         let grabbed = source.itemInSlot(i)
-        if grabbed != null and grabbed.getTypeId()!= ITEM_STASHED_RAW_MEAT
+        if grabbed != null
             dest.addItemHandle(grabbed)
+        if dest.isInventoryFull()
+            instance.onTargetOrder(grabbed)
 
 public function unit.transferItems(unit dest)
     transferItems(this, dest)

@@ -58,7 +58,7 @@ let MAGIC              = "Magic".color(COLOR_TURQUOISE)
 let WIND               = "Spirit of Wind".color(COLOR_LAVENDER)
 let WATER              = "Spirit of Water".color(COLOR_TURQUOISE)
 let DARKNESS           = "Spirit of Darkness".color(COLOR_VIOLET)
-let LESSER_ESSENCE   = "Lesser essence".color(COLOR_YELLOW)
+let LESSER_ESSENCE     = "Lesser essence".color(COLOR_YELLOW)
 let GREATER_ESSENCE    = "Greater essence".color(COLOR_VIOLET)
 let ANABOLIC           = "Anabolic Potion".color(COLOR_MAROON)
 let IRON               = "Iron Ingot".color(COLOR_RED)
@@ -67,9 +67,9 @@ let SPEAR              = "Spear".color(HIGHLIGHT_COLOR)
 let POISON             = "Poison".color(COLOR_GREEN)
 let ULTRA_POISON       = "Ultra Poison".color(COLOR_GREEN)
 let SHIELD             = "Shield".color(COLOR_PEANUT)
-let BASICGLOVES        = "Any Basic Gloves".color(COLOR_PEANUT)
-let BASICCOAT          = "Any Basic Coat".color(COLOR_PEANUT)
-let BASICBOOTS         = "Any Basic Boots".color(COLOR_PEANUT)
+let ELK_HIDE_GLOVES        = "Elk Hide Boots".color(COLOR_PEANUT)
+let ELK_HIDE_COAT          = "Elk Hide Coat".color(COLOR_PEANUT)
+let ELK_HIDE_BOOTS         = "Elk Hide Boots".color(COLOR_PEANUT)
 let NETS               = "Nets".color(COLOR_LIGHT_BLUE)
 let MANA               = "Mana Potion".color(COLOR_TURQUOISE)
 let HEALING            = "Healing Potion".color(COLOR_GREEN)
@@ -160,7 +160,7 @@ public let STONE_AXE_RECIPE   = "a Stone Axe. Increase damage by 6, allows tree 
 public let IRON_AXE_RECIPE    = "an Iron Axe. Increase damage by 9, allows tree to be cut :\n\n1x "                                    +STICK+"/"+BONE+" + 2x "+IRON
 public let STEEL_AXE_RECIPE   = "a Steel Axe. Increase damage by 12, allows tree to be cut :\n\n1x "                                   +STICK+"/"+BONE+" + 2x "+STEEL
 public let MAGE_MASHER_RECIPE = "a Mage Masher. " + TT_MM + "\n\n1x "+STICK+"/"+BONE+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
-public let CHAMELEON_HATCHET_RECIPE = "a Chameleon Hatchet. " + TT_CHAMELEON_HATCHET_STR + "\n\n1x "+STICK+"/"+BONE+" + 1x "+IRON+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
+public let CHAMELEON_HATCHET_RECIPE = "a Chameleon Hatchet. " + TT_CHAMELEON_HATCHET_STR + "\n\n1x "+"Iron Axe".color(COLOR_ORANGE)+" + 1x "+IRON+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
 
 public let SPEAR_RECIPE       = "a Spear. Deals 40 damage on target, has 60% chance of being recoverable :\n\n1x "                             +STICK+"/"+BONE+" + 1x "+STONE
 public let IRON_SPEAR_RECIPE  = "a Iron Spear. Deals 70 damage on target, has 60% chance of being recoverable :\n\n1x "                        +STICK+"/"+BONE+" + 1x "+IRON
@@ -172,17 +172,17 @@ public let BONE_SHIELD_RECIPE  = BONE_SHIELD_TOOLTIP  +"\n\n1x " +SHIELD   +" + 
 public let IRON_SHIELD_RECIPE  = IRON_SHIELD_TOOLTIP  +"\n\n1x " +SHIELD   +"+ 2x "  +IRON
 public let STEEL_SHIELD_RECIPE = STEEL_SHIELD_TOOLTIP +"\n\n1x " +SHIELD   +"+ 2x "  +STEEL
 
-public let BONE_GLOVES_RECIPE  = "a "  + "Bone Gloves. " .color(COLOR_ORANGE    ) + TT_BONE_GLOVES  +"\n\n1x " +BASICGLOVES+" + 5x "+BONE
-public let IRON_GLOVES_RECIPE  = "an " + "Iron Gloves. " .color(COLOR_GRAY      ) + TT_IRON_GLOVES  +"\n\n1x " +BASICGLOVES+" + 2x "+IRON
-public let STEEL_GLOVES_RECIPE = "a "  + "Steel Gloves. ".color(COLOR_TURQUOISE ) + TT_STEEL_GLOVES +"\n\n1x " +BASICGLOVES+" + 2x "+STEEL
+public let BONE_GLOVES_RECIPE  = "a "  + "Bone Gloves. " .color(COLOR_ORANGE    ) + TT_BONE_GLOVES  +"\n\n1x " +ELK_HIDE_GLOVES+" + 5x "+BONE
+public let IRON_GLOVES_RECIPE  = "an " + "Iron Gloves. " .color(COLOR_GRAY      ) + TT_IRON_GLOVES  +"\n\n1x " +ELK_HIDE_GLOVES+" + 2x "+IRON
+public let STEEL_GLOVES_RECIPE = "a "  + "Steel Gloves. ".color(COLOR_TURQUOISE ) + TT_STEEL_GLOVES +"\n\n1x " +ELK_HIDE_GLOVES+" + 2x "+STEEL
 
-public let BONE_COAT_RECIPE  = "a "  + "Bone Coat. " .color(COLOR_ORANGE   ) + TT_BONE_COAT  + "\n\n1x " +BASICCOAT +" + 5x "+BONE
-public let IRON_COAT_RECIPE  = "an " + "Iron Coat. " .color(COLOR_GRAY     ) + TT_IRON_COAT  + "\n\n1x " +BASICCOAT +" + 2x "+IRON
-public let STEEL_COAT_RECIPE = "a "  + "Steel Coat. ".color(COLOR_TURQUOISE) + TT_STEEL_COAT + "\n\n1x " +BASICCOAT +" + 2x "+STEEL
+public let BONE_COAT_RECIPE  = "a "  + "Bone Coat. " .color(COLOR_ORANGE   ) + TT_BONE_COAT  + "\n\n1x " +ELK_HIDE_COAT +" + 5x "+BONE
+public let IRON_COAT_RECIPE  = "an " + "Iron Coat. " .color(COLOR_GRAY     ) + TT_IRON_COAT  + "\n\n1x " +ELK_HIDE_COAT +" + 2x "+IRON
+public let STEEL_COAT_RECIPE = "a "  + "Steel Coat. ".color(COLOR_TURQUOISE) + TT_STEEL_COAT + "\n\n1x " +ELK_HIDE_COAT +" + 2x "+STEEL
 
-public let BONE_BOOTS_RECIPE  = "a pair of " + "Bone Boots. "  .color(COLOR_ORANGE   ) + TT_BONE_BOOTS  + " \n\n1x " + BASICBOOTS + " + 5x " + BONE
-public let IRON_BOOTS_RECIPE  = "a pair of " + "Iron Boots. "  .color(COLOR_GRAY     ) + TT_IRON_BOOTS  + " \n\n1x " + BASICBOOTS + " + 2x " + IRON
-public let STEEL_BOOTS_RECIPE = "a pair of " + "Steel Boots. " .color(COLOR_TURQUOISE) + TT_STEEL_BOOTS + " \n\n1x " + BASICBOOTS + " + 2x " + STEEL
+public let BONE_BOOTS_RECIPE  = "a pair of " + "Bone Boots. "  .color(COLOR_ORANGE   ) + TT_BONE_BOOTS  + " \n\n1x " + ELK_HIDE_BOOTS + " + 5x " + BONE
+public let IRON_BOOTS_RECIPE  = "a pair of " + "Iron Boots. "  .color(COLOR_GRAY     ) + TT_IRON_BOOTS  + " \n\n1x " + ELK_HIDE_BOOTS + " + 2x " + IRON
+public let STEEL_BOOTS_RECIPE = "a pair of " + "Steel Boots. " .color(COLOR_TURQUOISE) + TT_STEEL_BOOTS + " \n\n1x " + ELK_HIDE_BOOTS + " + 2x " + STEEL
 
 public let IRON_STAFF_RECIPE = TT_IRON_STAFF+"\n\n1x "+STICK+"1x "+"2x "+IRON+"1x "+MC
 
@@ -229,7 +229,7 @@ public let SCROLL_FIREBALL_RECIPE    = "a " +"Scroll of Fire Ball"      .color(C
 public let SCROLL_ROOT_RECIPE        = "a " +"Scroll of Entangling Root".color(COLOR_GREEN)     + ". " + ENTANGLING_ROOT_TT + " :\n\n1x "+ TINDER   + " + 1x "+ MC
 public let SCROLL_ARMOR_RECIPE       = "a " +"Scroll of Stone Armor"    .color(COLOR_ORANGE)    + ". " + STONE_ARMOR_TT     + " :\n\n1x "+ STONE    + " + 1x "+ MC
 public let SCROLL_LIVING_DEAD_RECIPE = "a " +"Scroll of Living Dead"    .color(COLOR_YELLOW)    + ". " + LIVING_DEAD_TT     + " :\n\n1x "+ BONE     + " + 1x "+ MC
-public let SCROLL_HASTE_RECIPE       = "a " +"Scroll of Haste"          .color(COLOR_ORANGE)    + ". " + HASTE_TT           + " :\n\n1x "+ BASICBOOTS + " + 1x "+ MC
+public let SCROLL_HASTE_RECIPE       = "a " +"Scroll of Haste"          .color(COLOR_ORANGE)    + ". " + HASTE_TT           + " :\n\n1x "+ ELK_HIDE_BOOTS + " + 1x "+ MC
 public let SCROLL_TSUNAMI_RECIPE     = "a " +"Scroll of Tsunami"        .color(COLOR_VIOLET)    + ". " + TSUNAMI_TT         + " :\n\n1x "+ WATER    + " + 1x "+ MC
 public let SCROLL_CYCLONE_RECIPE     = "a " +"Scroll of Cyclone"        .color(COLOR_TURQUOISE) + ". " + CYCLONE_TT         + " :\n\n1x "+ WIND     + " + 1x "+ MC
 
@@ -265,7 +265,7 @@ public let HUNTING_NET_RECIPE            = "a Hunting Net. Reusable if target di
                                            " :\n\n1x "+ NETS + " 1x " + STONE
 
 
-public let BLOW_GUN_RECIPE               = "a BlowGun. Used for shooting small things. Can be loaded with thistles or bones (up to 5 bones). Drag and drops items on the blowgun to load,"+
+public let BLOW_GUN_RECIPE               = "a BlowGun. Used for shooting small things. Can be loaded with thistles or bones. Drag and drops items on the blowgun to load,"+
                                           " click and use on your own troll to unload : \n\n1x "+STICK+" + 1x "+CLAY_BALL
 
 public let DARK_THISTLES_RECIPE         = "a Dark thistles. Creates a special type of blowgun ammo. Instead of poisoning, dark thistles depress enemies and zap mana from them over time :"+

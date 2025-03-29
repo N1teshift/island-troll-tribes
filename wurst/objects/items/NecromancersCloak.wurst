@@ -168,7 +168,19 @@ function onPickUp(unit troll, item itm)
                 instances.get(empoweredCloak).setTotalDamageDealt(totalDamageDealt)
                 instances.get(empoweredCloak).updateTooltip()
 
-      
+
+function onItemUse(item itm)
+    let itmId = itm.getTypeId()
+    if not (itmId == ITEM_NECROMANCERS_CLOAK or itmId == ITEM_EMPOWERED_NECROMANCERS_CLOAK)
+        return
+    flashEffect(Abilities.raiseSkeleton, GetTriggerUnit().getPos())    
+    if itmId == ITEM_NECROMANCERS_CLOAK
+        let charges = itm.getCharges()
+        if charges>=1
+            nullTimer() -> 
+                itm.setCharges(charges+1)
+
+
 
 init
     EventListener.add(EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER, () -> onTargetOrder())
@@ -184,8 +196,8 @@ init
     //    onPickUp(troll, troll.getItemById(ITEM_NECROMANCERS_CLOAK))
 
     registerPlayerUnitEvent(EVENT_PLAYER_UNIT_USE_ITEM) ->
-        if GetManipulatedItem().getTypeId() == ITEM_NECROMANCERS_CLOAK or GetManipulatedItem().getTypeId() == ITEM_EMPOWERED_NECROMANCERS_CLOAK
-            flashEffect(Abilities.raiseSkeleton, GetTriggerUnit().getPos())
+        onItemUse(GetManipulatedItem())
+
 /*    
     onEnter()->
         if getEnterLeaveUnit().getTypeId() == UNIT_LOCUST_SKELETON

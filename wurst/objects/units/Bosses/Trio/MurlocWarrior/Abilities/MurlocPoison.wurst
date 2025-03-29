@@ -1,0 +1,118 @@
+package MurlocPoison
+
+// Standard library imports:
+import Assets
+import UnitObjEditing
+import LinkedList
+
+// Local imports:
+import LocalObjectIDs
+import LocalAssets
+import BossAbilities
+import AbilityObjEditing
+import MakruraCuirass
+import ClosureTimers
+import StringBuilder
+import ColorUtils
+import ItemObjEditing
+import Items
+import LocalItemObjEditing
+import HashMap
+import HashList
+import DamageListeners
+import UnitExtensions
+import PlayerExtensions
+import ObjectIds
+import BuffObjEditing
+import ClosureEvents
+
+public let MURLOC_POISON_DURATION = 5.
+public let POISON_DMG_PERIOD = ANIMATION_PERIOD
+public let MURLOC_POISON_DAMAGE_TOTAL = 10
+public let murlocPoisonInstances = new HashMap<unit, MurlocPoison>()
+public let envenomedWeaponsMdl = "Abilities\\Weapons\\PoisonSting\\PoisonStingTarget.mdl"
+
+@compiletime function createMurlocPoisonAbility()
+    new AbilityDefinitionVenomSpearsCreep(ABILITY_MURLOC_POISON)
+        ..setDurationHero(1, MURLOC_POISON_DURATION)
+        ..setDurationNormal(1, MURLOC_POISON_DURATION)
+        ..setTargetsAllowed(1, commaList(
+            TargetsAllowed.enemies,
+            TargetsAllowed.ground,
+            TargetsAllowed.neutral,
+            TargetsAllowed.organic,
+            TargetsAllowed.hero,
+            TargetsAllowed.nonhero
+            ))
+        ..setAttackSpeedFactor(1, 0.)
+        ..setMovementSpeedFactor(1, 0.)
+        ..setDamageperSecond(1, 0.)
+        ..setDurationHero(1, MURLOC_POISON_DURATION)
+        ..setName("Murloc Poison")
+        ..setEditorSuffix("(Wurst)")
+
+@compiletime function createMurlocPoisonBuff()
+    new BuffDefinition(BUFF_MURLOC_POISON, BuffIds.poisonStacking)
+        ..setIcon(Icons.bTNStampede)
+        ..setName("Murloc's Poison")
+        //..setTooltipNormal(1, makeToolTipNorm("N", "Bloodlust"))
+        //..setTooltipNormalExtended(1, TT)
+        //..setEffectSound("")
+        //..setArtTarget("")
+        //..setTargetAttachmentPoint0(1, "")
+        //..setTargetAttachmentPoint1(1, "")
+
+
+public class MurlocPoison
+    unit target
+    unit source
+    int stacks = 0
+    real remainingDuration = 5.
+    real damagePerTick = MURLOC_POISON_DAMAGE_TOTAL/MURLOC_POISON_DURATION*ANIMATION_PERIOD
+    CallbackPeriodic cb = null
+    
+    construct(unit source, unit target)
+        this.source = source
+        this.target = target
+        murlocPoisonInstances.put(target, this)
+        print("created")
+        addVenomStacks(1)
+        cb = doPeriodically(POISON_DMG_PERIOD) (CallbackPeriodic cb) ->
+            if cb!= null
+                onTick()
+            else 
+                print("null")
+            
+    function onTick()
+        print("onTick damage = "+(damagePerTick*stacks).toString())
+        print("stacks = "+stacks.toString())
+        remainingDuration-=POISON_DMG_PERIOD
+        DamageEvent.setNextDamageFromCode()
+        UnitDamageTarget(source, target, damagePerTick*stacks, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_MAGIC, null)
+        if remainingDuration<=0
+            destroy this
+
+    function addVenomStacks(int stacks)
+        remainingDuration = 5.
+        print("addVenomStacks")
+        this.stacks+=stacks
+
+    ondestroy
+        murlocPoisonInstances.remove(target)
+        if cb!= null
+            destroy cb
+
+
+
+public function addVenomStacks(unit source, unit target, int stacks)
+    let instance = murlocPoisonInstances.get(target)
+    if instance != null
+        instance.addVenomStacks(stacks)
+        return
+    new MurlocPoison(source, target)
+
+init
+    EventListener.add(EVENT_PLAYER_UNIT_ATTACKED) -> 
+        if EventData.getAttackerUnit().getTypeId() == UNIT_MURLOC_WARRIOR
+            addVenomStacks(EventData.getAttackerUnit(), GetAttackedUnitBJ(), 1)
+        

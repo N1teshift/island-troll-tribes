@@ -15,7 +15,6 @@ import ToolTipsUtils
 constant ABIL_STONE = compiletime(ABIL_ID_GEN.next())
 constant ABIL_MAGIC = compiletime(ABIL_ID_GEN.next())
 
-constant HATCHERY_TRANSMUTABLE = "|n|c00ff8000Hatchery Transmutable|r"
 
 constant STONE_DMG = 25.
 constant STONE_COOLDOWN   = 8.
@@ -25,7 +24,7 @@ constant STONE_CAST_RANGE = 1000.
 
 constant TT_TINDER    = "" +
     "Some small leaves and twigs. Used in camp fire (Tinder Flint Stick), or for making ensnare " +
-    "traps and nets."+HATCHERY_TRANSMUTABLE
+    "traps and nets."
 
 constant TT_STICK     = "" +
     "Increases the damage of the troll by 1 when carried. " +
@@ -33,8 +32,8 @@ constant TT_STICK     = "" +
     "Can make various items in the armory too."
 
 constant TT_FLINT     = "Used for starting fires or making iron and steel in the armory."
-constant TT_MUSHROOM  = "Erk, this is clearly not edible, should be used to craft poison."+HATCHERY_TRANSMUTABLE
-constant TT_CLAY      = "A ball of clay that can be used for building."+HATCHERY_TRANSMUTABLE
+constant TT_MUSHROOM  = "Erk, this is clearly not edible, should be used to craft poison."
+constant TT_CLAY      = "A ball of clay that can be used for building."
 constant TT_STONE     = "" +
     "A sturdy stone. Can be thrown at enemies or used in buildings. " +
     "Deals {0} damage, stun for {1} seconds."
@@ -44,9 +43,9 @@ constant TT_STONE     = "" +
         )
     +makeToolTipCooldown(STONE_COOLDOWN)
 
-constant TT_ELK_HIDE  = "A hide from an Elk, can be tanned to make armor."+HATCHERY_TRANSMUTABLE
-constant TT_WOLF_HIDE = "A hide from a Wolf, can be tanned to make armor."+HATCHERY_TRANSMUTABLE
-constant TT_BEAR_HIDE = "A hide from a Bear, can be tanned to make armor."+HATCHERY_TRANSMUTABLE
+constant TT_ELK_HIDE  = "A hide from an Elk, can be tanned to make armor."
+constant TT_WOLF_HIDE = "A hide from a Wolf, can be tanned to make armor."
+constant TT_BEAR_HIDE = "A hide from a Bear, can be tanned to make armor."
 constant TT_BONE      = "" +
     "A sharp bone that can be used to cut an opponent adding 2 to damage. " +
     "Can be used to make bone armor and weapons."
@@ -55,9 +54,9 @@ constant TT_MAGIC     = "" +
     "A very rare and unpredictable activated Mana Complex. Use with extreme caution. " +
     "Who knows what it will do."
 
-constant TT_MC        = "A glowing crystal of mana. Used to craft magic gear."+HATCHERY_TRANSMUTABLE
+constant TT_MC        = "A glowing crystal of mana. Used to craft magic gear."
 constant TT_THISTLES  = "" +
-    "Some slightly poisonous thistles from a thistle bush. Use with the blowgun!"+HATCHERY_TRANSMUTABLE
+    "Some slightly poisonous thistles from a thistle bush. Use with the blowgun!"
 
 constant TT_PTHISTLES = "" +
     "Inflicts mushroom poison on the enemy unit dealing damage and slowing."

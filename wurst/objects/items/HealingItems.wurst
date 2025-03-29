@@ -38,6 +38,13 @@ public constant HONEY_HEAL  = 90.
 public constant COCONUT_HEAL = 30.
 public constant COCONUT_MANA = 30.
 
+public let FOOD_ITEMS_HEAL_AMOUNT = new IterableMap<int,real>()
+    ..put(ITEM_COOKED_MEAT, MEAT_HEAL)
+    ..put(ITEM_BANANA, BANANA_HEAL)
+    ..put(ITEM_HONEYCOMB, HONEY_HEAL)
+    ..put(ITEM_COCONUT, COCONUT_HEAL)
+
+
 constant TT_MEAT  = "A well done steak. Instantly heals {0} health point on use.".format(MEAT_HEAL.toToolTipGreen())
 constant TT_BANANA = "A banana left by an animal. Restores {0} health point on use.".format(BANANA_HEAL.toToolTipGreen())
 constant TT_HONEY = "A portion of honeycomb left by an animal. Restores {0} health point on use.".format(HONEY_HEAL.toToolTipGreen())
@@ -123,16 +130,8 @@ constant TT_COCONUT = "A refreshing coconut. Restores {0} health and {1} mana po
         ..setNumberofCharges(1)
         ..setClassification("Purchasable")
 
-HashMap<int, real> itemSelfHealAmount = null
 HashMap<int, real> itemTargetedHealAmount = null
 
-
-function initHealItemTable()
-    itemSelfHealAmount = new HashMap<int,real>()
-    itemSelfHealAmount.put(ITEM_COOKED_MEAT, MEAT_HEAL)
-    itemSelfHealAmount.put(ITEM_BANANA, BANANA_HEAL)
-    itemSelfHealAmount.put(ITEM_HONEYCOMB, HONEY_HEAL)
-    itemSelfHealAmount.put(ITEM_COCONUT, COCONUT_HEAL)
 
 function initHealAbilityTable()
     itemTargetedHealAmount = new HashMap<int,real>()
@@ -143,8 +142,8 @@ function onSelfHealItem()
     let itm = GetManipulatedItem()
     let itemId = itm.getTypeId()
     let user = GetManipulatingUnit()
-    if itemSelfHealAmount.has(itemId)
-        new HealingInstance(user, itemSelfHealAmount.get(itemId), HealingType.ITEM)
+    if FOOD_ITEMS_HEAL_AMOUNT.has(itemId)
+        new HealingInstance(user, FOOD_ITEMS_HEAL_AMOUNT.get(itemId), HealingType.ITEM)
 
 function onSpellEffect()
     let caster = GetSpellAbilityUnit()
@@ -221,7 +220,6 @@ init
             doubleClickSelfCast(EventData.getSpellAbilityUnit() , EventData.getSpellTargetItem())
         
                      
-    initHealItemTable()
     initHealAbilityTable()
     EventListener.add(EVENT_PLAYER_UNIT_USE_ITEM) ->
         onSelfHealItem()

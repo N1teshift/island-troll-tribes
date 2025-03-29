@@ -50,9 +50,9 @@ import EquipmentSlotFrames
 
 
 
-public IterableMap<unit, GatheringSlot> gatheringSlotInstances = null
-LinkedList<int> BLACKLISTED_ITEMS_LIST = null
-
+public IterableMap<unit, GatheringSlot> gatheringSlotInstances = new IterableMap<unit, GatheringSlot>()
+LinkedList<int> BLACKLISTED_ITEMS_LIST = asList(ITEM_MAGE_GRIMOIRE, ITEM_THIEFS_POCKET_DUMMY, ITEM_HUNTER_TROPHY_HIDE_DUMMY)
+        ..addAll(TROPHY_LIST)
 
 
 let TT_NAME = "Materials Slot"
@@ -68,6 +68,7 @@ public constant BACKPACK_ITEM_LIST = new LinkedList<int>()
     ..remove(ITEM_MAGIC)
     ..add(ITEM_HAWK_EGG)
     ..add(ITEM_POISON)
+    ..add(ITEM_MUSHROOM)
     ..add(ITEM_MEDALLION_COURAGE)
     ..add(ITEM_MEDALLION_COURAGE_NSS)
     
@@ -233,10 +234,10 @@ public class GatheringSlot
             return   
         isTriggerPaused= true    
         removeDummyItem(index)
+        //nullTimer() -> 
+        hero.addItemHandle(itm)
         nullTimer() -> 
-            hero.addItemHandle(itm)
-            nullTimer() -> 
-                isTriggerPaused= false
+            isTriggerPaused= false
                 //print("added item to dummy "+index.toString())
             
 
@@ -324,12 +325,7 @@ function onUnitEnter(unit troll)
     if not gatheringSlotInstances.has(troll)
         gatheringSlotInstances.put(troll, new GatheringSlot(troll))
 
-init
-    doAfter(1.) -> 
-        gatheringSlotInstances = new IterableMap<unit, GatheringSlot>()
-        BLACKLISTED_ITEMS_LIST = asList(ITEM_MAGE_GRIMOIRE, ITEM_THIEFS_POCKET_DUMMY, ITEM_HUNTER_TROPHY_HIDE_DUMMY)
-        ..addAll(TROPHY_LIST)
-        
+init      
     onEnter(()->onUnitEnter(getEnterLeaveUnit()))    
 
     EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->
