@@ -52,7 +52,8 @@ function onCast()
         if enumItem.getTypeId() == ITEM_COOKED_MEAT and not enumItem.isOwned()
             // Only collect if within circular range
             if pos.distanceTo(enumItem.getPos()) <= MEAT_COLLECT_RANGE
-                let success = building.addItemHandle(enumItem)
+                // Use addOrStackItem instead of addItemHandle to properly handle stacking
+                let success = building.addOrStackItem(enumItem)
                 if success
                     collected = true
                 else
