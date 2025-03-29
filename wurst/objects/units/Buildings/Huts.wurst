@@ -10,6 +10,7 @@ import ObjectIdGenerator
 // Local imports:
 import LocalAssets
 import LocalObjectIDs
+import MeatCollector
 
 public constant ABILITY_MUD_HUT_AURA = compiletime(ABIL_ID_GEN.next())
 
@@ -57,6 +58,13 @@ function createHut(int unitId) returns BuildingDefinition
         ..setName("Troll Hut")
         ..setTooltipBasic("Build Troll hut")
         ..setTooltipExtended("A little clay, some sticks, and some hides and you have a very nice home.")
+        ..setNormalAbilities(commaList(
+            LocalAbilityIds.inventoryBuilding,
+            ABILITY_SHOP_SHARING,
+            ABILITY_SLEEP_INSIDE_HUT,
+            ABILITY_MEAT_COLLECTOR
+            )
+        )
 
 @compiletime function createTrollMudHut() returns BuildingDefinition
     new AbilityDefinitionItemAuraDevotion(ABILITY_MUD_HUT_AURA)
@@ -72,6 +80,13 @@ function createHut(int unitId) returns BuildingDefinition
         ..setTooltipNormal(1, "|cffffd700Home|r|n|nGives units around the mud hut armour")
 
     return createHut(UNIT_MUD_HUT)
+        ..setNormalAbilities(commaList(
+            LocalAbilityIds.inventoryBuilding,
+            ABILITY_SHOP_SHARING,
+            ABILITY_SLEEP_INSIDE_HUT,
+            ABILITY_MEAT_COLLECTOR
+            )
+        )
         ..setIconGameInterface(Icons.bTNGoldmine)
         ..setTintingColorBlue(0)
         ..setModelFile(LocalBuildings.iglooFixed)
@@ -79,7 +94,7 @@ function createHut(int unitId) returns BuildingDefinition
         ..setName("Mud Hut")
         ..setTintingColorRed(150)
         ..setTooltipBasic("Build Mud hut")
-        ..setTooltipExtended("A hut made out of mud. Good for sleeping in")
+        ..setTooltipExtended("A hut made out of mud. Good for sleeping in and collecting nearby meat")
 
 
 init
