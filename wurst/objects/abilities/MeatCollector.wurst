@@ -24,6 +24,15 @@ let MANACOST = 0
 
 public constant ABILITY_MEAT_COLLECTOR = compiletime(ABIL_ID_GEN.next())
 
+// Simple function to handle smooth pickup animation
+function triggerSmoothPickup(unit u, item i)
+    nullTimer() ->
+        // Handle the pickup smooth animation/effect
+        if i != null
+            let pos = i.getPos()
+            if pos.distanceTo(u.getPos()) <= 800
+                addEffect(Abilities.healTarget, pos).destr()
+
 @compiletime function createMeatCollectorAbility() returns ChannelAbilityPreset
     return new ChannelAbilityPreset(ABILITY_MEAT_COLLECTOR, 1, true)
         ..setLevels(1)
