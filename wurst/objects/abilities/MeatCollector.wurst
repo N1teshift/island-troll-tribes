@@ -13,6 +13,10 @@ import ClosuresForItems
 import LocalObjectIDs
 import UnitExtensions
 import ObjectIdGenerator
+import StackNSplit
+import ClosureForGroups
+import SimError
+import HashList
 
 let MEAT_COLLECT_RANGE = 800.
 let COOLDOWN = 5.0
@@ -39,27 +43,87 @@ public constant ABILITY_MEAT_COLLECTOR = compiletime(ABIL_ID_GEN.next())
         ..setFollowThroughTime(1, 0)
         ..setBaseOrderID(1, "stop")
 
-function onCast()
-    let building = GetSpellAbilityUnit()
-    let pos = building.getPos()
-    var collected = false
 
-    // Search for meat items in range using rect for better performance
-    let searchRect = Rect(pos.x - MEAT_COLLECT_RANGE, pos.y - MEAT_COLLECT_RANGE, 
+
+
+class MeatCollector
+    unit building = null
+    vec2 pos
+    bool isEnemyInRange = false
+    item stackOfMeat = null
+    rect searchRect = null
+    HashList<item> cashedItems = new HashList<item>()
+    construct(unit building)
+        this.building = building
+        pos = building.getPos()
+        assertNoEnemiesInRange()
+        searchRect = Rect(pos.x - MEAT_COLLECT_RANGE, pos.y - MEAT_COLLECT_RANGE, 
                          pos.x + MEAT_COLLECT_RANGE, pos.y + MEAT_COLLECT_RANGE)
+        collectMeat()
+
+    function assertNoEnemiesInRange()
+        let targets = CreateGroup()..enumUnitsInRange(pos, MEAT_COLLECT_RANGE)        
+        targets.forEachIn() (unit enumUnit) ->
+            if enumUnit.isTroll() and enumUnit.isEnemyOf(building.getOwner())
+                this.isEnemyInRange = true
+        targets.destr()    
+        if isEnemyInRange == true
+            printErrorMessage()
     
-    forItemsInRect(searchRect) (item enumItem) ->
-        if enumItem.getTypeId() == ITEM_COOKED_MEAT and not enumItem.isOwned()
-            // Only collect if within circular range
-            if pos.distanceTo(enumItem.getPos()) <= MEAT_COLLECT_RANGE
-                let success = building.addItemHandle(enumItem)
-                if success
-                    collected = true
-                else
-                    // If inventory is full, drop it near the building
-                    let dropPos = pos.polarOffset(angle(GetRandomReal(0, 2*PI)), 100)
-                    enumItem.setPos(dropPos)
+    function printErrorMessage()
+        for i =0 to bj_MAX_PLAYER_SLOTS-1
+            if IsUnitSelected(building, players[i]) and players[i].isAllyOf(building.getOwner()) 
+                simError(players[i], "Cannot collect meat while there are enemies in range")
+
+    function cashItems()
+        forItemsInRect(searchRect) (item enumItem) ->
+            if enumItem.getTypeId() == ITEM_COOKED_MEAT and not enumItem.isOwned()        
+                // Only collect if within circular range
+                if pos.distanceTo(enumItem.getPos()) <= MEAT_COLLECT_RANGE
+                    cashedItems.add(enumItem)
+
+    function iterateOverItems()
+        let iter = cashedItems.iterator()
+        doPeriodicallyCounted(0.01, cashedItems.size()) cb ->
+            addMeat(iter.next())
+
+            if cb.isLast()
+                iter.close()  
+                // Pick up last dropped stack of meat in the end
+                building.addItemHandle(stackOfMeat)
+                doAfter(ANIMATION_PERIOD) -> 
+                    triggerSmoothPickup(building, stackOfMeat)                 
+                    destroy this                     
+
+
+    function addMeat(item meat)
+        let sucess = building.addItemHandle(meat)
+        if not sucess
+        // If inventory is full, drop a stack of meat from mud hut
+            triggerSmoothPickup(building, meat)
+            stackOfMeat = findFullStackOfMeat()
+            building.removeItem(stackOfMeat)        
+
+
+    function collectMeat()
+        if isEnemyInRange
+            destroy this
+            return
+        cashItems()
+        iterateOverItems()
+
+
+    function findFullStackOfMeat() returns item
+        for i = 0 to 5
+            let itm = building.itemInSlot(i)
+            if itm.getTypeId() == ITEM_COOKED_MEAT and itm.getCharges() == 10
+                return itm
+        return null
+
+    ondestroy
+        destroy cashedItems
+
 
 init
-    registerSpellEffectEvent(ABILITY_MEAT_COLLECTOR) ->
-        onCast() 
+    registerSpellEffectEvent(ABILITY_MEAT_COLLECTOR) ->  
+        new MeatCollector(GetSpellAbilityUnit())
