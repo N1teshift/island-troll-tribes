@@ -27,10 +27,8 @@ let GROUND_MODEL_PATH = LocalItems.blowGun
 
 let BATTLE_TOOLTIP = "Purchase |cffffcc00B|rattle |cffffcc00B|rlow Gun"
 
-// Instead of duplicating constants, we'll use those from BlowgunDefinition
-let CAST_RANGE = 600.  // Only keeping this one unique since battle blowgun has longer range
-
-public let BATTLE_COOLDOWN = 7.  // Only keeping this one unique since battle blowgun has faster cooldown
+let CAST_RANGE = 600. 
+public let BATTLE_COOLDOWN = 7.
 
 // Create custom tooltips for Battle Blowgun that use the BATTLE_COOLDOWN
 let BATTLE_BONE_TOOLTIP = BONE_TOOLTIP.replace(makeToolTipCooldown(COOLDOWN), makeToolTipCooldown(BATTLE_COOLDOWN))
@@ -53,8 +51,6 @@ let BATTLE_DESCRIPTION = "" +
     "An enhanced blowgun crafted specifically for battle. Made from sturdy wood " +
     "and reinforced for improved range and faster reloading."
 
-// The stats bonuses are added in ArmoryV2.wurst using the CustomItemDefinition system
-// (+4 damage, +2 str, +4 agi, +4 int)
 @compiletime function createBattleBlowgunItem()
     createUsableItem(ITEM_BATTLE_BLOW_GUN)
         ..setAbilities(toRawCode(BATTLE_BLOWGUN_ABILITY_ID))

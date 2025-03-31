@@ -27,19 +27,12 @@ import GameStates
  * There are two different states for empty blowguns:
  * 
  * 1. New empty blowguns or ones emptied via self-targeting:
- *    - Can be targeted normally
- *    - Will show "No ammo!" message when used
+ *    - Can be used to target
+ *    - Will show "No ammo!" message when fired at a target
  * 
  * 2. Blowguns that have fired their last ammo:
- *    - Cannot be targeted (ability appears disabled)
+ *    - Cannot be used to target (ability appears disabled)
  *    - No error message appears
- * 
- * This inconsistency appears to be engine-level behavior related 
- * to how the targeting ability state is handled when the last ammo
- * is fired versus when a blowgun is unloaded manually.
- * 
- * Workaround: Load any ammo into a non-targetable blowgun to
- * restore its targeting capability.
  */
 
 let MAX_SLOTS = 15
@@ -67,6 +60,8 @@ class Blowpipe
 
     function emptyContents()
         for iterItem in contents
+        
+            // Ensure correct charge display
             let charges = iterItem.getCharges()
             if charges > 0
                 // Ensure correct charge display
@@ -74,6 +69,7 @@ class Blowpipe
                 let parenIndex = name.indexOf(" (")
                 if parenIndex > 0
                     iterItem.setName(name.substring(0, parenIndex) + " (x" + charges.toString() + ")")
+
             iterItem.setPos(this.i.getPos())
             iterItem.setVisible(true)
             contents.remove(iterItem)
@@ -82,13 +78,15 @@ class Blowpipe
 
     function emptyContentsToUnit(unit u)
         for iterItem in contents
+
+            // Ensure correct charge display
             let charges = iterItem.getCharges()
             if charges > 0
-                // Ensure correct charge display
                 let name = iterItem.getName()
                 let parenIndex = name.indexOf(" (")
                 if parenIndex > 0
                     iterItem.setName(name.substring(0, parenIndex) + " (x" + charges.toString() + ")")
+
             if not u.addOrStackItem(iterItem)
                 iterItem.setPos(u.getPos())
             iterItem.setVisible(true)

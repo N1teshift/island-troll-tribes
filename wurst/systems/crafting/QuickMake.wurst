@@ -50,10 +50,6 @@ public class QuickMake
     function onCast(unit caster)
         if not caster.isTroll() and caster.getTypeId() != UNIT_CRAFT_MASTER
             return
-        
-        // Debug output to track the spell being cast
-        print("QuickMake spell cast: " + this.spellAbilityId.toString() + " | Unit: " + caster.getName())
-        
         runCallbacks(prior, caster, 0)
         // The position around which matches are searched for.
         let pos = caster.getPos()

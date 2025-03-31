@@ -120,6 +120,7 @@ init
         
     new QuickMake(ABILITY_QM_BATTLE_BLOW_GUN)
     ..add(ITEM_BLOW_GUN)
+    ..add(ITEM_IRON_INGOT)
     ..add(ITEM_SPIRIT_WIND)
     ..add(ITEM_SPIRIT_WATER)
     ..add(ITEM_MANA_CRYSTAL)
