@@ -58,18 +58,17 @@ class Blowpipe
         emptyContents()
         destroy contents
 
+    function updateItemChargeDisplay(item iterItem)
+        let charges = iterItem.getCharges()
+        if charges > 0
+            let name = iterItem.getName()
+            let parenIndex = name.indexOf(" (")
+            if parenIndex > 0
+                iterItem.setName(name.substring(0, parenIndex) + " (x" + charges.toString() + ")")
+
     function emptyContents()
         for iterItem in contents
-        
-            // Ensure correct charge display
-            let charges = iterItem.getCharges()
-            if charges > 0
-                // Ensure correct charge display
-                let name = iterItem.getName()
-                let parenIndex = name.indexOf(" (")
-                if parenIndex > 0
-                    iterItem.setName(name.substring(0, parenIndex) + " (x" + charges.toString() + ")")
-
+            updateItemChargeDisplay(iterItem)
             iterItem.setPos(this.i.getPos())
             iterItem.setVisible(true)
             contents.remove(iterItem)
@@ -78,15 +77,7 @@ class Blowpipe
 
     function emptyContentsToUnit(unit u)
         for iterItem in contents
-
-            // Ensure correct charge display
-            let charges = iterItem.getCharges()
-            if charges > 0
-                let name = iterItem.getName()
-                let parenIndex = name.indexOf(" (")
-                if parenIndex > 0
-                    iterItem.setName(name.substring(0, parenIndex) + " (x" + charges.toString() + ")")
-
+            updateItemChargeDisplay(iterItem)
             if not u.addOrStackItem(iterItem)
                 iterItem.setPos(u.getPos())
             iterItem.setVisible(true)
