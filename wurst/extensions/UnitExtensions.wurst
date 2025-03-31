@@ -114,6 +114,14 @@ public function unit.getItemMatching(Predicate<item> predicate) returns item
             return itm
     return null
 
+public function unit.hasItemOfType(int itemTypeId) returns bool
+    let inventorySize = this.inventorySize()
+    for i = 0 to inventorySize - 1
+        let itm = this.itemInSlot(i)
+        if itm != null and itm.getTypeId() == itemTypeId
+            return true
+    return false
+
 public function unit.moveInventoryDown()
     int array freeSlots
     var bottom = 0
