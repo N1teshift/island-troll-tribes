@@ -67,7 +67,7 @@ let hiddenStashPool = CreateItemPool()
 class ScavengedStash
     unit scavengedStash
     unit troll
-    real cooldown = 1.
+    real cooldown = 120.
     construct(unit _scavengedStash, unit _troll)
         scavengedStash = _scavengedStash
         troll = _troll

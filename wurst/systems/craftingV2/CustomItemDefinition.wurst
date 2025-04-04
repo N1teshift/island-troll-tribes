@@ -176,6 +176,8 @@ public class CustomItemDefinition
     //function onMixingPotQuickMake(unit caster)
 
     function onQuickMake(unit caster)
+        if itemId == ITEM_TRANSPORT_SHIP_KIT and gameConfig.getDisabledBoats() == true
+            return
         let quickMake = new QuickMakeV2(itemId, caster)
         let craftedItem = quickMake.craftItem(caster)
         if craftedItem == null

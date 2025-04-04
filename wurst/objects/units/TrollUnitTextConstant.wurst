@@ -53,9 +53,11 @@ public constant trollInventoryAbilityMap = new IterableMap<int, LinkedList<int>>
             ..remove(UNIT_PRIEST)
             ..remove(UNIT_DIRE_BEAR)
             ..remove(UNIT_DIRE_WOLF)
+            ..remove(UNIT_DREAMWALKER)
         )
 ..put(ABILITY_INVENTORY_5_SLOT, 
         TROLL_INVENTORY_SLOT_5_LIST
+            ..add(UNIT_DREAMWALKER)
             ..add(UNIT_PRIEST)
             ..add(UNIT_DIRE_WOLF)
         )
@@ -269,7 +271,7 @@ public constant  TOOLTIP_MAGE         = "" +
 public constant  TOOLTIP_PRIEST       = "" +
     "Slow with low damage,the Troll Priest has many buff and healing spells. He has "+COLOR_ORANGE.toColorString()+"The Glow|r,which increases"+
     "movement rate of nearby allies,and can learn many "+COLOR_ORANGE.toColorString()+"Defensive Spells|r. A good support class. "+
-    INVENTORY_4_SLOT+DIFFICULTY_HARD
+    INVENTORY_5_SLOT+DIFFICULTY_HARD
 
 public constant  TOOLTIP_BEASTMASTER = "" +
     "Fast and strong,the Beastmaster can tame pet which assist him in battle. His regular skill "+COLOR_ORANGE.toColorString()+"Spirit of the "+

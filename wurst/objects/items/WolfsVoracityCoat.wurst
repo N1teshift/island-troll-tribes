@@ -20,7 +20,9 @@ import Orders
 import ClosureTimers
 import Transformation
 import MoveCorpses
+import SoundUtils
 
+let howlSound = new SoundDefinition(Sounds.duskWolf)
 
 @compiletime function consumeCorpse()
     new AbilityDefinitionCannibalize(ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME)
@@ -44,15 +46,16 @@ public class WolfCoatInstance
     construct(unit wearer)
         this.wearer = wearer
         this.baseClock = 0
+        howlSound.playOnPoint(wearer.getPos3Real())
         //PlaySound(Sounds.duskWolf)       
-        wearer.removeAbility(LocalAbilityIds.corpseConsume)
-        wearer.addAbility(ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME)
-        wearer.makeAbilityPermanent(ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME, true)           
+        //wearer.removeAbility(LocalAbilityIds.corpseConsume)
+        //wearer.addAbility(ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME)
+        //wearer.makeAbilityPermanent(ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME, true)           
         //EventListener.onCast(wearer, LocalAbilityIds.corpseConsume) (unit caster) ->      
                                  
     ondestroy
-        wearer.removeAbility(ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME)
-        wearer.addAbility(LocalAbilityIds.corpseConsume)     
+       //wearer.removeAbility(ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME)
+        //wearer.addAbility(LocalAbilityIds.corpseConsume)     
 
 IterableMap<unit, WolfCoatInstance> instances = new IterableMap<unit, WolfCoatInstance>()
 

@@ -166,8 +166,10 @@ function onSteal(unit caster, unit target)
     else if tradeShips.has(target.getTypeId())
         itm = stealFromTradeShip(caster, target)
     else 
-        doAfter(ANIMATION_PERIOD) ->  
-            caster.endAbilityCooldown(ABILITY_STEAL)
+        doAfter(ANIMATION_PERIOD*2) ->
+            simError(caster.getOwner(), "You don't find anything inside Elk's pocket")  
+            caster.endAbilityCooldown(ABILITY_STEAL)  
+            caster.endAbilityCooldown(ABILITY_TELE_STEAL)
     if itm != null
         nullTimer() -> 
             instance.onTargetOrder(itm)

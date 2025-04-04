@@ -415,3 +415,4 @@ public class UnitClasses
 // This directory is similar to Sound but is used for ability sound effects.
 public class SoundEffects
     static constant loadUnload = "LoadUnload"
+    

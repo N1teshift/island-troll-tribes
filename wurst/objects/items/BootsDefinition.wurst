@@ -122,6 +122,7 @@ public let TT_HYDRA_FINS = TT_UNFORMAT_HYDRA_FINS_STRING.format(
         ..setArtTarget(Abilities.faerieDragonMissile)
         ..setTargetAttachmentPoint("foot,left")
         ..setTargetAttachmentPoint1("foot,right")
+        ..setItemAbility(true)
         ..setTargetAttachments(2)
         ..setName("Movement Speed Bonus 200")
         ..setEditorSuffix("(Wurst)")
@@ -130,12 +131,14 @@ public let TT_HYDRA_FINS = TT_UNFORMAT_HYDRA_FINS_STRING.format(
     new AbilityDefinitionEvasion(ABILITY_ANABOLIC_EVASION)
         ..setChancetoEvade(1, 0.10)
         ..setName("Anabolic Evasion")
+        ..setItemAbility(true)
         ..setEditorSuffix("(Wurst)")
 
 @compiletime function createSpellShieldAbility()
     new AbilityDefinition(ABILITY_SPELL_SHIELD, 'ANss')
         ..setCooldown(1, 75.0)
         ..setName("Hydra Fins Spell Shield (Amulet)")
+        ..setItemAbility(true)
         ..setEditorSuffix("(Wurst)")
 
 @compiletime function createElkSkinBoots() returns ItemDefinition

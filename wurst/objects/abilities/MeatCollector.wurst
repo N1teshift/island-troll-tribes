@@ -17,12 +17,14 @@ import StackNSplit
 import ClosureForGroups
 import SimError
 import HashList
+import ToolTipsUtils
+
 
 let MEAT_COLLECT_RANGE = 800.
 let COOLDOWN = 5.0
 let MANACOST = 0
-
-public constant ABILITY_MEAT_COLLECTOR = compiletime(ABIL_ID_GEN.next())
+let TT_EXT = "Collects cooked meat within {0} range and stores it in the building's inventory.".format(MEAT_COLLECT_RANGE.toToolTipLightBlue())+
+            "\nCannot be used if there is an enemy in range.".color(COLOR_GOLD_STR)
 
 @compiletime function createMeatCollectorAbility() returns ChannelAbilityPreset
     return new ChannelAbilityPreset(ABILITY_MEAT_COLLECTOR, 1, true)
@@ -31,14 +33,14 @@ public constant ABILITY_MEAT_COLLECTOR = compiletime(ABIL_ID_GEN.next())
         ..setCooldown(1, COOLDOWN)
         ..setHeroAbility(false)
         ..setItemAbility(false)
-        ..setName("Collect Meat")
+        ..setName("Collect Meat")   
         ..setEditorSuffix("(Wurst)")
-        ..setButtonPositionNormalX(3)
-        ..setButtonPositionNormalY(1)
+        ..setButtonPositionNormalX(2)
+        ..setButtonPositionNormalY(2)
         ..setIconNormal(Icons.bTNMonsterLure)
         ..setTooltipNormal(1, "Collect Meat")
-        ..setTooltipNormalExtended(1, "Collects cooked meat within {0} range and stores it in the building's inventory.".format(MEAT_COLLECT_RANGE.toString()))
-        ..setHotkeyNormal("R")
+        ..setTooltipNormalExtended(1, TT_EXT)
+        ..setHotkeyNormal("C")
         ..presetTargetTypes(Targettype.NONE)
         ..setFollowThroughTime(1, 0)
         ..setBaseOrderID(1, "stop")
@@ -67,8 +69,6 @@ class MeatCollector
             if enumUnit.isTroll() and enumUnit.isEnemyOf(building.getOwner())
                 this.isEnemyInRange = true
         targets.destr()    
-        if isEnemyInRange == true
-            printErrorMessage()
     
     function printErrorMessage()
         for i =0 to bj_MAX_PLAYER_SLOTS-1
@@ -107,6 +107,7 @@ class MeatCollector
 
     function collectMeat()
         if isEnemyInRange
+            printErrorMessage()
             destroy this
             return
         cashItems()

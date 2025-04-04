@@ -24,7 +24,7 @@ import QuickMake
 import InventoryEvent
 import GameTimer
 
-let INT_BONUS_PER_SCROLL = 3
+let INT_BONUS_PER_SCROLL = 2
 let GRIMOIRE_INT_BONUS_TT = "Pages collected in your Grimoire increase your {0} by ".format("Intelligence".color(COLOR_TURQUOISE))
 let GRIMOIRE_TT ="Mage can add a scroll to its Grimoire permanently gaining it's powers. \n\nMage gains {0} {1} per page added to the Grimoire.".format(
     INT_BONUS_PER_SCROLL.toString().color(COLOR_GREEN), "Intelligence".color(COLOR_TURQUOISE))

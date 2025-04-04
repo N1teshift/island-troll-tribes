@@ -39,6 +39,15 @@ RESOURCE_UBERTIP_UPKEEP=Numbers below are tenthed due to engine limitations.
 ; Pad the empty value with a color string to avoid stripping.
 RESOURCE_UBERTIP_UPKEEP_INFO=|N%d-%d Eaten: %s|R (%d%% Healing)
 
+
+BONUS_ATTACK_SPEED=- Each point increases attack speed by 2%|n 
+BONUS_DAMAGE=- Each point increases damage by 0.5
+BONUS_DEFENSE=- Each point increases armor by 0.1
+BONUS_DEFENSE_FIXED=- Each point increases armor by 0.1
+COLON_INTELLECT=Intelligence
+BONUS_MANAREGEN= 
+BONUS_HPREGEN= 
+
 [Terrain]
 MaxHeight=3712,3712,3712,3712,3712,3712,3712,3712,3712,3712,3712,3712,3712,3712,3712,3712,3712,3712,3712,3712,3712,3712,3712,3712,3712,3712,3712,3712,3712,3712,3712
 MaxSlope=90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90

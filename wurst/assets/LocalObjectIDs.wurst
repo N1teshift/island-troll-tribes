@@ -6,6 +6,7 @@ import ObjectIdGenerator
 // Third-party imports:
 import ObjectIDManager
 public let BUFF_THRILL_OF_THE_BATTLE                    =compiletime(ABIL_ID_GEN.next())..registerObjectID("BUFF_THRILL_OF_THE_BATTLE_BUFF")
+public let ABILITY_MEAT_COLLECTOR                            =compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_MEAT_COLLECTOR")
 public let ABILITY_MURLOC_NET                            =compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_MURLOC_NET")
 public let ABILITY_MURLOC_POISON                            =compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_MURLOC_POISON")
 public let ABILITY_CHAMELEON_AXE_DUMMY                            =compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_CHAMELEON_AXE_DUMMY")

@@ -39,11 +39,6 @@ public class Mammoth extends Hostile
         let drops = super.getDrops()
             ..add(ITEM_HORN_MAMMOTH)
             ..add(ITEM_MEDALLION_COURAGE)
-            ..add(ITEM_BONE)
-            ..add(ITEM_BONE)
-            ..add(ITEM_BONE)
-            ..add(ITEM_BONE)
-            ..add(ITEM_BONE)
         if gameConfig.isNoSuperSubs()
             drops.replace(ITEM_MEDALLION_COURAGE, ITEM_MEDALLION_COURAGE_NSS)
         return drops

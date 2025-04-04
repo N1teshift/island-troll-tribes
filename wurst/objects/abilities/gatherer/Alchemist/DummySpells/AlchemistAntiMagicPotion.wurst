@@ -19,7 +19,7 @@ import PhilosophersStone
 //constant NAME =""
 //constant COOLDOWN = 0
 //constant ICON =""
-constant POTION_COST = 16
+constant POTION_COST = 10
 constant errorMsg = "Philosopher's stone doesnt have enough energy"
 constant TT = NAME
 constant TT_COST = "\nCosts "+POTION_COST.toString().color(COLOR_GOLD_STR) +" energy."

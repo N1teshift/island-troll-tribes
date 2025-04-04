@@ -26,7 +26,7 @@ import FoodBuffs
 import PetReleasing
 import HealingItems
 
-let HEALING_PENALTY = 0.8
+let HEALING_PENALTY = 0.7
 let BUFF_DURATION = 15.
 public let ON_FOOD_COOLDOWN_REFUND = 1.
 let foodList = asList(ABIL_BANANA, ABIL_HONEY, ABIL_COCONUT, ABIL_MEAT, ABILITY_SCAVENGED_MUSHROOM)

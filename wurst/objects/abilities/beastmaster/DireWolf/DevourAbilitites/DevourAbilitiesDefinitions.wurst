@@ -127,7 +127,7 @@ public let BUFF_DEVOUR_PANTHER = compiletime(
         ..addEffectAbilityLevelBonus(0, 1, ABILITY_DEVOUR_SNAKE_DUMMY.toRawCode())
 
     new UpgradeDefinition(UPGD_DEVOUR_BEAR_DUMMY)
-        ..setName(1, "Devoured Snake")
+        ..setName(1, "Devoured Bear")
         ..setLevels(1)
         ..setIcon(1, Icons.bTNNagaUnBurrow)
         ..addEffectAbilityLevelBonus(0, 1, ABILITY_DEVOUR_SNAKE_DUMMY.toRawCode())

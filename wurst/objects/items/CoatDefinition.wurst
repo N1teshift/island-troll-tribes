@@ -303,7 +303,7 @@ public constant TT_SCALE_COAT = "" +
         ..setTintingColor3Blue(255)
         ..setScalingValue(1.5)
         ..setAbilities(ABIL_STEEL)
-        ..setCooldownGroup("AIms")
+        ..setCooldownGroup(ABIL_STEEL)
 
 @compiletime function createMakruruCuirass() returns ItemDefinition
     return createUsableItem(ITEM_MAKRURA_CUIRASS)
@@ -318,7 +318,7 @@ public constant TT_SCALE_COAT = "" +
         //..setTintingColor3Blue(128)
         ..setScalingValue(1.)
         ..setAbilities(ABIL_MAKRURA_CUIRASS)
-        ..setCooldownGroup("AIms")
+        ..setCooldownGroup(ABIL_MAKRURA_CUIRASS)
 
 @compiletime function createBattleArmor() returns ItemDefinition
     return createUsableItem(ITEM_BATTLE_ARMOR)

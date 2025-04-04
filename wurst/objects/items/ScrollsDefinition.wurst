@@ -406,6 +406,11 @@ function onTsunami(unit caster, vec2 target)
                 caster.damageTarget(u, TSUNAMI_STRUCT_DMG)
 
 function onRoot(unit caster, unit target)
+    if target.getTypeId() == UNIT_HAWK
+        //doAfter(ANIMATION_PERIOD) -> 
+        nullTimer()->
+            caster.endAbilityCooldown(ABILITY_ROOT_CAST)
+        return
     if target.isTroll()
         InstantDummyCaster.castTarget(caster.getOwner(), ABILITY_ROOT_TROLL, 1, Orders.ensnare, target)
     else
