@@ -21,6 +21,7 @@ import GatheringSlot
 
 public HashMap<int, QuickMakeV2> quickMakes  = new HashMap<int, QuickMakeV2>()
 public let BUILDING_CRAFTING_AOE = 900.
+let QM_SUCCESS_CD = 15.
 let MESSAGE_MISSING_UNIT_REQUIRED = "Missing required building: "
 let MESSAGE_DURATION = 10.
 public HashList<int> baseItems  = new HashList<int>()
@@ -30,6 +31,7 @@ public class QuickMakeV2
     static item baseItem
     //static unit baseItemOwner
     int itemId
+    int abilId
     unit caster
     unit baseItemOwner = null
     item craftedItem = null
@@ -49,9 +51,10 @@ public class QuickMakeV2
     IterableMap<item, QuickMakeV2> foundItems = new IterableMap<item, QuickMakeV2>()
     HashList<item> ignoredOwnedItems = new HashList<item>()
 
-    construct(int itemId, unit caster)
+    construct(int itemId, unit caster, int abilId)
         this.itemId = itemId
         this.caster = caster
+        this.abilId = abilId
         cashedItems = new HashList<item>()
         cashedOwnedItems = new HashList<item>()
         missingItemsCountMap = new IterableMap<int, int>()
@@ -211,9 +214,14 @@ public class QuickMakeV2
         return null
 
     function craftIngredient(int itemId) returns item
-        if customItemDefinitions.get(itemId).recipe.isCrafted == false
+        let customItemDefinition = customItemDefinitions.get(itemId)
+        if customItemDefinition.recipe.isCrafted == false
             //print("recipe is missing or item is a basic material")
             registerMissingItem(itemId)
+            return null
+        if customItemDefinition.preventBeingCraftedAsIngridient == true
+            registerMissingItem(itemId)
+            // prevent certain items from being crafted as intermediary ingridient
             return null
         let newQuickmake = new QuickMakeV2(itemId, caster, this)
         let craftedIngredient = newQuickmake.craftItem(caster)
@@ -317,6 +325,8 @@ public class QuickMakeV2
         craftedItem.setVisible(true)      
         //print("successfully crafted "+GetObjectName(itemId))
         if parentInstance == null
+            doAfter(ANIMATION_PERIOD) -> 
+                caster.startAbilityCooldown(abilId, QM_SUCCESS_CD)
             printToTeam("Successfuly crafted "+GetObjectName(craftedItem.getTypeId()))
         removeConsumedItems()
         if this!= null

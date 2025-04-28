@@ -1,0 +1,287 @@
+package AxeThrow
+
+// Standard library imports:
+import Assets
+import BuffObjEditing
+import ChannelAbilityPreset
+import ClosureEvents
+import ClosureTimers
+import HashMap
+import LinkedList
+import ItemObjEditing
+import Items
+import Cosmetics
+import OnUnitEnterLeave
+import Reflection
+
+// Third-party imports:
+import Lodash
+
+// Local imports:
+import ColorUtils
+import LocalObjectIDs
+import LocalAssets
+import Classes
+import IdListConstant
+import InventoryEvent
+import UnitExtensions
+import Orders
+import QuickMake
+import AxesDefinition
+import InstantDummyCaster
+import DamageEvent
+import CustomItemDefinition
+import PlayerExtensions
+import ToolTipsUtils
+import initlater WeaponsOfChoice
+
+let CD = 20.
+let CD_DUAL_WIELDING = 10.
+let RANGE = 700.
+let PROJECTILE_SPEED = 900
+let CAST_TIME = 0.1
+let MANACOST = 10
+let DURATION_NORMAL = 8. 
+let MS_FACTOR = 0.6
+let DURATION_HERO = 2.
+let ICON =  LocalIcons.bTNAxeThrow
+let ICON_DW = LocalIcons.bTNAxeThrowDW
+
+public let TT_AXE_THROW_NAME = "Axe Throw"
+public let TT_AXE_THROW_DW_NAME = "Empowered Axe Throw"
+public let AXE_THROW_DAMAGE_MULTIPLIER = 0.8
+public let TT_AXE_THROW_NAME_EXT = "Throw your axe to do {0} attack damage.".format((AXE_THROW_DAMAGE_MULTIPLIER.toString()+"x").color(COLOR_RED))+
+                                    "\nApplies {0} slow that decays over {1}({2}) seconds.".format(MS_FACTOR.toToolTipLightBlue(), DURATION_NORMAL.toToolTipLightBlue(), DURATION_HERO.toToolTipLightBlue())+
+                                    "\nHas {0} seconds cooldown.".format(CD.toToolTipLightBlue())
+
+public let TT_AXE_THROW_NAME_DW_EXT = "Throw your axe to do {0} attack damage.".format((AXE_THROW_DAMAGE_MULTIPLIER.toString()+"x").color(COLOR_RED))+
+                                    "\nApplies {0} slow that decays over {1}({2}) seconds.".format(MS_FACTOR.toToolTipLightBlue(), DURATION_NORMAL.toToolTipLightBlue(), DURATION_HERO.toToolTipLightBlue())+
+                                    "\nDual Wielding: ".color(COLOR_GOLD_STR)+"cooldown is reduced by {0}%".format("50".color(COLOR_LIGHT_BLUE))+
+                                    "\nHas {0} seconds cooldown.".format(CD_DUAL_WIELDING.toToolTipLightBlue())
+public let TT_AXE_THROW_BUFF_EXT = "You are inflicted with {0} slow that decays over {1} seconds.".format(MS_FACTOR.toToolTipLightBlue(), DURATION_HERO.toToolTipLightBlue())
+
+public HashMap<unit, AxeThrow> axeThrowInstances = new HashMap<unit, AxeThrow>()
+
+@compiletime function createStealMeatAbility()
+    new ChannelAbilityPreset(ABILITY_AXE_THROW, 1, true)
+        ..presetTooltipNormal(lvl -> TT_AXE_THROW_NAME)
+        ..presetTooltipNormalExtended(lvl-> TT_AXE_THROW_NAME_EXT)        
+        ..presetCastingTime(lvl ->CAST_TIME)
+        ..presetCastRange(lvl -> RANGE)
+        ..presetCooldown(lvl -> CD)
+        ..presetHotkey("Q")
+        ..presetManaCost(lvl -> MANACOST)
+        ..setMissileSpeed(PROJECTILE_SPEED)
+        ..setButtonPositionNormalX(1)
+        ..setButtonPositionNormalY(1)
+        ..presetTargetTypes(Targettype.UNIT)
+        ..setIconNormal(ICON)
+        ..presetTargetsAllowed(lvl ->commaList(
+            TargetsAllowed.ground,
+            TargetsAllowed.enemies,
+            TargetsAllowed.vulnerable,
+            TargetsAllowed.neutral,
+            TargetsAllowed.alive,
+            TargetsAllowed.organic,
+            TargetsAllowed.air
+        )) 
+
+    new ChannelAbilityPreset(ABILITY_AXE_THROW_DW, 1, true)
+        ..presetTooltipNormal(lvl -> TT_AXE_THROW_DW_NAME)
+        ..presetTooltipNormalExtended(lvl-> TT_AXE_THROW_NAME_DW_EXT)        
+        ..presetCastingTime(lvl ->CAST_TIME)
+        ..presetCastRange(lvl -> RANGE)
+        ..presetCooldown(lvl -> CD_DUAL_WIELDING)
+        ..presetHotkey("Q")
+        ..presetManaCost(lvl -> MANACOST)
+        ..setMissileSpeed(PROJECTILE_SPEED)
+        ..setButtonPositionNormalX(1)
+        ..setButtonPositionNormalY(1)
+        ..presetTargetTypes(Targettype.UNIT)
+        ..setIconNormal(ICON_DW)
+        ..presetTargetsAllowed(lvl ->commaList(
+            TargetsAllowed.ground,
+            TargetsAllowed.enemies,
+            TargetsAllowed.vulnerable,
+            TargetsAllowed.neutral,
+            TargetsAllowed.alive,
+            TargetsAllowed.organic,
+            TargetsAllowed.air
+        )) 
+
+
+    new BuffDefinition(BUFF_AXE_THROW, BuffIds.shadowStrike)
+        ..setTooltipNormal("Crippled")
+        ..setTooltipNormalExtended(TT_AXE_THROW_BUFF_EXT)
+        ..setArtTarget(Abilities.stampedeMissileDeath)
+        ..setIcon(LocalIcons.bTNAxeThrowDebuff)
+        ..setArtSpecial("")
+        ..setAreaEffect("")      
+
+    new AbilityDefinitionShadowStrikeCreep(ABILITY_AXE_THROW_DUMMY)
+        ..presetDecayingDamage(lvl->0.)
+        ..presetDurationHero(lvl->DURATION_HERO)
+        ..presetDurationNormal(lvl ->DURATION_NORMAL)
+        ..presetDecayPower(lvl->0.15)
+        ..presetInitialDamage(lvl->0.)
+        ..presetAttackSpeedFactor(lvl->0.)
+        ..presetMovementSpeedFactor(lvl->MS_FACTOR)
+        ..setBuffs(1, toRawCode(BUFF_AXE_THROW))
+        //..presetCastingTime(lvl-> 0.25)
+        ..setMissileArc(0.50)
+        ..setMissileSpeed(PROJECTILE_SPEED)
+        ..setArtTarget("")
+        ..setArtCaster("")
+        ..setArtSpecial(Abilities.stampedeMissileDeath)
+        ..setArtEffect(Abilities.stampedeMissileDeath)   
+        ..setAreaEffect("")   
+        ..setAreaofEffect(1, 0.)
+        ..setMissileArt(Abilities.rexxarMissile)        
+        ..setMissileHomingEnabled(true)
+        ..setEditorSuffix("(Wurst)")
+        ..presetTargetsAllowed(lvl ->commaList(
+            TargetsAllowed.ground,
+            TargetsAllowed.enemies,
+            TargetsAllowed.vulnerable,
+            //TargetsAllowed.alive,
+            //TargetsAllowed.organic,
+            TargetsAllowed.neutral,
+            TargetsAllowed.air,
+            TargetsAllowed.friend,
+            TargetsAllowed.self
+        ))         
+        ..setDummyAbility()
+
+    new AbilityDefinitionShadowStrikeCreep(ABILITY_AXE_THROW_DUMMY_DW)
+        ..presetDecayingDamage(lvl->0.)
+        ..presetDurationHero(lvl->2.)
+        ..presetDurationNormal(lvl ->8.)
+        ..presetDecayPower(lvl->0.15)
+        ..presetInitialDamage(lvl->0.)
+        ..presetAttackSpeedFactor(lvl->0.)
+        ..presetMovementSpeedFactor(lvl->0.6)
+        ..setBuffs(1, toRawCode(BUFF_AXE_THROW))
+        //..presetCastingTime(lvl-> 0.25)
+        ..setMissileArc(0.50)
+        ..setMissileSpeed(PROJECTILE_SPEED)
+        ..setArtTarget(Abilities.stampedeMissileDeath)
+        ..setArtCaster("")
+        ..setArtSpecial("")
+        ..setArtEffect("")   
+        ..setAreaEffect("")   
+        ..setAreaofEffect(1, 0.)
+        ..setMissileArt(Abilities.rexxarMissile)        
+        ..setMissileHomingEnabled(true)
+        ..setEditorSuffix("(Wurst)")
+        ..presetTargetsAllowed(lvl ->commaList(
+            TargetsAllowed.ground,
+            TargetsAllowed.enemies,
+            TargetsAllowed.vulnerable,
+            //TargetsAllowed.alive,
+            //TargetsAllowed.organic,
+            TargetsAllowed.air,
+            TargetsAllowed.friend,
+            TargetsAllowed.self
+        ))         
+        ..setDummyAbility()
+
+    new UnitDefinition(UNIT_AXE_THROW_DUMMY, 'ewsp')
+        ..setName("UNIT_UNIT_AXE_THROW_DUMMY")
+        ..setManaMaximum(1000000)
+        ..setMovementType(MovementType.Foot)
+        ..setUpgradesUsed("")
+        ..setCollisionSize(0.0)
+        ..setStructuresBuilt("")
+        ..setRace(Race.Commoner)
+        ..setFoodCost(0)
+        ..setArmorType(ArmorType.Divine)
+        ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNtemp.blp")
+        ..setSpeedBase(522)
+        ..setModelFile("dummy.mdl")
+        ..setAnimationBlendTimeseconds(0.0)
+        ..setAnimationCastBackswing(0.0)
+        ..setMaximumPitchAngledegrees(0.0)
+        ..setMaximumRollAngledegrees(0.0)
+        ..setTurnRate(3)
+        ..setArtSpecial("")
+        ..setProjectileImpactZ(0.0)
+        ..setProjectileLaunchZ(0.0)
+        ..setNameEditorSuffix("(Basics)")
+        ..setSightRadiusDay(1)
+        ..setSightRadiusNight(1)
+        ..setUnitClassification("_")
+        ..setPropulsionWindowdegrees(1.0)
+        ..setTooltipBasic("")
+        ..setNormalAbilities(commaList(LOCUST_ID, GHOST_INVIS_ID, ABILITY_AXE_THROW_DUMMY)) //(commaList(LOCUST_ID, GHOST_INVIS_ID, ABILITY_CLOAK_FLAMES))
+        ..setCollisionSize(0)         
+
+    new AbilityDefinitionChaosGrunt(ABILITY_CHAOS)
+    ..setRequirements("")
+    ..setNewUnitType(1, toRawCode(UNIT_AXE_THROW_DUMMY))
+
+
+public class AxeThrow
+    unit troll
+    unit dummy
+    player owner
+    real attackDamage = 0.
+    WeaponsOfChoice instance = null
+
+    construct(unit troll, WeaponsOfChoice instance)
+        this.troll = troll
+        this.instance = instance
+        owner = troll.getOwner()
+        dummy = createUnit(troll.getOwner(), UNIT_AXE_THROW_DUMMY, troll.getPos())
+        EventListener.add(EVENT_PLAYER_UNIT_SPELL_CAST) ->
+            onCast(GetSpellAbilityUnit(), GetSpellTargetUnit(), GetSpellAbilityId())
+
+
+/*
+        EventListener.onTargetCast(troll, ABILITY_AXE_THROW) (unit caster, unit target) ->
+            onCast(target)
+
+        EventListener.onTargetCast(troll, ABILITY_AXE_THROW_DW) (unit caster, unit target) ->
+            onCast(target)
+*/
+        EventListener.add(EVENT_PLAYER_UNIT_DAMAGED) -> 
+            if DamageEvent.getSource() == dummy
+                onImpact(DamageEvent.getTarget())              
+
+    function updateDamage()
+        attackDamage = instance.getAttackDamage()
+
+    function dealDamage(unit target, real damage)
+        troll.damageTarget(target, damage, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_POISON, null)
+    
+    function onImpact(unit target)
+        let damage = attackDamage/6 //due to mechanics of shadowstrike, this triggers 6 times
+        //print("doing "+damage.toString()+" damage")
+        dealDamage(target, damage)
+
+
+    function onCast(unit caster, unit target, int abilId)
+        if abilId != ABILITY_AXE_THROW and abilId != ABILITY_AXE_THROW_DW
+            return
+        if caster != troll
+            return
+        doAfter(0.15) -> 
+            troll.startAbilityCooldown(abilId)   
+            updateDamage()
+            dummy.setPos(troll.getPos())
+            nullTimer() -> 
+                dummy.issueTargetOrderById(OrderIds.shadowstrike, target)
+
+/*
+  
+function onCast(unit caster)
+    let instance = axeThrowInstances.get(caster)
+    if instance != null
+        return
+    axeThrowInstances.put(caster, new AxeThrow(caster))
+
+
+
+init
+    EventListener.onCast(ABILITY_WARRIOR) (unit caster) ->
+        onCast(caster)
+*/

@@ -32,24 +32,24 @@ import IdListConstant
 import ShieldsDefinition
 import Pets
 import ColorUtils
+import EquipmentSlots
 
 IterableMap<item, MakruraCarapace> instances = new IterableMap<item, MakruraCarapace>()
 constant DEFAULT_TT = MAKRURA_CARAPACE_TOOLTIP
 
 class MakruraCarapace
     item itm
-    item dummyItm
     unit currentOwner
     real reflectedDamage = 0
-    construct(item _itm)
-        itm = _itm
-        dummyItm = createItem(ITEM_MAKRURA_CARAPACE_DUMMY, vec2(1, 1))
+    bool isItemOnCooldown = false
+    construct(unit currentOwner, item itm)
+        this.currentOwner = currentOwner
+        this.itm = itm
         updateTooltip()
-        nullTimer() -> 
-            dummyItm.setVisible(false)
-
 
     function onAttack(unit source, unit target, real originalAmount)
+        if isItemOnCooldown
+            return
         if source.isTroll() or source.isPet()
             reflectedDamage+=originalAmount
         currentOwner = target
@@ -59,77 +59,63 @@ class MakruraCarapace
             if not source.isInvulnerable()
                 source.damageTarget(source, originalAmount, true, false, ATTACK_TYPE_HERO, DAMAGE_TYPE_NORMAL, null)
                 flashEffect("Objects\\Spawnmodels\\Naga\\NagaDeath\\NagaDeath.mdl", source.getPos())
-        replaceItemWithDummy(target)
+        isItemOnCooldown = true
+        currentOwner.startAbilityCooldown(ABILITY_CARAPACE_DUMMY, MAKRURA_CARAPACE_COOLDOWN)
         doAfter(MAKRURA_CARAPACE_COOLDOWN) ->
-            replaceDummyWithItem(target)
+            isItemOnCooldown = false
 
     function updateTooltip()
         let NEW_TT = DEFAULT_TT+("\nPremetigated damage reflected: "+reflectedDamage..toInt().toString()).color(COLOR_GOLD)
         itm.setExtendedTooltip(NEW_TT)
-        dummyItm.setExtendedTooltip(NEW_TT)
-
-    function replaceItemWithDummy(unit target)
-        //let itm = target.getItemById(ITEM_MAKRURA_CARAPACE)
-        let slot = target.getItemSlot(itm)
-        target.removeItem(itm)
-        nullTimer() -> 
-            itm.setVisible(false)
-        //let dummyItm = createItem(ITEM_MAKRURA_CARAPACE_DUMMY, target.getPos())
-        nullTimer() -> 
-            target.addItemHandleToSlot(dummyItm, slot)
-            nullTimer() -> 
-                updateTooltip()
-                target.useItem(dummyItm)
-
-    function replaceDummyWithItem(unit target)
-        let newSlot = target.getItemSlot(dummyItm)
-        //target.removeItem(dummyItm)
-        //nullTimer() -> 
-            //dummyItm.setVisible(false)
-        //let newItm = createItem(ITEM_MAKRURA_CARAPACE, target.getPos())
-        if not currentOwner.isAlive() or not currentOwner.hasItem(dummyItm)
-            dummyItm.setVisible(false)
-            itm.remove()
-            itm = createItem(ITEM_MAKRURA_CARAPACE, dummyItm.getPos())
-            nullTimer() -> 
-                updateTooltip()
-        else
-            target.removeItem(dummyItm)
-            nullTimer() -> 
-                dummyItm.setVisible(false)            
-                nullTimer() ->
-                    updateTooltip() 
-                    target.addItemHandleToSlot(itm, newSlot)       
-
 
 function onAttack(unit source, unit target, real originalAmount)
     if source.getOwner().isAllyOf(target.getOwner())
         return
-    let instance = instances.get(target.getItemById(ITEM_MAKRURA_CARAPACE))
+    let itm = target.getItemById(ITEM_MAKRURA_CARAPACE) != null ? target.getItemById(ITEM_MAKRURA_CARAPACE) : target.getItemEquippedById(ITEM_MAKRURA_CARAPACE)
+    let instance = instances.get(itm)
     if instance == null
         return
     instance.onAttack( source,  target,  originalAmount)
 
-             
+function onItemUse(item itm)
+    if itm.getTypeId() != ITEM_MAKRURA_CARAPACE
+        return
+    let instance = instances.get(itm)
+    if instance.isItemOnCooldown
+        return
+    nullTimer() -> 
+        instance.currentOwner.endAbilityCooldown(ABILITY_CARAPACE_DUMMY)
         
-function onFirstPickup(item itm)
+
+        
+function onFirstPickup(unit troll, item itm)
+    if not troll.isTroll()
+        return
     if not instances.has(itm)
-        instances.put(itm, new MakruraCarapace(itm))
+        instances.put(itm, new MakruraCarapace(troll, itm))
 
 init
     EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) -> 
         if EventData.getManipulatedItem().getTypeId() == ITEM_MAKRURA_CARAPACE
-            onFirstPickup(GetManipulatedItem())
+            onFirstPickup(GetManipulatingUnit(), GetManipulatedItem())
+
+    registerOnEquipEvent(ITEM_MAKRURA_CARAPACE) (unit troll, item itm) ->
+        onFirstPickup(troll, itm) 
+
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_USE_ITEM) ->
+        onItemUse(GetManipulatedItem())
+
 
     //filter valid targets
     DamageEvent.addListener(DamageListenerPriorities.PANTHER_INSTINCT castTo int) ->
-        if DamageEvent.getType() == DamageType.ATTACK and DamageEvent.getTarget().hasItemById(ITEM_MAKRURA_CARAPACE) 
+        if DamageEvent.getType() == DamageType.ATTACK and 
+            (DamageEvent.getTarget().hasItemById(ITEM_MAKRURA_CARAPACE)  or DamageEvent.getTarget().getItemEquippedById(ITEM_MAKRURA_CARAPACE)!= null)
             and (DamageEvent.getSource().isTroll() 
             or DamageEvent.getSource().isBoss()
             or HOSTILE_ANIMALS_LIST.has(DamageEvent.getSource().getTypeId())
             or PETS_LIST.has((DamageEvent.getSource().getTypeId()))
             )
 
-            onAttack(DamageEvent.getSource(), DamageEvent.getTarget(), DamageEvent.getUnreducedOriginalAmount()) 
+            onAttack(DamageEvent.getSource(), DamageEvent.getTarget(), DamageEvent.getUnreducedOriginalAmount())           
             
     

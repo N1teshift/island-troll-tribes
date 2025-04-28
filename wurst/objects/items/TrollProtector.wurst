@@ -172,6 +172,8 @@ class TrollProtectorAura extends AbilityDefinitionPaladinDevotionAura
     new TrollProtectorAura(ABILITY_TROLL_PROTECTOR_AURA)
 
 function onPickUp(unit troll, item itm)
+    if not troll.isTroll()
+        return
     let instance = instances.get(itm)
     if instance == null
         instances.put(itm, new TrollProtectorResistAura(troll))

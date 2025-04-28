@@ -1,0 +1,172 @@
+package WhirlingAxes
+
+// Standard library imports:
+import Assets
+import BuffObjEditing
+import ChannelAbilityPreset
+import ClosureEvents
+import ClosureTimers
+import HashMap
+import LinkedList
+import ItemObjEditing
+import Items
+import Cosmetics
+import OnUnitEnterLeave
+import Reflection
+
+// Third-party imports:
+import Lodash
+
+// Local imports:
+import ColorUtils
+import LocalObjectIDs
+import LocalAssets
+import Classes
+import IdListConstant
+import InventoryEvent
+import UnitExtensions
+import Orders
+import QuickMake
+import AxesDefinition
+import ClosureForGroups
+import DamageEvent
+import Knockback3
+import CustomProjectile
+import InstantDummyCaster
+import initlater WeaponsOfChoice
+import HashList
+import ObjectIDManager
+import ToolTipsUtils
+
+let COOLDOWN = 25.
+let MANACOST = 0
+let ATTACK_DAMAGE_MULTIPLIER = 0.2
+
+public let TT_WHIRLING_AXES_NAME = "Whirling Axes"
+public let TT_WHIRLING_AXES_EXT = "Warrior throws two axes that spiral around him, dealing {0}x attack damage on impact.".format(ATTACK_DAMAGE_MULTIPLIER.toString().color(COLOR_RED))+
+                                    "\nRemoves immobilizing effects on use."+
+                                    "\nHas {0} seconds cooldown.".format(COOLDOWN.toToolTipLightBlue())
+public let ABILITY_WHIRLING_AXES = compiletime(ABIL_ID_GEN.next())
+    ..registerObjectID("ABIL_WHIRLING_AXES") 
+
+@compiletime function createShieldCharge()
+    new AbilityDefinitionBladeMasterWindWalk(ABILITY_WHIRLING_AXES)
+        ..presetTooltipNormal(lvl -> TT_WHIRLING_AXES_NAME)
+        ..presetTooltipNormalExtended(lvl-> TT_WHIRLING_AXES_EXT)        
+        ..presetCastingTime(lvl ->0.01)
+        ..presetCooldown(lvl -> COOLDOWN)
+        ..presetManaCost(lvl -> MANACOST)
+        ..presetBackstabDamage(lvl->false)
+        ..presetBackstabDamage1(lvl->0.01)
+        ..presetHotkey("R")
+        ..presetDurationNormal(lvl->0.01)
+        ..presetDurationHero(lvl->0.01)
+        ..setButtonPositionNormalX(3)
+        ..setButtonPositionNormalY(0)
+        ..setIconNormal(LocalIcons.bTNWhirlingAxes)
+        ..setEffectSound("")
+        ..presetTargetsAllowed(lvl ->commaList(
+            TargetsAllowed.ground,
+            TargetsAllowed.enemies,
+            TargetsAllowed.neutral,
+            TargetsAllowed.vulnerable,
+            TargetsAllowed.alive,
+            TargetsAllowed.organic
+        ))
+
+public class WhirlingAxe
+    unit troll = null
+    real radians = 0.
+    real startingRadians = 0.
+    real maxDistance  = 600.
+    real collisionSize = 178.
+    real startingDistance = 50.
+    real currentDistance = startingDistance
+    real radiansStep = -0.18
+    real distanceStep = 18.
+    real attackDamage
+    WeaponsOfChoice weaponsOfChoiceInstace
+    HashList<unit> damagedUnits
+    vec3 pos
+    CallbackPeriodic cb
+    effect efx
+    construct(unit troll, real startingRadians)
+        this.startingRadians = -startingRadians
+        this.radians = this.startingRadians
+        this.troll = troll
+        this.pos = troll.getPos3Real()
+        this.damagedUnits = new HashList<unit>()
+        updateDamage()
+        createEfx()
+        cb = doPeriodically(ANIMATION_PERIOD) (CallbackPeriodic cb) ->
+            if cb!= null
+                updatePos()
+
+    function createEfx()
+        this.efx = addEffect(Abilities.rexxarMissile, troll.getPos())
+        ..setRoll(90..asAngleDegrees())
+        ..setScale(1.5)
+
+    function updateDamage()
+        weaponsOfChoiceInstace = weaponsOfChoiceInstances.get(troll)        
+        attackDamage = weaponsOfChoiceInstace.getAttackDamage()
+
+    function updatePos()
+        radians += radiansStep
+        if radians > -4*PI+startingRadians
+           // print(radians.toString()+", less than "+(-2*PI+startingRadians).toString()+", starting radians = "+startingRadians.toString())
+            currentDistance+=distanceStep
+            currentDistance = min(currentDistance, maxDistance)
+        else
+            currentDistance-=distanceStep
+            if currentDistance< startingDistance
+                //print("destroying "+radians.toString()+", less than "+(-2*PI+startingRadians).toString()+", starting radians = "+startingRadians.toString())
+                destroy this
+                return
+
+        pos = troll.getPos3Real()
+        pos.x +=currentDistance/2*radians.cos()
+        pos.y +=currentDistance/2*radians.sin()
+        efx.setPos(pos)
+        damageEnemies()
+
+
+    function damageEnemies()
+        let units = ENUM_GROUP
+        ..enumUnitsInRange(troll.getPos(), maxDistance+collisionSize, null)
+        .asList()
+        for each in units
+            if each.getPos().distanceTo(pos.toVec2())<= collisionSize and
+                not damagedUnits.has(each) and
+                not each.isAllyOf(troll.getOwner()) and
+                each.isAlive() 
+
+                damagedUnits.add(each)
+                doAfter(0.5) -> 
+                    damagedUnits.remove(each) 
+                dealDamage(each)
+                flashEffect(Abilities.stampedeMissileDeath, each.getPos3Real())
+
+        ENUM_GROUP.clear()
+        destroy units
+
+    function removeSnareBuffs()
+        for each in IMMOBILIZED_BUFF_LIST
+            if troll.hasAbility(each)
+                troll.removeAbility(each)
+
+    function dealDamage(unit target)
+        let damage = attackDamage*ATTACK_DAMAGE_MULTIPLIER
+        troll.damageTarget(target, damage, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_POISON, null)
+
+    ondestroy
+        destroy cb
+        efx.destr()
+        
+function onCast(unit caster)
+    new WhirlingAxe(caster, 0.)
+    new WhirlingAxe(caster, PI)
+
+init
+    EventListener.onCast(ABILITY_WHIRLING_AXES) (unit caster) ->
+        onCast(caster)

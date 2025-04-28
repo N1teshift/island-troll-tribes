@@ -4,6 +4,14 @@ package LocalAssets
 import ObjectIdGenerator
 
 public class LocalIcons
+    static constant bTNAxeThrowDebuff                          ="ReplaceableTextures\\CommandButtons\\bTNAxeThrowDebuff.blp"
+    static constant bTNScrollSlot                           ="ReplaceableTextures\\CommandButtons\\pASBTNScrollSlot.blp"
+    static constant bTNWhirlingAxes                            ="ReplaceableTextures\\CommandButtons\\bTNWhirlingAxes.blp"
+    static constant pASBTNWeaponsOfChoice                            ="ReplaceableTextures\\CommandButtons\\pASBTNWeaponsOfChoice.blp"
+    static constant pASBTNWeaponsOfChoiceSlot                            ="ReplaceableTextures\\CommandButtons\\pASBTNWeaponsOfChoiceSlot.blp"
+    static constant bTNAxeThrowDW                             ="ReplaceableTextures\\CommandButtons\\BTNAxeThrowDW.blp"
+    static constant bTNAxeThrow                             ="ReplaceableTextures\\CommandButtons\\BTNAxeThrow.blp"
+    static constant bTNShieldCharge                         ="ReplaceableTextures\\CommandButtons\\BTNShieldCharge.blp"
     static constant bTNChameleonHatchetStr                 ="ReplaceableTextures\\CommandButtons\\BTNChameleonHatchetStr.blp"
     static constant bTNChameleonHatchetAgi                 ="ReplaceableTextures\\CommandButtons\\BTNChameleonHatchetAgi.blp"
     static constant bTNChameleonHatchetInt                 ="ReplaceableTextures\\CommandButtons\\BTNChameleonHatchetInt.blp"
@@ -198,6 +206,7 @@ public class LocalIcons
 
 public class LocalUnits
     // A nonexistent model used to hide units.
+    static constant GurubashiWarrior                      = "Models\\Units\\GurubashiWarrior.mdx"
     static constant hawkTroll                      = "Models\\Units\\HawkFix.mdx"
     static constant ForestTrollWithElkHide         = "Models\\Units\\ForestTrollWithElkHide.mdx"
     static constant TrollHexerMasked               = "Models\\Units\\TrollHexerMasked.mdx"

@@ -20,7 +20,7 @@ let ABILITIES = asList(
     ABILITY_BOSS_ATTACK_SPEED_BONUS,
     ABILITY_MURLOC_POISON
 )
-let TT_NAME = "Ner’kaz The Hunter"
+let TT_NAME =  "R’thrak The Venomblade" 
 
 @compiletime function createMurloc()
     new UnitDefinition(UNIT_MURLOC_WARRIOR, UnitIds.murlocnightcrawler)

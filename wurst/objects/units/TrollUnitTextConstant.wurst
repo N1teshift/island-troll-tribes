@@ -12,6 +12,7 @@ import LocalAssets
 import LocalObjectIDs
 import IdListConstant
 import Reference
+import initlater WhirlingAxes
 
 // Troll Names
 public constant  NAME_HUNTER          = "Wonton,Liche,Taz,Koonta"
@@ -53,11 +54,9 @@ public constant trollInventoryAbilityMap = new IterableMap<int, LinkedList<int>>
             ..remove(UNIT_PRIEST)
             ..remove(UNIT_DIRE_BEAR)
             ..remove(UNIT_DIRE_WOLF)
-            ..remove(UNIT_DREAMWALKER)
         )
 ..put(ABILITY_INVENTORY_5_SLOT, 
         TROLL_INVENTORY_SLOT_5_LIST
-            ..add(UNIT_DREAMWALKER)
             ..add(UNIT_PRIEST)
             ..add(UNIT_DIRE_WOLF)
         )
@@ -135,7 +134,7 @@ public constant IterableMap<int, AttributeGrowth> trollAttributeGrowth =  new It
     ..put(UNIT_ASSASSIN, new AttributeGrowth(1.5, 2.5, 1.5))
     //scout classes attributesGworth
     ..put(UNIT_SCOUT, new AttributeGrowth(1., 1.3, 1.2))
-    ..put(UNIT_OBSERVER, new AttributeGrowth(1.3, 1.5, 1.7))
+    ..put(UNIT_OBSERVER, new AttributeGrowth(1.3, 1.7, 1.5))
     ..put(UNIT_TRAPPER, new AttributeGrowth(1.3, 1.7, 1.5))
     ..put(UNIT_SPY, new AttributeGrowth(1.8, 2.2, 1.9))
     //gatherer classes attributesGworth
@@ -164,12 +163,12 @@ public constant  NORMAL_SPELLS_HUNTER       = commaList(ABILITY_HUNTER_WEB)
 public constant  NORMAL_SPELLS_MAGE         = commaList(ABILITY_NEGATIVE_BLAST)
 public constant  NORMAL_SPELLS_PRIEST       = commaList(ABILITY_THE_GLOW)
 public constant  NORMAL_SPELLS_BEASTMASTER  = commaList(ABILITY_PET_SPELLS,ABILITY_SPIRIT_BEAST)
-public constant  NORMAL_SPELLS_THIEF        = commaList(ABILITY_TELEPORT, ABILITY_THIEF_SPELLBOOK)
+public constant  NORMAL_SPELLS_THIEF        = commaList(ABILITY_BLINK, ABILITY_THIEF_SPELLBOOK)
 public constant  NORMAL_SPELLS_SCOUT        = commaList(ABILITY_SCOUT_SPELLBOOK, ABILITY_HAWK_SWOOP ) //ABILITY_PING_ENEMY
 public constant  NORMAL_SPELLS_GATHERER     = commaList(ABILITY_SALVE_RECIPE)
 
 // Sub Hero Spells
-public constant HERO_SPELLS_WARRIOR        = commaList(ABILITY_UNDYING, ABILITY_JUGGERNAUT)//(ABILITY_GIANT_SWING,                ABILITY_JUGGERNAUT)
+public constant HERO_SPELLS_WARRIOR        = commaList(ABILITY_JUGGERNAUT)//(ABILITY_GIANT_SWING,                ABILITY_JUGGERNAUT)
 public constant HERO_SPELLS_TRACKER        = commaList(ABILITY_TRACKER_SPELLBOOK,          ABILITY_JUGGERNAUT)
 public constant HERO_SPELLS_ELEMENTALIST   = commaList(ABILITY_ELEMENTALIST_NEW_SPELLBOOK, ABILITY_DEMENTIA_MASTER)
 public constant HERO_SPELLS_HYPNOTIST      = commaList(ABILITY_HYPNOTIST_SPELLBOOK,        ABILITY_DEMENTIA_MASTER)
@@ -191,17 +190,17 @@ public constant HERO_SPELLS_DIRE_WOLF      = commaList(ABILITY_DIRE_WOLF_SPELLBO
 public constant HERO_SPELLS_DIRE_BEAR      = commaList(ABILITY_DIRE_BEAR_SPELLBOOK, ABILITY_JUNGLE_TYRANT)
 
 // Sub Normal Spells
-public constant NORMAL_SPELLS_WARRIOR        = commaList(ABILITY_HUNTER_WEB) //ABILITY_WARRIOR_SPELLBOOK,ABILITY_HUNTER_WEB
+public constant NORMAL_SPELLS_WARRIOR        = commaList(ABILITY_SPIKED_NET, ABILITY_WHIRLWIND, ABILITY_AXE_THROW, ABILITY_AXE_THROW_DW, ABILITY_WARRIOR_SHIELD_CHARGE, ABILITY_WEAPONS_OF_CHOICE, ABILITY_WHIRLING_AXES)//, ABILITY_WEAPONS_OF_CHOICE) //
 public constant NORMAL_SPELLS_TRACKER        = commaList(ABILITY_HUNTER_WEB)
 public constant NORMAL_SPELLS_ELEMENTALIST   = commaList(ABILITY_SUB_MAGE_INHERITED_SPELLBOOK)
 public constant NORMAL_SPELLS_HYPNOTIST      = commaList(ABILITY_SUB_MAGE_INHERITED_SPELLBOOK)
 public constant NORMAL_SPELLS_BOOSTER        = commaList(ABILITY_SUB_PRIEST_SPELLBOOK)
 public constant NORMAL_SPELLS_MASTER_HEALER  = commaList(ABILITY_SUB_PRIEST_SPELLBOOK)
 public constant NORMAL_SPELLS_DRUID          = commaList(ABILITY_PET_SPELLS)    
-public constant NORMAL_SPELLS_ESCAPE_ARTIST  = commaList(ABILITY_TELEPORT)
-public constant NORMAL_SPELLS_ROGUE          = commaList(ABILITY_TELEPORT)
-public constant NORMAL_SPELLS_CONTORTIONIST  = commaList(ABILITY_TELEPORT)
-public constant NORMAL_SPELLS_TELETHIEF      = commaList(ABILITY_TELEPORT)
+public constant NORMAL_SPELLS_ESCAPE_ARTIST  = commaList(ABILITY_BLINK)
+public constant NORMAL_SPELLS_ROGUE          = commaList(ABILITY_BLINK)
+public constant NORMAL_SPELLS_CONTORTIONIST  = commaList(ABILITY_BLINK)
+public constant NORMAL_SPELLS_TELETHIEF      = commaList(ABILITY_BLINK)
 public constant NORMAL_SPELLS_TRAPPER        = commaList(ABILITY_GREATER_REVEAL_ID)
 public constant NORMAL_SPELLS_OBSERVER       = commaList(ABILITY_OBSERVER_SPELLBOOK,ABILITY_GREATER_REVEAL_ID)
 public constant NORMAL_SPELLS_HAWK           = commaList(ABILITY_HAWK_SWOOP)

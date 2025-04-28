@@ -102,6 +102,7 @@ function onCast(unit caster)
             caster.endAbilityCooldown(ABILITY_TELE_FEED)
             caster.setMana(caster.getMana()+TELE_FEED_MANACOST)
         simError(caster.getOwner(), "There are no valid targets in range.")
+        ENUM_GROUP.clear()
         return
     unit target = ENUM_GROUP.getRandom()
     var currentHp = target.getHP()
@@ -110,7 +111,7 @@ function onCast(unit caster)
         if minimumHp < currentHp and each.isAllyOf(caster.getOwner())
             currentHp = minimumHp
             target = each    
-    
+    ENUM_GROUP.clear()
     let inventory = caster.getInventory()
     for itm in inventory
         if foodItems.has(itm.getTypeId())

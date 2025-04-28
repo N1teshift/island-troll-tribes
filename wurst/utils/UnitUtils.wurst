@@ -15,4 +15,5 @@ public function findNearestUnit(
             nearest = u
             bestDist = distSq
     predicate.maybeFree()
+    ENUM_GROUP.clear()
     return nearest

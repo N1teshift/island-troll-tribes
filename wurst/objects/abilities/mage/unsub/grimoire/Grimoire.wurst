@@ -310,6 +310,7 @@ function onMoved()
         instance.resetGrimoire()
 
 init
+    /*
     registerInventoryEvent(EVENT_ITEM_INVENTORY.MOVE, () -> onMoved())
 
     registerQuickMakePriorEffect() (unit target, int unitID) ->
@@ -339,6 +340,7 @@ init
 
     EventListener.add(EVENT_PLAYER_UNIT_SPELL_EFFECT) ->
         onScrollCast(GetTriggerUnit(), GetSpellAbilityId()) 
+    */
             
 
 

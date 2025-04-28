@@ -5,6 +5,8 @@ import ClosureTimers
 import CustomItemDefinition
 import ShieldsDefinition
 import CoatDefinition
+import AbilityObjectCreationUtils
+import ObjectIds
 
 let UNIT_REQUIREMENT = UNIT_ARMORY
 
@@ -19,7 +21,7 @@ public function initializeArmoryItems()
 
     new CustomItemDefinition(ITEM_ANABOLIC_BOOTS)
         ..addSpecialAbilities(ABILITY_SPEED_BONUS_200)
-        ..addSpecialAbilities(ABILITY_ANABOLIC_EVASION)
+        ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_ANABOLIC_EVASION))))
         ..addBonusArmour(5)
         ..addBonusStrength(4)
         ..addBonusIntelligence(4)
@@ -89,14 +91,14 @@ public function initializeArmoryItems()
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
     new CustomItemDefinition(ITEM_TROLL_PROTECTOR)
-    ..addSpecialAbilities(ABILITY_TROLL_PROTECTOR_ID)
-    ..addSpecialAbilities(ABILITY_TROLL_PROTECTOR_AURA)
+    ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_TROLL_PROTECTOR_ID))))
+    ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_TROLL_PROTECTOR_AURA))))
     ..setItemRecipe(ITEM_IRON_SHIELD, ITEM_ELK_HIDE, ITEM_MANA_CRYSTAL)
     ..setQuickMakeAbility(ABILITY_QM_TROLL_PROTECTOR)
     ..setUnitRequirement(UNIT_REQUIREMENT) 
 
     new CustomItemDefinition(ITEM_BATTLE_SHIELD)
-    ..addSpecialAbilities(ABILITY_BATTLE_SHIELD_BLOCK_ID)
+    ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_BATTLE_SHIELD_BLOCK_ID))))
     ..addBonusArmour(7)
     ..setItemRecipe(ITEM_BONE_SHIELD, ITEM_ELK_HIDE, ITEM_STEEL_INGOT, ITEM_SPIRIT_WIND, ITEM_SPIRIT_WATER, ITEM_MANA_CRYSTAL)
     ..setQuickMakeAbility(ABILITY_QM_BATTLE_SHIELD)
@@ -113,8 +115,8 @@ public function initializeArmoryItems()
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
     new CustomItemDefinition(ITEM_BEAR_PRESENCE_COAT)
-    ..addSpecialAbilities(ABILITY_BEARS_PRESENCE_AURA)
-    ..addSpecialAbilities(ABILITY_SPIRIT_BEAST)
+    ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_BEARS_PRESENCE_AURA))))
+    ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_SPIRIT_BEAST))))
     ..addBonusStrength(12)
     ..addBonusArmour(6)
     ..setItemRecipe(ITEM_BEAR_SKIN_COAT, ITEM_STEEL_INGOT, ITEM_SPIRIT_DARKNESS, ITEM_SPIRIT_WIND, ITEM_SPIRIT_WATER, ITEM_MANA_CRYSTAL)
@@ -122,7 +124,7 @@ public function initializeArmoryItems()
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
     new CustomItemDefinition(ITEM_BATTLE_ARMOR)
-    ..addSpecialAbilities(ABIL_SPELL_RESISTANCE_BATTLE)
+    ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABIL_SPELL_RESISTANCE_BATTLE))))
     ..addBonusAgility(4)
     ..addBonusStrength(4)
     ..addBonusIntelligence(4)

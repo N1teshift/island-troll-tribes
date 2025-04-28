@@ -29,6 +29,7 @@ public function initializeWorkshopItems()
     ..setItemRecipe(ITEM_SPIRIT_WIND, ITEM_SPIRIT_WATER)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_MANA_CRYSTAL)
+    ..setPreventBeingCraftedAsIngridient(true)
 
 
     new CustomItemDefinition(ITEM_MAGIC)

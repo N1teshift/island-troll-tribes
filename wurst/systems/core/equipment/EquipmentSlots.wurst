@@ -59,6 +59,7 @@ public interface EquipmentCallback
     function run(unit troll, item itm)
 
 public class EquipmentCallbacks extends OwnedLinkedList<Pair<int, EquipmentCallback>>
+public let EQUIPMENT_CALLBACK_ANY = compiletime(ITEM_ID_GEN.next())
 
 // The list of callbacks to apply before or onUnequip the transformation.
 let onEquipCallbacks = new EquipmentCallbacks()
@@ -74,14 +75,14 @@ public function registerOnUnequipEvent(int itemId, EquipmentCallback cb)
 
 function runOnEquipCallbacks(unit troll, item itm)
     for each in onEquipCallbacks
-        if each.a == itm.getTypeId()
+        if each.a == itm.getTypeId() or each.a == EQUIPMENT_CALLBACK_ANY
             //print("onEquip "+GetObjectName(each.a)+" == "+GetObjectName(itm.getTypeId()))
             each.b.run(troll, itm)
 
 
 function runOnUneqipCallbacks(unit troll, item itm)
     for each in onUnequipCallbacks
-        if each.a == itm.getTypeId()
+        if each.a == itm.getTypeId()  or each.a == EQUIPMENT_CALLBACK_ANY
             //print("onUnequip "+GetObjectName(each.a)+" == "+GetObjectName(itm.getTypeId()))
             each.b.run(troll, itm)
 
@@ -222,6 +223,15 @@ public class EquipmentSlots
             print("customItemDefinition doesnt exist for item "+GetObjectName(itemId))
         instance.removeBonuses(troll)
 
+    function onTransformation()
+        for each in currentItems
+            let itm = currentItems.get(each)
+            let customItemDefinition = customItemDefinitions.get(itm.getTypeId())
+            if customItemDefinition!= null
+                customItemDefinition.removeBonuses(troll)
+                nullTimer() -> 
+                    customItemDefinition.applyBonuses(troll)
+
     function findEquipmentItem() returns item
         let inventory = troll.getInventory()
         for itm in inventory
@@ -252,6 +262,14 @@ function onDeath(unit u)
         return
     instance.onDeath()
 
+function onTransformation(unit u)
+    if not u == u.getOwner().getTroll()
+        return
+    let instance = equimpentSlots.get(u.getOwner())
+    if instance == null
+        return
+    instance.onTransformation()    
+
 function onTargetOrder()
     let order = GetIssuedOrderId()
     let u = GetOrderedUnit()
@@ -277,11 +295,15 @@ function onTargetOrder()
             nullTimer() ->
                 instance.onTargetOrder(u, target)
 
+
 init
     EventListener.add(EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER, () -> onTargetOrder())  
 
     EventListener.add(EVENT_PLAYER_UNIT_DEATH) -> 
         onDeath(GetTriggerUnit())
+
+    registerAfterEffect() (unit target, int unitID) ->
+        onTransformation(target)
 
     doAfter(1.) -> 
         doPeriodically(120.) (CallbackPeriodic cb) ->

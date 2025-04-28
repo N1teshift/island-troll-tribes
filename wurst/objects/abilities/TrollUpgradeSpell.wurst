@@ -59,9 +59,9 @@ function AbilityDefinition.setRequiredTrollLevel(int level, boolean requiresSub)
 // Order IDs are manually set to manaflareon, manaflareoff, and manashieldoff
 // in order to avoid conflicts while banning order IDs is not functioning.
 // TODO: Remove these manual calls once order ID generation is fixed.
-@compiletime function createUpgradeAbilityWarrior() returns ChannelAbilityPreset
+@compiletime function createUpgradeAbilityGurubashiWarrior() returns ChannelAbilityPreset
     return createUpgradeAbility(ABILITY_WARRIOR)
-        ..setUpgradeTarget("Warrior")
+        ..setUpgradeTarget("Gurubashi Warrior")
         ..presetTooltipNormalExtended(lvl -> TOOLTIP_WARRIOR)
         ..setIconNormal(LocalIcons.bTNTrollPredator)
         ..presetHotkey("Q")

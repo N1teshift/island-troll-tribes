@@ -12,7 +12,7 @@ import Assets
 import ToolTipsUtils
 
 
-constant ABILITY_TELEPORT_BEACON = compiletime(ABIL_ID_GEN.next())
+constant ABILITY_BLINK_BEACON = compiletime(ABIL_ID_GEN.next())
 constant RANGE = [0.0, 700, 1100]
 constant rangeCheckModFirst = Doodads.glowingRunes2
 constant mirrorEfx = Abilities.blinkTarget
@@ -20,7 +20,7 @@ constant mirrorEfx = Abilities.blinkTarget
 constant TOOLTIP_EXT = "Teleports a friendly unit around the Teleportation Beacon 180°."
 
 @compiletime function createTeleportAbility() returns ChannelAbilityPreset
-    return new ChannelAbilityPreset(ABILITY_TELEPORT_BEACON, 2, true)
+    return new ChannelAbilityPreset(ABILITY_BLINK_BEACON, 2, true)
         ..presetManaCost(lvl -> 0)
         ..presetCooldown(lvl -> 2.5)
         ..setHeroAbility(false)
@@ -70,11 +70,11 @@ public class TeleportBeacon extends Building
             return
 
         let beacon = getUnit()
-        if beacon.getAbilityLevel(ABILITY_TELEPORT_BEACON) > 1
+        if beacon.getAbilityLevel(ABILITY_BLINK_BEACON) > 1
             return
 
         pickedUp.remove()
-        beacon.incAbilityLevel(ABILITY_TELEPORT_BEACON)
+        beacon.incAbilityLevel(ABILITY_BLINK_BEACON)
         flashEffect(Abilities.tomeOfRetrainingCaster, beacon, "origin")
 
     private function onSelected()
@@ -84,7 +84,7 @@ public class TeleportBeacon extends Building
             return
 
         let beacon = getUnit()
-        let level = beacon.getAbilityLevel(ABILITY_TELEPORT_BEACON)
+        let level = beacon.getAbilityLevel(ABILITY_BLINK_BEACON)
         let range = RANGE[level]
         let beaconPos = beacon.getPos()
         let list = new LinkedList<effect>()
@@ -110,7 +110,7 @@ public class TeleportBeacon extends Building
         effects.remove(whichPlayer)
 
     private function onCast()
-        if GetSpellAbilityId() != ABILITY_TELEPORT_BEACON
+        if GetSpellAbilityId() != ABILITY_BLINK_BEACON
             return
 
         let target = GetSpellTargetUnit()
@@ -136,7 +136,7 @@ public class TeleportBeacon extends Building
     override function postCreate()
         super.postCreate()
 
-        getUnit().addAbility(ABILITY_TELEPORT_BEACON)
+        getUnit().addAbility(ABILITY_BLINK_BEACON)
 
     ondestroy
         for whichPlayer in effects

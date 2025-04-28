@@ -21,7 +21,7 @@ let ABILITIES = asList(
     ABILITY_MURLOC_NET,
     ABILITY_ENVENOMED_HARPOON
 )
-let TT_NAME = "R’thrak The Venomblade"
+let TT_NAME = "Ner’kaz The Hunter"
 
 
 @compiletime function createMurloc()

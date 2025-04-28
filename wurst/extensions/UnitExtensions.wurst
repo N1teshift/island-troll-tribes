@@ -18,6 +18,7 @@ import TrollGroup
 import HashMap
 import IdListConstant
 import LocalObjectIDs
+import initlater PlayerExtensions
 
 
 public constant DUMMY_ITEM_ID = compiletime(ITEM_ID_GEN.next())
@@ -111,6 +112,25 @@ public function unit.getItemMatching(Predicate<item> predicate) returns item
     for i = 0 to inventorySize
         let itm = this.itemInSlot(i)
         if predicate.call(itm)
+            return itm
+    return null
+
+public function unit.hasItemEquipped(item itm) returns bool
+    let equippedItems = this.getOwner().getEquipmentSlots().currentItems
+    if equippedItems == null
+        return false
+    for each in equippedItems
+        if equippedItems.get(each) == itm
+            return true
+    return false
+
+public function unit.getItemEquippedById(int itemId) returns item
+    let equippedItems = this.getOwner().getEquipmentSlots().currentItems
+    if equippedItems == null
+        return null
+    for each in equippedItems
+        let itm = equippedItems.get(each)
+        if itm.getTypeId() == itemId
             return itm
     return null
 

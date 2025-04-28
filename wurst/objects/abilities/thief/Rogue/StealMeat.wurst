@@ -155,6 +155,7 @@ function onTeleStealCast(unit caster)
             caster.endAbilityCooldown(ABILITY_TELE_STEAL_FOOD)
             caster.setMana(caster.getMana()+TELE_STEAL_MANA_COST)
             simError(caster.getOwner(), "There is no valid target in radius.")
+        ENUM_GROUP.clear()
         return
     var distance = TELE_STEAL_CAST_RANGE
     unit target = null
@@ -163,6 +164,7 @@ function onTeleStealCast(unit caster)
         if minimumDistance < distance and each.isEnemyOf(caster.getOwner())
             distance = minimumDistance
             target = each
+    ENUM_GROUP.clear()        
     if target == null
         doAfter(ANIMATION_PERIOD*2)-> 
             caster.endAbilityCooldown(ABILITY_TELE_STEAL_FOOD)

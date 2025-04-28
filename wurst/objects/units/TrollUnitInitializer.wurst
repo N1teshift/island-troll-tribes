@@ -43,11 +43,11 @@ function createHunter(int unitId) returns HeroDefinition
 
 function createWarrior(int unitId) returns HeroDefinition
     return createSubTroll(unitId)
-        ..setNameEnhance("Warrior")
+        ..setNameEnhance("Gurubashi Warrior")
         ..setAttackDamage(11)
         ..setAttackSpeed(1.95)
-        ..setModelFile(LocalUnits.trollOverlord)
-        ..setIcons(LocalIcons.bTNTrollPredator)
+        ..setModelFile(LocalUnits.GurubashiWarrior)
+        ..setIcons(Icons.bTNHeadHunterBerserker)
         ..setUnitSoundSet(Soundsets.headHunter)
         ..setSpeedBase(300)
         ..setButtonPositionX(1)
@@ -91,7 +91,7 @@ function createTracker(int unitId) returns HeroDefinition
 
 function createJuggernaut(int unitId) returns HeroDefinition
     return createSuperSubTroll(unitId)
-        ..setNameEnhance("Juggernaut")
+        ..setNameEnhance("Gurubashi Champion")
         ..setAttackDamage(11)
         ..setAttackSpeed(1.95)
         ..setModelFile(LocalUnits.trollOverlord)
@@ -107,7 +107,7 @@ function createJuggernaut(int unitId) returns HeroDefinition
         ..setProperNames(NAME_JUGGERNAUT)
         ..setProperNamesUsed(4)
         ..setHotkey("R")
-        ..setAbilitiesEnhance(NORMAL_SPELLS_JUGGERNAUT, HERO_SPELLS_JUGGERNAUT)
+        ..setAbilitiesEnhance(NORMAL_SPELLS_WARRIOR, "")
 
 @compiletime function createJuggernaut()
     createJuggernaut(UNIT_JUGGERNAUT)
