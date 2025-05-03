@@ -21,9 +21,9 @@ let skillMap = new HashMap<int, int>()
     ..put(UNIT_HUNTER,               ABILITY_TRACK)
     ..put(UNIT_HUNTER_1,             ABILITY_TRACK)
     //..put(UNIT_WARRIOR,              ABILITY_WARRIOR_SPELLBOOK)
-    ..put(UNIT_WARRIOR,              ABILITY_UNDYING)
+    //..put(UNIT_WARRIOR,              HERO_SPELLS_WARRIOR)
     ..put(UNIT_TRACKER,              ABILITY_TRACKER_SPELLBOOK)
-    ..put(UNIT_JUGGERNAUT,           ABILITY_RAGE)
+    ..put(UNIT_JUGGERNAUT,           ABILITY_TITANS_GRIP)
 
     // Mage
     ..put(UNIT_MAGE,                 ABILITY_MAGE_SPELLBOOK)
@@ -95,7 +95,7 @@ public function autoSkill(unit target)
 
     let attributeGrowth = trollAttributeGrowth.get(target.getTypeId())
     let subTrollLvls = target.getTrollClassType() == ClassType.SUB_CLASS ? 5:0
-    let superSubTrollLvls =  target.getTrollClassType() == ClassType.SUPER_CLASS ? 8:0
+    let superSubTrollLvls =  target.getTrollClassType() == ClassType.SUPER_CLASS ? 6:0
     let lvl = target.getLevel()
     let strength = (attributeGrowth.strength*(lvl+2+subTrollLvls+superSubTrollLvls)).ceil()
     let agility = (attributeGrowth.agility*(lvl+2+subTrollLvls+superSubTrollLvls)).ceil()
@@ -103,7 +103,7 @@ public function autoSkill(unit target)
     target.setStr(strength)
     target.setAgi(agility)
     target.setInt(intelligence)
-    target.setAbilityLevel(ABILITY_TROLL_MS_PER_LVL, (lvl+subTrollLvls+superSubTrollLvls))
+    target.setAbilityLevel(ABILITY_TROLL_MS_PER_LVL, (lvl+2+subTrollLvls+superSubTrollLvls))
 
     // Look up the instance of the ability.
     let skill = target.getAbility(abilityID)

@@ -404,7 +404,8 @@ function onTsunami(unit caster, vec2 target)
             // Otherwise deal additional damage.
             else
                 caster.damageTarget(u, TSUNAMI_STRUCT_DMG)
-
+    ENUM_GROUP.clear()
+    
 function onRoot(unit caster, unit target)
     if target.getTypeId() == UNIT_HAWK
         //doAfter(ANIMATION_PERIOD) -> 

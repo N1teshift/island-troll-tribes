@@ -69,10 +69,11 @@ function performExperienceGain()
         return
 
     // Enumerate all allies that will share the experience.
-    let heroes = ENUM_GROUP
+    let enumList = ENUM_GROUP
         ..enumUnitsInRange(killer.getPos(), expRange, null)
         .asList()
-        .filter(
+
+    let heroes = enumList.filter(
             target -> (
                 target.isType(UNIT_TYPE_HERO) and
                 target.isAllyOf(killer) and
@@ -80,8 +81,9 @@ function performExperienceGain()
                 target != killer and
                 target.isTroll()
             )
-        )
-
+        )   
+        
+    ENUM_GROUP.clear()
     // Add the appropriate unit responsible for the kill.
     if killer.isType(UNIT_TYPE_HERO)
         heroes.add(killer)

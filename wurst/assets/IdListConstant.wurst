@@ -1,6 +1,7 @@
 package IdListConstant
 import LinkedList
 import LocalObjectIDs
+import BuffIds
 
 public constant BOSS_LIST = asList(
     UNIT_ALLIGATOR_MAN,
@@ -168,13 +169,13 @@ public constant TROLL_INVENTORY_SLOT_3_LIST = new LinkedList<int>()
    
 
 public constant TROLL_INVENTORY_SLOT_4_LIST = new LinkedList<int>()
-    ..addAll(MAGE_CLASS_LIST)
     ..addAll(HUNTER_CLASS_LIST) 
     ..addAll(PRIEST_CLASS_LIST)
     ..addAll(BEASTMASTER_CLASS_LIST)
 
 public constant TROLL_INVENTORY_SLOT_5_LIST = new LinkedList<int>()
     ..addAll(SCOUT_CLASS_LIST)
+    ..addAll(MAGE_CLASS_LIST)
 
 public constant TROLL_INVENTORY_SLOT_6_LIST = new LinkedList<int>()
     ..addAll(THIEF_CLASS_LIST)
@@ -330,6 +331,13 @@ public constant AXE_LIST = asList(
     ITEM_CHAMELEON_HATCHET_INT
 )
 
+public constant TWO_HANDED_WEAPON_LIST = asList(
+    ITEM_BATTLE_AXE,
+    ITEM_IRON_STAFF,
+    ITEM_CONDUCTING_ROD,
+    ITEM_BATTLE_STAFF
+)
+
 public constant SHIELD_LIST = asList(
     ITEM_SHIELD,
     ITEM_BONE_SHIELD,
@@ -337,7 +345,6 @@ public constant SHIELD_LIST = asList(
     ITEM_STEEL_SHIELD,
     ITEM_BATTLE_SHIELD,
     ITEM_MAKRURA_CARAPACE,
-    ITEM_MAKRURA_CARAPACE_DUMMY,
     ITEM_TROLL_PROTECTOR
 )
 
@@ -405,6 +412,12 @@ public constant PINION_LIST = asList(
     ITEM_DD_PINION_FIRE,
     ITEM_DD_PINION_SHADOW,
     ITEM_DD_PINION_PAIN
+)
+
+public constant IMMOBILIZED_BUFF_LIST = asList(
+    BuffIds.ensnareGround,
+    BuffIds.entanglingRoots,
+    BuffIds.ensnareGeneral
 )
 
 public constant HYDRA_RECIPE_LIST = asList(

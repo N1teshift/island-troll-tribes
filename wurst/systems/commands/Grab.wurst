@@ -21,7 +21,8 @@ function executeGrab(player p)
     for member from ENUM_GROUP
         if GetPlayerAlliance(member.getOwner(), p, ALLIANCE_SHARED_CONTROL)
             selected = member
-
+            
+    ENUM_GROUP.clear()
     // Do not continue if the player did not have any valid units selected.
     if selected == null
         return

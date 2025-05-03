@@ -29,15 +29,16 @@ import LinkedList
 import LocalAssets
 import BeeHives
 
-let cooldownRecoveryBonus = 0.03
+let cooldownRecoveryBonus = 0.02
 let TT_NAME = "Mental quickness."
 let TT_TOOLTIP = "Telethief's mental prowess allows him to use his abilities and items from dimentional pocket more often."+
-                "\n\nGain {0}% Cooldown Recovery speed per {1} beyond 14.".format(
+                "\n\nGain {0}% Cooldown Recovery speed per {1}".format(
                     (cooldownRecoveryBonus*100).toString().color(COLOR_LIGHT_BLUE),
                     "Intelligence".color(COLOR_TURQUOISE)
                 )+
                 "\n\nDoes not affect Cloak or Blink".color(COLOR_GOLD_STR)
 
+let IGNORED_ABILITY_LIST = asList(ABILITY_PANIC, ABILITY_CLOAK, ABILITY_BLINK)
 
 @compiletime function createMentalQuicknessDummyAbility() returns AbilityDefinitionHardenedSkin
     return new AbilityDefinitionHardenedSkin(ABILITY_MENTAL_QUICKNESS)
@@ -55,15 +56,21 @@ let TT_TOOLTIP = "Telethief's mental prowess allows him to use his abilities and
         ..setTooltipNormalExtended(1, TT_TOOLTIP)
 
 function onCast(unit caster, int abilId)
-    if caster.getTypeId() == UNIT_TELETHIEF or caster.getTypeId() == UNIT_ASSASSIN
-        let cooldown= caster.getAbilityCooldown(abilId, 0)
-        doAfter(ANIMATION_PERIOD) -> 
-            caster.endAbilityCooldown(abilId)
-            let cooldownRecovery = max((caster.getInt(true)-14), 0)*cooldownRecoveryBonus+1
-            nullTimer() ->
-                caster.startAbilityCooldown(abilId, cooldown/cooldownRecovery)
+    if not (caster.getTypeId() == UNIT_TELETHIEF or caster.getTypeId() == UNIT_ASSASSIN)
+        return
+    if IGNORED_ABILITY_LIST.has(abilId)
+        return
+    let cooldown= caster.getAbilityCooldown(abilId, 0)
+    doAfter(ANIMATION_PERIOD) -> 
+        let cooldownRecovery = max((caster.getInt(true)), 0)*cooldownRecoveryBonus+1
+        caster.startAbilityCooldown(abilId, cooldown/cooldownRecovery)
+        nullTimer() ->
+            caster.startAbilityCooldown(abilId, cooldown/cooldownRecovery)
             
 init
+    EventListener.add(EVENT_PLAYER_UNIT_SPELL_ENDCAST) ->
+        onCast(GetSpellAbilityUnit(), GetSpellAbilityId())     
+    /*
     EventListener.onCast(ABILITY_DIMENTIONAL_POCKET) (unit caster) ->
         onCast(caster, ABILITY_DIMENTIONAL_POCKET)
 
@@ -86,4 +93,8 @@ init
         onCast(caster, ABILITY_DRUNK_POTION)   
 
     EventListener.onCast(ABIL_BEE_FACTORY) (unit caster) ->
-        onCast(caster, ABIL_BEE_FACTORY)        
+        onCast(caster, ABIL_BEE_FACTORY)  
+    */
+
+        
+              

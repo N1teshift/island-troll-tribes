@@ -1,0 +1,205 @@
+package ShieldThrow
+
+// Standard library imports:
+import Assets
+import BuffObjEditing
+import ChannelAbilityPreset
+import ClosureEvents
+import ClosureTimers
+import HashMap
+import LinkedList
+import ItemObjEditing
+import Items
+import Cosmetics
+import OnUnitEnterLeave
+import Reflection
+
+// Third-party imports:
+import Lodash
+
+// Local imports:
+import ColorUtils
+import LocalObjectIDs
+import LocalAssets
+import Classes
+import IdListConstant
+import InventoryEvent
+import UnitExtensions
+import Orders
+import QuickMake
+import AxesDefinition
+import ClosureForGroups
+import DamageEvent
+import Knockback3
+import CustomProjectile
+import InstantDummyCaster
+import initlater WeaponsOfChoice
+
+public let TT_SHIELD_BASH_NAME = "Shield Charge"
+public let TT_SHIELD_BASH_EXT = "Perform shield bash, dealing attack damage and pushing enemies away in a cone."
+let CD = 25.
+let AOE = 300.
+let STUN_DURATION_HERO = 0.5
+let STUN_DURATION_NORMAL = 4.0
+let PROJECTILE_SPEED = 1200.
+let COOLDOWN = 1.
+let MANACOST = 0
+let RANGE = 700.
+
+@compiletime function createShieldCharge()
+    new ChannelAbilityPreset(ABILITY_SHIELD_THROW, 1, true)
+        ..presetTooltipNormal(lvl -> TT_SHIELD_BASH_NAME)
+        ..presetTooltipNormalExtended(lvl-> TT_SHIELD_BASH_EXT)        
+        ..presetCastingTime(lvl ->0.01)
+        ..presetCastRange(lvl -> RANGE)
+        ..presetCooldown(lvl -> COOLDOWN)
+        ..presetManaCost(lvl -> MANACOST)
+        ..presetDurationHero(lvl->0.5) 
+        ..presetHotkey("R")
+        ..presetTargetTypes(Targettype.UNIT)
+        ..setButtonPositionNormalX(3)
+        ..setButtonPositionNormalY(0)
+        //..setIconNormal(LocalIcons.bTNStealMeat)
+        ..presetTargetsAllowed(lvl ->commaList(
+            TargetsAllowed.ground,
+            TargetsAllowed.enemies,
+            TargetsAllowed.neutral,
+            TargetsAllowed.vulnerable,
+            TargetsAllowed.alive,
+            TargetsAllowed.organic,
+            TargetsAllowed.air
+        ))
+
+    new BuffDefinition(BUFF_SHIELD_THROW, BuffIds.dizziness)
+        //..setArtTarget(Objects)
+        //..setArtSpecial("")
+        //..setAreaEffect("") 
+
+    new AbilityDefinitionShadowStrikeCreep(ABILITY_SHIELD_THROW_DUMMY)
+        ..presetDecayingDamage(lvl->0.)
+        ..presetDurationHero(lvl->2.)
+        ..presetDurationNormal(lvl ->8.)
+        ..presetDecayPower(lvl->0.15)
+        ..presetInitialDamage(lvl->0.)
+        ..presetAttackSpeedFactor(lvl->1.)
+        ..presetMovementSpeedFactor(lvl->0.6)
+        ..setBuffs(1, toRawCode(BUFF_SHIELD_THROW))
+        //..presetCastingTime(lvl-> 0.25)
+        //..setMissileArc(0.50)
+        ..setMissileSpeed(900)
+        //..setArtTarget(Abilities.stormBoltTarget)
+        //..setArtCaster("")
+        //..setArtSpecial("")
+        //..setArtEffect("")   
+        //..setAreaEffect("")   
+        ..setAreaofEffect(1, 0.)
+        ..setMissileArt(Abilities.stormBoltMissile)        
+        ..setMissileHomingEnabled(true)
+        ..setEditorSuffix("(Wurst)")
+        ..presetTargetsAllowed(lvl ->commaList(
+            TargetsAllowed.ground,
+            TargetsAllowed.enemies,
+            TargetsAllowed.vulnerable,
+            TargetsAllowed.neutral,
+            TargetsAllowed.alive,
+            TargetsAllowed.organic,
+            TargetsAllowed.air
+        ))         
+        ..setDummyAbility()  
+
+/*
+    new ChannelAbilityPreset(ABILITY_WARRIOR_SHIELD_CHARGE, 1, true)
+        ..presetTooltipNormal(lvl -> TT_SHIELD_BASH_NAME)
+        ..presetTooltipNormalExtended(lvl-> TT_SHIELD_BASH_EXT)        
+        ..presetCastingTime(lvl ->0.1)
+        ..presetCastRange(lvl -> 150)
+        ..presetCooldown(lvl -> 30)
+        ..presetHotkey("R")
+        ..setButtonPositionNormalX(3)
+        ..setButtonPositionNormalY(0)
+        ..presetTargetTypes(Targettype.POINT)
+        ..setIconNormal(LocalIcons.bTNStealMeat)
+        ..presetTargetsAllowed(lvl ->commaList(
+            TargetsAllowed.ground,
+            TargetsAllowed.enemies,
+            TargetsAllowed.vulnerable,
+            TargetsAllowed.alive,
+            TargetsAllowed.organic,
+            TargetsAllowed.hero
+        )) 
+*/        
+
+public class ShieldThrow extends CustomProjectile
+    vec3 startPos
+    unit caster
+    unit target
+    WeaponsOfChoice weaponsOfChoice = null
+    real attackDamage
+    bool dealDamage
+
+    construct(unit caster, unit target, real groundSpeed, real gravity, string effectPath, real scale, bool dealDamage)
+        super(caster.getPos().withTerrainZ(100.), target, groundSpeed, gravity, effectPath)
+        this.weaponsOfChoice = weaponsOfChoiceInstances.get(caster)
+        this.caster = caster
+        this.dealDamage = dealDamage
+        //this.startPos = caster.getPos().withTerrainZ(-30.)
+        this.target = target
+        this.caster.startAbilityCooldown(ABILITY_WARRIOR_SHIELD_CHARGE, COOLDOWN)
+        this.missileFx.setScale(scale)
+        updateDamage()
+
+    override function onImpact()
+        this.missileFx.setPos(vec2(-9999. , -9999.))
+        InstantDummyCaster.castTarget(caster.getOwner(), ABILITY_SHIELD_THROW_DUMMY, 1, OrderIds.shadowstrike, target, target.getPos())
+        dealDamage(attackDamage)
+
+    function dealDamage(real damage)
+        if not dealDamage
+            return
+        caster.damageTarget(target, damage, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_POISON, null)       
+
+    function updateDamage()
+        attackDamage = weaponsOfChoice.getAttackDamage()
+
+    override function updateTick()
+        if this.target != null and this.homing
+            this.targetPos = this.target.getPos3Real()
+
+        let curPos3D = this.missileFx.getPos3()
+        let curPos2D = curPos3D.toVec2()
+        let targetPos3D = this.targetPos
+        let targetPos2D = targetPos3D.toVec2()
+        let distance2D = curPos2D.distanceTo(targetPos2D)
+
+        //Update vertical speed for appropriate flight arc
+        let flightTime = distance2D / this.groundSpeed
+        let heightDifference = (this.targetPos - missileFx.getPos3()).z
+        this.verticalSpeed = (heightDifference / flightTime) - (0.5 * this.gravity * flightTime)
+
+        //Update position
+        if this.groundSpeed * ANIMATION_PERIOD >= distance2D
+            this.missileFx.setPos(this.targetPos)
+            this.onImpact()
+            this.postImpact()
+            return
+        else
+            let newPos3D = curPos3D.offset2d(curPos2D.angleTo(targetPos2D), this.groundSpeed * ANIMATION_PERIOD) + vec3(0, 0, this.verticalSpeed * ANIMATION_PERIOD)
+            this.missileFx.setPos(newPos3D)
+            let angle = this.missileFx.getPos().angleTo(targetPos.toVec2())    
+        
+function onCast(unit caster, unit target)  
+    new ShieldThrow(caster, target, PROJECTILE_SPEED, 0., Abilities.replenishHealthCasterOverhead, 0.5, true)  
+    new ShieldThrow(caster, target, PROJECTILE_SPEED, 0., Abilities.glaiveMissile, 0.8, false)
+    //doAfter(ANIMATION_PERIOD) -> 
+    //    new ShieldCharge(caster, target, PROJECTILE_SPEED, 0., LocalUnits.trollOverlord, 0..asAngleDegrees())
+
+
+
+init
+    EventListener.onTargetCast(ABILITY_SHIELD_THROW) (unit caster, unit target) ->
+        onCast(caster, target)
+    //EventListener.add(EVENT_PLAYER_UNIT_SPELL_CAST) -> 
+    //    if GetSpellAbilityId() == ABILITY_WARRIOR_SHIELD_CHARGE
+    //        onCast(GetSpellAbilityUnit(), GetSpellTargetUnit())
+        
+        

@@ -82,6 +82,7 @@ public class CustomItemDefinition
     int attackSpeedBonus =0
     int hpBonus =0
     int mpBonus =0
+    bool preventBeingCraftedAsIngridient = false
     string iconPath
     string modelPath
     string TT_EXTENDED
@@ -123,6 +124,8 @@ public class CustomItemDefinition
             if abilId == 0
                 return
             troll.addAbility(abilId)
+            troll.makeAbilityPermanent(abilId, true)
+            troll.disableAbility(abilId, false, true)
 
     function removeBonuses(unit troll)
         if not troll.isTroll()
@@ -171,14 +174,14 @@ public class CustomItemDefinition
     function setQuickMakeAbility(int abilId)
         quickMakeAbility = abilId
         EventListener.onCast(abilId) (unit caster) ->
-            onQuickMake(caster)
+            onQuickMake(caster, quickMakeAbility)
             
     //function onMixingPotQuickMake(unit caster)
 
-    function onQuickMake(unit caster)
+    function onQuickMake(unit caster, int abilId)
         if itemId == ITEM_TRANSPORT_SHIP_KIT and gameConfig.getDisabledBoats() == true
             return
-        let quickMake = new QuickMakeV2(itemId, caster)
+        let quickMake = new QuickMakeV2(itemId, caster, abilId)
         let craftedItem = quickMake.craftItem(caster)
         if craftedItem == null
             return
@@ -256,6 +259,9 @@ public class CustomItemDefinition
         agilityBonus+=amount
         intelligenceBonus+=amount
 
+    function setPreventBeingCraftedAsIngridient(bool prevent)
+        preventBeingCraftedAsIngridient = prevent
+
 function addItems() 
 
     
@@ -316,9 +322,6 @@ function addItems()
     new CustomItemDefinition(ITEM_MAKRURA_CARAPACE)
     ..addBonusArmour(3)
 
-
-
- 
 
 init
     doAfter(1.) -> 

@@ -30,6 +30,7 @@ StrRegenBonus=0
 TradingIncLarge=0
 TradingIncSmall=0
 WebIsMagic=1
+canDeactivateBladestorm=1
 
 ; Used for displaying healing reduction status.
 ; Rates are divided by 10 because food cap cannot exceed 999.

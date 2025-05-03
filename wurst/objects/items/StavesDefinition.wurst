@@ -25,7 +25,7 @@ import AxesDefinition
 
 public let IRON_STAFF_DMG_BONUS = ABIL_DMG_IRON
 public let IRON_STAFF_ARMOR_BONUS = ABILITY_ARMOR_BONUS_2
-public let IRON_STAFF_INT_BONUS = ABILITY_INT_BONUS_10
+public let IRON_STAFF_INT_BONUS = ABILITY_INT_BONUS_8
 
 public let BATTLE_STAFF_DMG_BONUS = ABIL_DMG_BATTLE
 public let BATTLE_STAFF_ARMOR_BONUS = ABILITY_ARMOR_BONUS_4
@@ -56,7 +56,7 @@ public let TT_CONDUCTING_ROD ="Steel rod infused with magic for better mana cond
 public let TT_IRON_STAFF ="A magic staff reinforced with iron."+
                         "\n+{0} Attack damage".format("8".color(COLOR_GREEN))+
                         "\n+{0} Armor".format("2".color(COLOR_GREEN))+
-                        "\n+{0} Intelligence".format("10".color(COLOR_GREEN))
+                        "\n+{0} Intelligence".format("8".color(COLOR_GREEN))
 
 public let TT_BATTLE_STAFF = "Wood and steel unite in this fearsome weapon. Each end adorned with menacing skulls, "+
                                 "it provides both defensive and spellcasting benefits."+

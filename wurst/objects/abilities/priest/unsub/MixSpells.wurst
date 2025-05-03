@@ -109,7 +109,13 @@ class MixHealth extends ChannelAbilityPreset
         this.setCooldown(1, COOLDOWN)
         this.setHeroAbility(false)
         this.presetTargetTypes(Targettype.UNIT)
-        this.setTargetsAllowed(1, TARGET_ALLOWED)
+        this.setTargetsAllowed(1, commaList(
+            TargetsAllowed.air,
+            TargetsAllowed.friend,
+            TargetsAllowed.ground,
+            TargetsAllowed.hero,
+            TargetsAllowed.notself
+        ))
         this.setHotkeyNormal(hotkey)
         this.setName(TOOLTIP_NORM+"Health")
         this.presetTooltipNormal(lvl -> makeToolTipNorm(hotkey, TOOLTIP_NORM+"Health"))

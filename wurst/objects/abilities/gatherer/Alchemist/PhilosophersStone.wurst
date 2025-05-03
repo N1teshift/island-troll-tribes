@@ -19,10 +19,13 @@ import ColorUtils
 import QuickMake
 
 
+let MAX_ENERGY_INT_MULTIPLIER = 0.8
+let ENERGY_REGEN_INT_MULTIPLIER = 0.2
+
 let TT_PHILOSOPHERS_STONE = "Philosopher's stone converts Alchemist's mana into energy over time. It can be used to conjure Potion effects"+
                             "\nCosts 2 mana per 1 energy".color(COLOR_LIGHT_BLUE)+
-                            "\nMaximum energy = "+"10".color(COLOR_LIGHT_BLUE)+" +"+ "Intelligence".color(COLOR_TURQUOISE)+
-                            "\nConverts "+"0.25".color(COLOR_LIGHT_BLUE)+" + "+"0.25 ".color(COLOR_LIGHT_BLUE)+
+                            "\nMaximum energy = "+"10".color(COLOR_LIGHT_BLUE)+" +{0}".format(MAX_ENERGY_INT_MULTIPLIER.toString().color(COLOR_TURQUOISE))+ "Intelligence".color(COLOR_TURQUOISE)+
+                            "\nConverts "+"{0} ".format(ENERGY_REGEN_INT_MULTIPLIER.toString().color(COLOR_LIGHT_BLUE))+" + "+"{0} ".format(ENERGY_REGEN_INT_MULTIPLIER.toString().color(COLOR_LIGHT_BLUE))+
                             "per "+"20 Intelligence ".color(COLOR_TURQUOISE)+"energy per second."
 
 
@@ -87,8 +90,8 @@ class PhilosophersStoneInstance
     function updateCharges()
         if hero.getMana()<=20. and hero.hasItem(itemHandle)
             return        
-        let chargesCap = 10+hero.getInt(true)
-        let chargesRegenPerSecond = 0.25+0.0125*hero.getInt(true)
+        let chargesCap = 10+MAX_ENERGY_INT_MULTIPLIER*hero.getInt(true)
+        let chargesRegenPerSecond = 0.25+ENERGY_REGEN_INT_MULTIPLIER/20*hero.getInt(true)
         if charges>=chargesCap
             return
         hero.setMana(hero.getMana()-2*chargesRegenPeriod*chargesRegenPerSecond)

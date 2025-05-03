@@ -24,7 +24,7 @@ public function createHiddenSpellbookWithAbilities(string abilityList) returns i
     let id = ABIL_ID_GEN.next()
     new AbilityDefinitionSpellBook(id)
     ..setButtonPositionNormalX(0)
-    ..setButtonPositionNormalY(0)
+    ..setButtonPositionNormalY(-11)
     ..setButtonPositionResearchX(0)
     ..setButtonPositionResearchY(0)
     ..setIconNormal("")

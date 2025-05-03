@@ -65,9 +65,9 @@ function onCast(unit caster)
     nullTimer() ->
         caster.removeAbility(ABILITY_PANIC)
         caster.addAbility(ABILITY_THRILL_OF_BATTLE)
-        caster.removeAbility(ABILITY_HUNTER_WEB)
-        caster.addAbility(ABILITY_SPIKED_NET)
+        caster.removeAbility(ABILITY_HUNTER_WEB)    
+        caster.addAbility(ABILITY_SHIELD_THROW) //ABILITY_WHIRLWIND ABILITY_AXE_THROW
 
 init
-    EventListener.onCast(ABILITY_WARRIOR) (unit caster) ->
-        onCast(caster)
+   // EventListener.onCast(ABILITY_WARRIOR) (unit caster) ->
+        //onCast(caster)

@@ -15,6 +15,7 @@ import initlater EquipmentSlots
 //       the initialization order of objects or just an odd behavior of the
 //       compiler. This should be reinvestigated once #593 is complete.
 import GameMode
+import LinkedList
 
 
 let newObs = new HashSet<player>()
@@ -30,6 +31,13 @@ public function player.setEquipmentSlots(EquipmentSlots equipmentSlots)
 
 public function player.getEquipmentSlots() returns EquipmentSlots
     return equimpentSlots.get(this) 
+
+public function player.getEquippedItems() returns LinkedList<item>
+    let equippedItems = new LinkedList<item>
+    let equipmentslots = this.getEquipmentSlots().currentItems
+    for each in equipmentslots
+        equippedItems.add(equipmentslots.get(each))
+    return equippedItems
 
 public function player.getTribePlayer() returns player
     let tribe = this.getTribe()

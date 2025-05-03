@@ -1,0 +1,191 @@
+package ShieldCharge
+
+// Standard library imports:
+import Assets
+import BuffObjEditing
+import ChannelAbilityPreset
+import ClosureEvents
+import ClosureTimers
+import HashMap
+import LinkedList
+import ItemObjEditing
+import Items
+import Cosmetics
+import OnUnitEnterLeave
+import Reflection
+
+// Third-party imports:
+import Lodash
+
+// Local imports:
+import ColorUtils
+import LocalObjectIDs
+import LocalAssets
+import Classes
+import IdListConstant
+import InventoryEvent
+import UnitExtensions
+import Orders
+import QuickMake
+import AxesDefinition
+import ClosureForGroups
+import DamageEvent
+import Knockback3
+import CustomProjectile
+import InstantDummyCaster
+import ToolTipsUtils
+import initlater WeaponsOfChoice
+import TerrainUtils
+import SimError
+
+let AOE = 300.
+let STUN_DURATION_HERO = 0.5
+let STUN_DURATION_NORMAL = 3.0
+let PROJECTILE_SPEED = 1200.
+let COOLDOWN = 20.
+let MANACOST = 0
+let ICON = LocalIcons.bTNShieldCharge
+
+public let TT_SHIELD_BASH_NAME = "Shield Charge"
+public let TT_SHIELD_BASH_EXT = "Charge towards enemy stunning them for {0}({1}) seconds on impact.".format(STUN_DURATION_NORMAL.toToolTipLightBlue(), STUN_DURATION_HERO.toString().color(COLOR_LIGHT_BLUE))+
+                                "\nYou are invulnerable and ignore terrain during charge."+
+                                "\nHas {0} seconds cooldown.".format(COOLDOWN.toToolTipLightBlue())
+
+
+@compiletime function createShieldCharge()
+    new ChannelAbilityPreset(ABILITY_WARRIOR_SHIELD_CHARGE, 1, true)
+        ..presetTooltipNormal(lvl -> TT_SHIELD_BASH_NAME)
+        ..presetTooltipNormalExtended(lvl-> TT_SHIELD_BASH_EXT)        
+        ..presetCastingTime(lvl ->0.01)
+        ..presetCastRange(lvl -> 600.)
+        ..presetIcon(ICON)
+        ..presetCooldown(lvl -> COOLDOWN)
+        ..presetManaCost(lvl -> MANACOST)
+        ..presetDurationHero(lvl->0.5)
+        ..presetHotkey("E")
+        ..presetTargetTypes(Targettype.UNIT)
+        ..setButtonPositionNormalX(1)
+        ..setButtonPositionNormalY(1)
+        ..presetTargetsAllowed(lvl ->commaList(
+            TargetsAllowed.ground,
+            TargetsAllowed.enemies,
+            TargetsAllowed.neutral,
+            TargetsAllowed.vulnerable,
+            TargetsAllowed.alive,
+            TargetsAllowed.organic
+        ))
+
+    new AbilityDefinitionMountainKingThunderBolt(ABILITY_WARRIOR_SHIELD_CHARGE_DUMMY)  
+        ..setDummyAbility()
+        ..setCastingTime(1, 0.)
+        ..setDurationHero(1, STUN_DURATION_HERO)
+        ..setDurationNormal(1, STUN_DURATION_NORMAL)
+        ..setDamage(1, 0.)
+        ..setTargetsAllowed(1, commaList(
+            TargetsAllowed.ground,
+            TargetsAllowed.enemies,
+            TargetsAllowed.neutral,
+            TargetsAllowed.vulnerable,
+            TargetsAllowed.alive,
+            TargetsAllowed.organic
+        ))         
+
+/*
+    new ChannelAbilityPreset(ABILITY_WARRIOR_SHIELD_CHARGE, 1, true)
+        ..presetTooltipNormal(lvl -> TT_SHIELD_BASH_NAME)
+        ..presetTooltipNormalExtended(lvl-> TT_SHIELD_BASH_EXT)        
+        ..presetCastingTime(lvl ->0.1)
+        ..presetCastRange(lvl -> 150)
+        ..presetCooldown(lvl -> 30)
+        ..presetHotkey("R")
+        ..setButtonPositionNormalX(3)
+        ..setButtonPositionNormalY(0)
+        ..presetTargetTypes(Targettype.POINT)
+        ..setIconNormal(LocalIcons.bTNStealMeat)
+        ..presetTargetsAllowed(lvl ->commaList(
+            TargetsAllowed.ground,
+            TargetsAllowed.enemies,
+            TargetsAllowed.vulnerable,
+            TargetsAllowed.alive,
+            TargetsAllowed.organic,
+            TargetsAllowed.hero
+        )) 
+*/        
+
+public class ShieldCharge extends CustomProjectile
+    vec3 startPos
+    unit caster
+    real attackDamage
+    WeaponsOfChoice weaponsOfChoice
+    angle pitch 
+    construct(unit caster, widget targetWidget, real groundSpeed, real gravity, string effectPath, angle pitch)
+        super(caster.getPos().withTerrainZ(30.), targetWidget, groundSpeed, gravity, effectPath)
+        this.pitch = pitch
+        this.caster = caster
+        this.startPos = caster.getPos().withTerrainZ(-30.)
+        this.caster.setPathing(false)
+        this.caster.setInvulnerable(true)
+        this.caster.startAbilityCooldown(ABILITY_WARRIOR_SHIELD_CHARGE, COOLDOWN)
+        this.missileFx.setScale(1.2)
+
+    override function onImpact()
+        caster.setPos(this.missileFx.getPos())
+        this.missileFx.setPos(vec2(-9999. , -9999.))
+        InstantDummyCaster.castTarget(caster.getOwner(), ABILITY_WARRIOR_SHIELD_CHARGE_DUMMY, 1, OrderIds.thunderbolt, targetWidget, targetWidget.getPos())
+        caster.setInvulnerable(false)
+        caster.setPathing(true)
+
+    function dealDamage(real damage)
+        caster.damageTarget(caster, damage, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_POISON, null)       
+
+    function updateDamage()
+        attackDamage = weaponsOfChoice.getAttackDamage()
+
+
+    override function updateTick()
+        if this.targetWidget != null and this.homing
+            this.targetPos = this.targetWidget.getPos().withTerrainZ()
+
+        let curPos3D = this.missileFx.getPos3()
+        let curPos2D = curPos3D.toVec2()
+        let targetPos3D = this.targetPos
+        let targetPos2D = targetPos3D.toVec2()
+        let distance2D = curPos2D.distanceTo(targetPos2D)
+
+        //Update vertical speed for appropriate flight arc
+        let flightTime = distance2D / this.groundSpeed
+        let heightDifference = (this.targetPos - missileFx.getPos3()).z
+        this.verticalSpeed = (heightDifference / flightTime) - (0.5 * this.gravity * flightTime)
+
+        //Update position
+        if this.groundSpeed * ANIMATION_PERIOD >= distance2D
+            this.missileFx.setPos(this.targetPos)
+            this.onImpact()
+            this.postImpact()
+            return
+        else
+            let newPos3D = curPos3D.offset2d(curPos2D.angleTo(targetPos2D), this.groundSpeed * ANIMATION_PERIOD) + vec3(0, 0, this.verticalSpeed * ANIMATION_PERIOD)
+            this.missileFx.setPos(newPos3D)
+            let angle = this.missileFx.getPos().angleTo(targetPos.toVec2())
+            this.missileFx.setYaw(angle)
+            this.missileFx.setPitch(pitch)
+            doAfter(ANIMATION_PERIOD) -> 
+                this.caster.setPos(newPos3D.toVec2())            
+        
+function onCast(unit caster, unit target)
+    if not target.getPos().isTerrainWalkable()
+        simError(caster.getOwner(), "Cannot perform charge due to impassable terrain")
+        caster.issueImmediateOrder("stop")  
+        return        
+    new ShieldCharge(caster, target, PROJECTILE_SPEED, 0., Abilities.replenishHealthCasterOverhead, 50..asAngleDegrees())
+
+
+
+init
+//    EventListener.onTargetCast(ABILITY_WARRIOR_SHIELD_CHARGE) (unit caster, unit target) ->
+//        onCast(caster, target)
+    EventListener.add(EVENT_PLAYER_UNIT_SPELL_CAST) -> 
+        if GetSpellAbilityId() == ABILITY_WARRIOR_SHIELD_CHARGE
+            onCast(GetSpellAbilityUnit(), GetSpellTargetUnit())
+        
+        

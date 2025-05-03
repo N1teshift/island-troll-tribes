@@ -1,0 +1,239 @@
+package ScrollSlot
+
+import Classes
+import LocalObjectIDs
+import HashMap
+import OnUnitEnterLeave
+import Items
+import LocalAssets
+import UnitExtensions
+import ChannelAbilityPreset
+import Orders
+import ClosureEvents
+import ClosureTimers
+import InventoryEvent
+import HashSet
+import BushSpawns
+import ItemObjEditing
+import ClosuresForItems
+import ItemExtensions
+import IdListConstant
+import ColorUtils
+import LinkedList
+import QuickMake
+import PlayerExtensions
+import ObjectIDManager
+
+
+public IterableMap<unit, ScrollSlot> scrollSlotInstances = new IterableMap<unit, ScrollSlot>()
+
+public let ITEM_SCROLL_SLOT = compiletime(ITEM_ID_GEN.next())
+    ..registerObjectID("ITEM_SCROLL_SLOT")  
+
+let TT_NAME = "Scroll Slot"
+let TT_TOOLTIP = "A special slot you can carry a scroll in. "
+
+
+@compiletime function createDummyItem() returns ItemDefinition
+    return createBasicItem(ITEM_SCROLL_SLOT)
+            ..setName(TT_NAME)
+            ..setCanBeDropped(true)
+            ..setInterfaceIcon(LocalIcons.bTNScrollSlot)
+            ..setTooltipExtended(TT_TOOLTIP)
+            ..setCanBeSoldToMerchants(false)
+
+
+public class ScrollSlot
+    unit hero = null
+    item dummy = null
+    bool pauseTriggers = false
+
+    construct(unit _hero)
+        hero = _hero
+        dummy = createItem(ITEM_SCROLL_SLOT, hero.getPos())..setVisible(false)
+        nullTimer() -> 
+            hero.addItemHandle(dummy)
+
+    function updateDummyItems()
+        pauseTriggers = true
+        let currentArmsItems = getScrollItems()
+        let currentDummyItems = getCurrentDummyItems()
+        
+        if currentArmsItems == 0      
+            addDummyItem()
+
+        if currentArmsItems > 0       
+            removeDummyItem()
+
+        doAfter(ANIMATION_PERIOD) ->                                
+            pauseTriggers = false
+
+    function getScrollItems() returns int
+        int itemCount = 0
+        let inventory = hero.getInventory()
+        let equippedItems = hero.getOwner().getEquippedItems()
+        inventory.addAll(equippedItems)
+        for each in inventory
+            if SCROLL_LIST.has(each.getTypeId())
+                itemCount+=1
+        destroy inventory 
+        destroy equippedItems              
+        return itemCount
+
+    function getCurrentDummyItems() returns int
+        int currentDummyItems = 0
+        let inventory = hero.getInventory()
+        for each in inventory
+            if each.getTypeId() == ITEM_SCROLL_SLOT
+                currentDummyItems+=1 
+        destroy inventory       
+        return currentDummyItems       
+
+
+    function removeDummyItem()
+        hero.removeItem(dummy)
+        nullTimer() -> 
+            dummy.setVisible(false)
+        //print("removed dummy item")
+
+    function addDummyItem()
+        if hero.hasItem(dummy)
+            //print("hero already has dummy")
+            return                  
+        let inventory = hero.getInventory()
+        let equippedItems = hero.getOwner().getEquippedItems()
+        inventory.addAll(equippedItems)
+        while hero.isInventoryFull()
+            if inventory.getLast().getTypeId() == ITEM_SCROLL_SLOT
+                inventory.remove(inventory.getLast())
+            else
+                //print("removed item")
+                hero.removeItem(inventory.getLast())
+        hero.addItemHandle(dummy)
+        destroy equippedItems
+        destroy inventory
+        //print("added dummy item "+index.toString())
+    
+    function onTargetOrder(item itm) 
+        if not SCROLL_LIST.has(itm.getTypeId())
+            return
+        if hero.hasItem(itm) or itm == null
+            //print("handled by stack system")
+            return
+        if hero.hasItemEquipped(itm)
+            updateDummyItems()
+            return
+
+
+function onEnter(unit troll)
+    if troll.getTrollBaseClass() != UNIT_MAGE
+        return
+    if not scrollSlotInstances.has(troll)
+        doAfter(ANIMATION_PERIOD)->
+            if not scrollSlotInstances.has(troll)
+                scrollSlotInstances.put(troll, new ScrollSlot(troll))
+
+
+function onPickup(unit troll, item itm)
+    let instance = scrollSlotInstances.get(troll)
+    if instance == null
+        return
+    if not SCROLL_LIST.has(itm.getTypeId())
+        return
+    if instance.pauseTriggers == true
+        return
+    nullTimer() -> 
+        instance.updateDummyItems()
+
+function onDummyDrop(unit troll, item itm)
+    nullTimer() -> 
+        itm.setVisible(false)
+    if not troll.isAlive()
+        return
+    let instance = scrollSlotInstances.get(troll)
+    if instance == null
+        return
+    if instance.pauseTriggers == true
+        return    
+    nullTimer() -> 
+        //print(instance.pauseTriggers)
+        //print("added dummy on drop")
+        troll.addItemHandle(itm)
+
+function onRevive(unit troll)
+    let instance = scrollSlotInstances.get(troll)
+    if instance == null
+        //print("null instance")
+        return
+    if instance.pauseTriggers == true
+        //print("triggers paused")
+        return    
+    doAfter(ANIMATION_PERIOD) ->  
+        instance.updateDummyItems()
+
+function onQuickMakePriorEffect(unit caster)
+    let instance = scrollSlotInstances.get(caster)
+    if instance == null
+        return
+    instance.pauseTriggers = true
+
+function onQuickMakeAfterEffect(unit caster)
+    let instance = scrollSlotInstances.get(caster)
+    if instance == null
+        return
+    instance.pauseTriggers = false
+    doAfter(ANIMATION_PERIOD) ->
+        instance.updateDummyItems() 
+        
+
+function onTargetOrder()
+    let order = GetIssuedOrderId()
+    let u = GetOrderedUnit()
+    let target = GetOrderTargetItem()
+    let instance = scrollSlotInstances.get(u)
+    if instance == null
+        return
+    if instance.pauseTriggers == true
+        return
+    if order != Orders.smart or not u.isInventoryFull() or not scrollSlotInstances.has(u)
+        return
+    // Smart pickup system -> simulate picking up meat like an item if full inventory, like in Bannars StackNSplit system
+    // Used to pick up ammo even if inventory's full
+    // TODO: Currently only work when troll is in pick up range, make it so the troll move toward ammo even if inventory is full
+    if (target != null
+        and target.isPickupable()
+        and u.hasItemById(ITEM_SCROLL_SLOT))
+        let collisionSize = u.getCollisionSize()
+        let rangeSq = (150.0 + collisionSize).pow(2)
+        if u.getPos().distanceToSq(target.getPos()) <= rangeSq
+            doAfter(0.01) ->
+                instance.onTargetOrder(target)
+
+
+init
+    onEnter(()->onEnter(getEnterLeaveUnit())) 
+
+    //EventListener.onCast(ABILITY_WARRIOR) (unit caster) ->
+    //    onEnter(caster)
+
+    EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->
+        onPickup(GetManipulatingUnit(), GetManipulatedItem())
+
+    EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
+        onPickup(GetManipulatingUnit(), GetManipulatedItem())  
+
+    EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
+        if GetManipulatedItem().getTypeId() == ITEM_SCROLL_SLOT
+            onDummyDrop(GetManipulatingUnit(), GetManipulatedItem())           
+
+    registerPlayerUnitEvent(EVENT_PLAYER_HERO_REVIVE_FINISH)->
+        onRevive(GetTriggerUnit())  
+
+    EventListener.add(EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER, () -> onTargetOrder())  
+
+    registerQuickMakePriorEffect() (unit target, int unitID) ->
+        onQuickMakePriorEffect(target)
+
+    registerQuickMakeAfterEffect() (unit target, int unitID) ->
+        onQuickMakeAfterEffect(target)
+

@@ -11,7 +11,7 @@ import LocalItemObjEditing
 
 @compiletime function createMedalionThief() returns ItemDefinition
     return createPerishableItem(ITEM_THIEF_MED)
-        ..setAbilities(ABILITY_TELEPORT.toRawCode())
+        ..setAbilities(ABILITY_BLINK.toRawCode())
         ..setInterfaceIcon(Icons.bTNMedalionOfCourage)
         ..setCooldownGroup("AEbl")
         ..setLumberCost(8)

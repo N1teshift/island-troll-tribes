@@ -8,6 +8,8 @@ import GameStates
 import LocalObjectIDs
 import PlayerExtensions
 import ClosureTimers
+import Tribe
+import IdListConstant
 
 class Restriction
     int maxCount
@@ -47,9 +49,15 @@ public function enforceInventoryLimits(unit whichUnit, item whichItem) returns b
                 isManipulatedItemEquipped = true
                 equippedItemIndex = i
         
-        let currCount = inventory
+        int currCount = inventory
             .map(i -> restriction.getCount.call(i))
             .sum()
+
+
+        if whichUnit.hasAbility(ABILITY_TITANS_GRIP)
+            for each in inventory
+                if TWO_HANDED_WEAPON_LIST.has(each.getTypeId())
+                    currCount-=1
 
         if currCount > restriction.maxCount
             isCheckSuccess = false
@@ -67,7 +75,6 @@ public function enforceInventoryLimits(unit whichUnit, item whichItem) returns b
         return false
     return true
 
-
 init
     restrictions
     ..add(new Restriction(i -> i.isGloves().toInt()))
@@ -76,10 +83,10 @@ init
     ..add(new Restriction(i -> i.isSpell().toInt()))
     ..add(new Restriction(i -> i.isGloves().toInt()))
     ..add(new Restriction(i -> (i.getTypeId()==ITEM_STASHED_RAW_MEAT).toInt()))
-    ..add(new Restriction(2, i -> ((i.getTypeId() == ITEM_BATTLE_AXE) 
+    ..add(new Restriction(2, i -> (((i.getTypeId() == ITEM_BATTLE_AXE) 
                                 or (i.getTypeId() == ITEM_IRON_STAFF)
                                 or (i.getTypeId() == ITEM_CONDUCTING_ROD)
-                                or (i.getTypeId() == ITEM_BATTLE_STAFF)) ? 2 : i.isAxeOrShield().toInt()))
+                                or (i.getTypeId() == ITEM_BATTLE_STAFF))) ? 2 : i.isAxeOrShield().toInt()))
     ..add(new Restriction(i -> i.isPinion().toInt()))
     ..add(new Restriction(i -> i.isShield().toInt()))
 

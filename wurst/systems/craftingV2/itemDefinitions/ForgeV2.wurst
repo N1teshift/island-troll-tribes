@@ -5,6 +5,8 @@ import ClosureTimers
 import CustomItemDefinition
 import ShieldsDefinition
 import ChameleonHatchet
+import AbilityObjectCreationUtils
+import ObjectIds
 
 let UNIT_REQUIREMENT = UNIT_FORGE
 
@@ -108,37 +110,37 @@ public function initializeForgeItems()
     new CustomItemDefinition(ITEM_IRON_STAFF)
     ..addBonusDamage(8)
     ..addBonusArmour(2)
-    ..addBonusIntelligence(10)
+    ..addBonusIntelligence(8)
     ..setItemRecipe(ITEM_STICK, ITEM_IRON_INGOT, ITEM_IRON_INGOT, ITEM_MANA_CRYSTAL)
     ..setQuickMakeAbility(ABILITY_QM_IRON_STAFF)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
     new CustomItemDefinition(ITEM_BONE_SHIELD)
-    ..addSpecialAbilities(ABILITY_BONE_SHIELD_BLOCK_ID)
-    ..addSpecialAbilities(ABILITY_MAGIC_RESIST)
+    ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_BONE_SHIELD_BLOCK_ID))))
+    ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_MAGIC_RESIST))))
     ..setItemRecipe(ITEM_SHIELD, ITEM_BONE, ITEM_BONE, ITEM_BONE, ITEM_BONE, ITEM_BONE)
     ..setQuickMakeAbility(ABILITY_QM_BONE_SHIELD)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
     new CustomItemDefinition(ITEM_SHIELD)
-    ..addSpecialAbilities(ABILITY_BASIC_SHIELD_BLOCK_ID)
-    ..addSpecialAbilities(ABILITY_MAGIC_RESIST)
+    ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_BASIC_SHIELD_BLOCK_ID))))
+    ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_MAGIC_RESIST))))
     ..addBonusArmour(1) 
     ..setItemRecipe(ITEM_ELK_HIDE, ITEM_STICK, ITEM_STICK)
     ..setQuickMakeAbility(ABILITY_QM_SHIELD)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
     new CustomItemDefinition(ITEM_STEEL_SHIELD)
-    ..addSpecialAbilities(ABILITY_STEEL_SHIELD_BLOCK_ID)
-    ..addSpecialAbilities(ABILITY_MAGIC_RESIST)
+    ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_STEEL_SHIELD_BLOCK_ID))))
+    ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_MAGIC_RESIST))))
     ..addBonusArmour(4)
     ..setItemRecipe(ITEM_SHIELD, ITEM_STEEL_INGOT, ITEM_STEEL_INGOT)
     ..setQuickMakeAbility(ABILITY_QM_STEEL_SHIELD)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     
     new CustomItemDefinition(ITEM_IRON_SHIELD)
-    ..addSpecialAbilities(ABILITY_MAGIC_RESIST)
-    ..addSpecialAbilities(ABILITY_IRON_SHIELD_BLOCK_ID)
+    ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_MAGIC_RESIST))))
+    ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_IRON_SHIELD_BLOCK_ID))))
     ..addBonusArmour(2)
     ..setItemRecipe(ITEM_SHIELD, ITEM_IRON_INGOT, ITEM_IRON_INGOT)
     ..setQuickMakeAbility(ABILITY_QM_IRON_SHIELD)
