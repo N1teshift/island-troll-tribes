@@ -262,3 +262,6 @@ public function unit.triggerSmoothPickup(item whichItem)
 // TODO: Use UnitEnterLeave so that this is called automatically.
 public function unit.correctColor()
     this.setColor(this.getOwner().getColor())
+
+public function triggerSmoothPickup(unit u, item itm)
+    u.addOrStackItem(itm)
