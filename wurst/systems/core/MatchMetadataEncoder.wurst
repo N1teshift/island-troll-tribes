@@ -124,7 +124,7 @@ function buildMatchMetadata() returns MatchMetadata
 
     for tribe in Tribe.getTribes()
         for member in tribe.getMembers()
-            if member != null and not member.isObserver()
+            if member != null
                 let entry = new MatchPlayerMetadata(
                     member.getId(),
                     sanitizeValue(member.getName()),
