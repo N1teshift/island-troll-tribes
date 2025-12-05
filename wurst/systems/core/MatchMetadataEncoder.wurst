@@ -42,6 +42,7 @@ public class MatchPlayerMetadata
     int killsWolf = 0
     int killsBear = 0
     int killsPanther = 0
+    LinkedList<int> items = new LinkedList<int>()
 
     construct(int slotIndex, string name, string raceCode, string trollClass, int team, string result)
         this.slotIndex = slotIndex
@@ -133,6 +134,15 @@ function buildMatchMetadata() returns MatchMetadata
                     tribe.getId(),
                     determineResult(member, tribe)
                 )
+                // Load items
+                let troll = member.getTroll()
+                for i = 0 to 5
+                    let itemHandle = troll != null ? UnitItemInSlot(troll, i) : null
+                    if itemHandle != null
+                        entry.items.add(GetItemTypeId(itemHandle))
+                    else
+                        entry.items.add(0)
+
                 // Load player stats if available
                 if playerScores.has(member)
                     entry.loadStats(playerScores.get(member))
@@ -175,6 +185,16 @@ public function serializeMatchMetadata(MatchMetadata meta) returns string
             playerMeta.killsBear.toString(),
             playerMeta.killsPanther.toString()
         )
+        
+        // Append items
+        payload = payload.substring(0, payload.length() - 1) + "|"
+        let itemIter = playerMeta.items.iterator()
+        while itemIter.hasNext()
+            payload += itemIter.next().toString()
+            if itemIter.hasNext()
+                payload += ","
+        itemIter.close()
+        payload += "\n"
 
     meta.checksum = computeChecksum(payload)
     payload += "checksum:" + meta.checksum.toString() + "\n"
