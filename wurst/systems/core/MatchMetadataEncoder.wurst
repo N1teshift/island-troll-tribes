@@ -13,6 +13,7 @@ import MatchMetadataConfig
 import PlayerExtensions
 import PlayerScore
 import Tribe
+import EquipmentSlotFrames
 
 constant int MATCH_CHECKSUM_MOD = 1000000007
 
@@ -43,6 +44,7 @@ public class MatchPlayerMetadata
     int killsBear = 0
     int killsPanther = 0
     LinkedList<int> items = new LinkedList<int>()
+    LinkedList<int> itemCharges = new LinkedList<int>()
 
     construct(int slotIndex, string name, string raceCode, string trollClass, int team, string result)
         this.slotIndex = slotIndex
@@ -134,14 +136,33 @@ function buildMatchMetadata() returns MatchMetadata
                     tribe.getId(),
                     determineResult(member, tribe)
                 )
-                // Load items
+                // Load items from standard inventory (slots 0-5)
                 let troll = member.getTroll()
                 for i = 0 to 5
                     let itemHandle = troll != null ? UnitItemInSlot(troll, i) : null
                     if itemHandle != null
                         entry.items.add(GetItemTypeId(itemHandle))
+                        entry.itemCharges.add(itemHandle.getCharges())
                     else
                         entry.items.add(0)
+                        entry.itemCharges.add(0)
+                
+                // Load items from equipment slots
+                let equipmentSlots = member.getEquipmentSlots()
+                if equipmentSlots != null
+                    for i = 0 to INVENTORY_BUTTON_AMOUNT - 1
+                        let equippedItem = equipmentSlots.currentItems.get(i)
+                        if equippedItem != null
+                            entry.items.add(equippedItem.getTypeId())
+                            entry.itemCharges.add(equippedItem.getCharges())
+                        else
+                            entry.items.add(0)
+                            entry.itemCharges.add(0)
+                else
+                    // Player doesn't have equipment slots initialized, add empty slots
+                    for i = 0 to INVENTORY_BUTTON_AMOUNT - 1
+                        entry.items.add(0)
+                        entry.itemCharges.add(0)
 
                 // Load player stats if available
                 if playerScores.has(member)
@@ -186,14 +207,27 @@ public function serializeMatchMetadata(MatchMetadata meta) returns string
             playerMeta.killsPanther.toString()
         )
         
-        // Append items
+        // Append items with charges (format: itemId:charges or itemId if charges <= 1)
         payload = payload.substring(0, payload.length() - 1) + "|"
         let itemIter = playerMeta.items.iterator()
+        let chargeIter = playerMeta.itemCharges.iterator()
+        var isFirstItem = true
         while itemIter.hasNext()
-            payload += itemIter.next().toString()
-            if itemIter.hasNext()
+            let itemId = itemIter.next()
+            let charges = chargeIter.next()
+            
+            if not isFirstItem
                 payload += ","
+            
+            // Encode as itemId:charges if charges > 1, otherwise just itemId (backward compatible)
+            if charges > 1
+                payload += itemId.toString() + ":" + charges.toString()
+            else
+                payload += itemId.toString()
+            
+            isFirstItem = false
         itemIter.close()
+        chargeIter.close()
         payload += "\n"
 
     meta.checksum = computeChecksum(payload)
