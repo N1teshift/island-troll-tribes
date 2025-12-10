@@ -1,10 +1,15 @@
 package MatchMetadataEncoder
 
 // Standard library imports:
+import HashMap
 import HashSet
 import LinkedList
 import RegisterEvents
 import StringBuilder
+import ClosureTimers
+
+// Third-party imports:
+import MMD
 
 // Local imports:
 import Game
@@ -23,6 +28,17 @@ public interface MetadataEncoderStrategy
 
 // Registry of encoder strategies
 let encoderStrategies = new LinkedList<MetadataEncoderStrategy>()
+
+// Position data structure for player tracking
+public class PositionData
+    int timeSeconds  // Game time in seconds
+    int x            // X coordinate (rounded to integer)
+    int y            // Y coordinate (rounded to integer)
+    
+    construct(int timeSeconds, int x, int y)
+        this.timeSeconds = timeSeconds
+        this.x = x
+        this.y = y
 
 public class MatchPlayerMetadata
     int slotIndex
@@ -89,6 +105,11 @@ bool encoderStarted = false
 string currentMatchId = ""
 int matchStartTimeSeconds = 0
 
+// Position tracking state
+let positionData = new HashMap<int, LinkedList<PositionData>>()
+var positionTrackingActive = false
+constant real POSITION_TRACKING_INTERVAL = 5.0  // Track every 5 seconds
+
 /** Register a new encoder strategy. Call this during init. */
 public function registerEncoderStrategy(MetadataEncoderStrategy strategy)
     encoderStrategies.add(strategy)
@@ -102,6 +123,9 @@ public function startMatchMetadataEncoding()
         return
 
     encoderStarted = true
+
+    // Encode position data first (before main metadata)
+    encodePositionDataToMMD()
 
     let metadata = buildMatchMetadata()
     let payload = serializeMatchMetadata(metadata)
@@ -309,6 +333,103 @@ function generateMatchId() returns string
     let randomPart = GetRandomInt(100000, 999999)
     return elapsedMs.toString() + randomPart.toString()
 
+/** Start tracking player positions */
+function startPositionTracking()
+    if positionTrackingActive
+        return
+    
+    positionTrackingActive = true
+    
+    // Start periodic timer to record positions every 5 seconds
+    doPeriodically(POSITION_TRACKING_INTERVAL) (CallbackPeriodic cb) ->
+        if GameStates.gameplay.active
+            let currentTime = GAME_TIMER.getElapsed().toInt()
+            
+            // Track positions for all players in tribes
+            for tribe in Tribe.getTribes()
+                for member in tribe.getMembers()
+                    if member != null
+                        let troll = member.getTroll()
+                        if troll != null and troll.isAlive()
+                            let pos = troll.getPos()
+                            let slotIndex = member.getId()
+                            
+                            // Get or create position list for this player
+                            if not positionData.has(slotIndex)
+                                positionData.put(slotIndex, new LinkedList<PositionData>())
+                            
+                            // Add position data (round coordinates to integers)
+                            positionData.get(slotIndex).add(new PositionData(
+                                currentTime,
+                                pos.x.toInt(),
+                                pos.y.toInt()
+                            ))
+
+/** Encode position data to MMD */
+function encodePositionDataToMMD()
+    if positionData.size() == 0
+        return
+    
+    // Encode each player's position data by iterating over all tribes and players
+    for tribe in Tribe.getTribes()
+        for member in tribe.getMembers()
+            if member != null
+                let slotIndex = member.getId()
+                if positionData.has(slotIndex)
+                    let positions = positionData.get(slotIndex)
+                    if positions.size() > 0
+                        // Serialize positions: "time|x|y,time|x|y,..."
+                        var positionString = ""
+                        var isFirst = true
+                        for pos in positions
+                            if not isFirst
+                                positionString += ","
+                            positionString += pos.timeSeconds.toString() + "|" + pos.x.toString() + "|" + pos.y.toString()
+                            isFirst = false
+                        
+                        // Chunk the position data (MMD has message size limits)
+                        let chunks = chunkPositionData(positionString, 200)
+                        var chunkIndex = 0
+                        for chunk in chunks
+                            MMD.logCustom("itt_pos_p" + slotIndex.toString() + "_" + chunkIndex.toString(), chunk)
+                            chunkIndex++
+                        
+                        // Log chunk count for this player
+                        MMD.logCustom("itt_pos_p" + slotIndex.toString() + "_chunks", chunkIndex.toString())
+                        
+                        destroy chunks
+
+/** Chunk position data string into smaller pieces */
+function chunkPositionData(string data, int maxSize) returns LinkedList<string>
+    let chunks = new LinkedList<string>()
+    var position = 0
+    let dataLength = data.length()
+    
+    // Try to split at comma boundaries to keep position entries intact
+    while position < dataLength
+        let remaining = dataLength - position
+        if remaining <= maxSize
+            // Last chunk or fits in one chunk
+            chunks.add(data.substring(position, dataLength))
+            break
+        
+        // Find the last comma before maxSize to keep entries intact
+        var splitPos = position + maxSize
+        while splitPos > position
+            if data.charAt(splitPos) == ","
+                splitPos++
+                break
+            splitPos--
+        
+        // If no comma found, just split at maxSize (might break an entry, but that's okay)
+        if splitPos == position
+            splitPos = position + maxSize
+        
+        chunks.add(data.substring(position, splitPos))
+        position = splitPos
+    
+    return chunks
+
 init
     registerPlayerEvent(EVENT_PLAYER_LEAVE) ->
         let leaver = GetTriggerPlayer()
@@ -318,3 +439,4 @@ init
     GameStates.gameplay.onEnter() state ->
         matchStartTimeSeconds = GAME_TIMER.getElapsed().toInt()
         currentMatchId = generateMatchId()
+        startPositionTracking()
