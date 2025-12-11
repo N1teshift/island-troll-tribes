@@ -28,6 +28,13 @@ let MESSAGE_MISSING_UNIT_REQUIRED = "Missing required building: "
 let MESSAGE_DURATION = 10.
 public HashList<int> baseItems  = new HashList<int>()
 
+// Callback type for craft event logging
+public interface CraftEventCallback
+    function onCraftEvent(player whichPlayer, int itemId, string status)
+
+// Callback instance (set by MatchMetadataEncoder)
+public CraftEventCallback craftEventCallback = null
+
 
 public class QuickMakeV2
     static item baseItem
@@ -337,6 +344,9 @@ public class QuickMakeV2
                 doAfter(ANIMATION_PERIOD) -> 
                     caster.startAbilityCooldown(abilId, QM_SUCCESS_CD)
             printToTeam("Successfuly crafted "+GetObjectName(craftedItem.getTypeId()))
+            // Log craft event for metadata tracking (using callback to avoid import issues)
+            if craftedItem != null and caster != null and caster.getOwner() != null and craftEventCallback != null
+                craftEventCallback.onCraftEvent(caster.getOwner(), craftedItem.getTypeId(), "SUCCESS")
         removeConsumedItems()
         if this!= null
             destroy this    

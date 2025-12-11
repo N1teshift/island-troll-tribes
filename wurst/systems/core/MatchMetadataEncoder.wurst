@@ -19,6 +19,8 @@ import PlayerExtensions
 import PlayerScore
 import Tribe
 import EquipmentSlotFrames
+import UnitExtensions
+import QuickMakeV2
 
 constant int MATCH_CHECKSUM_MOD = 1000000007
 
@@ -39,6 +41,32 @@ public class PositionData
         this.timeSeconds = timeSeconds
         this.x = x
         this.y = y
+
+// Building event data structure
+public class BuildingEvent
+    int team          // Team ID (tribe ID)
+    int timeSeconds   // Game time in seconds
+    int buildingTypeId // Unit type ID of the building
+    string status     // Status: START, FINISH, CANCEL, DESTROY
+    
+    construct(int team, int timeSeconds, int buildingTypeId, string status)
+        this.team = team
+        this.timeSeconds = timeSeconds
+        this.buildingTypeId = buildingTypeId
+        this.status = status
+
+// Craft event data structure
+public class CraftEvent
+    int team          // Team ID (tribe ID)
+    int timeSeconds   // Game time in seconds
+    int itemId        // Item type ID of the crafted item
+    string status     // Status: SUCCESS, FAIL
+    
+    construct(int team, int timeSeconds, int itemId, string status)
+        this.team = team
+        this.timeSeconds = timeSeconds
+        this.itemId = itemId
+        this.status = status
 
 public class MatchPlayerMetadata
     int slotIndex
@@ -110,6 +138,12 @@ let positionData = new HashMap<int, LinkedList<PositionData>>()
 var positionTrackingActive = false
 constant real POSITION_TRACKING_INTERVAL = 5.0  // Track every 5 seconds
 
+// Building event tracking state
+let buildingEvents = new LinkedList<BuildingEvent>()
+
+// Craft event tracking state
+let craftEvents = new LinkedList<CraftEvent>()
+
 /** Register a new encoder strategy. Call this during init. */
 public function registerEncoderStrategy(MetadataEncoderStrategy strategy)
     encoderStrategies.add(strategy)
@@ -121,8 +155,6 @@ public function registerMatchVictory(Tribe tribe)
 public function startMatchMetadataEncoding()
     if encoderStarted
         return
-
-    encoderStarted = true
 
     // Encode position data first (before main metadata)
     encodePositionDataToMMD()
@@ -136,6 +168,9 @@ public function startMatchMetadataEncoding()
     // Call all registered encoder strategies
     for strategy in encoderStrategies
         strategy.encode(payload)
+    
+    // Only mark as started after successful encoding
+    encoderStarted = true
 
 function buildMatchMetadata() returns MatchMetadata
     let meta = new MatchMetadata()
@@ -253,6 +288,14 @@ public function serializeMatchMetadata(MatchMetadata meta) returns string
         itemIter.close()
         chargeIter.close()
         payload += "\n"
+
+    // Append building events (schema version 7+)
+    for buildingEvent in buildingEvents
+        payload += "build:" + buildingEvent.team.toString() + "|" + buildingEvent.timeSeconds.toString() + "|" + buildingEvent.buildingTypeId.toString() + "|" + buildingEvent.status + "\n"
+
+    // Append craft events (schema version 8+)
+    for craftEvent in craftEvents
+        payload += "craft:" + craftEvent.team.toString() + "|" + craftEvent.timeSeconds.toString() + "|" + craftEvent.itemId.toString() + "|" + craftEvent.status + "\n"
 
     meta.checksum = computeChecksum(payload)
     payload += "checksum:" + meta.checksum.toString() + "\n"
@@ -399,6 +442,56 @@ function encodePositionDataToMMD()
                         
                         destroy chunks
 
+/** Record a building event */
+function recordBuildingEvent(unit structure, string status)
+    if structure == null
+        return
+    
+    // Only track structures, not units
+    if not structure.isStructure()
+        return
+    
+    let owner = structure.getOwner()
+    if owner == null
+        return
+    
+    // Skip neutral/gaia constructions
+    if owner == players[PLAYER_NEUTRAL_PASSIVE] or owner == players[PLAYER_NEUTRAL_AGGRESSIVE]
+        return
+    
+    let tribe = Tribe.ofPlayer(owner)
+    if tribe == null
+        return
+    
+    let teamId = tribe.getId()
+    let timeSeconds = GAME_TIMER.getElapsed().toInt()
+    let buildingTypeId = structure.getTypeId()
+    
+    buildingEvents.add(new BuildingEvent(teamId, timeSeconds, buildingTypeId, status))
+
+/** Record a craft event */
+public function logCraftEvent(player whichPlayer, int itemId, string status)
+    if whichPlayer == null
+        return
+    
+    // Skip neutral/gaia players
+    if whichPlayer == players[PLAYER_NEUTRAL_PASSIVE] or whichPlayer == players[PLAYER_NEUTRAL_AGGRESSIVE]
+        return
+    
+    let tribe = Tribe.ofPlayer(whichPlayer)
+    if tribe == null
+        return
+    
+    let teamId = tribe.getId()
+    let timeSeconds = GAME_TIMER.getElapsed().toInt()
+    
+    craftEvents.add(new CraftEvent(teamId, timeSeconds, itemId, status))
+
+/** Craft event callback implementation */
+class CraftEventLogger implements CraftEventCallback
+    override function onCraftEvent(player whichPlayer, int itemId, string status)
+        logCraftEvent(whichPlayer, itemId, status)
+
 /** Chunk position data string into smaller pieces */
 function chunkPositionData(string data, int maxSize) returns LinkedList<string>
     let chunks = new LinkedList<string>()
@@ -436,7 +529,24 @@ init
         if leaver != null
             playersWhoLeft.add(leaver)
 
+    // Register building event listeners
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_CONSTRUCT_START) ->
+        recordBuildingEvent(GetTriggerUnit(), "START")
+    
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_CONSTRUCT_FINISH) ->
+        recordBuildingEvent(EventData.getConstructedStructure(), "FINISH")
+    
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_CONSTRUCT_CANCEL) ->
+        recordBuildingEvent(EventData.getCancelledStructure(), "CANCEL")
+    
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_DEATH) ->
+        let dyingUnit = EventData.getDyingUnit()
+        if dyingUnit != null and dyingUnit.isStructure()
+            recordBuildingEvent(dyingUnit, "DESTROY")
+
     GameStates.gameplay.onEnter() state ->
         matchStartTimeSeconds = GAME_TIMER.getElapsed().toInt()
         currentMatchId = generateMatchId()
         startPositionTracking()
+        // Register craft event callback with QuickMakeV2
+        craftEventCallback = new CraftEventLogger()
