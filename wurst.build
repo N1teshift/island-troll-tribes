@@ -20,6 +20,4 @@ buildMapData:
     suggestedPlayers: 3v3 4v4 5v5 6v6
     loadingScreen:
       model: LoadingScreen.mdx
-      title: ' '
-      subTitle: ' '
-      text: ' '
+wc3Patch: v2.0
