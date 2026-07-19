@@ -8,8 +8,8 @@ dependencies:
 - https://github.com/jlfarris91/WurstMMD:main
 - https://github.com/Frotty/wurst-table-layout
 buildMapData:
-  name: '|cffffd700Island.Troll.Tribes.v3.30.3'
-  fileName: Island.Troll.Tribes.v3.30.3
+  name: '|cffffd700Island.Troll.Tribes.v3.30.6_scat'
+  fileName: Island.Troll.Tribes.v3.30.6_scat
   author: "Quazz, Marsunpaisti, Xan Kriegor"
   scenarioData:
     description: "Island Troll Tribes is a PvP-centric survival map in which multiple\
@@ -20,6 +20,4 @@ buildMapData:
     suggestedPlayers: 3v3 4v4 5v5 6v6
     loadingScreen:
       model: LoadingScreen.mdx
-      title: ' '
-      subTitle: ' '
-      text: ' '
+wc3Patch: v2.0
